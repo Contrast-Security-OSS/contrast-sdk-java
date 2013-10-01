@@ -39,6 +39,10 @@ import java.util.List;
  */
 public class AppClass {
 
+    /**
+     * The name of the class being measured.
+     * @return The classname
+     */
     @XmlAttribute(name = "name")
     public String getName() {
         return name;
@@ -50,9 +54,11 @@ public class AppClass {
 
     private String name;
 
-    @XmlElements({
-            @XmlElement(name = "m", type = AppMethod.class)
-    })
+    /**
+     * A list containing the {@link AppMethod}s within this class.
+     * @return
+     */
+    @XmlElements({@XmlElement(name = "m", type = AppMethod.class)})
     public List<AppMethod> getMethods() {
         return methods;
     }

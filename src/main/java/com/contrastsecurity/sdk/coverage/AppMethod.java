@@ -36,6 +36,10 @@ import javax.xml.bind.annotation.XmlAttribute;
  */
 public class AppMethod {
 
+    /**
+     * The signature of the method
+     * @return
+     */
     @XmlAttribute(name = "sig")
     public String getSignature() {
         return signature;
@@ -47,6 +51,10 @@ public class AppMethod {
 
     private String signature;
 
+    /**
+     * Whether the method has been executed while the application has been under monitoring by contrast
+     * @return
+     */
     @XmlAttribute(name = "exec")
     public boolean isExecuted() {
         return executed;

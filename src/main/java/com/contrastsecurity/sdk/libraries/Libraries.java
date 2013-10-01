@@ -33,6 +33,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
+/**
+ * Object representing the high level statistics and information about the {@link Library}
+ * in use by an {@link com.contrastsecurity.sdk.App}
+ */
 @XmlRootElement(name = "libraries")
 public class Libraries {
     private int total;
@@ -43,21 +47,38 @@ public class Libraries {
     public Libraries() {
     }
 
+    /**
+     * Total number of libraries in use by the application.
+     * @return
+     */
     @XmlElement(name = "total")
     public int getTotal() {
         return this.total;
     }
 
+    /**
+     * Count of libraries considered stale (out of date or behind in versions)
+     * @return
+     */
     @XmlElement(name = "stale")
     public int getStale() {
         return this.stale;
     }
 
+    /**
+     * Count of libraries that Contrast does not recognize as third-party or open source.
+     * @return
+     */
     @XmlElement(name = "unknown")
     public int getUnknown() {
         return this.unknown;
     }
 
+    /**
+     * A list of {@link Library} objects representing meta-data about each of the libraries
+     * in use by the application.
+     * @return
+     */
     @XmlElement(name = "lib")
     public List<Library> getLibraries() {
         return libraries;

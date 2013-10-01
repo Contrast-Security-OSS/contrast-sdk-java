@@ -31,8 +31,15 @@ package com.contrastsecurity.sdk.libraries;
 
 import javax.xml.bind.annotation.XmlElement;
 
+/**
+ * This object represents a single library within an {@link com.contrastsecurity.sdk.App}
+ */
 public class Library {
 
+    /**
+     * The unique hash that represents this library
+     * @return
+     */
     @XmlElement(name = "sha1")
     public String getHash() {
         return hash;
@@ -44,6 +51,10 @@ public class Library {
 
     private String hash;
 
+    /**
+     * The URL where the library is located within the application.
+     * @return
+     */
     @XmlElement(name = "url")
     public String getUrl() {
         return url;
@@ -55,6 +66,10 @@ public class Library {
 
     private String url;
 
+    /**
+     * Count of lines of code within the library
+     * @return
+     */
     @XmlElement(name = "lines-of-code")
     public int getLinesOfCode() {
         return linesOfCode;
@@ -66,6 +81,10 @@ public class Library {
 
     private int linesOfCode;
 
+    /**
+     * The internal release date of the library
+     * @return
+     */
     @XmlElement(name = "internal-date", required = false)
     public Long getInternalDate() {
         return internalDate;
@@ -77,6 +96,10 @@ public class Library {
 
     private Long internalDate;
 
+    /**
+     * How many classes within the application have been invoked
+     * @return
+     */
     @XmlElement(name = "used-class-count")
     public int getUsedClassCount() {
         return usedClassCount;
@@ -88,6 +111,10 @@ public class Library {
 
     private int usedClassCount;
 
+    /**
+     * Number of classes present in the library
+     * @return
+     */
     @XmlElement(name = "class-count")
     public int getClassCount() {
         return classCount;
@@ -99,6 +126,10 @@ public class Library {
 
     private Integer classCount;
 
+    /**
+     * External release date
+     * @return
+     */
     @XmlElement(name = "external-date", required = false)
     public Long getExternalDate() {
         return externalDate;
@@ -110,6 +141,10 @@ public class Library {
 
     private Long externalDate;
 
+    /**
+     * Manifest information about the library
+     * @return
+     */
     @XmlElement(name = "manifest")
     public String getManifest() {
         return manifest;
@@ -121,6 +156,10 @@ public class Library {
 
     private String manifest;
 
+    /**
+     * File name of the library on disk
+     * @return
+     */
     @XmlElement(name = "file")
     public String getFileName() {
         return fileName;
@@ -132,6 +171,10 @@ public class Library {
 
     private String fileName;
 
+    /**
+     * Current library version
+     * @return
+     */
     @XmlElement(name = "version")
     public String getVersion() {
         return version;
