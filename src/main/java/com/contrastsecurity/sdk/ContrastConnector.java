@@ -75,6 +75,11 @@ public class ContrastConnector {
     private static final String SERVICE_QUEUE_STATUS_URL = "/Contrast/s/api/status/";
     private static final String VALID_EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
 
+    public static final String PROPS_USERNAME = "username";
+    public static final String PROPS_SERVICEKEY = "servicekey";
+    public static final String PROPS_APIKEY = "apikey";
+    public static final String PROPS_HOSTURL = "hosturl";
+
     private JAXBContext xmlContext;
     private Unmarshaller xmlUnmarshaller;
     private String username;
@@ -267,7 +272,9 @@ public class ContrastConnector {
     public Apps getAppList() {
         HttpURLConnection conn = getConnection(null, 0);
         InputStream is = null;
+
         if (conn == null) {
+            LOG.error("Unable to establish connection with " + contrastHost);
             return null;
         }
 
@@ -483,7 +490,7 @@ public class ContrastConnector {
      * @param type Integer which type of query to make (0 = App list, 1 = Trace list, 2 = Trace Details)
      * @return HttpResponse The HTTP Response of the attempted connection
      */
-    private HttpURLConnection getConnection(String add, int type) {
+     HttpURLConnection getConnection(String add, int type) {
 
         if (!checkCredentials()) {
             return null;
