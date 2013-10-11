@@ -41,6 +41,9 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+/**
+ * Represents an event within a trace. An event can be a propagation of data, a trigger,
+ */
 @XmlRootElement(name = "event")
 public class Event {
     private String eventTime;
