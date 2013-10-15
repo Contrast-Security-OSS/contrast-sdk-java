@@ -27,8 +27,9 @@
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.contrastsecurity.sdk;
+package com.contrastsecurity.sdk.application;
 
+import com.contrastsecurity.sdk.Vulns;
 import com.contrastsecurity.sdk.libraries.Libraries;
 import com.google.gson.Gson;
 

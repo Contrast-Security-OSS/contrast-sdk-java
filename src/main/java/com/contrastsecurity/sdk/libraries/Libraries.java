@@ -35,7 +35,7 @@ import java.util.List;
 
 /**
  * Object representing the high level statistics and information about the {@link Library}
- * in use by an {@link com.contrastsecurity.sdk.App}
+ * in use by an {@link com.contrastsecurity.sdk.application.App}
  */
 @XmlRootElement(name = "libraries")
 public class Libraries {

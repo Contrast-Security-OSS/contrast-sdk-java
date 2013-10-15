@@ -38,13 +38,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
- * This object represents the coverage metrics for the {@link com.contrastsecurity.sdk.App}
+ * This object represents the coverage metrics for the {@link com.contrastsecurity.sdk.application.App}
  */
 @XmlRootElement(name = "coverage")
 public class CoverageData {
 
     /**
-     * List of {@link AppClass} objects within the {@link com.contrastsecurity.sdk.App}
+     * List of {@link AppClass} objects within the {@link com.contrastsecurity.sdk.application.App}
      * @return
      */
     @XmlElementWrapper(name = "classes")

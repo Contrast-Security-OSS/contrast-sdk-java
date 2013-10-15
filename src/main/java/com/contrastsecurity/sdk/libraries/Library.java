@@ -32,7 +32,7 @@ package com.contrastsecurity.sdk.libraries;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- * This object represents a single library within an {@link com.contrastsecurity.sdk.App}
+ * This object represents a single library within an {@link com.contrastsecurity.sdk.application.App}
  */
 public class Library {
 

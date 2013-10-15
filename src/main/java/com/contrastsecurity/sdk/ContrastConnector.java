@@ -29,8 +29,12 @@
 
 package com.contrastsecurity.sdk;
 
+import com.contrastsecurity.sdk.application.App;
+import com.contrastsecurity.sdk.application.AppStats;
+import com.contrastsecurity.sdk.application.Apps;
 import com.contrastsecurity.sdk.coverage.CoverageData;
 import com.contrastsecurity.sdk.exception.InitializationException;
+import com.contrastsecurity.sdk.http.ContrastRequest;
 import com.contrastsecurity.sdk.traces.Findings;
 import com.contrastsecurity.sdk.traces.Traces;
 import com.contrastsecurity.sdk.traces.status.QueueStatus;
@@ -41,11 +45,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Properties;
@@ -67,12 +73,6 @@ import java.util.Properties;
 public class ContrastConnector {
     private static final Logger LOG = LoggerFactory.getLogger(ContrastConnector.class);
 
-    private static final String SERVICE_APP_LIST_URL = "/Contrast/s/api/app/list";
-    private static final String SERVICE_APP_DATA_URL = "/Contrast/s/api/app/stats/";
-    private static final String SERVICE_APP_TRACES_URL = "/Contrast/s/api/traces/";
-    private static final String SERVICE_COVERAGE_URL = "/Contrast/s/api/app/coverage/";
-    private static final String SERVICE_TRACE_DETAIL_URL = "/Contrast/s/api/traces/trace/";
-    private static final String SERVICE_QUEUE_STATUS_URL = "/Contrast/s/api/status/";
     private static final String VALID_EMAIL_REGEX = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
 
     public static final String PROPS_USERNAME = "username";
@@ -203,47 +203,6 @@ public class ContrastConnector {
     }
 
     /**
-     * If failure is returned, access connection response code via getErrorString().
-     *
-     * @return true = Successful connection, false = Failed connection, use getErrorString()
-     *         to obtain a reason for any return of false, use getErrorString() to get further
-     *         details of a return value of false.
-     */
-    public boolean testConnection() {
-        if (!checkCredentials()) {
-            return false;
-        }
-
-        if (xmlContext == null) {
-            errorString = "Error initializing JAXB Context & Unmarshaller";
-            return false;
-        } else {
-            errorString = "";
-        }
-
-        HttpURLConnection conn = getConnection(null, 0);
-        try {
-            boolConnectionSuccess = false;
-            if (conn == null) {
-                boolConnectionSuccess = false;
-            } else {
-                int statusCode = conn.getResponseCode();
-                if (statusCode != 200) {
-                    boolConnectionSuccess = false;
-                    errorString = conn.getResponseMessage();
-                } else {
-                    boolConnectionSuccess = true;
-                }
-            }
-        } catch (IOException ioe) {
-            boolConnectionSuccess = false;
-            errorString = ioe.getMessage();
-        }
-
-        return boolConnectionSuccess;
-    }
-
-    /**
      * Returns the Status Line of a failed connection.
      *
      * @return String value of the HTTP Response Status Line
@@ -270,30 +229,7 @@ public class ContrastConnector {
      *         retrieve a String error message;
      */
     public Apps getAppList() {
-        HttpURLConnection conn = getConnection(null, 0);
-        InputStream is = null;
-
-        if (conn == null) {
-            LOG.error("Unable to establish connection with " + contrastHost);
-            return null;
-        }
-
-        try {
-            int statusCode = conn.getResponseCode();
-            if (statusCode != 200) {
-                errorString = conn.getResponseMessage();
-                return null;
-            }
-            is = conn.getInputStream();
-            InputStreamReader reader = new InputStreamReader(is);
-            Apps apps = (Apps) xmlUnmarshaller.unmarshal(reader);
-            return apps;
-        } catch (Exception e) {
-            errorString = e.getMessage();
-            return null;
-        } finally {
-            IOUtils.closeQuietly(is);
-        }
+        return sendRequest(ContrastRequest.APP_LIST, null);
     }
 
     /**
@@ -305,27 +241,7 @@ public class ContrastConnector {
      *         getErrorString() to retrieve a String error message;
      */
     public Traces getTraceList(String appId) {
-        HttpURLConnection conn = getConnection(appId, 1);
-        InputStream is = null;
-        try {
-            if (conn == null) {
-                return null;
-            }
-            int statusCode = conn.getResponseCode();
-            if (statusCode != 200) {
-                errorString = conn.getResponseMessage();
-                return null;
-            }
-            is = conn.getInputStream();
-            InputStreamReader reader = new InputStreamReader(is);
-            Traces traces = (Traces) xmlUnmarshaller.unmarshal(reader);
-            return traces;
-        } catch (Exception e) {
-            errorString = e.getMessage();
-            return null;
-        } finally {
-            IOUtils.closeQuietly(is);
-        }
+        return sendRequest(ContrastRequest.APP_TRACES, appId);
     }
 
     /**
@@ -338,25 +254,7 @@ public class ContrastConnector {
      *         String error message;
      */
     public Findings getTraceDetails(String traceID) {
-        HttpURLConnection conn = getConnection(traceID, 2);
-        InputStream is = null;
-        try {
-            int statusCode = conn.getResponseCode();
-            if (statusCode != 200) {
-                errorString = conn.getResponseMessage();
-                return null;
-            }
-
-            InputStreamReader reader = new InputStreamReader(is);
-            Unmarshaller xmlUnmarshaller = xmlContext.createUnmarshaller();
-            Findings traceList = (Findings) xmlUnmarshaller.unmarshal(reader);
-            return traceList;
-        } catch (Exception e) {
-            errorString = e.getMessage();
-            return null;
-        } finally {
-            IOUtils.closeQuietly(is);
-        }
+        return sendRequest(ContrastRequest.TRACE_DETAIL, traceID);
     }
 
     /**
@@ -369,23 +267,7 @@ public class ContrastConnector {
      *         String error message;
      */
     public AppStats getAppStats(String appId) {
-        HttpURLConnection conn = getConnection(appId, 3);
-        InputStream is = null;
-
-        try {
-            int statusCode = conn.getResponseCode();
-            if (statusCode != 200) {
-                errorString = conn.getResponseMessage();
-                return null;
-            }
-            is = conn.getInputStream();
-            InputStreamReader reader = new InputStreamReader(is);
-            AppStats appStats = (AppStats) xmlUnmarshaller.unmarshal(reader);
-            return appStats;
-        } catch (Exception e) {
-            errorString = e.getMessage();
-            return null;
-        }
+        return sendRequest(ContrastRequest.APP_DATA, appId);
     }
 
     /**
@@ -397,23 +279,7 @@ public class ContrastConnector {
      *         String error message;
      */
     public QueueStatus getQueueStatus() {
-        HttpURLConnection conn = getConnection(null, 5);
-        InputStream is = null;
-
-        try {
-            int statusCode = conn.getResponseCode();
-            if (statusCode != 200) {
-                errorString = conn.getResponseMessage();
-                return null;
-            }
-            is = conn.getInputStream();
-            InputStreamReader reader = new InputStreamReader(is);
-            QueueStatus coverage = (QueueStatus) xmlUnmarshaller.unmarshal(reader);
-            return coverage;
-        } catch (Exception e) {
-            errorString = e.getMessage();
-            return null;
-        }
+        return sendRequest(ContrastRequest.QUEUE_STATUS, null);
     }
 
     /**
@@ -426,23 +292,7 @@ public class ContrastConnector {
      *         String error message;
      */
     public CoverageData getAppCoverage(String applicationId) {
-        HttpURLConnection conn = getConnection(applicationId, 4);
-        InputStream is = null;
-
-        try {
-            int statusCode = conn.getResponseCode();
-            if (statusCode != 200) {
-                errorString = conn.getResponseMessage();
-                return null;
-            }
-            is = conn.getInputStream();
-            InputStreamReader reader = new InputStreamReader(is);
-            CoverageData coverage = (CoverageData) xmlUnmarshaller.unmarshal(reader);
-            return coverage;
-        } catch (Exception e) {
-            errorString = e.getMessage();
-            return null;
-        }
+        return sendRequest(ContrastRequest.COVERAGE, applicationId);
     }
 
     /**
@@ -479,54 +329,51 @@ public class ContrastConnector {
     public App getSingleAppData(App app) {
         app.setAppStats(getAppStats(app.getID()));
         app.setTraceList(getTraceList(app.getID()));
-
         return app;
     }
 
-    /**
-     * Internal method to establish HTTP Connection and obtain the HTTP Response.
-     *
-     * @param add  String for additional URL pieces: App ID, Trace ID (Plain-text)
-     * @param type Integer which type of query to make (0 = App list, 1 = Trace list, 2 = Trace Details)
-     * @return HttpResponse The HTTP Response of the attempted connection
-     */
-     HttpURLConnection getConnection(String add, int type) {
-
+    <T> T sendRequest(ContrastRequest req, String add) {
         if (!checkCredentials()) {
             return null;
         } else {
             errorString = "";
         }
 
-        String url;
+        InputStream is = null;
+
         try {
-            if (type == 0) {
-                url = contrastHost + SERVICE_APP_LIST_URL;
-            } else if (type == 1) {
-                url = contrastHost + SERVICE_APP_TRACES_URL + add;
-            } else if (type == 2) {
-                url = contrastHost + SERVICE_TRACE_DETAIL_URL + add;
-            } else if (type == 3) {
-                url = contrastHost + SERVICE_APP_DATA_URL + add;
-            } else if (type == 4) {
-                url = contrastHost + SERVICE_COVERAGE_URL + add;
-            } else if (type == 5) {
-                url = contrastHost + SERVICE_QUEUE_STATUS_URL + add;
-            } else {
-                url = contrastHost + SERVICE_APP_LIST_URL;
-            }
-            URL u = new URL(url);
-            HttpURLConnection conn = (HttpURLConnection) u.openConnection();
-            conn.setRequestMethod("PUT");
+            URL url = new URL(contrastHost + req.getUrl() + (req.isParm() ? add : ""));
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod(req.getMethod().toString());
             conn.setRequestProperty("Content-Type", "text/xml");
             conn.setRequestProperty("Authorization", Base64.encodeBase64String((username + ":" + serviceKey).getBytes()).trim());
             conn.setRequestProperty("API-Key", apiKey);
             conn.connect();
 
-            return conn;
-        } catch (Exception e) {
-            errorString = e.getMessage();
+            if (conn.getResponseCode() != 200) {
+                errorString = conn.getResponseMessage();
+                return null;
+            }
+
+            is = conn.getInputStream();
+            InputStreamReader reader = new InputStreamReader(is);
+            T out = (T) xmlUnmarshaller.unmarshal(reader);
+
+            return out;
+        } catch (MalformedURLException e) {
+            LOG.error("Invalid URL - Please verify the hostname is correct for your Contrast TeamServer instance.", e);
+            errorString = "Invalid URL - Please verify the hostname is correct for your Contrast TeamServer instance.";
             return null;
+        } catch (IOException e) {
+            LOG.error("Unable to connect to " + contrastHost + ". Please check your network connection and try again.", e);
+            errorString = "Unable to connect to " + contrastHost + ". Please check your network connection and try again.";
+            return null;
+        } catch (JAXBException e) {
+            LOG.error("Malformed response was received.", e);
+            errorString = "A malformed response was received from the server. Please notify your system administrator.";
+            return null;
+        } finally {
+            IOUtils.closeQuietly(is);
         }
     }
 }

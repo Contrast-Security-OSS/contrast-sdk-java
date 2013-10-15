@@ -27,7 +27,7 @@
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.contrastsecurity.sdk;
+package com.contrastsecurity.sdk.application;
 
 import com.contrastsecurity.sdk.traces.Trace;
 import com.contrastsecurity.sdk.traces.Traces;
@@ -55,16 +55,16 @@ public class App {
     /**
      * Instantiation for setup when the four required variables are known at once.
      *
-     * @param ssID      String Application ID
-     * @param ssLicense String License #
-     * @param ssPath    String Path Value
-     * @param ssName    String Application Name
+     * @param id      String Application ID
+     * @param license String License #
+     * @param path    String Path Value
+     * @param name    String Application Name
      */
-    public App(String ssID, String ssLicense, String ssPath, String ssName) {
-        id = ssID;
-        license = ssLicense;
-        path = ssPath;
-        name = ssName;
+    public App(String id, String license, String path, String name) {
+        this.id = id;
+        this.license = license;
+        this.path = path;
+        this.name = name;
     }
 
     public void setAppStats(AppStats casd) {
