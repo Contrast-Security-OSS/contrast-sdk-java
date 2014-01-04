@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Contrast Security, LLC.
+ * Copyright (c) 2013, Contrast Security, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -12,7 +12,7 @@
  * conditions and the following disclaimer in the documentation and/or other materials
  * provided with the distribution.
  *
- * Neither the name of the Contrast Security, LLC. nor the names of its contributors may
+ * Neither the name of the Contrast Security, Inc. nor the names of its contributors may
  * be used to endorse or promote products derived from this software without specific
  * prior written permission.
  *
@@ -26,37 +26,42 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.contrastsecurity.rest;
 
-import java.util.List;
+import org.apache.commons.codec.binary.Base64;
 
 /**
- * The platform an application is running on. Not applicable in many
- * environments. ColdFusion is the only platform in use today. 
+ * Represents a primitive/object in a method invocation. The parameters,
+ * "this", and return value are modeled with this object.
  */
-public class Platform {
+public class CodeObject {
+    
+	/**
+	 * Return the identity hash code of this object.
+	 * @return the identity hash code of this object
+	 */
+    public String getHashCode() {
+        return hashCode;
+    }
+    private String hashCode;
 
-	/**
-	 * Return the version of the app platform. For ColdFusion, this value
-	 * could be: "9.0.1".
-	 * 
-	 * @return the version of the app platform
-	 */
-	public String getVersion() {
-		return version;
-	}
-	private String version;
-	
-	/**
-	 * Return a list of vulnerabilities associated with this platform version.
-	 * 
-	 * This is usually a set of publicly known vulnerabilities, and contains
-	 * CVEs and some metadata.
-	 * 
-	 * @return a list of vulnerabilities associated with this platform version.
-	 */
-	public List<PlatformVulnerability> getVulnerabilities() {
-		return vulnerabilities;
-	}
-	private List<PlatformVulnerability> vulnerabilities;
+    /**
+     * Return whether or not the object is tracked.
+     * @return whether or not the object is tracked
+     */
+    public boolean isTracked() {
+        return tracked;
+    }
+    private boolean tracked;
+
+    /**
+     * Return the value of the object.
+     *
+     * @return the value of the object
+     */
+    public String getValue() {
+        return new String(Base64.decodeBase64(value));
+    }
+    private String value;
 }

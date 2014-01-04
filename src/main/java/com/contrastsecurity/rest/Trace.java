@@ -28,41 +28,75 @@
  */
 package com.contrastsecurity.rest;
 
+import java.util.List;
+
 /**
  * A vulnerability identified by Contrast.
  */
 public class Trace {
 
+	/**
+	 * Return the title for this vulnerability, e.g.:
+	 * "XSS on /foo.jsp in 'bar' parameter"
+	 * 
+	 * @return the title of this vulnerability
+	 */
 	public String getTitle() {
 		return title;
 	}
 	private String title;
 	
+	/**
+	 * Return any arbitrarily-formatted 'evidence' for this trace. Many rules
+	 * won't cause any evidence to be created.
+	 * 
+	 * @return an arbitrarily-formatted 'evidence' for this trace, or null if none present
+	 */
 	public String getEvidence() {
 		return evidence;
 	}
 	private String evidence;
 	
+	/**
+	 * Return the language of application this trace was discovered in.
+	 * @return the language of application this trace was discovered in
+	 */
 	public String getLanguage() {
 		return language;
 	}
 	private String language;
 	
+	/**
+	 * Return the status of this trace, like "Reported", "Verified", "Suspicious", etc.
+	 * @return the status of this trace, like "Reported", "Verified", "Suspicious", etc
+	 */
 	public String getStatus() {
 		return status;
 	}
 	private String status;
 	
+	/**
+	 * Return the simple, numeric hash of this trace
+	 * @return numeric hash of this trace
+	 */
 	public String getHash() {
 		return hash;
 	}
     private String hash;
     
+    /**
+     * Return the UUID for this trace.
+     * @return the UUID for this trace
+     */
     public String getUuid() {
 		return uuid;
 	}
     private String uuid;
 
+    /**
+     * Return the name of the rule that caused this trace.
+     * @return the name of the rule that caused this trace
+     */
     public String getRule() {
 		return rule;
 	}
@@ -76,4 +110,9 @@ public class Trace {
 		return request;
 	}
     private HttpRequest request;
+    
+    public List<TraceEvent> getEvents() {
+		return events;
+	}
+    private List<TraceEvent> events;
 }

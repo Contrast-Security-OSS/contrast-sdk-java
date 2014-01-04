@@ -31,6 +31,7 @@ package com.contrastsecurity.rest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -126,6 +127,14 @@ public class ContrastConnection {
 		}
 	}
 	
+	/**
+	 * Return coverage data about the monitored Contrast application.
+	 * 
+	 * @param appId the ID of the application
+	 * @return a List of Library objects for the given app
+	 * @throws UnauthorizedException if the Contrast account failed to authorize
+	 * @throws IOException if there was a communication problem
+	 */
 	public Coverage getCoverage(String appId) throws IOException, UnauthorizedException {
 		InputStream is = null;
 		InputStreamReader reader = null;
@@ -149,6 +158,14 @@ public class ContrastConnection {
 		}
 	}
 	
+	/**
+	 * Return the libraries of the monitored Contrast application.
+	 * 
+	 * @param appId the ID of the application
+	 * @return a List of Library objects for the given app
+	 * @throws UnauthorizedException if the Contrast account failed to authorize
+	 * @throws IOException if there was a communication problem
+	 */
 	public List<Library> getLibraries(String appId) throws IOException, UnauthorizedException {
 		InputStream is = null;
 		InputStreamReader reader = null;
@@ -164,6 +181,14 @@ public class ContrastConnection {
 		}
 	}
 	
+	/**
+	 * Get the vulnerabilities in the application whose ID is passed in.
+	 * 
+	 * @param appId the ID of the application
+	 * @return a List of Trace objects representing the vulnerabilities
+	 * @throws UnauthorizedException if the Contrast account failed to authorize
+	 * @throws IOException if there was a communication problem
+	 */
 	public List<Trace> getTraces(String appId) throws IOException, UnauthorizedException {
 		InputStream is = null;
 		InputStreamReader reader = null;
@@ -179,12 +204,59 @@ public class ContrastConnection {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param appId the ID of the application
+	 * @param conditions a name=value pair querystring of trace conditions 
+	 * @return the HTTP response code of the given query
+	 * 
+	 * @throws UnauthorizedException if the Contrast account failed to authorize
+	 * @throws IOException if there was a communication problem
+	 */
+	public int checkForTrace(String appId, String conditions) throws IOException, UnauthorizedException {
+		HttpURLConnection connection = makeConnection("/s/traces/exists","POST");
+		connection.setRequestProperty("Application", appId);
+		connection.setRequestProperty("Content-Length", Integer.toString(conditions.getBytes().length));
+		connection.setDoOutput(true);
+		
+		InputStream is = null;
+		OutputStream os = null;
+		try {
+			is = connection.getInputStream();
+			os = connection.getOutputStream();
+	        os.write(conditions.getBytes());
+	        
+	        List<String> lines = IOUtils.readLines(is, "UTF-8");
+	        if(lines == null || lines.size() != 1) {
+	        	throw new IOException("Issue reading lines: " + (lines != null ? lines.size() : "null"));
+	        }
+		} finally {
+			IOUtils.closeQuietly(is);
+			IOUtils.closeQuietly(os);
+		}
+        
+        int rc = connection.getResponseCode();
+        if(rc >= 400 && rc < 500) {
+			throw new UnauthorizedException(rc);
+		}
+        return rc;
+	}
+	
+	public byte[] getJavaEngine() throws IOException {
+		HttpURLConnection connection = makeConnection(ENGINE_JAVA_URL,"GET");
+		InputStream is = null;
+		try {
+			is = connection.getInputStream();
+			byte[] engineBytes = IOUtils.toByteArray(is);
+			return engineBytes;
+		} finally {
+			IOUtils.closeQuietly(is);
+		}
+	}
+	
 	private InputStream makeSimpleRequest(String method, String path) throws MalformedURLException, IOException, UnauthorizedException {
 		String url = restApiURL + path; 
-		HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-		connection.setRequestMethod(method);
-		connection.setRequestProperty("Authorization", makeAuthorizationToken());
-		connection.setRequestProperty("API-Key", apiKey);
+		HttpURLConnection connection = makeConnection(url,method);
 		InputStream is = connection.getInputStream();
 		int rc = connection.getResponseCode();
 		if(rc >= 400 && rc < 500) {
@@ -192,6 +264,15 @@ public class ContrastConnection {
 			throw new UnauthorizedException(rc);
 		}
 		return is;
+	}
+
+	private HttpURLConnection makeConnection(String url, String method) throws IOException {
+		HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+		connection.setRequestMethod(method);
+		connection.setRequestProperty("Authorization", makeAuthorizationToken());
+		connection.setRequestProperty("API-Key", apiKey);
+		connection.setUseCaches(false);
+		return connection;
 	}
 
 	private String makeAuthorizationToken() {
@@ -220,6 +301,7 @@ public class ContrastConnection {
 		System.out.println(gson.toJson(conn.getTraces("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
 	}
 
+	private static final String ENGINE_JAVA_URL = "/download/java";
 	private static final String TRACES_URL = "/traces";
 	private static final String COVERAGE_URL = "/coverage";
 	private static final String APPLICATIONS_URL = "/applications";

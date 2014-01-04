@@ -72,4 +72,9 @@ public class HttpRequest {
 		return headers;
 	}
 	private List<NameValuePair> headers;
+	
+	public List<NameValuePair> getParameters() {
+		return parameters;
+	}
+	private List<NameValuePair> parameters;
 }
