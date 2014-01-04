@@ -242,8 +242,18 @@ public class ContrastConnection {
         return rc;
 	}
 	
-	public byte[] getJavaEngine() throws IOException {
-		HttpURLConnection connection = makeConnection(ENGINE_JAVA_URL,"GET");
+	/**
+	 * Download a contrast.jar agent associated with this account. The user should save
+	 * this byte array to a file named 'contrast.jar'. This signature takes a parameter
+	 * which contains the name of the saved engine profile to download.
+	 * 
+	 * @param profileName the name of the saved engine profile to download, 
+	 * @return a byte[] array of the contrast.jar file contents, which the user should 
+	 * @throws IOException if there was a communication problem
+	 */
+	public byte[] getJavaEngine(String profileName) throws IOException {
+		String url = restApiURL + String.format(ENGINE_JAVA_URL,profileName);
+		HttpURLConnection connection = makeConnection(url,"GET");
 		InputStream is = null;
 		try {
 			is = connection.getInputStream();
@@ -252,6 +262,14 @@ public class ContrastConnection {
 		} finally {
 			IOUtils.closeQuietly(is);
 		}
+	}
+	
+	/**
+	 * Download a contrast.jar agent associated with this account. The user should save
+	 * this byte array to a file named 'contrast.jar'.
+	 */
+	public byte[] getJavaEngine() throws IOException {
+		return getJavaEngine("default");
 	}
 	
 	private InputStream makeSimpleRequest(String method, String path) throws MalformedURLException, IOException, UnauthorizedException {
@@ -298,10 +316,10 @@ public class ContrastConnection {
 		System.out.println(gson.toJson(conn.getApplications()));
 		System.out.println(gson.toJson(conn.getCoverage("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
 		System.out.println(gson.toJson(conn.getLibraries("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
-		System.out.println(gson.toJson(conn.getTraces("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
+		System.out.println(gson.toJson(conn.getJavaEngine()));
 	}
 
-	private static final String ENGINE_JAVA_URL = "/download/java";
+	private static final String ENGINE_JAVA_URL = "/engine/%s/java";
 	private static final String TRACES_URL = "/traces";
 	private static final String COVERAGE_URL = "/coverage";
 	private static final String APPLICATIONS_URL = "/applications";
