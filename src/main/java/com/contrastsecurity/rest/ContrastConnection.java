@@ -45,8 +45,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * Entry point for using the Contrast REST API SDK. Make an instance of this
- * class and call methods. Easy!
+ * Entry point for using the Contrast REST API. Make an instance of this class 
+ * and call methods. Easy!
  */
 public class ContrastConnection {
 	

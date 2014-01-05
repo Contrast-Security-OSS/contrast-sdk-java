@@ -111,6 +111,12 @@ public class Trace {
 	}
     private HttpRequest request;
     
+    /**
+     * The events that make up the vulnerability. Some traces
+     * will only have an evidence field and no events.
+     * 
+     * @return
+     */
     public List<TraceEvent> getEvents() {
 		return events;
 	}

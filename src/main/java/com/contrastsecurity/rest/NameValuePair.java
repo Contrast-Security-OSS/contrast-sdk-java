@@ -28,6 +28,9 @@
  */
 package com.contrastsecurity.rest;
 
+/**
+ * HTTP name=value pair model.
+ */
 public class NameValuePair {
 	
 	public String getName() {

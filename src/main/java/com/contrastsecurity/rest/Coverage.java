@@ -32,19 +32,36 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * A model of an application's code coverage.
+ */
 public class Coverage {
 
+	/**
+	 * The class coverage model if the language is class-oriented
+	 * 
+	 * @return the classes in the application, if there are any
+	 */
 	public List<CodeClass> getClasses() {
 		return classes;
 	}
 	List<CodeClass> classes;
 	
+	/**
+	 * The source file coverage model if the language is script or template-oriented
+	 * 
+	 * @return the source files in the application, if there are any
+	 */
 	public List<CodeFile> getCodeFiles() {
 		return codeFiles;
 	}
 	@SerializedName(value="source-file")
 	List<CodeFile> codeFiles;
 	
+	/**
+	 * Return the libraries in use by the application.
+	 * @return the libraries in use by the application
+	 */
 	public List<Library> getLibraries() {
 		return libraries;
 	}
