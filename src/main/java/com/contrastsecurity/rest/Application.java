@@ -42,7 +42,7 @@ public class Application {
 	public String getId() {
         return this.id;
     }
-	@SerializedName(value="app-id")
+	@SerializedName("app-id")
     private String id = null;
     
     /**
@@ -105,6 +105,18 @@ public class Application {
     public long getLastSeen() {
     	return lastSeen;
     }
-    @SerializedName(value="last-seen")
+    @SerializedName("last-seen")
     private long lastSeen;
+    
+    public String getPlatformVersion() {
+		return platformVersion;
+	}
+    @SerializedName("platform-version")
+    private String platformVersion;
+    
+    public List<PlatformVulnerability> getPlatformVulnerabilities() {
+		return platformVulnerabilities;
+	}
+    @SerializedName("platform-vulnerabilities")
+    private List<PlatformVulnerability> platformVulnerabilities;
 }
