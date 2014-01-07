@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Contrast Security, Inc.
+ * Copyright (c) 2014, Contrast Security, LLC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -12,7 +12,7 @@
  * conditions and the following disclaimer in the documentation and/or other materials
  * provided with the distribution.
  *
- * Neither the name of the Contrast Security, Inc. nor the names of its contributors may
+ * Neither the name of the Contrast Security, LLC. nor the names of its contributors may
  * be used to endorse or promote products derived from this software without specific
  * prior written permission.
  *
@@ -26,50 +26,31 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.contrastsecurity.rest;
 
-package com.contrastsecurity.sdk.traces;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class containing an ArrayList of {@link Finding} objects.
- * (C) Aspect Security, 2013
- *
- * @author Kevin Decker, Aspect Security 2013
- * @version 1.0
+ * A .NET or Java class.
  */
-@XmlRootElement(name = "findings")
-public class Findings {
-    private ArrayList<Finding> traceDataList;
+public class CodeClass {
 
-    public Findings() {
-    }
-
-    @XmlElement(name = "finding")
-    public List<Finding> getTraceDataList() {
-        return this.traceDataList;
-    }
-
-    public void setTraceDataList(ArrayList<Finding> findings) {
-        this.traceDataList = findings;
-    }
-
-    /**
-     * Customized toString method to allow proper printing of the object to a String
-     *
-     * @return String
-     */
-    @Override
-    public String toString() {
-        StringBuilder thisObj = new StringBuilder();
-
-        for (Finding tf : this.traceDataList) {
-            thisObj.append(tf.toString() + "\n");
-        }
-
-        return thisObj.toString();
-    }
+	/**
+	 * Return the name of the class.
+	 * @return the name of the class
+	 */
+	public String getName() { 
+		return name;
+	}
+	private String name;
+	
+	/**
+	 * Return the list of methods in this class.
+	 * @return the methods in this class
+	 */
+	public List<CodeMethod> getMethods() { 
+		return methods;
+	}
+	private List<CodeMethod> methods;
+	
 }

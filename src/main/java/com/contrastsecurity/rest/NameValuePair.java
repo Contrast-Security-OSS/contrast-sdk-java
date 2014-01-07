@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Contrast Security, Inc.
+ * Copyright (c) 2014, Contrast Security, LLC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -12,7 +12,7 @@
  * conditions and the following disclaimer in the documentation and/or other materials
  * provided with the distribution.
  *
- * Neither the name of the Contrast Security, Inc. nor the names of its contributors may
+ * Neither the name of the Contrast Security, LLC. nor the names of its contributors may
  * be used to endorse or promote products derived from this software without specific
  * prior written permission.
  *
@@ -26,58 +26,21 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package com.contrastsecurity.sdk.coverage;
-
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import java.util.List;
+package com.contrastsecurity.rest;
 
 /**
- * This object represents a single monitored class in the target application.
+ * HTTP name=value pair model.
  */
-public class AppClass {
-
-    /**
-     * The name of the class being measured.
-     * @return The classname
-     */
-    @XmlAttribute(name = "name")
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    private String name;
-
-    /**
-     * A list containing the {@link AppMethod}s within this class.
-     * @return
-     */
-    @XmlElements({@XmlElement(name = "m", type = AppMethod.class)})
-    public List<AppMethod> getMethods() {
-        return methods;
-    }
-
-    public void setMethods(List<AppMethod> methods) {
-        this.methods = methods;
-    }
-
-    private List<AppMethod> methods;
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("AppClassXML [name=");
-        builder.append(name);
-        builder.append(", methods=");
-        builder.append(methods);
-        builder.append("]");
-        return builder.toString();
-    }
-
+public class NameValuePair {
+	
+	public String getName() {
+		return name;
+	}
+	private String name;
+	
+	public String getValue() {
+		return value;
+	}
+	private String value;
+	
 }

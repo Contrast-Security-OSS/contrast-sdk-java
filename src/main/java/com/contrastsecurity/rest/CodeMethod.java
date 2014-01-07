@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Contrast Security, Inc.
+ * Copyright (c) 2014, Contrast Security, LLC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -12,7 +12,7 @@
  * conditions and the following disclaimer in the documentation and/or other materials
  * provided with the distribution.
  *
- * Neither the name of the Contrast Security, Inc. nor the names of its contributors may
+ * Neither the name of the Contrast Security, LLC. nor the names of its contributors may
  * be used to endorse or promote products derived from this software without specific
  * prior written permission.
  *
@@ -26,55 +26,28 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package com.contrastsecurity.sdk.coverage;
-
-import javax.xml.bind.annotation.XmlAttribute;
+package com.contrastsecurity.rest;
 
 /**
- * This object represents a single method within a monitored class
+ * An application method.
  */
-public class AppMethod {
+public class CodeMethod {
 
-    /**
-     * The signature of the method
-     * @return
-     */
-    @XmlAttribute(name = "sig")
-    public String getSignature() {
-        return signature;
-    }
+	/**
+	 * Return the signature of this method. 
+	 * @return the method signature
+	 */
+	public String getSignature() {
+		return signature; 
+	}
+	private String signature;
 
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
-
-    private String signature;
-
-    /**
-     * Whether the method has been executed while the application has been under monitoring by contrast
-     * @return
-     */
-    @XmlAttribute(name = "exec")
-    public boolean isExecuted() {
-        return executed;
-    }
-
-    public void setExecuted(boolean executed) {
-        this.executed = executed;
-    }
-
-    private boolean executed;
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("AppMethodXML [signature=");
-        builder.append(signature);
-        builder.append(", executed=");
-        builder.append(executed);
-        builder.append("]");
-        return builder.toString();
-    }
-
+	/**
+	 * Return whether or not this method has been executed.
+	 * @return true, if this method has been executed; false otherwise
+	 */
+	public boolean isExecuted() { 
+		return executed;
+	}
+	private boolean executed;
 }

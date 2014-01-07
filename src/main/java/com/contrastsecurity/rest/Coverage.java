@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Contrast Security, Inc.
+ * Copyright (c) 2014, Contrast Security, LLC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -12,7 +12,7 @@
  * conditions and the following disclaimer in the documentation and/or other materials
  * provided with the distribution.
  *
- * Neither the name of the Contrast Security, Inc. nor the names of its contributors may
+ * Neither the name of the Contrast Security, LLC. nor the names of its contributors may
  * be used to endorse or promote products derived from this software without specific
  * prior written permission.
  *
@@ -26,24 +26,44 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.contrastsecurity.rest;
 
-package com.contrastsecurity.sdk.traces.status;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
-@XmlRootElement(name = "queues")
-public class QueueStatus {
+import com.google.gson.annotations.SerializedName;
 
-    @XmlElement(name = "q")
-    public List<Queue> getQueues() {
-        return queues;
-    }
+/**
+ * A model of an application's code coverage.
+ */
+public class Coverage {
 
-    public void setQueues(List<Queue> queues) {
-        this.queues = queues;
-    }
-
-    private List<Queue> queues;
+	/**
+	 * The class coverage model if the language is class-oriented
+	 * 
+	 * @return the classes in the application, if there are any
+	 */
+	public List<CodeClass> getClasses() {
+		return classes;
+	}
+	List<CodeClass> classes;
+	
+	/**
+	 * The source file coverage model if the language is script or template-oriented
+	 * 
+	 * @return the source files in the application, if there are any
+	 */
+	public List<CodeFile> getCodeFiles() {
+		return codeFiles;
+	}
+	@SerializedName(value="source-file")
+	List<CodeFile> codeFiles;
+	
+	/**
+	 * Return the libraries in use by the application.
+	 * @return the libraries in use by the application
+	 */
+	public List<Library> getLibraries() {
+		return libraries;
+	}
+	List<Library> libraries;
 }

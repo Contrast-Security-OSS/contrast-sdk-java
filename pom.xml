@@ -8,6 +8,15 @@
     <artifactId>contrast-sdk-java</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>contrast-snapshots</id>
+            <url>http://nexus.dev.contrastsecurity.com:8081/nexus/content/repositories/snapshots/</url>
+            <layout>default</layout>
+            <uniqueVersion>true</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.mockito</groupId>

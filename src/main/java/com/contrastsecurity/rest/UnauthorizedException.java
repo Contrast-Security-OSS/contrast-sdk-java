@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Contrast Security, Inc.
+ * Copyright (c) 2014, Contrast Security, LLC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -12,7 +12,7 @@
  * conditions and the following disclaimer in the documentation and/or other materials
  * provided with the distribution.
  *
- * Neither the name of the Contrast Security, Inc. nor the names of its contributors may
+ * Neither the name of the Contrast Security, LLC. nor the names of its contributors may
  * be used to endorse or promote products derived from this software without specific
  * prior written permission.
  *
@@ -26,17 +26,13 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.contrastsecurity.rest;
 
-package com.contrastsecurity.sdk.util;
+public class UnauthorizedException extends Exception {
+	
+	public UnauthorizedException(int rc) {
+		super("Received response code: " + rc);
+	}
 
-public class StringUtil {
-    public static boolean anyNullOrEmpty(String... sa) {
-        if (sa == null) return true;
-        boolean ret = false;
-        for (String s : sa) {
-            ret = s == null || "".equals(s.trim());
-            if (ret) break;
-        }
-        return ret;
-    }
+	private static final long serialVersionUID = -9049287248312255189L;
 }

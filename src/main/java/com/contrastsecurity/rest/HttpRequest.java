@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Contrast Security, Inc.
+ * Copyright (c) 2014, Contrast Security, LLC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -12,7 +12,7 @@
  * conditions and the following disclaimer in the documentation and/or other materials
  * provided with the distribution.
  *
- * Neither the name of the Contrast Security, Inc. nor the names of its contributors may
+ * Neither the name of the Contrast Security, LLC. nor the names of its contributors may
  * be used to endorse or promote products derived from this software without specific
  * prior written permission.
  *
@@ -26,19 +26,55 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.contrastsecurity.rest;
 
-package com.contrastsecurity.sdk.exception;
+import java.util.List;
 
-public class InitializationException extends Exception {
-    public InitializationException(String s) {
-        super(s);
-    }
+import com.google.gson.annotations.SerializedName;
 
-    public InitializationException(String s, Throwable throwable) {
-        super(s, throwable);
-    }
+/**
+ * An HTTP request.
+ */
+public class HttpRequest {
 
-    public InitializationException(Throwable throwable) {
-        super(throwable);
-    }
+	public int getPort() {
+		return port;
+	}
+	private int port;
+	
+	public String getProtocol() {
+		return protocol;
+	}
+	private String protocol;
+	
+	public String getMethod() {
+		return method;
+	}
+	private String method;
+	
+	public String getUri() {
+		return uri;
+	}
+	private String uri;
+	
+	public String getVersion() {
+		return version;
+	}
+	private String version;
+	
+	public String getQueryString() {
+		return queryString;
+	}
+	@SerializedName("query-string")
+	private String queryString;
+	
+	public List<NameValuePair> getHeaders() {
+		return headers;
+	}
+	private List<NameValuePair> headers;
+	
+	public List<NameValuePair> getParameters() {
+		return parameters;
+	}
+	private List<NameValuePair> parameters;
 }

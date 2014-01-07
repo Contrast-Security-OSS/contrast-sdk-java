@@ -27,56 +27,41 @@
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.contrastsecurity.sdk.traces;
+package com.contrastsecurity.rest;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.codec.binary.Base64;
 
-@XmlRootElement(name = "traces")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class Traces {
-    @XmlElement(name = "trace")
-    private List<Trace> traceList = null;
+/**
+ * Represents a primitive/object in a method invocation. The parameters,
+ * "this", and return value are modeled with this object.
+ */
+public class CodeObject {
+    
+	/**
+	 * Return the identity hash code of this object.
+	 * @return the identity hash code of this object
+	 */
+    public String getHashCode() {
+        return hashCode;
+    }
+    private String hashCode;
 
     /**
-     * Method to get the value of the list contained in this class.
-     *
-     * @return ArrayList&lt;Trace&gt;
+     * Return whether or not the object is tracked.
+     * @return whether or not the object is tracked
      */
-    public List<Trace> getTraceList() {
-        if (this.traceList == null) {
-            return new ArrayList<Trace>();
-        } else {
-            return this.traceList;
-        }
+    public boolean isTracked() {
+        return tracked;
     }
+    private boolean tracked;
 
     /**
-     * Method to set a value for the list contained in this class.
+     * Return the value of the object.
      *
-     * @param traceList
+     * @return the value of the object
      */
-    public void setTraceList(List<Trace> traceList) {
-        this.traceList = traceList;
+    public String getValue() {
+        return new String(Base64.decodeBase64(value));
     }
-
-    /**
-     * Customized toString method to allow proper printing of the object to a String
-     *
-     * @return String
-     */
-    @Override
-    public String toString() {
-        StringBuilder thisObj = new StringBuilder();
-
-        for (Trace td : this.traceList) {
-            thisObj.append(td.toString() + "\n");
-        }
-
-        return thisObj.toString();
-    }
+    private String value;
 }
