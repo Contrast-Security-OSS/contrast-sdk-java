@@ -28,6 +28,8 @@
  */
 package com.contrastsecurity.rest;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * A source code file, like a Ruby script, ColdFusion template, etc.
  */
@@ -40,6 +42,7 @@ public class CodeFile {
 	public String getPath() {
 		return path;
 	}
+	@SerializedName("script-path")
 	private String path;
 	
 	/**
@@ -60,6 +63,7 @@ public class CodeFile {
 	public long getLastModified() {
 		return lastModified;
 	}
+	@SerializedName("last-modified-date")
 	private long lastModified;
 	
 	/**
@@ -70,6 +74,7 @@ public class CodeFile {
 	public int getLinesHit() {
 		return linesHit;
 	}
+	@SerializedName("executed-loc")
 	private int linesHit;
 	
 	/**
@@ -79,6 +84,7 @@ public class CodeFile {
 	public int getHittableLines() {
 		return hittableLines;
 	}
+	@SerializedName("executable-loc")
 	private int hittableLines;
 	
 	/**
@@ -88,6 +94,7 @@ public class CodeFile {
 	public int getTotalLines() {
 		return totalLines;
 	}
+	@SerializedName("total-loc")
 	private int totalLines;
 	
 }

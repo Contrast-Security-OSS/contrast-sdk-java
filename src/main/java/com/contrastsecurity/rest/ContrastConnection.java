@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -293,9 +294,9 @@ public class ContrastConnection {
 		return connection;
 	}
 
-	private String makeAuthorizationToken() {
+	private String makeAuthorizationToken() throws IOException {
 		String token = user + ":" + serviceKey;
-		return Base64.encodeBase64String(token.getBytes());
+		return Base64.encodeBase64String(token.getBytes("ASCII")).trim();
 	}
 
 	private void validateUrl() throws IllegalArgumentException {
