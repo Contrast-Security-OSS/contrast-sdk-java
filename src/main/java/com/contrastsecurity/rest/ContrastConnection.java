@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -252,8 +251,16 @@ public class ContrastConnection {
 	 * @return a byte[] array of the contrast.jar file contents, which the user should 
 	 * @throws IOException if there was a communication problem
 	 */
-	public byte[] getJavaEngine(String profileName) throws IOException {
-		String url = restApiURL + String.format(ENGINE_JAVA_URL,profileName);
+	public byte[] getAgent(AgentType type, String profileName) throws IOException {
+		String url = restApiURL;
+		
+		if(AgentType.JAVA.equals(type)) {
+			url += String.format(ENGINE_JAVA_URL,profileName);
+		} else if(AgentType.DOTNET_x86.equals(type)) {
+			url += String.format(ENGINE_DOTNETx32_URL,profileName);
+		} else if(AgentType.DOTNET_x64.equals(type)) {
+			url += String.format(ENGINE_DOTNETx64_URL,profileName);
+		}
 		HttpURLConnection connection = makeConnection(url,"GET");
 		InputStream is = null;
 		try {
@@ -266,11 +273,10 @@ public class ContrastConnection {
 	}
 	
 	/**
-	 * Download a contrast.jar agent associated with this account. The user should save
-	 * this byte array to a file named 'contrast.jar'.
+	 * Download a Contrast agent associated with this account and the platform passed in.
 	 */
-	public byte[] getJavaEngine() throws IOException {
-		return getJavaEngine("default");
+	public byte[] getAgent(AgentType type) throws IOException {
+		return getAgent(type,"default");
 	}
 	
 	private InputStream makeSimpleRequest(String method, String path) throws MalformedURLException, IOException, UnauthorizedException {
@@ -317,10 +323,14 @@ public class ContrastConnection {
 		System.out.println(gson.toJson(conn.getApplications()));
 		System.out.println(gson.toJson(conn.getCoverage("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
 		System.out.println(gson.toJson(conn.getLibraries("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
-		System.out.println(gson.toJson(conn.getJavaEngine()));
+		System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA)));
+		System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x86)));
+		System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x64)));
 	}
 
 	private static final String ENGINE_JAVA_URL = "/engine/%s/java";
+	private static final String ENGINE_DOTNETx32_URL = "/engine/%s/.net32";
+	private static final String ENGINE_DOTNETx64_URL = "/engine/%s/.net64";
 	private static final String TRACES_URL = "/traces";
 	private static final String COVERAGE_URL = "/coverage";
 	private static final String APPLICATIONS_URL = "/applications";
