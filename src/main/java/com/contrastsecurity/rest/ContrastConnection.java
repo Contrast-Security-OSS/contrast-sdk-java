@@ -321,16 +321,16 @@ public class ContrastConnection {
 		ContrastConnection conn = new ContrastConnection("contrast_admin", "demo", "demo", "http://localhost:19080/Contrast/api");
 		Gson gson = new Gson();
 		System.out.println(gson.toJson(conn.getApplications()));
-		System.out.println(gson.toJson(conn.getCoverage("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
-		System.out.println(gson.toJson(conn.getLibraries("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
+		//System.out.println(gson.toJson(conn.getCoverage("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
+		//System.out.println(gson.toJson(conn.getLibraries("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
 		System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA)));
 		System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x86)));
 		System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x64)));
 	}
 
-	private static final String ENGINE_JAVA_URL = "/engine/%s/java";
-	private static final String ENGINE_DOTNETx32_URL = "/engine/%s/.net32";
-	private static final String ENGINE_DOTNETx64_URL = "/engine/%s/.net64";
+	private static final String ENGINE_JAVA_URL = "/engine/%s/java/";
+	private static final String ENGINE_DOTNETx32_URL = "/engine/%s/.net32/";
+	private static final String ENGINE_DOTNETx64_URL = "/engine/%s/.net64/";
 	private static final String TRACES_URL = "/traces";
 	private static final String COVERAGE_URL = "/coverage";
 	private static final String APPLICATIONS_URL = "/applications";
