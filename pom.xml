@@ -17,11 +17,11 @@
     <name>Contrast Java SDK</name>
     <description>SDK for accessing and using the Contrast TeamServer REST API in Java</description>
 
-    <scm>
-        <connection>scm:svn:https://github.com/Contrast-Security-OSS/contrast-sdk-java</connection>
-        <developerConnection>scm:svn:https://github.com/Contrast-Security-OSS/contrast-sdk-java</developerConnection>
-        <url>https://github.com/Contrast-Security-OSS/contrast-sdk-java</url>
-    </scm>
+ <scm>
+	<connection>scm:git:git@github.com:Contrast-Security-OSS/contrast-sdk-java.git</connection>
+	<url>scm:git:git@github.com:Contrast-Security-OSS/contrast-sdk-java.git</url>
+	<developerConnection>scm:git:git@github.com:Contrast-Security-OSS/contrast-sdk-java.git</developerConnection>
+  </scm>
 
     <dependencies>
         <dependency>
@@ -67,6 +67,10 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                  <artifactId>maven-release-plugin</artifactId>
+                  <version>2.4.2</version>
             </plugin>
         </plugins>
     </build>
