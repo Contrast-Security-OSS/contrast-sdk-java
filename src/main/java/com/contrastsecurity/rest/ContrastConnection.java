@@ -139,18 +139,14 @@ public class ContrastConnection {
 		InputStream is = null;
 		InputStreamReader reader = null;
 		try {
-			Type classesType = new TypeToken<List<CodeClass>>(){}.getType();
-			is = makeSimpleRequest("GET", COVERAGE_URL + "/" + appId + "/classes?expand=methods");
+			Type urisType = new TypeToken<List<URIEntry>>(){}.getType();
+			is = makeSimpleRequest("GET", APPLICATIONS_URL + "/" + appId + "/sitemap/activity/entries");
 			reader = new InputStreamReader(is);
 			Coverage coverage = new Coverage();
-			coverage.classes = new Gson().fromJson(reader, classesType);
+			coverage.uris = new Gson().fromJson(reader, urisType);
 			IOUtils.closeQuietly(reader);
 			IOUtils.closeQuietly(is);
 			
-			Type scriptsType = new TypeToken<List<CodeFile>>(){}.getType();
-			is = makeSimpleRequest("GET", COVERAGE_URL + "/" + appId + "/scripts");
-			reader = new InputStreamReader(is);
-			coverage.codeFiles = new Gson().fromJson(reader, scriptsType);
 			return coverage;
 		} finally {
 			IOUtils.closeQuietly(is);
@@ -320,19 +316,18 @@ public class ContrastConnection {
 	public static void main(String[] args) throws UnauthorizedException, IOException {
 		ContrastConnection conn = new ContrastConnection("contrast_admin", "demo", "demo", "http://localhost:19080/Contrast/api");
 		Gson gson = new Gson();
-		System.out.println(gson.toJson(conn.getApplications()));
-		//System.out.println(gson.toJson(conn.getCoverage("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
+		//System.out.println(gson.toJson(conn.getApplications()));
+		System.out.println(gson.toJson(conn.getCoverage("44b1aa36-95e5-46c8-b2c1-a87fa18cb52c")));
 		//System.out.println(gson.toJson(conn.getLibraries("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
-		System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA)));
-		System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x86)));
-		System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x64)));
+		//System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA)));
+		//System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x86)));
+		//System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x64)));
 	}
 
 	private static final String ENGINE_JAVA_URL = "/engine/%s/java/";
 	private static final String ENGINE_DOTNETx32_URL = "/engine/%s/.net32/";
 	private static final String ENGINE_DOTNETx64_URL = "/engine/%s/.net64/";
 	private static final String TRACES_URL = "/traces";
-	private static final String COVERAGE_URL = "/coverage";
 	private static final String APPLICATIONS_URL = "/applications";
 	private static final String DEFAULT_API_URL = "https://www.contrastsecurity.com/Contrast/api";
 }

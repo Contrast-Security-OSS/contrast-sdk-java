@@ -28,73 +28,32 @@
  */
 package com.contrastsecurity.rest;
 
+import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
- * A source code file, like a Ruby script, ColdFusion template, etc.
+ * A URI that's been observed under monitoring.
  */
-public class CodeFile {
+public class URIEntry {
 
 	/**
-	 * The path to the code file within the app root. 
-	 * @return the relative path of the code file
+	 * Return the URI.
+	 * @return the URI
 	 */
-	public String getPath() {
-		return path;
+	public String getUri() { 
+		return uri;
 	}
-	@SerializedName("script-path")
-	private String path;
+	private String uri;
 	
 	/**
-	 * Return the SHA1 of the file.
-	 * 
-	 * @return the hexified SHA1 for this file
+	 * Return the last time this URI was observed under monitoring.
+	 * @return the last time this URI was observed under monitoring
 	 */
-	public String getSha1() {
-		return sha1;
+	public Long getLastTimeSeen() { 
+		return lastTimeSeen;
 	}
-	private String sha1;
-	
-	/**
-	 * Return the last modified time of this file.
-	 * 
-	 * @return the epoch time of the last modification to this file
-	 */
-	public long getLastModified() {
-		return lastModified;
-	}
-	@SerializedName("last-modified-date")
-	private long lastModified;
-	
-	/**
-	 * Return the number of lines executed in the file.
-	 * 
-	 * @return the number of lines executed in the file.
-	 */
-	public int getLinesHit() {
-		return linesHit;
-	}
-	@SerializedName("executed-loc")
-	private int linesHit;
-	
-	/**
-	 * Return the number of hittable lines in the file.
-	 * @return the number of hittable lines in the file
-	 */
-	public int getHittableLines() {
-		return hittableLines;
-	}
-	@SerializedName("executable-loc")
-	private int hittableLines;
-	
-	/**
-	 * Return the number of total lines in the file, including those that aren't executable
-	 * @return the number of total lines in the file
-	 */
-	public int getTotalLines() {
-		return totalLines;
-	}
-	@SerializedName("total-loc")
-	private int totalLines;
+	@SerializedName("last-time-seen")
+	private Long lastTimeSeen;
 	
 }

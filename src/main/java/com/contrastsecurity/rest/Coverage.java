@@ -30,10 +30,8 @@ package com.contrastsecurity.rest;
 
 import java.util.List;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
- * A model of an application's code coverage.
+ * A model of an application's sitemap coverage.
  */
 public class Coverage {
 
@@ -42,21 +40,10 @@ public class Coverage {
 	 * 
 	 * @return the classes in the application, if there are any
 	 */
-	public List<CodeClass> getClasses() {
-		return classes;
+	public List<URIEntry> getUris() {
+		return uris;
 	}
-	List<CodeClass> classes;
-	
-	/**
-	 * The source file coverage model if the language is script or template-oriented
-	 * 
-	 * @return the source files in the application, if there are any
-	 */
-	public List<CodeFile> getCodeFiles() {
-		return codeFiles;
-	}
-	@SerializedName(value="source-file")
-	List<CodeFile> codeFiles;
+	List<URIEntry> uris;
 	
 	/**
 	 * Return the libraries in use by the application.
