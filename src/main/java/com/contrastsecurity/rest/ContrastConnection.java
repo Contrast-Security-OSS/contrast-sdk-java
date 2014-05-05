@@ -252,10 +252,8 @@ public class ContrastConnection {
 		
 		if(AgentType.JAVA.equals(type)) {
 			url += String.format(ENGINE_JAVA_URL,profileName);
-		} else if(AgentType.DOTNET_x86.equals(type)) {
-			url += String.format(ENGINE_DOTNETx32_URL,profileName);
-		} else if(AgentType.DOTNET_x64.equals(type)) {
-			url += String.format(ENGINE_DOTNETx64_URL,profileName);
+		} else if(AgentType.DOTNET.equals(type)) {
+			url += String.format(ENGINE_DOTNET_URL,profileName);
 		}
 		HttpURLConnection connection = makeConnection(url,"GET");
 		InputStream is = null;
@@ -325,8 +323,7 @@ public class ContrastConnection {
 	}
 
 	private static final String ENGINE_JAVA_URL = "/engine/%s/java/";
-	private static final String ENGINE_DOTNETx32_URL = "/engine/%s/.net32/";
-	private static final String ENGINE_DOTNETx64_URL = "/engine/%s/.net64/";
+	private static final String ENGINE_DOTNET_URL = "/engine/%s/.net/";
 	private static final String TRACES_URL = "/traces";
 	private static final String APPLICATIONS_URL = "/applications";
 	private static final String DEFAULT_API_URL = "https://www.contrastsecurity.com/Contrast/api";

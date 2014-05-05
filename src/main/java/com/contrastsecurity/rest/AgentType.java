@@ -5,6 +5,5 @@ package com.contrastsecurity.rest;
  */
 public enum AgentType {
 	JAVA,
-	DOTNET_x86,
-	DOTNET_x64
+	DOTNET
 }
