@@ -77,6 +77,11 @@ public class Application {
     }
     private String name = null;
     
+    public int getViews() {
+    	return this.views;
+    }
+    private int views = 0;
+    
     /**
      * Return the language of the application, e.g., Java.
      * 
