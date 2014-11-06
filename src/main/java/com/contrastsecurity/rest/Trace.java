@@ -121,4 +121,32 @@ public class Trace {
 		return events;
 	}
     private List<TraceEvent> events;
+
+    /**
+     * Return the overall severity of this trace.
+     * @return the severity
+     */
+    public String getSeverity() { return this.severity; }
+    private String severity;
+
+    /**
+     * Return the likelihood of this trace
+     * @return the likelihood
+     */
+    public String getLikelihood() { return this.likelihood; }
+    private String likelihood;
+
+    /**
+     * Return the impact of this trace
+     * @return the impact
+     */
+    public String getImpact() { return this.impact; }
+    private String impact;
+
+    /**
+     * Return the confidence rating for this trace
+     * @return the confidence
+     */
+    public String getConfidence() { return this.confidence; }
+    private String confidence;
 }
