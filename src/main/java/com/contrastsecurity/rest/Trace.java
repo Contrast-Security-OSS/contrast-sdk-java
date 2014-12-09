@@ -28,6 +28,8 @@
  */
 package com.contrastsecurity.rest;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
@@ -149,4 +151,20 @@ public class Trace {
      */
     public String getConfidence() { return this.confidence; }
     private String confidence;
+
+    /**
+     * Return the First time this Trace was seen
+     * @return Time this trace was first seen
+     */
+    public Long getFirstTimeSeen() { return this.firstTimeSeen; }
+    @SerializedName("first-time-seen")
+    private Long firstTimeSeen;
+
+    /**
+     * Return the Last time this Trace was seen
+     * @return the time this trace was last seen
+     */
+    public Long getLastTimeSeen() { return this.lastTimeSeen; }
+    @SerializedName("last-time-seen")
+    private Long lastTimeSeen;
 }
