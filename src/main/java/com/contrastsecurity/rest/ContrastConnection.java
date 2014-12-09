@@ -315,8 +315,9 @@ public class ContrastConnection {
 		ContrastConnection conn = new ContrastConnection("contrast_admin", "demo", "demo", "http://localhost:19080/Contrast/api");
 		Gson gson = new Gson();
 		//System.out.println(gson.toJson(conn.getApplications()));
-		System.out.println(gson.toJson(conn.getCoverage("44b1aa36-95e5-46c8-b2c1-a87fa18cb52c")));
-		//System.out.println(gson.toJson(conn.getLibraries("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
+		//System.out.println(gson.toJson(conn.getCoverage("44b1aa36-95e5-46c8-b2c1-a87fa18cb52c")));
+        //System.out.println(gson.toJson(conn.getTraces("20c739e3-0f2c-4d84-8667-905b31e8cf0d")));
+        //System.out.println(gson.toJson(conn.getLibraries("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
 		//System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA)));
 		//System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x86)));
 		//System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x64)));
@@ -326,5 +327,5 @@ public class ContrastConnection {
 	private static final String ENGINE_DOTNET_URL = "/engine/%s/.net/";
 	private static final String TRACES_URL = "/traces";
 	private static final String APPLICATIONS_URL = "/applications";
-	private static final String DEFAULT_API_URL = "https://www.contrastsecurity.com/Contrast/api";
+	private static final String DEFAULT_API_URL = "https://app.contrastsecurity.com/Contrast/api";
 }
