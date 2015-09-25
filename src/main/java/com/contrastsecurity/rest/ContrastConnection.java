@@ -86,6 +86,7 @@ public class ContrastConnection {
 	
 	/**
 	 * Get summary information about a single app.
+	 * @param organizationId the ID of the organization
 	 * @param appId the ID of the application
 	 * @return an ApplicationSummary representing the object whose ID was passed in
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
@@ -107,6 +108,7 @@ public class ContrastConnection {
 	
 	/**
 	 * Get the list of applications being monitored by Contrast.
+	 * @param organizationId the ID of the organization
 	 * @return a List of Application objects that are being monitored
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
 	 * @throws IOException if there was a communication problem
@@ -130,7 +132,8 @@ public class ContrastConnection {
 	/**
 	 * Return coverage data about the monitored Contrast application.
 	 * 
-	 * @param appId the ID of the application
+	 * @param organizationId the ID of the organization
+	 * @param appId the ID of the application	 
 	 * @return a List of Library objects for the given app
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
 	 * @throws IOException if there was a communication problem
@@ -157,6 +160,7 @@ public class ContrastConnection {
 	/**
 	 * Return the libraries of the monitored Contrast application.
 	 * 
+	 * @param organizationId the ID of the organization
 	 * @param appId the ID of the application
 	 * @return a List of Library objects for the given app
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
@@ -180,6 +184,7 @@ public class ContrastConnection {
 	/**
 	 * Get the vulnerabilities in the application whose ID is passed in.
 	 * 
+	 * @param organizationId the ID of the organization 
 	 * @param appId the ID of the application
 	 * @return a List of Trace objects representing the vulnerabilities
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
