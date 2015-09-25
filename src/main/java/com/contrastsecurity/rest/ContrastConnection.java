@@ -91,11 +91,11 @@ public class ContrastConnection {
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
 	 * @throws IOException if there was a communication problem
 	 */
-	public Application getApplication(String appId) throws IOException, UnauthorizedException, ResourceNotFoundException {
+	public Application getApplication(Long organizationId, String appId) throws IOException, UnauthorizedException, ResourceNotFoundException {
 		InputStream is = null;
 		InputStreamReader reader = null;
 		try {
-			is = makeSimpleRequest("GET", APPLICATIONS_URL + "/" + appId);
+			is = makeSimpleRequest("GET", "/" + organizationId + APPLICATIONS_URL + "/" + appId);
 			reader = new InputStreamReader(is);
 			Application app = new Gson().fromJson(reader, Application.class);
 			return app;
@@ -111,11 +111,11 @@ public class ContrastConnection {
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
 	 * @throws IOException if there was a communication problem
 	 */
-	public List<Application> getApplications() throws UnauthorizedException, IOException {
+	public List<Application> getApplications(Long organizationId) throws UnauthorizedException, IOException {
 		InputStream is = null;
 		InputStreamReader reader = null;
 		try {
-			is = makeSimpleRequest("GET", APPLICATIONS_URL);
+			is = makeSimpleRequest("GET", "/" + organizationId + APPLICATIONS_URL);
 			reader = new InputStreamReader(is);
 			
 			Type type = new TypeToken<List<Application>>(){}.getType();
@@ -135,12 +135,12 @@ public class ContrastConnection {
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
 	 * @throws IOException if there was a communication problem
 	 */
-	public Coverage getCoverage(String appId) throws IOException, UnauthorizedException {
+	public Coverage getCoverage(Long organizationId, String appId) throws IOException, UnauthorizedException {
 		InputStream is = null;
 		InputStreamReader reader = null;
 		try {
 			Type urisType = new TypeToken<List<URIEntry>>(){}.getType();
-			is = makeSimpleRequest("GET", APPLICATIONS_URL + "/" + appId + "/sitemap/activity/entries");
+			is = makeSimpleRequest("GET", "/" + organizationId + APPLICATIONS_URL + "/" + appId + "/sitemap/activity/entries");
 			reader = new InputStreamReader(is);
 			Coverage coverage = new Coverage();
 			coverage.uris = new Gson().fromJson(reader, urisType);
@@ -162,12 +162,12 @@ public class ContrastConnection {
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
 	 * @throws IOException if there was a communication problem
 	 */
-	public List<Library> getLibraries(String appId) throws IOException, UnauthorizedException {
+	public List<Library> getLibraries(Long organizationId, String appId) throws IOException, UnauthorizedException {
 		InputStream is = null;
 		InputStreamReader reader = null;
 		try {
 			Type libsType = new TypeToken<List<Library>>(){}.getType();
-			is = makeSimpleRequest("GET", APPLICATIONS_URL + "/" + appId + "/libraries?expand=manifest,servers,cve");
+			is = makeSimpleRequest("GET", "/" + organizationId + APPLICATIONS_URL + "/" + appId + "/libraries?expand=manifest,servers,cve");
 			reader = new InputStreamReader(is);
 			List<Library> libraries = new Gson().fromJson(reader, libsType);
 			return libraries;
@@ -185,12 +185,12 @@ public class ContrastConnection {
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
 	 * @throws IOException if there was a communication problem
 	 */
-	public List<Trace> getTraces(String appId) throws IOException, UnauthorizedException {
+	public List<Trace> getTraces(Long organizationId, String appId) throws IOException, UnauthorizedException {
 		InputStream is = null;
 		InputStreamReader reader = null;
 		try {
 			Type libsType = new TypeToken<List<Trace>>(){}.getType();
-			is = makeSimpleRequest("GET", TRACES_URL + "/" + appId);
+			is = makeSimpleRequest("GET", "/" + organizationId + TRACES_URL + "/" + appId);
 			reader = new InputStreamReader(is);
 			List<Trace> traces = new Gson().fromJson(reader, libsType);
 			return traces;
@@ -244,16 +244,17 @@ public class ContrastConnection {
 	 * which contains the name of the saved engine profile to download.
 	 * 
 	 * @param profileName the name of the saved engine profile to download, 
+	 * @param organizationId the ID of the organization,
 	 * @return a byte[] array of the contrast.jar file contents, which the user should 
 	 * @throws IOException if there was a communication problem
 	 */
-	public byte[] getAgent(AgentType type, String profileName) throws IOException {
+	public byte[] getAgent(AgentType type, Long organizationId, String profileName) throws IOException {
 		String url = restApiURL;
 		
 		if(AgentType.JAVA.equals(type)) {
-			url += String.format(ENGINE_JAVA_URL,profileName);
+			url += String.format(ENGINE_JAVA_URL,organizationId,profileName);
 		} else if(AgentType.DOTNET.equals(type)) {
-			url += String.format(ENGINE_DOTNET_URL,profileName);
+			url += String.format(ENGINE_DOTNET_URL,organizationId,profileName);
 		}
 		HttpURLConnection connection = makeConnection(url,"GET");
 		InputStream is = null;
@@ -269,8 +270,8 @@ public class ContrastConnection {
 	/**
 	 * Download a Contrast agent associated with this account and the platform passed in.
 	 */
-	public byte[] getAgent(AgentType type) throws IOException {
-		return getAgent(type,"default");
+	public byte[] getAgent(AgentType type, Long organizationId) throws IOException {
+		return getAgent(type,organizationId,"default");
 	}
 	
 	private InputStream makeSimpleRequest(String method, String path) throws MalformedURLException, IOException, UnauthorizedException {
@@ -323,8 +324,8 @@ public class ContrastConnection {
 		//System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x64)));
 	}
 
-	private static final String ENGINE_JAVA_URL = "/engine/%s/java/";
-	private static final String ENGINE_DOTNET_URL = "/engine/%s/.net/";
+	private static final String ENGINE_JAVA_URL = "/%s/engine/%s/java/";
+	private static final String ENGINE_DOTNET_URL = "/%s/engine/%s/.net/";
 	private static final String TRACES_URL = "/traces";
 	private static final String APPLICATIONS_URL = "/applications";
 	private static final String DEFAULT_API_URL = "https://app.contrastsecurity.com/Contrast/api";
