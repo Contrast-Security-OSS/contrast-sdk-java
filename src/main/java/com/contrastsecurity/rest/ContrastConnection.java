@@ -320,13 +320,12 @@ public class ContrastConnection {
 	public static void main(String[] args) throws UnauthorizedException, IOException {
 		ContrastConnection conn = new ContrastConnection("contrast_admin", "demo", "demo", "http://localhost:19080/Contrast/api");
 		Gson gson = new Gson();
-		//System.out.println(gson.toJson(conn.getApplications()));
-		//System.out.println(gson.toJson(conn.getCoverage("44b1aa36-95e5-46c8-b2c1-a87fa18cb52c")));
-        //System.out.println(gson.toJson(conn.getTraces("20c739e3-0f2c-4d84-8667-905b31e8cf0d")));
-        //System.out.println(gson.toJson(conn.getLibraries("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
-		//System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA)));
-		//System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x86)));
-		//System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x64)));
+//		System.out.println(gson.toJson(conn.getApplications(1L)));
+//		System.out.println(gson.toJson(conn.getCoverage(1L, "277834b9-654f-4f6e-81ef-efe3e38690c0")));
+//        System.out.println(gson.toJson(conn.getTraces(1L, "277834b9-654f-4f6e-81ef-efe3e38690c0")));
+//        System.out.println(gson.toJson(conn.getLibraries(1L, "277834b9-654f-4f6e-81ef-efe3e38690c0")));
+//		System.out.println(conn.getAgent(AgentType.JAVA, 1L).length);
+//		System.out.println(conn.getAgent(AgentType.DOTNET, 1L).length);
 	}
 
 	private static final String ENGINE_JAVA_URL = "/%s/engine/%s/java/";
