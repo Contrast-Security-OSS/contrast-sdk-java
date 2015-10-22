@@ -9,13 +9,13 @@ This SDK gives you a quick start for programmatically accessing the [Contrast RE
 ### How to use this SDK
 1. Clone the project and run 'clean install' Maven goals to build the artifact with the latest code
 2. Add contrast-sdk-java to your project dependency
-```
-<dependency>
-    <groupId>com.contrastsecurity</groupId>
-    <artifactId>contrast-sdk-java</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
+    ```
+    <dependency>
+        <groupId>com.contrastsecurity</groupId>
+        <artifactId>contrast-sdk-java</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    ```
 3. Look up the following information from TeamServer
     * API Key
     * User Service Key
