@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Contrast Security, LLC.
+ * Copyright (c) 2015, Contrast Security, LLC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -92,7 +92,7 @@ public class ContrastConnection {
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
 	 * @throws IOException if there was a communication problem
 	 */
-	public Application getApplication(Long organizationId, String appId) throws IOException, UnauthorizedException, ResourceNotFoundException {
+	public Application getApplication(String organizationId, String appId) throws IOException, UnauthorizedException, ResourceNotFoundException {
 		InputStream is = null;
 		InputStreamReader reader = null;
 		try {
@@ -113,7 +113,7 @@ public class ContrastConnection {
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
 	 * @throws IOException if there was a communication problem
 	 */
-	public List<Application> getApplications(Long organizationId) throws UnauthorizedException, IOException {
+	public List<Application> getApplications(String organizationId) throws UnauthorizedException, IOException {
 		InputStream is = null;
 		InputStreamReader reader = null;
 		try {
@@ -138,7 +138,7 @@ public class ContrastConnection {
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
 	 * @throws IOException if there was a communication problem
 	 */
-	public Coverage getCoverage(Long organizationId, String appId) throws IOException, UnauthorizedException {
+	public Coverage getCoverage(String organizationId, String appId) throws IOException, UnauthorizedException {
 		InputStream is = null;
 		InputStreamReader reader = null;
 		try {
@@ -166,7 +166,7 @@ public class ContrastConnection {
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
 	 * @throws IOException if there was a communication problem
 	 */
-	public List<Library> getLibraries(Long organizationId, String appId) throws IOException, UnauthorizedException {
+	public List<Library> getLibraries(String organizationId, String appId) throws IOException, UnauthorizedException {
 		InputStream is = null;
 		InputStreamReader reader = null;
 		try {
@@ -190,7 +190,7 @@ public class ContrastConnection {
 	 * @throws UnauthorizedException if the Contrast account failed to authorize
 	 * @throws IOException if there was a communication problem
 	 */
-	public List<Trace> getTraces(Long organizationId, String appId) throws IOException, UnauthorizedException {
+	public List<Trace> getTraces(String organizationId, String appId) throws IOException, UnauthorizedException {
 		InputStream is = null;
 		InputStreamReader reader = null;
 		try {
@@ -253,7 +253,7 @@ public class ContrastConnection {
 	 * @return a byte[] array of the contrast.jar file contents, which the user should 
 	 * @throws IOException if there was a communication problem
 	 */
-	public byte[] getAgent(AgentType type, Long organizationId, String profileName) throws IOException {
+	public byte[] getAgent(AgentType type, String organizationId, String profileName) throws IOException {
 		String url = restApiURL;
 		
 		if(AgentType.JAVA.equals(type)) {
@@ -275,7 +275,7 @@ public class ContrastConnection {
 	/**
 	 * Download a Contrast agent associated with this account and the platform passed in.
 	 */
-	public byte[] getAgent(AgentType type, Long organizationId) throws IOException {
+	public byte[] getAgent(AgentType type, String organizationId) throws IOException {
 		return getAgent(type,organizationId,"default");
 	}
 	
@@ -319,14 +319,19 @@ public class ContrastConnection {
 	
 	public static void main(String[] args) throws UnauthorizedException, IOException {
 		ContrastConnection conn = new ContrastConnection("contrast_admin", "demo", "demo", "http://localhost:19080/Contrast/api");
+		List<Application> apps = conn.getApplications("a64b1f3e-a0b5-4e8b-900f-6ae263711d6d");
+		for(Application app: apps)
+		{
+			System.out.println(app.getName() + " / "+ app.getLanguage());
+		}
 		Gson gson = new Gson();
-		//System.out.println(gson.toJson(conn.getApplications()));
-		//System.out.println(gson.toJson(conn.getCoverage("44b1aa36-95e5-46c8-b2c1-a87fa18cb52c")));
-        //System.out.println(gson.toJson(conn.getTraces("20c739e3-0f2c-4d84-8667-905b31e8cf0d")));
-        //System.out.println(gson.toJson(conn.getLibraries("d3efa3fb-1ef8-4a12-a904-c4abce81d08e")));
-		//System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA)));
-		//System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x86)));
-		//System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET_x64)));
+		System.out.println(gson.toJson(apps));
+
+		//System.out.println(gson.toJson(conn.getCoverage("a64b1f3e-a0b5-4e8b-900f-6ae263711d6d", "aecfb08d-dbff-4665-b4ff-43930bffc81a")));
+		//System.out.println(gson.toJson(conn.getTraces("a64b1f3e-a0b5-4e8b-900f-6ae263711d6d", "aecfb08d-dbff-4665-b4ff-43930bffc81a")));
+		//System.out.println(gson.toJson(conn.getLibraries("a64b1f3e-a0b5-4e8b-900f-6ae263711d6d", "aecfb08d-dbff-4665-b4ff-43930bffc81a")));
+		//System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA, "a64b1f3e-a0b5-4e8b-900f-6ae263711d6d")));
+		//System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET, "a64b1f3e-a0b5-4e8b-900f-6ae263711d6d")));
 	}
 
 	private static final String ENGINE_JAVA_URL = "/%s/engine/%s/java/";
