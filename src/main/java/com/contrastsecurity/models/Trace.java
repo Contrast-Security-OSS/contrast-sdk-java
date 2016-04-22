@@ -28,8 +28,6 @@
  */
 package com.contrastsecurity.models;
 
-import com.contrastsecurity.models.HttpRequest;
-import com.contrastsecurity.rest.TraceEvent;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

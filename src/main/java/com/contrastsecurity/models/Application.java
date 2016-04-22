@@ -30,7 +30,6 @@ package com.contrastsecurity.models;
 
 import java.util.List;
 
-import com.contrastsecurity.rest.PlatformVulnerability;
 import com.google.gson.annotations.SerializedName;
 
 public class Application {

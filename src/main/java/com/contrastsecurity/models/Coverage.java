@@ -28,9 +28,6 @@
  */
 package com.contrastsecurity.models;
 
-import com.contrastsecurity.rest.Library;
-import com.contrastsecurity.rest.URIEntry;
-
 import java.util.List;
 
 /**
