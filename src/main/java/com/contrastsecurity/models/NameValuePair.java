@@ -26,14 +26,21 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.contrastsecurity.rest;
+package com.contrastsecurity.models;
 
-public class ResourceNotFoundException extends Exception {
+/**
+ * HTTP name=value pair model.
+ */
+public class NameValuePair {
 	
-	private static final long serialVersionUID = -4132985938344669390L;
-
-	public ResourceNotFoundException(String type, String id) {
-		super(String.format("Resource '%s' of id '%s' was not found", type, id));
+	public String getName() {
+		return name;
 	}
-
+	private String name;
+	
+	public String getValue() {
+		return value;
+	}
+	private String value;
+	
 }

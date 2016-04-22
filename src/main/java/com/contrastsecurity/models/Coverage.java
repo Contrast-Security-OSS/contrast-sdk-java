@@ -26,46 +26,37 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.contrastsecurity.rest;
+package com.contrastsecurity.models;
 
-public class PlatformVulnerability {
-	
+import com.contrastsecurity.rest.Library;
+import com.contrastsecurity.rest.URIEntry;
+
+import java.util.List;
+
+/**
+ * A model of an application's sitemap coverage.
+ */
+public class Coverage {
+
 	/**
-	 * Return the CVE associated with this vulnerability.
+	 * The class coverage model if the language is class-oriented
 	 * 
-	 * @return the CVE associated with this vulnerability
+	 * @return the classes in the application, if there are any
 	 */
-	public String getCve() {
-		return cve;
+	public List<URIEntry> getUris() {
+		return uris;
 	}
-	private String cve;
+	public void setUris(List<URIEntry> uris) {
+		this.uris = uris;
+	}
+	private List<URIEntry> uris;
 	
 	/**
-	 * Return the severity of the CVE; one of Critical, High, Medium, Low, Note.
-	 * 
-	 * @return the severity of the CVE; one of Critical, High, Medium, Low, Note 
+	 * Return the libraries in use by the application.
+	 * @return the libraries in use by the application
 	 */
-	public String getSeverity() {
-		return severity;
+	public List<Library> getLibraries() {
+		return libraries;
 	}
-	private String severity;
-	
-	/**
-	 * Return a short description about the issue.
-	 * 
-	 * @return a short description about the issue
-	 */
-	public String getDescription() {
-		return description;
-	}
-	private String description;
-	
-	/**
-	 * Return a link to the issue from the vendor.
-	 * @return a link to the issue from the vendor
-	 */
-	public String getLink() {
-		return link;
-	}
-	private String link;
+	private List<Library> libraries;
 }

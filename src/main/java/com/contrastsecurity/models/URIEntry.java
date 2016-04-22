@@ -26,21 +26,34 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.contrastsecurity.rest;
+package com.contrastsecurity.models;
+
+import java.util.List;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
- * HTTP name=value pair model.
+ * A URI that's been observed under monitoring.
  */
-public class NameValuePair {
-	
-	public String getName() {
-		return name;
+public class URIEntry {
+
+	/**
+	 * Return the URI.
+	 * @return the URI
+	 */
+	public String getUri() { 
+		return uri;
 	}
-	private String name;
+	private String uri;
 	
-	public String getValue() {
-		return value;
+	/**
+	 * Return the last time this URI was observed under monitoring.
+	 * @return the last time this URI was observed under monitoring
+	 */
+	public Long getLastTimeSeen() { 
+		return lastTimeSeen;
 	}
-	private String value;
+	@SerializedName("last-time-seen")
+	private Long lastTimeSeen;
 	
 }

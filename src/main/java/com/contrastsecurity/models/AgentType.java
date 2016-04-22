@@ -1,4 +1,4 @@
-package com.contrastsecurity.rest;
+package com.contrastsecurity.models;
 
 /**
  * Enumerate the agent downloads.

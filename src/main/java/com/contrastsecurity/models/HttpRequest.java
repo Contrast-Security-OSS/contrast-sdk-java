@@ -26,28 +26,56 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.contrastsecurity.rest;
+package com.contrastsecurity.models;
+
+import java.util.List;
+
+import com.contrastsecurity.rest.NameValuePair;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * An application method.
+ * An HTTP request.
  */
-public class CodeMethod {
+public class HttpRequest {
 
-	/**
-	 * Return the signature of this method. 
-	 * @return the method signature
-	 */
-	public String getSignature() {
-		return signature; 
+	public int getPort() {
+		return port;
 	}
-	private String signature;
-
-	/**
-	 * Return whether or not this method has been executed.
-	 * @return true, if this method has been executed; false otherwise
-	 */
-	public boolean isExecuted() { 
-		return executed;
+	private int port;
+	
+	public String getProtocol() {
+		return protocol;
 	}
-	private boolean executed;
+	private String protocol;
+	
+	public String getMethod() {
+		return method;
+	}
+	private String method;
+	
+	public String getUri() {
+		return uri;
+	}
+	private String uri;
+	
+	public String getVersion() {
+		return version;
+	}
+	private String version;
+	
+	public String getQueryString() {
+		return queryString;
+	}
+	@SerializedName("query-string")
+	private String queryString;
+	
+	public List<NameValuePair> getHeaders() {
+		return headers;
+	}
+	private List<NameValuePair> headers;
+	
+	public List<NameValuePair> getParameters() {
+		return parameters;
+	}
+	private List<NameValuePair> parameters;
 }

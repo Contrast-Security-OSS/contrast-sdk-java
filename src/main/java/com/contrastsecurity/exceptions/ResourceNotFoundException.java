@@ -26,31 +26,14 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.contrastsecurity.rest;
+package com.contrastsecurity.exceptions;
 
-import java.util.List;
-
-/**
- * A model of an application's sitemap coverage.
- */
-public class Coverage {
-
-	/**
-	 * The class coverage model if the language is class-oriented
-	 * 
-	 * @return the classes in the application, if there are any
-	 */
-	public List<URIEntry> getUris() {
-		return uris;
-	}
-	List<URIEntry> uris;
+public class ResourceNotFoundException extends Exception {
 	
-	/**
-	 * Return the libraries in use by the application.
-	 * @return the libraries in use by the application
-	 */
-	public List<Library> getLibraries() {
-		return libraries;
+	private static final long serialVersionUID = -4132985938344669390L;
+
+	public ResourceNotFoundException(String type, String id) {
+		super(String.format("Resource '%s' of id '%s' was not found", type, id));
 	}
-	List<Library> libraries;
+
 }

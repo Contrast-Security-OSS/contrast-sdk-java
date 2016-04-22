@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Contrast Security, Inc.
+ * Copyright (c) 2014, Contrast Security, LLC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -26,42 +26,13 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.contrastsecurity.exceptions;
 
-package com.contrastsecurity.rest;
+public class UnauthorizedException extends Exception {
+	
+	public UnauthorizedException(int rc) {
+		super("Received response code: " + rc);
+	}
 
-import org.apache.commons.codec.binary.Base64;
-
-/**
- * Represents a primitive/object in a method invocation. The parameters,
- * "this", and return value are modeled with this object.
- */
-public class CodeObject {
-    
-	/**
-	 * Return the identity hash code of this object.
-	 * @return the identity hash code of this object
-	 */
-    public String getHashCode() {
-        return hashCode;
-    }
-    private String hashCode;
-
-    /**
-     * Return whether or not the object is tracked.
-     * @return whether or not the object is tracked
-     */
-    public boolean isTracked() {
-        return tracked;
-    }
-    private boolean tracked;
-
-    /**
-     * Return the value of the object.
-     *
-     * @return the value of the object
-     */
-    public String getValue() {
-        return new String(Base64.decodeBase64(value));
-    }
-    private String value;
+	private static final long serialVersionUID = -9049287248312255189L;
 }

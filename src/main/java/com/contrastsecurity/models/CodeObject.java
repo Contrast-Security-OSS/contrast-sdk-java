@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014, Contrast Security, LLC.
+ * Copyright (c) 2013, Contrast Security, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -26,34 +26,42 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.contrastsecurity.rest;
 
-import java.util.List;
+package com.contrastsecurity.models;
 
-import com.google.gson.annotations.SerializedName;
+import org.apache.commons.codec.binary.Base64;
 
 /**
- * A URI that's been observed under monitoring.
+ * Represents a primitive/object in a method invocation. The parameters,
+ * "this", and return value are modeled with this object.
  */
-public class URIEntry {
+public class CodeObject {
+    
+	/**
+	 * Return the identity hash code of this object.
+	 * @return the identity hash code of this object
+	 */
+    public String getHashCode() {
+        return hashCode;
+    }
+    private String hashCode;
 
-	/**
-	 * Return the URI.
-	 * @return the URI
-	 */
-	public String getUri() { 
-		return uri;
-	}
-	private String uri;
-	
-	/**
-	 * Return the last time this URI was observed under monitoring.
-	 * @return the last time this URI was observed under monitoring
-	 */
-	public Long getLastTimeSeen() { 
-		return lastTimeSeen;
-	}
-	@SerializedName("last-time-seen")
-	private Long lastTimeSeen;
-	
+    /**
+     * Return whether or not the object is tracked.
+     * @return whether or not the object is tracked
+     */
+    public boolean isTracked() {
+        return tracked;
+    }
+    private boolean tracked;
+
+    /**
+     * Return the value of the object.
+     *
+     * @return the value of the object
+     */
+    public String getValue() {
+        return new String(Base64.decodeBase64(value));
+    }
+    private String value;
 }

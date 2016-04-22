@@ -26,10 +26,11 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.contrastsecurity.rest;
+package com.contrastsecurity.models;
 
 import java.util.List;
 
+import com.contrastsecurity.rest.PlatformVulnerability;
 import com.google.gson.annotations.SerializedName;
 
 public class Application {
