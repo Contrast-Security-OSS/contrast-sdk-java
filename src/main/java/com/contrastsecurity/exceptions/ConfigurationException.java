@@ -1,4 +1,4 @@
-package com.contrastsecurity.sdk.exception;
+package com.contrastsecurity.exceptions;
 
 public class ConfigurationException extends Exception {
     public ConfigurationException() {

@@ -31,25 +31,22 @@ package com.contrastsecurity.rest;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.models.*;
-import com.contrastsecurity.sdk.http.RequestConstants;
-import com.contrastsecurity.sdk.http.UrlBuilder;
+import com.contrastsecurity.http.RequestConstants;
+import com.contrastsecurity.http.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
-
-import static com.sun.deploy.net.HttpRequest.CONTENT_LENGTH;
 
 /**
  * Entry point for using the Contrast REST API. Make an instance of this class
@@ -225,6 +222,35 @@ public class ContrastConnection {
     }
 
     /**
+     * Get the vulnerabilities in the application whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param appId          the ID of the application
+     * @param startDate      beginning Date to filter
+     * @param endDate        end Date to filter
+
+     * @return a List of Trace objects representing the vulnerabilities
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public List<Trace> getTracesWithByDates(String organizationId, String appId, Date startDate, Date endDate) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+
+        try {
+            Type libsType = new TypeToken<List<Trace>>() {
+            }.getType();
+            is = makeSimpleRequest(GET_REQUEST, urlBuilder.getTracesByDatesUrl(organizationId, appId, startDate, endDate));
+            reader = new InputStreamReader(is);
+
+            return new Gson().fromJson(reader, libsType);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
      * @param appId      the ID of the application
      * @param conditions a name=value pair querystring of trace conditions
      * @return the HTTP response code of the given query
@@ -234,7 +260,7 @@ public class ContrastConnection {
     public int checkForTrace(String appId, String conditions) throws IOException, UnauthorizedException {
         HttpURLConnection connection = makeConnection("/s/traces/exists", POST_REQUEST);
         connection.setRequestProperty(RequestConstants.APPLICATION, appId);
-        connection.setRequestProperty(CONTENT_LENGTH, Integer.toString(conditions.getBytes().length));
+        connection.setRequestProperty("content-length", Integer.toString(conditions.getBytes().length));
         connection.setDoOutput(true);
 
         InputStream is = null;
@@ -337,20 +363,26 @@ public class ContrastConnection {
     public static void main(String[] args) throws UnauthorizedException, IOException {
         ContrastConnection conn = new ContrastConnection("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
 
-        List<Application> apps = conn.getApplications("a64b1f3e-a0b5-4e8b-900f-6ae263711d6d");
+        String orgId = "936a8014-10d5-4c76-bc96-6f710dbfcc8b";
+        String appId = "3da856f4-c508-48b8-95a9-514eddefcbf3";
 
-        for (Application app : apps) {
-            System.out.println(app.getName() + " / " + app.getLanguage());
-        }
+        List<Application> apps = conn.getApplications(orgId);
+
+        //for (Application app : apps) {
+        //    System.out.println(app.getName() + " / " + app.getLanguage());
+        //}
 
         Gson gson = new Gson();
-        System.out.println(gson.toJson(apps));
+        // System.out.println(gson.toJson(apps));
 
-        //System.out.println(gson.toJson(conn.getCoverage("a64b1f3e-a0b5-4e8b-900f-6ae263711d6d", "aecfb08d-dbff-4665-b4ff-43930bffc81a")));
-        //System.out.println(gson.toJson(conn.getTraces("a64b1f3e-a0b5-4e8b-900f-6ae263711d6d", "aecfb08d-dbff-4665-b4ff-43930bffc81a")));
-        //System.out.println(gson.toJson(conn.getLibraries("a64b1f3e-a0b5-4e8b-900f-6ae263711d6d", "aecfb08d-dbff-4665-b4ff-43930bffc81a")));
-        //System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA, "a64b1f3e-a0b5-4e8b-900f-6ae263711d6d")));
-        //System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET, "a64b1f3e-a0b5-4e8b-900f-6ae263711d6d")));
+        System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
+        System.out.println(gson.toJson(conn.getTraces(orgId, appId)));
+        System.out.println(gson.toJson(conn.getLibraries(orgId, appId)));
+
+        // FileUtils.writeByteArrayToFile(new File("contrast.jar"), conn.getAgent(AgentType.JAVA, orgId));
+
+        // System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA, orgId)));
+        // System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET, orgId)));
     }
 
 
@@ -362,8 +394,6 @@ public class ContrastConnection {
 
     private static final String ENGINE_JAVA_URL = "/%s/engine/%s/java/";
     private static final String ENGINE_DOTNET_URL = "/%s/engine/%s/.net/";
-    private static final String TRACES_URL = "/traces";
-    private static final String APPLICATIONS_URL = "/applications";
     private static final String DEFAULT_API_URL = "https://app.contrastsecurity.com/Contrast/api";
     private static final String LOCALHOST_API_URL = "http://localhost:19080/Contrast/api";
     private static final String DEFAULT_AGENT_PROFILE = "default";

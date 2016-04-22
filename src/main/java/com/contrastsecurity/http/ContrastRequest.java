@@ -1,4 +1,4 @@
-package com.contrastsecurity.sdk.http;
+package com.contrastsecurity.http;
 
 public enum ContrastRequest {
     APP_LIST(HttpMethod.GET, RequestUrlConstants.SERVICE_APP_LIST_URL, false),

@@ -1,4 +1,4 @@
-package com.contrastsecurity.sdk.http;
+package com.contrastsecurity.http;
 
 public class RequestConstants {
     public static final String AUTHORIZATION = "Authorization";

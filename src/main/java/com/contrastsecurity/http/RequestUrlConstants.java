@@ -1,4 +1,4 @@
-package com.contrastsecurity.sdk.http;
+package com.contrastsecurity.http;
 
 public class RequestUrlConstants {
     static final String SERVICE_APP_LIST_URL = "/Contrast/s/api/app/list";
