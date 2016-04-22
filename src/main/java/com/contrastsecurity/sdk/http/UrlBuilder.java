@@ -33,8 +33,7 @@ public class UrlBuilder {
     public String getTracesUrl(String organizationId, String appId) {
         return SEPARATOR + organizationId + TRACES_URL + SEPARATOR + appId;
     }
-
-
+    
     // ----------------- UTILITIES --------------------------
     private String buildExpand(List<String> values) {
         return QUERY_SEPARATOR + EXPAND_PARAM + EQUALS_SEPARATOR + StringUtils.join(values, COMMA_DELIMITER);
@@ -43,8 +42,6 @@ public class UrlBuilder {
     private String buildExpand(String... values) {
         return QUERY_SEPARATOR + EXPAND_PARAM + EQUALS_SEPARATOR + StringUtils.join(values, COMMA_DELIMITER);
     }
-
-
 
     private static final String ENGINE_JAVA_URL = "/%s/engine/%s/java/";
     private static final String ENGINE_DOTNET_URL = "/%s/engine/%s/.net/";

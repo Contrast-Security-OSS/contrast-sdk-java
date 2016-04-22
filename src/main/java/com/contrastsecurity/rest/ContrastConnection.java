@@ -31,6 +31,7 @@ package com.contrastsecurity.rest;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.models.*;
+import com.contrastsecurity.sdk.http.RequestConstants;
 import com.contrastsecurity.sdk.http.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -47,6 +48,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+
+import static com.sun.deploy.net.HttpRequest.CONTENT_LENGTH;
 
 /**
  * Entry point for using the Contrast REST API. Make an instance of this class
@@ -230,8 +233,8 @@ public class ContrastConnection {
      */
     public int checkForTrace(String appId, String conditions) throws IOException, UnauthorizedException {
         HttpURLConnection connection = makeConnection("/s/traces/exists", POST_REQUEST);
-        connection.setRequestProperty("Application", appId);
-        connection.setRequestProperty("Content-Length", Integer.toString(conditions.getBytes().length));
+        connection.setRequestProperty(RequestConstants.APPLICATION, appId);
+        connection.setRequestProperty(CONTENT_LENGTH, Integer.toString(conditions.getBytes().length));
         connection.setDoOutput(true);
 
         InputStream is = null;
@@ -251,7 +254,7 @@ public class ContrastConnection {
         }
 
         int rc = connection.getResponseCode();
-        if (rc >= 400 && rc < 500) {
+        if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
             throw new UnauthorizedException(rc);
         }
         return rc;
@@ -308,15 +311,15 @@ public class ContrastConnection {
     private HttpURLConnection makeConnection(String url, String method) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod(method);
-        connection.setRequestProperty("Authorization", makeAuthorizationToken());
-        connection.setRequestProperty("API-Key", apiKey);
+        connection.setRequestProperty(RequestConstants.AUTHORIZATION, makeAuthorizationToken());
+        connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
         connection.setUseCaches(false);
         return connection;
     }
 
     private String makeAuthorizationToken() throws IOException {
         String token = user + ":" + serviceKey;
-        return Base64.encodeBase64String(token.getBytes("ASCII")).trim();
+        return Base64.encodeBase64String(token.getBytes(CharEncoding.US_ASCII)).trim(); // "ASCII"
     }
 
     private void validateUrl() throws IllegalArgumentException {
