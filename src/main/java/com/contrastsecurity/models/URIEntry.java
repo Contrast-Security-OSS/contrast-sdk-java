@@ -28,8 +28,6 @@
  */
 package com.contrastsecurity.models;
 
-import java.util.List;
-
 import com.google.gson.annotations.SerializedName;
 
 /**

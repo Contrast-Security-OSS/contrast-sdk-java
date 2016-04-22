@@ -28,8 +28,6 @@
  */
 package com.contrastsecurity.models;
 
-import com.contrastsecurity.models.CodeObject;
-
 import java.util.List;
 
 /**

@@ -1,8 +1,5 @@
 package com.contrastsecurity.sdk.http;
 
-import com.contrastsecurity.sdk.http.HttpMethod;
-import com.contrastsecurity.sdk.http.RequestUrlConstants;
-
 public enum ContrastRequest {
     APP_LIST(HttpMethod.GET, RequestUrlConstants.SERVICE_APP_LIST_URL, false),
     APP_TRACES(HttpMethod.GET, RequestUrlConstants.SERVICE_APP_TRACES_URL, true),

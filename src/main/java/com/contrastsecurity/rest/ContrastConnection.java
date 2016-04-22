@@ -28,6 +28,16 @@
  */
 package com.contrastsecurity.rest;
 
+import com.contrastsecurity.exceptions.ResourceNotFoundException;
+import com.contrastsecurity.exceptions.UnauthorizedException;
+import com.contrastsecurity.models.*;
+import com.contrastsecurity.sdk.http.UrlBuilder;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.CharEncoding;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,17 +47,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-
-import com.contrastsecurity.exceptions.ResourceNotFoundException;
-import com.contrastsecurity.exceptions.UnauthorizedException;
-import com.contrastsecurity.models.*;
-import com.contrastsecurity.sdk.http.UrlBuilder;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.apache.commons.lang.CharEncoding;
 
 /**
  * Entry point for using the Contrast REST API. Make an instance of this class
