@@ -28,26 +28,29 @@
  */
 package com.contrastsecurity.models;
 
-/**
- * An application method.
- */
-public class CodeMethod {
+import java.util.List;
 
-	/**
-	 * Return the signature of this method. 
-	 * @return the method signature
-	 */
-	public String getSignature() {
-		return signature; 
-	}
-	private String signature;
+public class Traces {
 
-	/**
-	 * Return whether or not this method has been executed.
-	 * @return true, if this method has been executed; false otherwise
-	 */
-	public boolean isExecuted() { 
-		return executed;
-	}
-	private boolean executed;
+    /**
+     * Return the number of traces
+     *
+     * @return the count of traces
+     */
+    public Integer getCount() {
+        return count;
+    }
+    private Integer count;
+
+    /**
+     * Return the trace objects
+     *
+     * @return a list of traces
+     */
+    public List<Trace> getTrace() {
+        return traces;
+    }
+    private List<Trace> traces;
+
 }
+

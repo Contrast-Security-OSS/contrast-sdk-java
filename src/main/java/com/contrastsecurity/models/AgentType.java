@@ -5,5 +5,6 @@ package com.contrastsecurity.models;
  */
 public enum AgentType {
 	JAVA,
-	DOTNET
+	DOTNET,
+	NODE
 }

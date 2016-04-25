@@ -36,7 +36,6 @@ import com.contrastsecurity.http.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.CharEncoding;
 
@@ -104,14 +103,14 @@ public class ContrastConnection {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Application getApplication(String organizationId, String appId) throws IOException, UnauthorizedException, ResourceNotFoundException {
+    public Applications getApplication(String organizationId, String appId) throws IOException, UnauthorizedException, ResourceNotFoundException {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeSimpleRequest(GET_REQUEST, this.urlBuilder.getSingleApplicationUrl(organizationId, appId));
+            is = makeSimpleRequest(GET_REQUEST, this.urlBuilder.getApplicationUrl(organizationId, appId));
             reader = new InputStreamReader(is);
 
-            return new Gson().fromJson(reader, Application.class);
+            return new Gson().fromJson(reader, Applications.class);
         } finally {
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(is);
@@ -126,16 +125,16 @@ public class ContrastConnection {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public List<Application> getApplications(String organizationId) throws UnauthorizedException, IOException {
+    public Applications getApplications(String organizationId) throws UnauthorizedException, IOException {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
             is = makeSimpleRequest(GET_REQUEST, urlBuilder.getApplicationsUrl(organizationId));
             reader = new InputStreamReader(is);
 
-            Type type = new TypeToken<List<Application>>() {}.getType();
+            //Type type = new TypeToken<List<Application>>() {}.getType();
 
-            return new Gson().fromJson(reader, type);
+            return new Gson().fromJson(reader, Applications.class);
         } finally {
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(is);
@@ -233,17 +232,15 @@ public class ContrastConnection {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public List<Trace> getTracesWithByDates(String organizationId, String appId, Date startDate, Date endDate) throws IOException, UnauthorizedException {
+    public Traces getTracesWithByDates(String organizationId, String appId, Date startDate, Date endDate) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
 
         try {
-            Type libsType = new TypeToken<List<Trace>>() {
-            }.getType();
             is = makeSimpleRequest(GET_REQUEST, urlBuilder.getTracesByDatesUrl(organizationId, appId, startDate, endDate));
             reader = new InputStreamReader(is);
 
-            return new Gson().fromJson(reader, libsType);
+            return new Gson().fromJson(reader, Traces.class);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
@@ -322,7 +319,7 @@ public class ContrastConnection {
         return getAgent(type, organizationId, DEFAULT_AGENT_PROFILE);
     }
 
-    private InputStream makeSimpleRequest(String method, String path) throws MalformedURLException, IOException, UnauthorizedException {
+    private InputStream makeSimpleRequest(String method, String path) throws IOException, UnauthorizedException {
         String url = restApiURL + path;
         HttpURLConnection connection = makeConnection(url, method);
         InputStream is = connection.getInputStream();
@@ -360,25 +357,26 @@ public class ContrastConnection {
         }
     }
 
-    public static void main(String[] args) throws UnauthorizedException, IOException {
+    public static void main(String[] args) throws UnauthorizedException, IOException, ResourceNotFoundException {
         ContrastConnection conn = new ContrastConnection("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
 
         String orgId = "936a8014-10d5-4c76-bc96-6f710dbfcc8b";
         String appId = "3da856f4-c508-48b8-95a9-514eddefcbf3";
 
-        List<Application> apps = conn.getApplications(orgId);
-
-        //for (Application app : apps) {
-        //    System.out.println(app.getName() + " / " + app.getLanguage());
-        //}
-
         Gson gson = new Gson();
-        // System.out.println(gson.toJson(apps));
+        System.out.println(gson.toJson(conn.getApplication(orgId, appId)));
 
-        System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
-        System.out.println(gson.toJson(conn.getTraces(orgId, appId)));
-        System.out.println(gson.toJson(conn.getLibraries(orgId, appId)));
+        //System.out.println(gson.toJson(conn.getApplications(orgId)));
 
+
+        //System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
+        //System.out.println(gson.toJson(conn.getTraces(orgId, appId)));
+        //System.out.println(gson.toJson(conn.getLibraries(orgId, appId)));
+
+        //System.out.println(conn.getTracesWithByDates(orgId, appId, new Date(1459746000000L), new Date(1461346140000L)).getCount());
+        //System.out.println(conn.getTracesWithByDates(orgId, appId, new Date(1459746000000L), null).getCount());
+
+        // test agent
         // FileUtils.writeByteArrayToFile(new File("contrast.jar"), conn.getAgent(AgentType.JAVA, orgId));
 
         // System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA, orgId)));

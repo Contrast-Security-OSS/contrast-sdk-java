@@ -17,29 +17,27 @@ public class UrlBuilder {
         return instance;
     }
 
-    public String getSingleApplicationUrl(String organizationId, String appId) {
-        return SEPARATOR + organizationId + SEPARATOR + APPLICATIONS_URL + SEPARATOR + appId;
+    public String getApplicationUrl(String organizationId, String appId) {
+        return NEXT_GEN + SEPARATOR + organizationId + SEPARATOR + APPLICATIONS_URL + SEPARATOR + appId;
     }
 
     public String getApplicationsUrl(String organizationId) {
-        return SEPARATOR + organizationId + SEPARATOR + APPLICATIONS_URL;
+        return NEXT_GEN + SEPARATOR + organizationId + SEPARATOR + APPLICATIONS_URL + QUERY_SEPARATOR + "base=false";
     }
 
     public String getCoverageUrl(String organizationId, String appId) {
-        return SEPARATOR + organizationId + SEPARATOR + APPLICATIONS_URL + SEPARATOR + appId + SEPARATOR + COVERAGE_URL;
+        return NEXT_GEN + SEPARATOR + organizationId + SEPARATOR + APPLICATIONS_URL + SEPARATOR + appId + SEPARATOR + COVERAGE_URL;
     }
 
     public String getLibrariesUrl(String organizationId, String appId) {
-        return SEPARATOR + organizationId + SEPARATOR + APPLICATIONS_URL + SEPARATOR + appId + SEPARATOR + LIBRARIES_URL + buildExpand("manifest", "servers", "cve");
+        return NEXT_GEN + SEPARATOR + organizationId + SEPARATOR + APPLICATIONS_URL + SEPARATOR + appId + SEPARATOR + LIBRARIES_URL + buildExpand("manifest", "servers", "cve");
     }
 
     public String getTracesUrl(String organizationId, String appId) {
-        return SEPARATOR + organizationId + SEPARATOR + TRACES_URL + SEPARATOR + appId;
+        return NEXT_GEN + SEPARATOR + organizationId + SEPARATOR + TRACES_URL + SEPARATOR + appId;
     }
 
     public String getTracesByDatesUrl(String organizationaId, String appId, Date startDate, Date endDate) {
-        //936a8014-10d5-4c76-bc96-6f710dbfcc8b/traces/3da856f4-c508-48b8-95a9-514eddefcbf3/filter/tags/empty-tags/search?endDate=1461346140000&sort=-lastTimeSeen&startDate=1459746000000
-
         ArrayList<String> params = new ArrayList<>();
 
         if (startDate != null) {
@@ -50,15 +48,13 @@ public class UrlBuilder {
             params.add("endDate=" + endDate.getTime());
         }
 
-        return SEPARATOR + organizationaId + SEPARATOR + TRACES_URL + SEPARATOR + appId + SEPARATOR + FILTER_QUERY + SEPARATOR +
-               TAGS_QUERY + SEPARATOR + EMPTY_TAGS_QUERY + SEPARATOR + SEARCH_QUERY + SEPARATOR + StringUtils.join(params, AND_SEPARATOR);
+        params.add(FILTER_SORT);
+
+        return NEXT_GEN + SEPARATOR + organizationaId + SEPARATOR + TRACES_URL + SEPARATOR + appId + SEPARATOR + FILTER_QUERY + SEPARATOR +
+               SEARCH_QUERY + QUERY_SEPARATOR + StringUtils.join(params, AND_SEPARATOR);
     }
 
     // ----------------- UTILITIES --------------------------
-    private String buildExpand(List<String> values) {
-        return QUERY_SEPARATOR + EXPAND_PARAM + EQUALS_SEPARATOR + StringUtils.join(values, COMMA_DELIMITER);
-    }
-
     private String buildExpand(String... values) {
         return QUERY_SEPARATOR + EXPAND_PARAM + EQUALS_SEPARATOR + StringUtils.join(values, COMMA_DELIMITER);
     }
@@ -77,7 +73,8 @@ public class UrlBuilder {
 
     private static final String EXPAND_PARAM = "expand";
 
-    private static final String FILTER_QUERY = "filter";
+    private static final String FILTER_SORT = "sort=-lastTimeSeen";
+    private static final String FILTER_QUERY = "filter/tags/empty-tags";
 
     private static final String SEARCH_QUERY = "search";
     private static final String TAGS_QUERY = "tags";
@@ -88,6 +85,8 @@ public class UrlBuilder {
     private static final String QUERY_SEPARATOR = "?";
     private static final String EQUALS_SEPARATOR = "=";
     private static final String AND_SEPARATOR = "&";
+
+    private static final String NEXT_GEN = SEPARATOR + "ng";
 
     public static final List<String> SEVERITIES = Arrays.asList("Note", "Low", "Medium", "High", "Critical");
 }
