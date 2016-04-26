@@ -30,20 +30,40 @@ package com.contrastsecurity.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * An application library.
  */
 public class Library {
-	
-	/**
-	 * Return the SHA1 hash of this library.
-	 * 
-	 * @return return the hexified SHA1 of this library
-	 */
-	public String getSha1() {
-		return sha1;
+	/*
+	{
+	  "app_context_path": "",
+	  "app_id": "",
+	  "app_language": "",
+	  "app_name": "",
+	  "apps": [],
+	  "class_count": 0,
+	  "classes_used": 0,
+	  "custom": true,
+	  "file_name": "",
+	  "file_version": "",
+	  "grade": "",
+	  "group": "",
+	  "hash": "",
+	  "latest_release_date": 0,
+	  "latest_version": "",
+	  "libScore": 0,
+	  "library_id": 0,
+	  "links": [],
+	  "months_outdated": 0,
+	  "release_date": 0,
+	  "tags": [],
+	  "total_vulnerabilities": 0,
+	  "version": "",
+	  "vulns": []
 	}
-	private String sha1;
+	 */
 	
 	/**
 	 * Return the filename for this library.
@@ -51,9 +71,10 @@ public class Library {
 	 * @return the simple name of the library, like 'log4j-2.1.4.jar'.
 	 */
 	public String getFilename() {
-		return filename;
+		return fileName;
 	}
-	private String filename;
+	@SerializedName("file_name")
+	private String fileName;
 	
 	/**
 	 * Return the version of this library according to the library authority
@@ -65,39 +86,10 @@ public class Library {
 		return version;
 	}
 	private String version;
-	
-	/**
-	 * Return an estimate of the number of lines of code in this library.
-	 * 
-	 * @return an estimated line count for this library
-	 */
-	public long getLinesOfCode() {
-		return linesOfCode;
-	}
-	@SerializedName("lines-of-code")
-	private long linesOfCode;
-	
-	/**
-	 * Return the last date that an entry within this file was altered.
-	 * 
-	 * @return the YYYY-MM-DD of the last modification to an entry in this library
-	 */
-	public String getInternalDateModified() {
-		return internalDateModified;
-	}
-	@SerializedName("internal-date")
-	private String internalDateModified;
-	
-	/**
-	 * Return the last date this file was altered.
-	 * 
-	 * @return the YYYY-MM-DD of the last modification to this file
-	 */
-	public String getExternalDateModified() {
-		return externalDateModified;
-	}
-	@SerializedName("external-date")
-	private String externalDateModified;
+
+
+	public List<Application> getApplications() { return apps;}
+	private List<Application> apps;
 	
 	/**
 	 * Return the number of classes in this library.
@@ -107,7 +99,7 @@ public class Library {
 	public int getClassCount() {
 		return classCount;
 	}
-	@SerializedName("class-count")
+	@SerializedName("class_count")
 	private int classCount;
 	
 	/**
@@ -119,11 +111,11 @@ public class Library {
 	 * 
 	 * @return the maximum number of classes used in any instance of this library 
 	 */
-	public int getUsedClassCount() {
-		return usedClassCount;
+	public int getClassedUsed() {
+		return classesUsed;
 	}
-	@SerializedName("used-class-count")
-	private int usedClassCount;
+	@SerializedName("classes_used")
+	private int classesUsed;
 	
 	/**
 	 * Return the blob of MANIFEST.MF in plaintext.
@@ -134,4 +126,73 @@ public class Library {
 		return manifest;
 	}
 	private String manifest;
+
+	@SerializedName("library_id")
+	private long libraryId;
+
+	private String grade;
+	private String hash;
+	private String group;
+	@SerializedName("file_version")
+	private String fileVersion;
+
+	@SerializedName("app_id")
+	private String appId;
+	@SerializedName("app_name")
+	private String appName;
+	@SerializedName("app_context_path")
+	private String appContextPath;
+	@SerializedName("app_language")
+	private String appLanguage;
+
+	@SerializedName("latest_version")
+	private String latestVersion;
+	@SerializedName("release_date")
+	private long releaseDate;
+	@SerializedName("latest_release_date")
+	private long latestReleaseDate;
+
+	@SerializedName("total_vulnerabilities")
+	private int totalVulnerabilities;
+	private boolean custom;
+	@SerializedName("lib_score")
+	private double libScore;
+
+	@SerializedName("months_outdated")
+	private int monthsOutdated;
+
+	public long getLibraryId() { return libraryId; }
+
+	public String getGrade() { return grade; }
+
+	public String getHash() { return hash; }
+
+	public String getFileName() { return fileName; }
+
+	public String getGroup() { return group; }
+
+	public String getFileVersion() { return fileVersion; }
+
+	public String getLatestVersion() { return latestVersion; }
+
+	public long getReleaseDate() { return releaseDate; }
+
+	public long getLatestReleaseDate() { return latestReleaseDate; }
+
+	public int getTotalVulnerabilities() { return totalVulnerabilities; }
+
+	public boolean getCustom() { return custom; }
+
+	public double getLibScore() { return libScore; }
+
+	public String getAppLanguage() { return appLanguage; }
+
+	public int getMonthsOutdated() { return monthsOutdated; }
+
+	public String getAppId() { return appId; }
+
+	public String getAppName() { return appName; }
+
+	public String getAppContextPath() { return appContextPath; }
+
 }

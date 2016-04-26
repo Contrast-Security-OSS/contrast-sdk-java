@@ -2,6 +2,9 @@ package com.contrastsecurity.models;
 
 import java.util.List;
 
+/**
+    Base class for api calls returning one or more method
+ */
 public class Applications {
 
     public Integer getCount() {

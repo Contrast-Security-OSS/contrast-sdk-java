@@ -30,6 +30,9 @@ package com.contrastsecurity.models;
 
 import java.util.List;
 
+/**
+ * Base class for api calls with traces
+ */
 public class Traces {
 
     /**

@@ -76,6 +76,11 @@ public class Trace {
 		return status;
 	}
 	private String status;
+
+	public String getSubStatus() {
+		return subStatus;
+	}
+	private String subStatus;
 	
 	/**
 	 * Return the simple, numeric hash of this trace
@@ -102,6 +107,7 @@ public class Trace {
     public String getRule() {
 		return rule;
 	}
+	@SerializedName("rule_name")
     private String rule;
     
     /**
@@ -117,7 +123,7 @@ public class Trace {
      * The events that make up the vulnerability. Some traces
      * will only have an evidence field and no events.
      * 
-     * @return
+     * @return the TraceEvents
      */
     public List<TraceEvent> getEvents() {
 		return events;
@@ -128,43 +134,108 @@ public class Trace {
      * Return the overall severity of this trace.
      * @return the severity
      */
-    public String getSeverity() { return this.severity; }
+    public String getSeverity() { return severity; }
     private String severity;
 
     /**
      * Return the likelihood of this trace
      * @return the likelihood
      */
-    public String getLikelihood() { return this.likelihood; }
+    public String getLikelihood() { return likelihood; }
     private String likelihood;
 
     /**
      * Return the impact of this trace
      * @return the impact
      */
-    public String getImpact() { return this.impact; }
+    public String getImpact() { return impact; }
     private String impact;
 
     /**
      * Return the confidence rating for this trace
      * @return the confidence
      */
-    public String getConfidence() { return this.confidence; }
+    public String getConfidence() { return confidence; }
     private String confidence;
 
     /**
      * Return the First time this Trace was seen
      * @return Time this trace was first seen
      */
-    public Long getFirstTimeSeen() { return this.firstTimeSeen; }
-    @SerializedName("first-time-seen")
+    public Long getFirstTimeSeen() { return firstTimeSeen; }
+    @SerializedName("first_time_seen")
     private Long firstTimeSeen;
 
     /**
      * Return the Last time this Trace was seen
      * @return the time this trace was last seen
      */
-    public Long getLastTimeSeen() { return this.lastTimeSeen; }
-    @SerializedName("last-time-seen")
+    public Long getLastTimeSeen() { return lastTimeSeen; }
+    @SerializedName("last_time_seen")
     private Long lastTimeSeen;
+
+
+	/**
+	* Return the Application for this trace
+	* @return the applicaiton
+	*/
+	public Application getApplication() { return application;}
+	private Application application;
+
+	/**
+	 * Return the category for this trace
+	 * @return the category
+	 */
+	public String getCategory() { return category; }
+	private String category;
+
+	/**
+	 * Return the closed time this Trace was seen
+	 * @return the time this trace was closed
+	 */
+	public Long getClosedTime() { return closedTime; }
+	@SerializedName("closed_time")
+	private Long closedTime;
+
+	/**
+	 * Return the parent application id for this trace
+	 * @return the parent application id
+	 */
+	public String getParentApplicationId() { return parentApplicationId; }
+	private String parentApplicationId;
+
+	/**
+	 * Return the platform for this trace
+	 * @return the platform
+	 */
+	public String getPlatform() { return platform; }
+	private String platform;
+
+	/**
+	 * Return the list of servers this traces is in
+	 * @return list of Servers
+     */
+	public List<Server> getServers() { return servers; }
+	private List<Server> servers;
+
+	/**
+	 * Return the total number of traces received for the trace
+	 * @return the total number
+	 */
+	public Long getTotalTracesReceived() { return totalTotalTracesReceived; }
+	@SerializedName("total_traces_received")
+	private Long totalTotalTracesReceived;
+
+	/**
+	 * Return if the Trace is visible
+	 * @return visibility status
+     */
+	public boolean getVisible() { return visible; }
+	private boolean visible;
+
+	// TODO event
+	// TODO card
+	// TODO notes?
+
+
 }

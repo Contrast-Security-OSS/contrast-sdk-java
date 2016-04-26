@@ -33,16 +33,19 @@ import com.google.gson.annotations.SerializedName;
 /**
  * A URI that's been observed under monitoring.
  */
-public class URIEntry {
+public class URLEntry {
 
 	/**
-	 * Return the URI.
-	 * @return the URI
+	 * Return the URL
+	 * @return the URL
 	 */
-	public String getUri() { 
-		return uri;
+	public String getUrl() {
+		return url;
 	}
-	private String uri;
+	private String url;
+
+	public boolean getVulnerable() { return vulnerable;}
+	private boolean vulnerable = false;
 	
 	/**
 	 * Return the last time this URI was observed under monitoring.
@@ -51,7 +54,7 @@ public class URIEntry {
 	public Long getLastTimeSeen() { 
 		return lastTimeSeen;
 	}
-	@SerializedName("last-time-seen")
+	@SerializedName("last_time_seen")
 	private Long lastTimeSeen;
 	
 }

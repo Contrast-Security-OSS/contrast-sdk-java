@@ -18,26 +18,26 @@ public class UrlBuilder {
     }
 
     public String getApplicationUrl(String organizationId, String appId) {
-        return NEXT_GEN + SEPARATOR + organizationId + SEPARATOR + APPLICATIONS_URL + SEPARATOR + appId;
+        return String.format("ng/%s/applications/%s", organizationId, appId);
     }
 
     public String getApplicationsUrl(String organizationId) {
-        return NEXT_GEN + SEPARATOR + organizationId + SEPARATOR + APPLICATIONS_URL + QUERY_SEPARATOR + "base=false";
+        return String.format("ng/%s/applications?%s", organizationId, "base=false");
     }
 
     public String getCoverageUrl(String organizationId, String appId) {
-        return NEXT_GEN + SEPARATOR + organizationId + SEPARATOR + APPLICATIONS_URL + SEPARATOR + appId + SEPARATOR + COVERAGE_URL;
+        return String.format("ng/%s/applications/%s/coverage", organizationId, appId);
     }
 
     public String getLibrariesUrl(String organizationId, String appId) {
-        return NEXT_GEN + SEPARATOR + organizationId + SEPARATOR + APPLICATIONS_URL + SEPARATOR + appId + SEPARATOR + LIBRARIES_URL + buildExpand("manifest", "servers", "cve");
+        return String.format("ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand("manifest", "servers", "cve"));
     }
 
     public String getTracesUrl(String organizationId, String appId) {
-        return NEXT_GEN + SEPARATOR + organizationId + SEPARATOR + TRACES_URL + SEPARATOR + appId;
+        return String.format("ng/%s/traces/%s", organizationId, appId);
     }
 
-    public String getTracesByDatesUrl(String organizationaId, String appId, Date startDate, Date endDate) {
+    public String getTracesWithFilter(String organizationalId, String appId, Date startDate, Date endDate) {
         ArrayList<String> params = new ArrayList<>();
 
         if (startDate != null) {
@@ -50,8 +50,7 @@ public class UrlBuilder {
 
         params.add(FILTER_SORT);
 
-        return NEXT_GEN + SEPARATOR + organizationaId + SEPARATOR + TRACES_URL + SEPARATOR + appId + SEPARATOR + FILTER_QUERY + SEPARATOR +
-               SEARCH_QUERY + QUERY_SEPARATOR + StringUtils.join(params, AND_SEPARATOR);
+        return String.format("ng/%s/traces/%s/filter/tags/empty-tags/search?%s", organizationalId, appId, StringUtils.join(params, AND_SEPARATOR));
     }
 
     // ----------------- UTILITIES --------------------------
@@ -67,7 +66,7 @@ public class UrlBuilder {
     private static final String ENGINE_DOTNET_URL = "/%s/engine/%s/.net/";
 
     private static final String TRACES_URL = "traces";
-    private static final String COVERAGE_URL = "sitemap/activity/entries";
+    private static final String COVERAGE_URL = "coverage";
     private static final String APPLICATIONS_URL = "applications";
     private static final String LIBRARIES_URL = "libraries";
 
@@ -85,8 +84,6 @@ public class UrlBuilder {
     private static final String QUERY_SEPARATOR = "?";
     private static final String EQUALS_SEPARATOR = "=";
     private static final String AND_SEPARATOR = "&";
-
-    private static final String NEXT_GEN = SEPARATOR + "ng";
 
     public static final List<String> SEVERITIES = Arrays.asList("Note", "Low", "Medium", "High", "Critical");
 }

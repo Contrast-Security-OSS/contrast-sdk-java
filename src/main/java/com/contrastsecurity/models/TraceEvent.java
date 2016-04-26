@@ -28,6 +28,8 @@
  */
 package com.contrastsecurity.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
@@ -35,6 +37,22 @@ import java.util.List;
  * represent a method invocation that Contrast monitored.
  */
 public class TraceEvent {
+
+	/**
+	 * Return the id for the event in the trace
+	 * @return the id of the event
+     */
+	public long getEventId() { return eventId; }
+	@SerializedName("event-id")
+	private long eventId;
+
+	/**
+	 * Return the code context for the event
+	 * @return code context for the event
+	 */
+	private String codeContext;
+	@SerializedName("code-context")
+	public String getCodeContext() { return codeContext; }
 
 	/**
 	 * Return the timestamp of when this event occurred.

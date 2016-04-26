@@ -40,20 +40,8 @@ public class Coverage {
 	 * 
 	 * @return the classes in the application, if there are any
 	 */
-	public List<URIEntry> getUris() {
-		return uris;
+	public List<URLEntry> getUrls() {
+		return urls;
 	}
-	public void setUris(List<URIEntry> uris) {
-		this.uris = uris;
-	}
-	private List<URIEntry> uris;
-	
-	/**
-	 * Return the libraries in use by the application.
-	 * @return the libraries in use by the application
-	 */
-	public List<Library> getLibraries() {
-		return libraries;
-	}
-	private List<Library> libraries;
+	private List<URLEntry> urls;
 }

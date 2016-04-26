@@ -56,7 +56,12 @@ public class HttpRequest {
 		return uri;
 	}
 	private String uri;
-	
+
+	public String getUrl() {
+		return url;
+	}
+	private String url;
+
 	public String getVersion() {
 		return version;
 	}
@@ -65,7 +70,7 @@ public class HttpRequest {
 	public String getQueryString() {
 		return queryString;
 	}
-	@SerializedName("query-string")
+	@SerializedName("query_string")
 	private String queryString;
 	
 	public List<NameValuePair> getHeaders() {
