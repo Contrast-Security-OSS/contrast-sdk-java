@@ -58,6 +58,10 @@ public class ContrastSDK {
     private UrlBuilder urlBuilder;
     private Gson gson;
 
+    public ContrastSDK() {
+
+    }
+
     /**
      * Create a ContrastSDK object that will attempt to use the Contrast V3 API
      *

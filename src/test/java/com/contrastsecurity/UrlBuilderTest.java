@@ -1,4 +1,4 @@
-package com.aspectsecurity.contrast;
+package com.contrastsecurity;
 
 /**
  * Created by justinleo on 4/22/16.
