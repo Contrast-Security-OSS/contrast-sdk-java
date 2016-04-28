@@ -103,7 +103,7 @@ public class ContrastSDK {
      *
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
-     * @return an ApplicationSummary representing the object whose ID was passed in
+     * @return Applications object that contains one Application; wrapper
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
@@ -125,7 +125,7 @@ public class ContrastSDK {
      * Get the list of applications being monitored by Contrast.
      *
      * @param organizationId the ID of the organization
-     * @return a List of Application objects that are being monitored
+     * @return Applications object that contains the list of Application's
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
@@ -171,7 +171,7 @@ public class ContrastSDK {
      *
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
-     * @return a List of Library objects for the given app
+     * @return Libraries object that contains the list of Library objects
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
@@ -194,7 +194,7 @@ public class ContrastSDK {
      *
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
-     * @return a List of Trace objects representing the vulnerabilities
+     * @return Traces object that contains the list of Trace's
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
@@ -218,7 +218,7 @@ public class ContrastSDK {
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
      * @param form           FilterForm query parameters
-     * @return a List of Trace objects representing the vulnerabilities
+     * @return Traces object that contains the list of Trace's
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
@@ -242,6 +242,7 @@ public class ContrastSDK {
      * this byte array to a file named 'contrast.jar'. This signature takes a parameter
      * which contains the name of the saved engine profile to download.
      *
+     * @param type           the type of agent you want to download; Java, Java 1.5, .NET, or Node
      * @param profileName    the name of the saved engine profile to download,
      * @param organizationId the ID of the organization,
      * @return a byte[] array of the contrast.jar file contents, which the user should convert to a new File
@@ -259,7 +260,16 @@ public class ContrastSDK {
     }
 
     /**
-     * Download a Contrast agent associated with this account, the platform, and the default agent profile.
+     * Download a contrast.jar agent associated with this account. The user should save
+     * this byte array to a file named 'contrast.jar'. This signature takes a parameter
+     * which contains the name of the saved engine profile to download.
+     * <p>
+     * This uses 'default' as the profile name.
+     *
+     * @param type           the type of agent you want to download; Java, Java 1.5, .NET, or Node
+     * @param organizationId the ID of the organization,
+     * @return a byte[] array of the contrast.jar file contents, which the user should convert to a new File
+     * @throws IOException if there was a communication problem
      */
     public byte[] getAgent(AgentType type, String organizationId) throws IOException, UnauthorizedException {
         return getAgent(type, organizationId, DEFAULT_AGENT_PROFILE);
@@ -274,15 +284,15 @@ public class ContrastSDK {
         Gson gson = new Gson();
 
         // System.out.println(gson.toJson(conn.getApplication(orgId, appId)));
-        // System.out.println(gson.toJson(conn.getApplications(orgId)));
+        System.out.println(gson.toJson(conn.getApplications(orgId)));
         // System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
         // System.out.println(gson.toJson(conn.getTraces(orgId, appId)));
         // System.out.println(gson.toJson(conn.getLibraries(orgId, appId)));
 
-        FilterForm form = new FilterForm();
-        form.setStartDate(new Date(1459746000000L));
+        // FilterForm form = new FilterForm();
+        //form.setStartDate(new Date(1459746000000L));
 
-        System.out.println(conn.getTracesWithFilter(orgId, appId, form).getCount());
+        // System.out.println(conn.getTracesWithFilter(orgId, appId, form).getCount());
 
         //System.out.println(conn.getTracesWithFilter(orgId, appId, new Date(1459746000000L), new Date(1461346140000L)).getCount());
         //System.out.println(conn.getTracesWithFilter(orgId, appId, new Date(1459746000000L), null).getCount());
