@@ -1,12 +1,8 @@
 package com.aspectsecurity.contrast;
 
-import com.contrastsecurity.exceptions.ResourceNotFoundException;
-import com.contrastsecurity.exceptions.UnauthorizedException;
-import com.contrastsecurity.models.Application;
 import com.contrastsecurity.models.Applications;
-import com.contrastsecurity.rest.ContrastConnection;
+import com.contrastsecurity.sdk.ContrastSDK;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -22,14 +18,14 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ContrastConnectionTest {
+public class ContrastSDKTest {
 
     private String response;
-    private ContrastConnection contrastConnection;
+    private ContrastSDK contrastSDK;
 
     @BeforeClass
     public void setUp() {
-        contrastConnection = new ContrastConnection("user", "apiKey", "serviceKey", "localhost");
+        contrastSDK = new ContrastSDK("user", "apiKey", "serviceKey", "localhost");
         response = "";
     }
 
@@ -42,11 +38,13 @@ public class ContrastConnectionTest {
         final HttpURLConnection mockCon = mock(HttpURLConnection. class);
         InputStream inputStream = IOUtils.toInputStream(response);
         when(mockCon.getInputStream()).thenReturn( inputStream);
+
+        /*
         try {
-            when(contrastConnection.makeSimpleRequest(anyString(), anyString()));
+            when(contrastSDK.makeSimpleRequest(anyString(), anyString()));
         } catch (UnauthorizedException e) {
             e.printStackTrace();
-        }
+        }*/
 
         URLStreamHandler stubURLStreamHandler = new URLStreamHandler() {
             @Override
@@ -59,7 +57,7 @@ public class ContrastConnectionTest {
 
         Applications actual = new Applications();
         try {
-            actual = contrastConnection.getApplication("org", "app");
+            actual = contrastSDK.getApplication("org", "app");
         } catch (Exception e ) {
             e.printStackTrace();
         }

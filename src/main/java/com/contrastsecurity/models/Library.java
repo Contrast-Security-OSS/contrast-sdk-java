@@ -36,34 +36,6 @@ import java.util.List;
  * An application library.
  */
 public class Library {
-	/*
-	{
-	  "app_context_path": "",
-	  "app_id": "",
-	  "app_language": "",
-	  "app_name": "",
-	  "apps": [],
-	  "class_count": 0,
-	  "classes_used": 0,
-	  "custom": true,
-	  "file_name": "",
-	  "file_version": "",
-	  "grade": "",
-	  "group": "",
-	  "hash": "",
-	  "latest_release_date": 0,
-	  "latest_version": "",
-	  "libScore": 0,
-	  "library_id": 0,
-	  "links": [],
-	  "months_outdated": 0,
-	  "release_date": 0,
-	  "tags": [],
-	  "total_vulnerabilities": 0,
-	  "version": "",
-	  "vulns": []
-	}
-	 */
 	
 	/**
 	 * Return the filename for this library.

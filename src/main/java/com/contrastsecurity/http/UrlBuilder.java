@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Filter;
 
 public class UrlBuilder {
 
@@ -18,26 +19,26 @@ public class UrlBuilder {
     }
 
     public String getApplicationUrl(String organizationId, String appId) {
-        return String.format("ng/%s/applications/%s", organizationId, appId);
+        return String.format("/ng/%s/applications/%s", organizationId, appId);
     }
 
     public String getApplicationsUrl(String organizationId) {
-        return String.format("ng/%s/applications?%s", organizationId, "base=false");
+        return String.format("/ng/%s/applications?%s", organizationId, "base=false");
     }
 
     public String getCoverageUrl(String organizationId, String appId) {
-        return String.format("ng/%s/applications/%s/coverage", organizationId, appId);
+        return String.format("/ng/%s/applications/%s/coverage", organizationId, appId);
     }
 
     public String getLibrariesUrl(String organizationId, String appId) {
-        return String.format("ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand("manifest", "servers", "cve"));
+        return String.format("/ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand("manifest", "servers", "cve"));
     }
 
     public String getTracesUrl(String organizationId, String appId) {
-        return String.format("ng/%s/traces/%s", organizationId, appId);
+        return String.format("/ng/%s/traces/%s/filter/tags/empty-tags/search", organizationId, appId);
     }
 
-    public String getTracesWithFilter(String organizationalId, String appId, Date startDate, Date endDate) {
+    public String getTracesWithDates(String organizationalId, String appId, Date startDate, Date endDate) {
         ArrayList<String> params = new ArrayList<>();
 
         if (startDate != null) {
@@ -48,9 +49,11 @@ public class UrlBuilder {
             params.add("endDate=" + endDate.getTime());
         }
 
-        params.add(FILTER_SORT);
+        return String.format("/ng/%s/traces/%s/filter/tags/empty-tags/search?%s", organizationalId, appId, StringUtils.join(params, AND_SEPARATOR));
+    }
 
-        return String.format("ng/%s/traces/%s/filter/tags/empty-tags/search?%s", organizationalId, appId, StringUtils.join(params, AND_SEPARATOR));
+    public String getTracesWithFilter(String organizationalId, String appId, FilterForm form) {
+        return String.format("/ng/%s/traces/%s/filter/tags/empty-tags/search?%s", organizationalId, appId, form.toString());
     }
 
     // ----------------- UTILITIES --------------------------
@@ -80,7 +83,6 @@ public class UrlBuilder {
     private static final String EMPTY_TAGS_QUERY = "empty-tags";
 
     private static final String COMMA_DELIMITER = ",";
-    private static final String SEPARATOR = "/";
     private static final String QUERY_SEPARATOR = "?";
     private static final String EQUALS_SEPARATOR = "=";
     private static final String AND_SEPARATOR = "&";

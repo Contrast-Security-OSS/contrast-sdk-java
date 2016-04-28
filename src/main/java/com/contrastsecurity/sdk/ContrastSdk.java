@@ -26,41 +26,39 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  * THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.contrastsecurity.rest;
+package com.contrastsecurity.sdk;
 
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
-import com.contrastsecurity.models.*;
+import com.contrastsecurity.http.FilterForm;
 import com.contrastsecurity.http.RequestConstants;
 import com.contrastsecurity.http.UrlBuilder;
+import com.contrastsecurity.models.*;
+import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
 
-import java.io.*;
-import java.lang.reflect.Type;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Entry point for using the Contrast REST API. Make an instance of this class
  * and call methods. Easy!
  */
-public class ContrastConnection {
+public class ContrastSDK {
 
     private String apiKey;
     private String serviceKey;
     private String user;
     private String restApiURL;
     private UrlBuilder urlBuilder;
+    private Gson gson;
 
     /**
-     * Create a ContrastConnection object that will attempt to use the Contrast installation
+     * Create a ContrastSDK object that will attempt to use the Contrast installation
      * in the
      *
      * @param user       Username (e.g., joe@acme.com)
@@ -69,29 +67,31 @@ public class ContrastConnection {
      * @param restApiURL the base Contrast API URL
      * @throws IllegalArgumentException if the API URL is malformed
      */
-    public ContrastConnection(String user, String serviceKey, String apiKey, String restApiURL) throws IllegalArgumentException {
+    public ContrastSDK(String user, String serviceKey, String apiKey, String restApiURL) throws IllegalArgumentException {
         this.user = user;
         this.serviceKey = serviceKey;
         this.apiKey = apiKey;
         this.restApiURL = restApiURL;
 
-        validateUrl();
+        ContrastSDKUtils.validateUrl(this.restApiURL);
 
         this.urlBuilder = UrlBuilder.getInstance();
+        this.gson = new Gson();
     }
 
     /**
-     * Create a ContrastConnection object that attempts to use the Contrast SaaS service.
+     * Create a ContrastSDK object that attempts to use the Contrast SaaS service.
      */
-    public ContrastConnection(String user, String serviceKey, String apiKey) {
+    public ContrastSDK(String user, String serviceKey, String apiKey) {
         this.user = user;
         this.serviceKey = serviceKey;
         this.apiKey = apiKey;
         this.restApiURL = DEFAULT_API_URL;
 
-        validateUrl();
+        ContrastSDKUtils.validateUrl(this.restApiURL);
 
         this.urlBuilder = UrlBuilder.getInstance();
+        this.gson = new Gson();
     }
 
     /**
@@ -110,7 +110,7 @@ public class ContrastConnection {
             is = makeSimpleRequest(GET_REQUEST, this.urlBuilder.getApplicationUrl(organizationId, appId));
             reader = new InputStreamReader(is);
 
-            return new Gson().fromJson(reader, Applications.class);
+            return this.gson.fromJson(reader, Applications.class);
         } finally {
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(is);
@@ -132,7 +132,7 @@ public class ContrastConnection {
             is = makeSimpleRequest(GET_REQUEST, urlBuilder.getApplicationsUrl(organizationId));
             reader = new InputStreamReader(is);
 
-            return new Gson().fromJson(reader, Applications.class);
+            return this.gson.fromJson(reader, Applications.class);
         } finally {
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(is);
@@ -155,7 +155,7 @@ public class ContrastConnection {
             is = makeSimpleRequest(GET_REQUEST, urlBuilder.getCoverageUrl(organizationId, appId));
             reader = new InputStreamReader(is);
 
-            return new Gson().fromJson(reader, Coverage.class);
+            return this.gson.fromJson(reader, Coverage.class);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
@@ -178,7 +178,7 @@ public class ContrastConnection {
             is = makeSimpleRequest(GET_REQUEST, urlBuilder.getLibrariesUrl(organizationId, appId));
             reader = new InputStreamReader(is);
 
-            return new Gson().fromJson(reader, Libraries.class);
+            return this.gson.fromJson(reader, Libraries.class);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
@@ -201,7 +201,7 @@ public class ContrastConnection {
             is = makeSimpleRequest(GET_REQUEST, urlBuilder.getTracesUrl(organizationId, appId));
             reader = new InputStreamReader(is);
 
-            return new Gson().fromJson(reader, Traces.class);
+            return this.gson.fromJson(reader, Traces.class);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
@@ -213,22 +213,20 @@ public class ContrastConnection {
      *
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
-     * @param startDate      beginning Date to filter
-     * @param endDate        end Date to filter
-
+     * @param form           FilterForm query parameters
      * @return a List of Trace objects representing the vulnerabilities
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Traces getTracesWithByFilter(String organizationId, String appId, Date startDate, Date endDate) throws IOException, UnauthorizedException {
+    public Traces getTracesWithByFilter(String organizationId, String appId, FilterForm form) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
 
         try {
-            is = makeSimpleRequest(GET_REQUEST, urlBuilder.getTracesWithFilter(organizationId, appId, startDate, endDate));
+            is = makeSimpleRequest(GET_REQUEST, urlBuilder.getTracesWithFilter(organizationId, appId, form));
             reader = new InputStreamReader(is);
 
-            return new Gson().fromJson(reader, Traces.class);
+            return this.gson.fromJson(reader, Traces.class);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
@@ -271,7 +269,7 @@ public class ContrastConnection {
         return getAgent(type, organizationId, DEFAULT_AGENT_PROFILE);
     }
 
-    public InputStream makeSimpleRequest(String method, String path) throws IOException, UnauthorizedException {
+    private InputStream makeSimpleRequest(String method, String path) throws IOException, UnauthorizedException {
         String url = restApiURL + path;
         HttpURLConnection connection = makeConnection(url, method);
         InputStream is = connection.getInputStream();
@@ -283,43 +281,26 @@ public class ContrastConnection {
         return is;
     }
 
-    public HttpURLConnection makeConnection(String url, String method) throws IOException {
+    private HttpURLConnection makeConnection(String url, String method) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod(method);
-        connection.setRequestProperty(RequestConstants.AUTHORIZATION, makeAuthorizationToken());
+        connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
         connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
         connection.setUseCaches(false);
         return connection;
     }
 
-    private String makeAuthorizationToken() throws IOException {
-        String token = user + ":" + serviceKey;
-        return Base64.encodeBase64String(token.getBytes(CharEncoding.US_ASCII)).trim();
-    }
-
-    private void validateUrl() throws IllegalArgumentException {
-        URL u;
-        try {
-            u = new URL(restApiURL);
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Invalid URL");
-        }
-        if (!u.getProtocol().startsWith("http")) {
-            throw new IllegalArgumentException("Invalid protocol");
-        }
-    }
-
     public static void main(String[] args) throws UnauthorizedException, IOException, ResourceNotFoundException {
-        ContrastConnection conn = new ContrastConnection("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
+        ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
 
         String orgId = "936a8014-10d5-4c76-bc96-6f710dbfcc8b";
         String appId = "3da856f4-c508-48b8-95a9-514eddefcbf3";
 
         Gson gson = new Gson();
 
-        //System.out.println(gson.toJson(conn.getApplication(orgId, appId)));
+        System.out.println(gson.toJson(conn.getApplication(orgId, appId)));
         //System.out.println(gson.toJson(conn.getApplications(orgId)));
-        //System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
+        // System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
 
         // System.out.println(gson.toJson(conn.getTraces(orgId, appId)));
 
