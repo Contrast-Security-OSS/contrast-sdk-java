@@ -43,6 +43,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 
 /**
  * Entry point for using the Contrast REST API. Make an instance of this class
@@ -58,8 +59,7 @@ public class ContrastSDK {
     private Gson gson;
 
     /**
-     * Create a ContrastSDK object that will attempt to use the Contrast installation
-     * in the
+     * Create a ContrastSDK object that will attempt to use the Contrast V3 API
      *
      * @param user       Username (e.g., joe@acme.com)
      * @param serviceKey User service key
@@ -80,7 +80,7 @@ public class ContrastSDK {
     }
 
     /**
-     * Create a ContrastSDK object that attempts to use the Contrast SaaS service.
+     * Create a ContrastSDK object that attempts to use the Contrast V3 API.
      */
     public ContrastSDK(String user, String serviceKey, String apiKey) {
         this.user = user;
@@ -218,7 +218,7 @@ public class ContrastSDK {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Traces getTracesWithByFilter(String organizationId, String appId, FilterForm form) throws IOException, UnauthorizedException {
+    public Traces getTracesWithFilter(String organizationId, String appId, FilterForm form) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
 
@@ -240,7 +240,7 @@ public class ContrastSDK {
      *
      * @param profileName    the name of the saved engine profile to download,
      * @param organizationId the ID of the organization,
-     * @return a byte[] array of the contrast.jar file contents, which the user should
+     * @return a byte[] array of the contrast.jar file contents, which the user should convert to a new File
      * @throws IOException if there was a communication problem
      */
     public byte[] getAgent(AgentType type, String organizationId, String profileName) throws IOException {
@@ -269,6 +269,38 @@ public class ContrastSDK {
         return getAgent(type, organizationId, DEFAULT_AGENT_PROFILE);
     }
 
+    public static void main(String[] args) throws UnauthorizedException, IOException, ResourceNotFoundException {
+        ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
+
+        String orgId = "936a8014-10d5-4c76-bc96-6f710dbfcc8b";
+        String appId = "3da856f4-c508-48b8-95a9-514eddefcbf3";
+
+        Gson gson = new Gson();
+
+        // System.out.println(gson.toJson(conn.getApplication(orgId, appId)));
+        // System.out.println(gson.toJson(conn.getApplications(orgId)));
+        // System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
+        // System.out.println(gson.toJson(conn.getTraces(orgId, appId)));
+        // System.out.println(gson.toJson(conn.getLibraries(orgId, appId)));
+
+        FilterForm form = new FilterForm();
+        form.setStartDate(new Date(1459746000000L));
+
+        System.out.println(conn.getTracesWithFilter(orgId, appId, form).getCount());
+
+        //System.out.println(conn.getTracesWithFilter(orgId, appId, new Date(1459746000000L), new Date(1461346140000L)).getCount());
+        //System.out.println(conn.getTracesWithFilter(orgId, appId, new Date(1459746000000L), null).getCount());
+
+        // test agents
+        // FileUtils.writeByteArrayToFile(new File("contrast.jar"), conn.getAgent(AgentType.JAVA, orgId));
+
+        // System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA, orgId)));
+        // System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET, orgId)));
+        // System.out.println(gson.toJson(conn.getAgent(AgentType.NODE, orgId)));
+    }
+
+    // ------------------------ Utilities -----------------------------------------------
+
     private InputStream makeSimpleRequest(String method, String path) throws IOException, UnauthorizedException {
         String url = restApiURL + path;
         HttpURLConnection connection = makeConnection(url, method);
@@ -289,34 +321,6 @@ public class ContrastSDK {
         connection.setUseCaches(false);
         return connection;
     }
-
-    public static void main(String[] args) throws UnauthorizedException, IOException, ResourceNotFoundException {
-        ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
-
-        String orgId = "936a8014-10d5-4c76-bc96-6f710dbfcc8b";
-        String appId = "3da856f4-c508-48b8-95a9-514eddefcbf3";
-
-        Gson gson = new Gson();
-
-        System.out.println(gson.toJson(conn.getApplication(orgId, appId)));
-        //System.out.println(gson.toJson(conn.getApplications(orgId)));
-        // System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
-
-        // System.out.println(gson.toJson(conn.getTraces(orgId, appId)));
-
-        // System.out.println(gson.toJson(conn.getLibraries(orgId, appId)));
-
-        //System.out.println(conn.getTracesWithFilter(orgId, appId, new Date(1459746000000L), new Date(1461346140000L)).getCount());
-        //System.out.println(conn.getTracesWithFilter(orgId, appId, new Date(1459746000000L), null).getCount());
-
-        // test agents
-        // FileUtils.writeByteArrayToFile(new File("contrast.jar"), conn.getAgent(AgentType.JAVA, orgId));
-
-        // System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA, orgId)));
-        // System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET, orgId)));
-        // System.out.println(gson.toJson(conn.getAgent(AgentType.NODE, orgId)));
-    }
-
 
     private static final String GET_REQUEST = "GET";
     private static final String POST_REQUEST = "POST";

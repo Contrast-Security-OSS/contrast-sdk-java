@@ -38,20 +38,6 @@ public class UrlBuilder {
         return String.format("/ng/%s/traces/%s/filter/tags/empty-tags/search", organizationId, appId);
     }
 
-    public String getTracesWithDates(String organizationalId, String appId, Date startDate, Date endDate) {
-        ArrayList<String> params = new ArrayList<>();
-
-        if (startDate != null) {
-            params.add("startDate=" + startDate.getTime());
-        }
-
-        if (endDate != null) {
-            params.add("endDate=" + endDate.getTime());
-        }
-
-        return String.format("/ng/%s/traces/%s/filter/tags/empty-tags/search?%s", organizationalId, appId, StringUtils.join(params, AND_SEPARATOR));
-    }
-
     public String getTracesWithFilter(String organizationalId, String appId, FilterForm form) {
         return String.format("/ng/%s/traces/%s/filter/tags/empty-tags/search?%s", organizationalId, appId, form.toString());
     }
