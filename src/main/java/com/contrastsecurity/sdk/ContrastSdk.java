@@ -111,7 +111,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeSimpleRequest(GET_REQUEST, this.urlBuilder.getApplicationUrl(organizationId, appId));
+            is = makeRequest(GET_REQUEST, this.urlBuilder.getApplicationUrl(organizationId, appId));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Applications.class);
@@ -133,7 +133,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeSimpleRequest(GET_REQUEST, urlBuilder.getApplicationsUrl(organizationId));
+            is = makeRequest(GET_REQUEST, urlBuilder.getApplicationsUrl(organizationId));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Applications.class);
@@ -156,7 +156,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeSimpleRequest(GET_REQUEST, urlBuilder.getCoverageUrl(organizationId, appId));
+            is = makeRequest(GET_REQUEST, urlBuilder.getCoverageUrl(organizationId, appId));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Coverage.class);
@@ -179,7 +179,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeSimpleRequest(GET_REQUEST, urlBuilder.getLibrariesUrl(organizationId, appId));
+            is = makeRequest(GET_REQUEST, urlBuilder.getLibrariesUrl(organizationId, appId));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Libraries.class);
@@ -202,7 +202,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeSimpleRequest(GET_REQUEST, urlBuilder.getTracesUrl(organizationId, appId));
+            is = makeRequest(GET_REQUEST, urlBuilder.getTracesUrl(organizationId, appId));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Traces.class);
@@ -227,7 +227,7 @@ public class ContrastSDK {
         InputStreamReader reader = null;
 
         try {
-            is = makeSimpleRequest(GET_REQUEST, urlBuilder.getTracesWithFilter(organizationId, appId, form));
+            is = makeRequest(GET_REQUEST, urlBuilder.getTracesWithFilterUrl(organizationId, appId, form));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Traces.class);
@@ -247,18 +247,10 @@ public class ContrastSDK {
      * @return a byte[] array of the contrast.jar file contents, which the user should convert to a new File
      * @throws IOException if there was a communication problem
      */
-    public byte[] getAgent(AgentType type, String organizationId, String profileName) throws IOException {
-        String url = restApiURL;
-
-        if (AgentType.JAVA.equals(type)) {
-            url += String.format(ENGINE_JAVA_URL, organizationId, profileName);
-        } else if (AgentType.DOTNET.equals(type)) {
-            url += String.format(ENGINE_DOTNET_URL, organizationId, profileName);
-        }
-        HttpURLConnection connection = makeConnection(url, GET_REQUEST);
+    public byte[] getAgent(AgentType type, String organizationId, String profileName) throws IOException, UnauthorizedException {
         InputStream is = null;
         try {
-            is = connection.getInputStream();
+            is = makeRequest(GET_REQUEST, urlBuilder.getAgentUrl(type, organizationId, profileName));
 
             return IOUtils.toByteArray(is);
         } finally {
@@ -267,9 +259,9 @@ public class ContrastSDK {
     }
 
     /**
-     * Download a Contrast agent associated with this account and the platform passed in.
+     * Download a Contrast agent associated with this account, the platform, and the default agent profile.
      */
-    public byte[] getAgent(AgentType type, String organizationId) throws IOException {
+    public byte[] getAgent(AgentType type, String organizationId) throws IOException, UnauthorizedException {
         return getAgent(type, organizationId, DEFAULT_AGENT_PROFILE);
     }
 
@@ -305,7 +297,7 @@ public class ContrastSDK {
 
     // ------------------------ Utilities -----------------------------------------------
 
-    private InputStream makeSimpleRequest(String method, String path) throws IOException, UnauthorizedException {
+    private InputStream makeRequest(String method, String path) throws IOException, UnauthorizedException {
         String url = restApiURL + path;
         HttpURLConnection connection = makeConnection(url, method);
         InputStream is = connection.getInputStream();

@@ -1,5 +1,6 @@
 package com.contrastsecurity.http;
 
+import com.contrastsecurity.models.AgentType;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
@@ -38,8 +39,24 @@ public class UrlBuilder {
         return String.format("/ng/%s/traces/%s/filter/tags/empty-tags/search", organizationId, appId);
     }
 
-    public String getTracesWithFilter(String organizationalId, String appId, FilterForm form) {
+    public String getTracesWithFilterUrl(String organizationalId, String appId, FilterForm form) {
         return String.format("/ng/%s/traces/%s/filter/tags/empty-tags/search?%s", organizationalId, appId, form.toString());
+    }
+
+    public String getAgentUrl(AgentType type, String organizationId, String profileName) {
+        String url = "";
+
+        if (AgentType.JAVA.equals(type)) {
+            url += String.format("/ng/%s/agents/%s/java?jvm=1_6", organizationId, profileName);
+        } else if (AgentType.JAVA1_5.equals(type)) {
+            url += String.format("/ng/%s/agents/%s/java?jvm=1_5", organizationId, profileName);
+        } else if (AgentType.DOTNET.equals(type)) {
+            url += String.format("/ng/%s/agents/%s/dotnet", organizationId, profileName);
+        } else if (AgentType.NODE.equals(type)) {
+            url += String.format("/ng/%s/agents/%s/node", organizationId, profileName);
+        }
+
+        return url;
     }
 
     // ----------------- UTILITIES --------------------------
@@ -51,22 +68,7 @@ public class UrlBuilder {
         return SEVERITIES.subList(SEVERITIES.indexOf(severity), SEVERITIES.size());
     }
 
-    private static final String ENGINE_JAVA_URL = "/%s/engine/%s/java/";
-    private static final String ENGINE_DOTNET_URL = "/%s/engine/%s/.net/";
-
-    private static final String TRACES_URL = "traces";
-    private static final String COVERAGE_URL = "coverage";
-    private static final String APPLICATIONS_URL = "applications";
-    private static final String LIBRARIES_URL = "libraries";
-
     private static final String EXPAND_PARAM = "expand";
-
-    private static final String FILTER_SORT = "sort=-lastTimeSeen";
-    private static final String FILTER_QUERY = "filter/tags/empty-tags";
-
-    private static final String SEARCH_QUERY = "search";
-    private static final String TAGS_QUERY = "tags";
-    private static final String EMPTY_TAGS_QUERY = "empty-tags";
 
     private static final String COMMA_DELIMITER = ",";
     private static final String QUERY_SEPARATOR = "?";
