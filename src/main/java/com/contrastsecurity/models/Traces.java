@@ -50,7 +50,7 @@ public class Traces {
      *
      * @return a list of traces
      */
-    public List<Trace> getTrace() {
+    public List<Trace> getTraces() {
         return traces;
     }
     private List<Trace> traces;

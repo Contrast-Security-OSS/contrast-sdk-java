@@ -43,7 +43,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Date;
 
 /**
  * Entry point for using the Contrast REST API. Make an instance of this class
@@ -85,6 +84,8 @@ public class ContrastSDK {
 
     /**
      * Create a ContrastSDK object that attempts to use the Contrast V3 API.
+     *
+     * This will use the default api url which is https://app.contrastsecurity.com/Contrast/api
      */
     public ContrastSDK(String user, String serviceKey, String apiKey) {
         this.user = user;
@@ -213,7 +214,7 @@ public class ContrastSDK {
     }
 
     /**
-     * Get the vulnerabilities in the application whose ID is passed in.
+     * Get the vulnerabilities in the application whose ID is passed in with a filter.
      *
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
