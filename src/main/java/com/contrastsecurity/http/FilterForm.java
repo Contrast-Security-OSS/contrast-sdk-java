@@ -126,6 +126,10 @@ public class FilterForm {
             filters.add("status=" + status);
         }
 
-        return StringUtils.join(filters, "&");
+        if (!filters.isEmpty()) {
+            return "?" + StringUtils.join(filters, "&");
+        } else {
+            return "";
+        }
     }
 }

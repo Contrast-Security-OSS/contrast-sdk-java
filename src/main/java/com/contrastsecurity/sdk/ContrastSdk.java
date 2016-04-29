@@ -294,20 +294,17 @@ public class ContrastSDK {
 
         // System.out.println(conn.getTracesWithFilter(orgId, appId, form).getCount());
 
-        //System.out.println(conn.getTracesWithFilter(orgId, appId, new Date(1459746000000L), new Date(1461346140000L)).getCount());
-        //System.out.println(conn.getTracesWithFilter(orgId, appId, new Date(1459746000000L), null).getCount());
-
-        // test agents
         // FileUtils.writeByteArrayToFile(new File("contrast.jar"), conn.getAgent(AgentType.JAVA, orgId));
 
         // System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA, orgId)));
+        // System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA1_5, orgId)));
         // System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET, orgId)));
         // System.out.println(gson.toJson(conn.getAgent(AgentType.NODE, orgId)));
     }
 
     // ------------------------ Utilities -----------------------------------------------
 
-    private InputStream makeRequest(String method, String path) throws IOException, UnauthorizedException {
+    public InputStream makeRequest(String method, String path) throws IOException, UnauthorizedException {
         String url = restApiURL + path;
         HttpURLConnection connection = makeConnection(url, method);
         InputStream is = connection.getInputStream();
@@ -319,7 +316,7 @@ public class ContrastSDK {
         return is;
     }
 
-    private HttpURLConnection makeConnection(String url, String method) throws IOException {
+    public HttpURLConnection makeConnection(String url, String method) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod(method);
         connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
@@ -334,8 +331,6 @@ public class ContrastSDK {
     private static final int BAD_REQUEST = 400;
     private static final int SERVER_ERROR = 500;
 
-    private static final String ENGINE_JAVA_URL = "/%s/engine/%s/java/";
-    private static final String ENGINE_DOTNET_URL = "/%s/engine/%s/.net/";
     private static final String DEFAULT_API_URL = "https://app.contrastsecurity.com/Contrast/api";
     private static final String LOCALHOST_API_URL = "http://localhost:19080/Contrast/api";
     private static final String DEFAULT_AGENT_PROFILE = "default";

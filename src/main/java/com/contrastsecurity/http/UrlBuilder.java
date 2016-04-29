@@ -40,7 +40,7 @@ public class UrlBuilder {
     }
 
     public String getTracesWithFilterUrl(String organizationalId, String appId, FilterForm form) {
-        return String.format("/ng/%s/traces/%s/filter/tags/empty-tags/search?%s", organizationalId, appId, form.toString());
+        return String.format("/ng/%s/traces/%s/filter/tags/empty-tags/search%s", organizationalId, appId, form.toString());
     }
 
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {
