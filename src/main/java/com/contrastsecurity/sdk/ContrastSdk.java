@@ -277,30 +277,19 @@ public class ContrastSDK {
     }
 
     public static void main(String[] args) throws UnauthorizedException, IOException, ResourceNotFoundException {
-        ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
+        ContrastSDK conn = new ContrastSDK("username", "demo", "demo", LOCALHOST_API_URL);
 
-        String orgId = "936a8014-10d5-4c76-bc96-6f710dbfcc8b";
-        String appId = "3da856f4-c508-48b8-95a9-514eddefcbf3";
+        String orgId = "add-your-org-id";
+        String appId = "add-your-app-id";
 
         Gson gson = new Gson();
 
         // System.out.println(gson.toJson(conn.getApplication(orgId, appId)));
-        System.out.println(gson.toJson(conn.getApplications(orgId)));
+        // System.out.println(gson.toJson(conn.getApplications(orgId)));
         // System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
         // System.out.println(gson.toJson(conn.getTraces(orgId, appId)));
         // System.out.println(gson.toJson(conn.getLibraries(orgId, appId)));
-
-        // FilterForm form = new FilterForm();
-        //form.setStartDate(new Date(1459746000000L));
-
-        // System.out.println(conn.getTracesWithFilter(orgId, appId, form).getCount());
-
         // FileUtils.writeByteArrayToFile(new File("contrast.jar"), conn.getAgent(AgentType.JAVA, orgId));
-
-        // System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA, orgId)));
-        // System.out.println(gson.toJson(conn.getAgent(AgentType.JAVA1_5, orgId)));
-        // System.out.println(gson.toJson(conn.getAgent(AgentType.DOTNET, orgId)));
-        // System.out.println(gson.toJson(conn.getAgent(AgentType.NODE, orgId)));
     }
 
     // ------------------------ Utilities -----------------------------------------------
