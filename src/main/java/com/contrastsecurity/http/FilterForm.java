@@ -11,7 +11,9 @@ import java.util.List;
 public class FilterForm {
 
     public enum ExpandValues {
-        VULNS, APPS, MANIFEST, CVE, SERVERS;
+        VULNS, APPS, MANIFEST, CVE, SERVERS,
+        SCORE ,TRACE_BREAKDOWN, LICENSE,
+        CARD, EVENTS, NOTES, REQUEST, APPLICATION;
 
         @Override
         public String toString() {
@@ -105,8 +107,6 @@ public class FilterForm {
 
     public String toString() {
         List<String> filters = new ArrayList<>();
-
-        System.out.println(expand);
 
         if (expand != null && !expand.isEmpty()) {
             filters.add("expand=" + StringUtils.join(expand, ","));
