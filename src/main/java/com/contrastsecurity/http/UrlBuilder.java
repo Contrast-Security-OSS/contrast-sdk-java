@@ -33,7 +33,7 @@ public class UrlBuilder {
     }
 
     public String getLibrariesUrl(String organizationId, String appId, EnumSet<FilterForm.ExpandValues> expandValues) {
-        return String.format("/ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand(expandValues)); //"manifest", "servers", "cve"
+        return String.format("/ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand(expandValues));
     }
 
     public String getTracesUrl(String organizationId, String appId) {

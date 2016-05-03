@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;
@@ -40,10 +41,7 @@ public class FilterFormTest {
 
     @Test
     public void testExpand() {
-        List<String> expand = new ArrayList<>();
-        expand.add("cve");
-        expand.add("manifest");
-        expand.add("apps");
+        EnumSet<FilterForm.ExpandValues> expand = EnumSet.of(FilterForm.ExpandValues.CVE, FilterForm.ExpandValues.MANIFEST, FilterForm.ExpandValues.APPS);
 
         filterForm.setExpand(expand);
 

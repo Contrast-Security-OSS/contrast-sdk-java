@@ -1,9 +1,11 @@
 package com.contrastsecurity.http;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.enums.Enum;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 
 public class FilterForm {
@@ -17,7 +19,7 @@ public class FilterForm {
         }
     }
 
-    private List<String> expand;
+    private EnumSet<ExpandValues> expand;
     private int limit;
     private int offset;
     private Date startDate;
@@ -27,7 +29,7 @@ public class FilterForm {
     private String status;
 
     public FilterForm() {
-        this.expand = new ArrayList<>();
+        this.expand = null;
         this.limit = 0;
         this.offset = 0;
         this.startDate = null;
@@ -45,11 +47,11 @@ public class FilterForm {
         this.status = status;
     }
 
-    public List<String> getExpand() {
+    public EnumSet<ExpandValues> getExpand() {
         return expand;
     }
 
-    public void setExpand(List<String> expand) {
+    public void setExpand(EnumSet<ExpandValues> expand) {
         this.expand = expand;
     }
 
@@ -104,7 +106,9 @@ public class FilterForm {
     public String toString() {
         List<String> filters = new ArrayList<>();
 
-        if (!expand.isEmpty()) {
+        System.out.println(expand);
+
+        if (expand != null && !expand.isEmpty()) {
             filters.add("expand=" + StringUtils.join(expand, ","));
         }
 
