@@ -3,10 +3,7 @@ package com.contrastsecurity.http;
 import com.contrastsecurity.models.AgentType;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Filter;
 
 public class UrlBuilder {
@@ -17,6 +14,10 @@ public class UrlBuilder {
 
     public static UrlBuilder getInstance() {
         return instance;
+    }
+
+    public String getProfileOrganizationsUrl() {
+        return "/ng/profile/organizations";
     }
 
     public String getApplicationUrl(String organizationId, String appId) {
@@ -31,16 +32,16 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s/coverage", organizationId, appId);
     }
 
-    public String getLibrariesUrl(String organizationId, String appId) {
-        return String.format("/ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand("manifest", "servers", "cve"));
+    public String getLibrariesUrl(String organizationId, String appId, EnumSet<FilterForm.ExpandValues> expandValues) {
+        return String.format("/ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand(expandValues)); //"manifest", "servers", "cve"
     }
 
     public String getTracesUrl(String organizationId, String appId) {
-        return String.format("/ng/%s/traces/%s/filter/tags/empty-tags/search", organizationId, appId);
+        return String.format("/ng/%s/traces/%s/filter/workflow/00001/search", organizationId, appId);
     }
 
     public String getTracesWithFilterUrl(String organizationalId, String appId, FilterForm form) {
-        return String.format("/ng/%s/traces/%s/filter/tags/empty-tags/search%s", organizationalId, appId, form.toString());
+        return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationalId, appId, form.toString());
     }
 
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {
@@ -61,6 +62,10 @@ public class UrlBuilder {
 
     // ----------------- UTILITIES --------------------------
     private String buildExpand(String... values) {
+        return QUERY_SEPARATOR + EXPAND_PARAM + EQUALS_SEPARATOR + StringUtils.join(values, COMMA_DELIMITER);
+    }
+
+    private String buildExpand(EnumSet<FilterForm.ExpandValues> values) {
         return QUERY_SEPARATOR + EXPAND_PARAM + EQUALS_SEPARATOR + StringUtils.join(values, COMMA_DELIMITER);
     }
 

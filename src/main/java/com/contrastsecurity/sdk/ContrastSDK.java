@@ -31,6 +31,7 @@ package com.contrastsecurity.sdk;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.FilterForm;
+import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.http.RequestConstants;
 import com.contrastsecurity.http.UrlBuilder;
 import com.contrastsecurity.models.*;
@@ -43,6 +44,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.EnumSet;
 
 /**
  * Entry point for using the Contrast REST API. Make an instance of this class
@@ -100,6 +102,28 @@ public class ContrastSDK {
     }
 
     /**
+     * Get all organizations for the user profile.
+     *
+     * @return Organization objects with a list of disabled and valid organizations for the user.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+
+    public Organizations getProfileOrganizations() throws IOException, UnauthorizedException, ResourceNotFoundException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getProfileOrganizationsUrl());
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, Organizations.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    /**
      * Get summary information about a single app.
      *
      * @param organizationId the ID of the organization
@@ -108,11 +132,11 @@ public class ContrastSDK {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Applications getApplication(String organizationId, String appId) throws IOException, UnauthorizedException, ResourceNotFoundException {
+    public Applications getApplication(String organizationId, String appId) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(GET_REQUEST, this.urlBuilder.getApplicationUrl(organizationId, appId));
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getApplicationUrl(organizationId, appId));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Applications.class);
@@ -134,7 +158,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(GET_REQUEST, urlBuilder.getApplicationsUrl(organizationId));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationsUrl(organizationId));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Applications.class);
@@ -157,7 +181,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(GET_REQUEST, urlBuilder.getCoverageUrl(organizationId, appId));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getCoverageUrl(organizationId, appId));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Coverage.class);
@@ -176,11 +200,11 @@ public class ContrastSDK {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Libraries getLibraries(String organizationId, String appId) throws IOException, UnauthorizedException {
+    public Libraries getLibraries(String organizationId, String appId, EnumSet<FilterForm.ExpandValues> expandValues) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(GET_REQUEST, urlBuilder.getLibrariesUrl(organizationId, appId));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getLibrariesUrl(organizationId, appId, expandValues));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Libraries.class);
@@ -203,7 +227,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(GET_REQUEST, urlBuilder.getTracesUrl(organizationId, appId));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesUrl(organizationId, appId));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Traces.class);
@@ -228,7 +252,7 @@ public class ContrastSDK {
         InputStreamReader reader = null;
 
         try {
-            is = makeRequest(GET_REQUEST, urlBuilder.getTracesWithFilterUrl(organizationId, appId, form));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesWithFilterUrl(organizationId, appId, form));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Traces.class);
@@ -252,7 +276,7 @@ public class ContrastSDK {
     public byte[] getAgent(AgentType type, String organizationId, String profileName) throws IOException, UnauthorizedException {
         InputStream is = null;
         try {
-            is = makeRequest(GET_REQUEST, urlBuilder.getAgentUrl(type, organizationId, profileName));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getAgentUrl(type, organizationId, profileName));
 
             return IOUtils.toByteArray(is);
         } finally {
@@ -277,14 +301,15 @@ public class ContrastSDK {
     }
 
     public static void main(String[] args) throws UnauthorizedException, IOException, ResourceNotFoundException {
-        ContrastSDK conn = new ContrastSDK("username", "demo", "demo", LOCALHOST_API_URL);
+        ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
 
         String orgId = "add-your-org-id";
         String appId = "add-your-app-id";
 
         Gson gson = new Gson();
 
-        // System.out.println(gson.toJson(conn.getApplication(orgId, appId)));
+        // System.out.println(UrlBuilder.getInstance().getProfileOrganizations());
+        //System.out.println(gson.toJson(conn.getOrganizations()));
         // System.out.println(gson.toJson(conn.getApplications(orgId)));
         // System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
         // System.out.println(gson.toJson(conn.getTraces(orgId, appId)));
@@ -294,9 +319,9 @@ public class ContrastSDK {
 
     // ------------------------ Utilities -----------------------------------------------
 
-    public InputStream makeRequest(String method, String path) throws IOException, UnauthorizedException {
+    public InputStream makeRequest(HttpMethod method, String path) throws IOException, UnauthorizedException {
         String url = restApiURL + path;
-        HttpURLConnection connection = makeConnection(url, method);
+        HttpURLConnection connection = makeConnection(url, method.toString());
         InputStream is = connection.getInputStream();
         int rc = connection.getResponseCode();
         if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
@@ -314,9 +339,6 @@ public class ContrastSDK {
         connection.setUseCaches(false);
         return connection;
     }
-
-    private static final String GET_REQUEST = "GET";
-    private static final String POST_REQUEST = "POST";
 
     private static final int BAD_REQUEST = 400;
     private static final int SERVER_ERROR = 500;

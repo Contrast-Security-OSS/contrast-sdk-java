@@ -6,7 +6,12 @@ import com.contrastsecurity.models.AgentType;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class UrlBuilderTest {
 
@@ -20,6 +25,13 @@ public class UrlBuilderTest {
         organizationId = "test-org";
 
         urlBuilder = UrlBuilder.getInstance();
+    }
+
+    @Test
+    public void testProfileOrganizationsUrl() {
+        String expectedUrl = "/ng/profile/organizations";
+
+        assertEquals(expectedUrl, urlBuilder.getProfileOrganizationsUrl());
     }
 
     @Test
@@ -45,21 +57,31 @@ public class UrlBuilderTest {
 
     @Test
     public void testLibrariesUrl() {
-        String expectedUrl = "/ng/test-org/applications/test-app/libraries?expand=manifest,servers,cve";
+        String expectedUrl = "/ng/test-org/applications/test-app/libraries";
 
-        assertEquals(expectedUrl, urlBuilder.getLibrariesUrl(organizationId, applicationId));
+        EnumSet<FilterForm.ExpandValues> expandValues = EnumSet.of(FilterForm.ExpandValues.MANIFEST, FilterForm.ExpandValues.SERVERS, FilterForm.ExpandValues.CVE);
+
+        String[] resultUrl = urlBuilder.getLibrariesUrl(organizationId, applicationId, expandValues).split("\\?");
+
+        assertEquals(expectedUrl, resultUrl[0]);
+
+        List<String> resultParams = Arrays.asList(resultUrl[1].split("=")[1].split(","));
+
+        assertTrue(resultParams.contains(FilterForm.ExpandValues.MANIFEST.toString()));
+        assertTrue(resultParams.contains(FilterForm.ExpandValues.CVE.toString()));
+        assertTrue(resultParams.contains(FilterForm.ExpandValues.SERVERS.toString()));
     }
 
     @Test
     public void testTracesUrl() {
-        String expectedUrl = "/ng/test-org/traces/test-app/filter/tags/empty-tags/search";
+        String expectedUrl = "/ng/test-org/traces/test-app/filter/workflow/00001/search";
 
         assertEquals(expectedUrl, urlBuilder.getTracesUrl(organizationId, applicationId));
     }
 
     @Test
     public void testTracesWithFilterUrl() {
-        String expectedUrl = "/ng/test-org/traces/test-app/filter/tags/empty-tags/search";
+        String expectedUrl = "/ng/test-org/traces/test-app/filter/workflow/00001/search";
 
         assertEquals(expectedUrl, urlBuilder.getTracesWithFilterUrl(organizationId, applicationId, new FilterForm()));
     }

@@ -8,6 +8,15 @@ import java.util.List;
 
 public class FilterForm {
 
+    public enum ExpandValues {
+        VULNS, APPS, MANIFEST, CVE, SERVERS;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+    }
+
     private List<String> expand;
     private int limit;
     private int offset;
@@ -35,6 +44,7 @@ public class FilterForm {
     public void setStatus(String status) {
         this.status = status;
     }
+
     public List<String> getExpand() {
         return expand;
     }
