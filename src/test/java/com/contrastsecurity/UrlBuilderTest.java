@@ -38,7 +38,7 @@ public class UrlBuilderTest {
     public void testApplicationUrl() {
         String expectedUrl = "/ng/test-org/applications/test-app";
 
-        assertEquals(expectedUrl, urlBuilder.getApplicationUrl(organizationId, applicationId));
+        assertEquals(expectedUrl, urlBuilder.getApplicationUrl(organizationId, applicationId, null));
     }
 
     @Test
@@ -59,24 +59,16 @@ public class UrlBuilderTest {
     public void testLibrariesUrl() {
         String expectedUrl = "/ng/test-org/applications/test-app/libraries";
 
-        EnumSet<FilterForm.ExpandValues> expandValues = EnumSet.of(FilterForm.ExpandValues.MANIFEST, FilterForm.ExpandValues.SERVERS, FilterForm.ExpandValues.CVE);
+        String resultUrl = urlBuilder.getLibrariesUrl(organizationId, applicationId, null);
 
-        String[] resultUrl = urlBuilder.getLibrariesUrl(organizationId, applicationId, expandValues).split("\\?");
-
-        assertEquals(expectedUrl, resultUrl[0]);
-
-        List<String> resultParams = Arrays.asList(resultUrl[1].split("=")[1].split(","));
-
-        assertTrue(resultParams.contains(FilterForm.ExpandValues.MANIFEST.toString()));
-        assertTrue(resultParams.contains(FilterForm.ExpandValues.CVE.toString()));
-        assertTrue(resultParams.contains(FilterForm.ExpandValues.SERVERS.toString()));
+        assertEquals(expectedUrl, resultUrl);
     }
 
     @Test
     public void testTracesUrl() {
         String expectedUrl = "/ng/test-org/traces/test-app/filter/workflow/00001/search";
 
-        assertEquals(expectedUrl, urlBuilder.getTracesUrl(organizationId, applicationId));
+        assertEquals(expectedUrl, urlBuilder.getTracesUrl(organizationId, applicationId, null));
     }
 
     @Test

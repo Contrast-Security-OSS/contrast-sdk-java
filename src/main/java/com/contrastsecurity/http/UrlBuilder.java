@@ -20,8 +20,8 @@ public class UrlBuilder {
         return "/ng/profile/organizations";
     }
 
-    public String getApplicationUrl(String organizationId, String appId) {
-        return String.format("/ng/%s/applications/%s", organizationId, appId);
+    public String getApplicationUrl(String organizationId, String appId, EnumSet<FilterForm.ApplicationExpandValues> expandValues) {
+        return String.format("/ng/%s/applications/%s%s", organizationId, appId, buildExpand(expandValues));
     }
 
     public String getApplicationsUrl(String organizationId) {
@@ -32,12 +32,12 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s/coverage", organizationId, appId);
     }
 
-    public String getLibrariesUrl(String organizationId, String appId, EnumSet<FilterForm.ExpandValues> expandValues) {
+    public String getLibrariesUrl(String organizationId, String appId, EnumSet<FilterForm.LibrariesExpandValues> expandValues) {
         return String.format("/ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand(expandValues));
     }
 
-    public String getTracesUrl(String organizationId, String appId) {
-        return String.format("/ng/%s/traces/%s/filter/workflow/00001/search", organizationId, appId);
+    public String getTracesUrl(String organizationId, String appId, EnumSet<FilterForm.TraceExpandValue> expandValues) {
+        return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationId, appId, buildExpand(expandValues));
     }
 
     public String getTracesWithFilterUrl(String organizationalId, String appId, FilterForm form) {
@@ -62,10 +62,18 @@ public class UrlBuilder {
 
     // ----------------- UTILITIES --------------------------
     private String buildExpand(String... values) {
+        if (values == null || values.length == 0) {
+            return "";
+        }
+
         return QUERY_SEPARATOR + EXPAND_PARAM + EQUALS_SEPARATOR + StringUtils.join(values, COMMA_DELIMITER);
     }
 
-    private String buildExpand(EnumSet<FilterForm.ExpandValues> values) {
+    private String buildExpand(EnumSet<?> values) {
+        if (values == null || values.isEmpty()) {
+            return "";
+        }
+
         return QUERY_SEPARATOR + EXPAND_PARAM + EQUALS_SEPARATOR + StringUtils.join(values, COMMA_DELIMITER);
     }
 

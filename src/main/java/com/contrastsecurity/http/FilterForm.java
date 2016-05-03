@@ -10,9 +10,25 @@ import java.util.List;
 
 public class FilterForm {
 
-    public enum ExpandValues {
-        VULNS, APPS, MANIFEST, CVE, SERVERS,
-        SCORE ,TRACE_BREAKDOWN, LICENSE,
+    public enum ApplicationExpandValues {
+        SCORES, TRACE_BREAKDOWN, LICENSE;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+    }
+
+    public enum LibrariesExpandValues {
+        VULNS;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
+    }
+
+    public enum TraceExpandValue {
         CARD, EVENTS, NOTES, REQUEST, APPLICATION;
 
         @Override
@@ -21,7 +37,7 @@ public class FilterForm {
         }
     }
 
-    private EnumSet<ExpandValues> expand;
+    private EnumSet<?> expand;
     private int limit;
     private int offset;
     private Date startDate;
@@ -49,11 +65,11 @@ public class FilterForm {
         this.status = status;
     }
 
-    public EnumSet<ExpandValues> getExpand() {
+    public EnumSet<?> getExpand() {
         return expand;
     }
 
-    public void setExpand(EnumSet<ExpandValues> expand) {
+    public void setExpand(EnumSet<?> expand) {
         this.expand = expand;
     }
 

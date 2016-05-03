@@ -41,7 +41,7 @@ public class FilterFormTest {
 
     @Test
     public void testExpand() {
-        EnumSet<FilterForm.ExpandValues> expand = EnumSet.of(FilterForm.ExpandValues.CVE, FilterForm.ExpandValues.MANIFEST, FilterForm.ExpandValues.APPS);
+        EnumSet<FilterForm.ApplicationExpandValues> expand = EnumSet.of(FilterForm.ApplicationExpandValues.SCORES, FilterForm.ApplicationExpandValues.LICENSE);
 
         filterForm.setExpand(expand);
 
@@ -54,10 +54,10 @@ public class FilterFormTest {
         String expandValues = qs.split("=")[1];
         ArrayList<String> values = new ArrayList<>(Arrays.asList(expandValues.split(",")));
 
-        assertTrue(values.contains("cve"));
-        assertTrue(values.contains("manifest"));
-        assertTrue(values.contains("apps"));
+        assertTrue(values.contains("scores"));
+        assertTrue(values.contains("license"));
 
+        assertFalse(values.contains("apps"));
         assertFalse(values.contains("test"));
         assertFalse(values.contains("libs"));
     }

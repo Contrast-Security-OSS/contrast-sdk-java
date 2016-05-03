@@ -132,11 +132,11 @@ public class ContrastSDK {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Applications getApplication(String organizationId, String appId) throws IOException, UnauthorizedException {
+    public Applications getApplication(String organizationId, String appId, EnumSet<FilterForm.ApplicationExpandValues> expandValues) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(HttpMethod.GET, this.urlBuilder.getApplicationUrl(organizationId, appId));
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getApplicationUrl(organizationId, appId, expandValues));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Applications.class);
@@ -200,7 +200,7 @@ public class ContrastSDK {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Libraries getLibraries(String organizationId, String appId, EnumSet<FilterForm.ExpandValues> expandValues) throws IOException, UnauthorizedException {
+    public Libraries getLibraries(String organizationId, String appId, EnumSet<FilterForm.LibrariesExpandValues> expandValues) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
@@ -223,11 +223,11 @@ public class ContrastSDK {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Traces getTraces(String organizationId, String appId) throws IOException, UnauthorizedException {
+    public Traces getTraces(String organizationId, String appId, EnumSet<FilterForm.TraceExpandValue> expandValues) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesUrl(organizationId, appId));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesUrl(organizationId, appId, expandValues));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Traces.class);
@@ -303,13 +303,14 @@ public class ContrastSDK {
     public static void main(String[] args) throws UnauthorizedException, IOException, ResourceNotFoundException {
         ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
 
-        String orgId = "add-your-org-id";
-        String appId = "add-your-app-id";
+        String orgId = "";
+        String appId = "";
 
         Gson gson = new Gson();
 
+        // System.out.println(gson.toJson(conn.getApplication(orgId, appId, EnumSet.of(FilterForm.ApplicationExpandValues.SCORES, FilterForm.ApplicationExpandValues.TRACE_BREAKDOWN))));
         // System.out.println(UrlBuilder.getInstance().getProfileOrganizations());
-        //System.out.println(gson.toJson(conn.getOrganizations()));
+        // System.out.println(gson.toJson(conn.getOrganizations()));
         // System.out.println(gson.toJson(conn.getApplications(orgId)));
         // System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
         // System.out.println(gson.toJson(conn.getTraces(orgId, appId)));
