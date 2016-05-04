@@ -109,7 +109,7 @@ public class ContrastSDK {
      * @throws IOException           if there was a communication problem
      */
 
-    public Organizations getProfileOrganizations() throws IOException, UnauthorizedException, ResourceNotFoundException {
+    public Organizations getProfileOrganizations() throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
@@ -308,8 +308,10 @@ public class ContrastSDK {
 
         Gson gson = new Gson();
 
+        // Examples
+
         // System.out.println(gson.toJson(conn.getApplication(orgId, appId, EnumSet.of(FilterForm.ApplicationExpandValues.SCORES, FilterForm.ApplicationExpandValues.TRACE_BREAKDOWN))));
-        // System.out.println(UrlBuilder.getInstance().getProfileOrganizations());
+        // System.out.println(gson.toJson(conn.getTraces(orgId, appId, EnumSet.of(FilterForm.TraceExpandValue.CARD, FilterForm.TraceExpandValue.EVENTS))));
         // System.out.println(gson.toJson(conn.getOrganizations()));
         // System.out.println(gson.toJson(conn.getApplications(orgId)));
         // System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));

@@ -43,7 +43,6 @@ public class TraceEvent {
 	 * @return the id of the event
      */
 	public long getEventId() { return eventId; }
-	@SerializedName("event-id")
 	private long eventId;
 
 	/**
@@ -51,26 +50,7 @@ public class TraceEvent {
 	 * @return code context for the event
 	 */
 	private String codeContext;
-	@SerializedName("code-context")
 	public String getCodeContext() { return codeContext; }
-
-	/**
-	 * Return the timestamp of when this event occurred.
-	 * @return the timestamp of when this event occurred
-	 */
-	public String getTimestamp() {
-		return timestamp;
-	}
-	private String timestamp;
-	
-	/**
-	 * Return the name of the thread on which this method invocation occurred.
-	 * @return the name of the thread on which this method invocation occurred
-	 */
-	public String getThread() {
-		return thread;
-	}
-    private String thread;
     
     /**
      * Return the type of event this is, e.g., Creation, P2O, Trigger, etc.
@@ -80,61 +60,4 @@ public class TraceEvent {
 		return type;
 	}
     private String type;
-    
-    /**
-     * Return a proprietary bitset value for markup on any data flow evidence
-     * in this event.
-     * @return a proprietary bitset value for markup purposes
-     */
-    public String getBitset() {
-		return bitset;
-	}
-    private String bitset;
-    
-    /**
-     * Return the method signature of this method invocation.
-     * @return the method signature of this method invocation
-     */
-    public String getSignature() {
-		return signature;
-	}
-    private String signature;
-    
-    /**
-     * The 'this' in the method invocation. In a static call, this will
-     * be the string 'null'.
-     * 
-     * @return the String value of "this" in the event
-     */
-    public CodeObject getObject() {
-		return object;
-	}
-    private CodeObject object;
-    
-    /**
-     * The method parameters in the method invocation.
-     * @return method parameters in a method invocation
-     */
-    public List<CodeObject> getArguments() {
-		return arguments;
-	}
-    private List<CodeObject> arguments;
-    
-    /**
-     * The return value of the method invocation.
-     * @return
-     */
-    public CodeObject getReturnValue() {
-		return returnValue;
-	}
-    private CodeObject returnValue;
-    
-    /**
-     * The stack trace at the time of this method invocation.
-     * @return stack trace at the time of this method invocation
-     */
-    public List<String> getStackTrace() {
-		return stackTrace;
-	}
-    private List<String> stackTrace;
 }

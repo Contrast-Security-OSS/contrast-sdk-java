@@ -233,9 +233,19 @@ public class Trace {
 	public boolean getVisible() { return visible; }
 	private boolean visible;
 
-	// TODO event
-	// TODO card
-	// TODO notes?
+	/**
+	 * Return the notes for the trace
+	 * @return list of TraceNote's
+	 */
+	public List<TraceNote> getTraceNotes() { return notes; }
+	private List<TraceNote> notes;
+
+	/**
+	 * Return the card for the trace
+	 * @return Card Object
+	 */
+	public Card getCard() { return card; }
+	private Card card;
 
 
 }
