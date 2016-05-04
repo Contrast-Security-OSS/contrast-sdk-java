@@ -288,19 +288,20 @@ public class ContrastSDK {
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
      * @param ruleId         the rule ID to filter on
+     * @param form           FilterForm query parameters
      * @return Traces object that contains the list of Trace's
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Filters<TraceFilter> getTraceFilterByRule(String organizationId, String appId, String ruleId) throws IOException, UnauthorizedException {
+    public Traces getTraceFilterByRule(String organizationId, String appId, String ruleId, FilterForm form) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
 
         try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesByRule(organizationId, appId, ruleId));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesByRule(organizationId, appId, ruleId, form));
             reader = new InputStreamReader(is);
 
-            return this.gson.fromJson(reader, Filters.class);
+            return this.gson.fromJson(reader, Traces.class);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
@@ -349,13 +350,14 @@ public class ContrastSDK {
         ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
 
         String orgId = conn.getProfileDefaultOrganizations().getOrganization().getOrgUuid();
+        // String orgId = "";
         String appId = "";
 
         Gson gson = new Gson();
 
-
         // Examples
         // System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, "insecure-auth-protocol")));
+        // System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, "reflected-xss", null)));
         // System.out.println(gson.toJson(conn.getApplication(orgId, appId, EnumSet.of(FilterForm.ApplicationExpandValues.SCORES, FilterForm.ApplicationExpandValues.TRACE_BREAKDOWN))));
         // System.out.println(gson.toJson(conn.getTraces(orgId, appId, EnumSet.of(FilterForm.TraceExpandValue.CARD, FilterForm.TraceExpandValue.EVENTS))));
         // System.out.println(gson.toJson(conn.getProfileDefaultOrganizations()));

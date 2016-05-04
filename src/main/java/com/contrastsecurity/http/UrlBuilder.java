@@ -45,11 +45,13 @@ public class UrlBuilder {
     }
 
     public String getTracesWithFilterUrl(String organizationId, String appId, FilterForm form) {
-        return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationId, appId, form.toString());
+        String formString = form == null ? "" : form.toString();
+        return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationId, appId, formString);
     }
 
-    public String getTracesByRule(String organizationId, String appId, String ruleId) {
-        return String.format("/ng/%s/traces/%s/filter/vulntype/%s/severities", organizationId, appId, ruleId);
+    public String getTracesByRule(String organizationId, String appId, String ruleId, FilterForm form) {
+        String formString = form == null ? "" : form.toString();
+        return String.format("/ng/%s/traces/%s/filter/vulntype/%s/search%s", organizationId, appId, ruleId, formString);
     }
 
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {
