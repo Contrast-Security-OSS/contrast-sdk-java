@@ -40,8 +40,12 @@ public class UrlBuilder {
         return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationId, appId, buildExpand(expandValues));
     }
 
-    public String getTracesWithFilterUrl(String organizationalId, String appId, FilterForm form) {
-        return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationalId, appId, form.toString());
+    public String getTracesWithFilterUrl(String organizationId, String appId, FilterForm form) {
+        return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationId, appId, form.toString());
+    }
+
+    public String getTracesByRule(String organizationId, String appId, String ruleId) {
+        return String.format("/ng/%s/traces/%s/filter/vulntype/%s/severities", organizationId, appId, ruleId);
     }
 
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {
