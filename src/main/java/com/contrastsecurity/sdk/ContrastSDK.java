@@ -272,7 +272,7 @@ public class ContrastSDK {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Filters<TraceFilter> getTraceFilterByRule(String organizationId, String appId, String ruleId) throws IOException, UnauthorizedException {
+    public Traces getTraceFilterByRule(String organizationId, String appId, String ruleId) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
 
@@ -280,7 +280,7 @@ public class ContrastSDK {
             is = makeRequest(HttpMethod.GET, urlBuilder.getTracesByRule(organizationId, appId, ruleId));
             reader = new InputStreamReader(is);
 
-            return this.gson.fromJson(reader, Filters.class);
+            return this.gson.fromJson(reader, Traces.class);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
@@ -328,14 +328,13 @@ public class ContrastSDK {
     public static void main(String[] args) throws UnauthorizedException, IOException, ResourceNotFoundException {
         ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
 
-        String orgId = "936a8014-10d5-4c76-bc96-6f710dbfcc8b";
-        String appId = "3da856f4-c508-48b8-95a9-514eddefcbf3";
+        String orgId = "";
+        String appId = "";
 
         Gson gson = new Gson();
 
         // Examples
-        System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, "insecure-auth-protocol")));
-
+//        System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, "reflected-xss")));
         // System.out.println(gson.toJson(conn.getApplication(orgId, appId, EnumSet.of(FilterForm.ApplicationExpandValues.SCORES, FilterForm.ApplicationExpandValues.TRACE_BREAKDOWN))));
         // System.out.println(gson.toJson(conn.getTraces(orgId, appId, EnumSet.of(FilterForm.TraceExpandValue.CARD, FilterForm.TraceExpandValue.EVENTS))));
         // System.out.println(gson.toJson(conn.getOrganizations()));

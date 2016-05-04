@@ -45,7 +45,7 @@ public class UrlBuilder {
     }
 
     public String getTracesByRule(String organizationId, String appId, String ruleId) {
-        return String.format("/ng/%s/traces/%s/filter/vulntype/%s/severities", organizationId, appId, ruleId);
+        return String.format("/ng/%s/traces/%s/filter/vulntype/%s/search", organizationId, appId, ruleId);
     }
 
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {
