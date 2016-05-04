@@ -108,12 +108,32 @@ public class ContrastSDK {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-
     public Organizations getProfileOrganizations() throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
             is = makeRequest(HttpMethod.GET, this.urlBuilder.getProfileOrganizationsUrl());
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, Organizations.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    /**
+     * Get the default organization for the user profile.
+     *
+     * @return Organization object with the default Organizaiton.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public Organizations getProfileDefaultOrganizations() throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getProfileDefaultOrganizationUrl());
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Organizations.class);
@@ -328,17 +348,17 @@ public class ContrastSDK {
     public static void main(String[] args) throws UnauthorizedException, IOException, ResourceNotFoundException {
         ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
 
-        String orgId = "936a8014-10d5-4c76-bc96-6f710dbfcc8b";
-        String appId = "3da856f4-c508-48b8-95a9-514eddefcbf3";
+        String orgId = conn.getProfileDefaultOrganizations().getOrganization().getOrgUuid();
+        String appId = "";
 
         Gson gson = new Gson();
 
-        // Examples
-        System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, "insecure-auth-protocol")));
 
+        // Examples
+        // System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, "insecure-auth-protocol")));
         // System.out.println(gson.toJson(conn.getApplication(orgId, appId, EnumSet.of(FilterForm.ApplicationExpandValues.SCORES, FilterForm.ApplicationExpandValues.TRACE_BREAKDOWN))));
         // System.out.println(gson.toJson(conn.getTraces(orgId, appId, EnumSet.of(FilterForm.TraceExpandValue.CARD, FilterForm.TraceExpandValue.EVENTS))));
-        // System.out.println(gson.toJson(conn.getOrganizations()));
+        // System.out.println(gson.toJson(conn.getProfileDefaultOrganizations()));
         // System.out.println(gson.toJson(conn.getApplications(orgId)));
         // System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
         // System.out.println(gson.toJson(conn.getTraces(orgId, appId)));

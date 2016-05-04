@@ -20,6 +20,10 @@ public class UrlBuilder {
         return "/ng/profile/organizations";
     }
 
+    public String getProfileDefaultOrganizationUrl() {
+        return "/ng/profile/organizations/default";
+    }
+
     public String getApplicationUrl(String organizationId, String appId, EnumSet<FilterForm.ApplicationExpandValues> expandValues) {
         return String.format("/ng/%s/applications/%s%s", organizationId, appId, buildExpand(expandValues));
     }
