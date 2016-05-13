@@ -142,6 +142,10 @@ public class ContrastSDK {
             IOUtils.closeQuietly(is);
         }
     }
+    
+    public Applications getApplication(String organizationId, String appId) throws IOException, UnauthorizedException {
+        return getApplication(organizationId, appId, null);
+    }
 
     /**
      * Get summary information about a single app.
@@ -209,6 +213,10 @@ public class ContrastSDK {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
         }
+    }
+    
+    public Libraries getLibraries(String organizationId, String appId) throws IOException, UnauthorizedException {
+        return getLibraries(organizationId, appId, null);
     }
 
     /**
