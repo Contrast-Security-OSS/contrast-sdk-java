@@ -264,6 +264,28 @@ public class ContrastSDK {
             IOUtils.closeQuietly(reader);
         }
     }
+    /**
+     * Get the listing for the traces in the application.
+     *
+     * @param organizationId the ID of the organization
+     * @param appId          the ID of the application
+     * @return TraceListing object that contains the trace listings for the application
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public TraceListing getTraceListing(String organizationId, String appId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTraceListingUrl(organizationId, appId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, TraceListing.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
 
     /**
      * Get the vulnerabilities in the application whose ID is passed in with a filter.
@@ -373,6 +395,7 @@ public class ContrastSDK {
         // System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
         // System.out.println(gson.toJson(conn.getTraces(orgId, appId)));
         // System.out.println(gson.toJson(conn.getLibraries(orgId, appId)));
+        // System.out.println(gson.toJson(conn.getTraceListing(orgId, appId)));
         // FileUtils.writeByteArrayToFile(new File("contrast.jar"), conn.getAgent(AgentType.JAVA, orgId));
     }
 

@@ -44,6 +44,10 @@ public class UrlBuilder {
         return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationId, appId, buildExpand(expandValues));
     }
 
+    public String getTraceListingUrl(String organizationId, String appId) {
+        return String.format("/ng/%s/traces/%s/filter/vulntype/listing", organizationId, appId);
+    }
+
     public String getTracesWithFilterUrl(String organizationId, String appId, FilterForm form) {
         String formString = form == null ? "" : form.toString();
         return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationId, appId, formString);
