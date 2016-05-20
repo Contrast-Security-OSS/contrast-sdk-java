@@ -339,6 +339,29 @@ public class ContrastSDK {
     }
 
     /**
+     * Get the rules for an organization
+     *
+     * @param organizationId the ID of the organization
+     * @return Traces object that contains the list of Trace's
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public Rules getRules(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getRules(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, Rules.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
      * Download a contrast.jar agent associated with this account. The user should save
      * this byte array to a file named 'contrast.jar'. This signature takes a parameter
      * which contains the name of the saved engine profile to download.
@@ -386,6 +409,7 @@ public class ContrastSDK {
         Gson gson = new Gson();
 
         // Examples
+        // System.out.println(gson.toJson(conn.getRules(orgId)));
         // System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, "insecure-auth-protocol")));
         // System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, "reflected-xss", null)));
         // System.out.println(gson.toJson(conn.getApplication(orgId, appId, EnumSet.of(FilterForm.ApplicationExpandValues.SCORES, FilterForm.ApplicationExpandValues.TRACE_BREAKDOWN))));

@@ -58,6 +58,10 @@ public class UrlBuilder {
         return String.format("/ng/%s/traces/%s/filter/vulntype/%s/search%s", organizationId, appId, ruleId, formString);
     }
 
+    public String getRules(String organizationId) {
+        return String.format("/ng/%s/rules", organizationId);
+    }
+
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {
         String url = "";
 
