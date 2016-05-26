@@ -30,10 +30,7 @@ package com.contrastsecurity.sdk;
 
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
-import com.contrastsecurity.http.FilterForm;
-import com.contrastsecurity.http.HttpMethod;
-import com.contrastsecurity.http.RequestConstants;
-import com.contrastsecurity.http.UrlBuilder;
+import com.contrastsecurity.http.*;
 import com.contrastsecurity.models.*;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.google.gson.Gson;
@@ -243,6 +240,50 @@ public class ContrastSDK {
     }
 
     /**
+     * Return the servers of the monitored Contrast application.
+     *
+     * @param organizationId the ID of the organization
+     * @return Servers object that contains the list of Library objects
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public Servers getServers(String organizationId, ServerFilterForm filterForm) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getServersUrl(organizationId, filterForm));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, Servers.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Return the servers of the monitored Contrast application.
+     *
+     * @param organizationId the ID of the organization
+     * @return Servers object that contains the list of Library objects
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public Servers getServersWithFilter(String organizationId, ServerFilterForm filterForm) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getServersFilterUrl(organizationId, filterForm));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, Servers.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
      * Get the vulnerabilities in the application whose ID is passed in.
      *
      * @param organizationId the ID of the organization
@@ -313,6 +354,33 @@ public class ContrastSDK {
     }
 
     /**
+     * Get the vulnerabilities in the application whose ID is passed in with a filter.
+     *
+     * @param organizationId  the ID of the organization
+     * @param appId           the ID of the application
+     * @param traceFilterType filter type
+     * @param keycode         id or key to filter on
+     * @param form            FilterForm query parameters
+     * @return Traces object that contains the list of Trace's
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public Traces getTracesWithFilter(String organizationId, String appId, String traceFilterType, String keycode, FilterForm form) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesWithFilterUrl(organizationId, appId, traceFilterType, keycode, form));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, Traces.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
      * Get the vulnerabilities in the application by the rule.
      *
      * @param organizationId the ID of the organization
@@ -341,7 +409,7 @@ public class ContrastSDK {
     /**
      * Get the rules for an organization
      *
-     * @param organizationId the ID of the organization
+     * @param  organizationId the ID of the organization
      * @return Traces object that contains the list of Trace's
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem

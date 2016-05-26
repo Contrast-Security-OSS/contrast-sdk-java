@@ -61,6 +61,17 @@ public class Server {
     private String name;
 
     /**
+     * Return the hostname of this server.
+     *
+     * @return the hostname of this server
+     */
+    public String getHostname() {
+        return hostname;
+    }
+
+    private String hostname;
+
+    /**
      * Return the last time this server was restarted.
      *
      * @return the epoch time of the last server restart
@@ -280,4 +291,26 @@ public class Server {
 
     private boolean noPending;
 
+    /**
+     * Return if the server has assess sensors
+     *
+     * @return assess sensors
+     */
+    public boolean getAssessSensors() {
+        return assessSensors;
+    }
+
+    private boolean assessSensors;
+
+    /**
+     * Return the last assess update for this server
+     *
+     * @return last assess update
+     */
+    public long getAssessLastUpdate() {
+        return assessLastUpdate;
+    }
+
+    @SerializedName("assess_last_update")
+    private long assessLastUpdate;
 }
