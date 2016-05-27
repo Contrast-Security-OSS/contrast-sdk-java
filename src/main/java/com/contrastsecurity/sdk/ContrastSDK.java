@@ -477,6 +477,7 @@ public class ContrastSDK {
         Gson gson = new Gson();
 
         // Examples
+        // System.out.println(gson.toJson(conn.getServers(orgId, null)));
         // System.out.println(gson.toJson(conn.getRules(orgId)));
         // System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, "insecure-auth-protocol")));
         // System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, "reflected-xss", null)));
