@@ -9,7 +9,7 @@ public class Rules {
         return rules;
     }
 
-    private class Rule {
+    public class Rule {
         private String description;
         private String title;
         private String category;
