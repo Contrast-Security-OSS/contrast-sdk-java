@@ -248,4 +248,19 @@ public class Trace {
 	private Card card;
 
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Trace trace = (Trace) o;
+
+		return uuid != null ? uuid.equals(trace.uuid) : trace.uuid == null;
+
+	}
+
+	@Override
+	public int hashCode() {
+		return uuid != null ? uuid.hashCode() : 0;
+	}
 }
