@@ -40,8 +40,22 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand(expandValues));
     }
 
+    public String getServersUrl(String organizationId, FilterForm form) {
+        String formString = form == null ? "" : form.toString();
+        return String.format("/ng/%s/servers%s", organizationId, formString);
+    }
+
+    public String getServersFilterUrl(String organizationId, FilterForm form) {
+        String formString = form == null ? "" : form.toString();
+        return String.format("/ng/%s/servers/filter%s", organizationId, formString);
+    }
+
     public String getTracesUrl(String organizationId, String appId, EnumSet<FilterForm.TraceExpandValue> expandValues) {
         return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationId, appId, buildExpand(expandValues));
+    }
+
+    public String getTraceListingUrl(String organizationId, String appId) {
+        return String.format("/ng/%s/traces/%s/filter/vulntype/listing", organizationId, appId);
     }
 
     public String getTracesWithFilterUrl(String organizationId, String appId, FilterForm form) {
@@ -49,9 +63,18 @@ public class UrlBuilder {
         return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationId, appId, formString);
     }
 
+    public String getTracesWithFilterUrl(String organizationId, String appId, String traceFilterType, String keycode, FilterForm form) {
+        String formString = form == null ? "" : form.toString();
+        return String.format("/ng/%s/traces/%s/filter/%s/%s/search%s", organizationId, appId, traceFilterType, keycode, formString);
+    }
+
     public String getTracesByRule(String organizationId, String appId, String ruleId, FilterForm form) {
         String formString = form == null ? "" : form.toString();
         return String.format("/ng/%s/traces/%s/filter/vulntype/%s/search%s", organizationId, appId, ruleId, formString);
+    }
+
+    public String getRules(String organizationId) {
+        return String.format("/ng/%s/rules", organizationId);
     }
 
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {

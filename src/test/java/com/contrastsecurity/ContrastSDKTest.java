@@ -3,6 +3,8 @@ package com.contrastsecurity;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.models.Applications;
+import com.contrastsecurity.models.Rules;
+import com.contrastsecurity.models.Servers;
 import com.contrastsecurity.models.Traces;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.google.gson.Gson;
@@ -20,7 +22,7 @@ public class ContrastSDKTest extends ContrastSDK {
 
     @BeforeClass
     public static void setUp() {
-        contrastSDK = new ContrastSDK("contrast_admin", "demo", "demo", "http://localhost:19080/Contrast/api");
+        contrastSDK = new ContrastSDK("test_user", "testApiKey", "testServiceKey", "http://localhost:19080/Contrast/api");
         gson = new Gson();
     }
 
@@ -64,4 +66,27 @@ public class ContrastSDKTest extends ContrastSDK {
         assertTrue(traces.getCount() > 0);
     }
 
+
+    @Test
+    public void getGetRules() throws UnauthorizedException, IOException, ResourceNotFoundException {
+
+        String rulesString = "{\"rules\":[{\"description\":\"Verifies that caching controls are used to protect application content.\",\"title\":\"Anti-Caching Controls Missing\",\"category\":\"Caching\",\"impact\":\"Low\",\"likelihood\":\"Low\",\"enabled\":\"true\",\"cwe\":\"http://cwe.mitre.org/data/definitions/525.html\",\"owasp\":\"https://www.owasp.org/index.php/Testing_for_Logout_and_Browser_Cache_Management_(OWASP-AT-007)\",\"confidence\":\"Low\",\"severity\":\"Note\",\"serviceLevel\":\"Enterprise\",\"references\":[],\"free\":false,\"name\":\"cache-controls-missing\"},{\"description\":\"Verifies that cookies have the \\u0027secure\\u0027 flag.\",\"title\":\"Application Disables \\u0027secure\\u0027 Flag on Cookies\",\"category\":\"Secure Communications\",\"impact\":\"Low\",\"likelihood\":\"High\",\"enabled\":\"true\",\"cwe\":\"http://cwe.mitre.org/data/definitions/614.html\",\"owasp\":\"http://www.owasp.org/index.php/SecureFlag\",\"confidence\":\"High\",\"severity\":\"Medium\",\"serviceLevel\":\"Enterprise\",\"references\":[\"https://www.owasp.org/index.php/Top_10_2013-A2-Broken_Authentication_and_Session_Management\"],\"free\":false,\"name\":\"cookie-flags-missing\"},{\"description\":\"Verifies that no untrusted data is used to build a path used in forwards.\",\"title\":\"Arbitrary Server Side Forwards\",\"category\":\"Access Control\",\"impact\":\"High\",\"likelihood\":\"Medium\",\"enabled\":\"true\",\"cwe\":\"http://cwe.mitre.org/data/definitions/22.html\",\"owasp\":\"https://www.owasp.org/index.php/Top_10_2013-A10-Unvalidated_Redirects_and_Forwards\",\"confidence\":\"High\",\"severity\":\"High\",\"serviceLevel\":\"Enterprise\",\"references\":[\"https://www.owasp.org/index.php/Top_10_2013-A10-Unvalidated_Redirects_and_Forwards\",\"https://blog.gdssecurity.com/labs/2011/9/9/net-servertransfer-vs-responseredirect-reiterating-a-securit.html\"],\"free\":false,\"name\":\"unvalidated-forward\"},{\"description\":\"Verifies that the application\\u0027s authorization rules do not include an allow all user rule before a deny rule.\",\"title\":\"Authorization Rules Misordered\",\"category\":\"Access Control\",\"impact\":\"Medium\",\"likelihood\":\"Medium\",\"enabled\":\"true\",\"cwe\":\"https://cwe.mitre.org/data/definitions/284.html\",\"owasp\":\"https://www.owasp.org/index.php/Top_10_2013-A5-Security_Misconfiguration\",\"confidence\":\"Medium\",\"severity\":\"Medium\",\"serviceLevel\":\"Enterprise\",\"references\":[\"http://msdn.microsoft.com/en-us/library/system.web.configuration.authorizationsection.aspx\"],\"free\":false,\"name\":\"authorization-rules-misordered\"},{\"description\":\"Verifies that the application\\u0027s authorization rules include a deny rule.\",\"title\":\"Authorization Rules Missing Deny Rule\",\"category\":\"Access Control\",\"impact\":\"Medium\",\"likelihood\":\"Medium\",\"enabled\":\"true\",\"cwe\":\"http://cwe.mitre.org/data/definitions/294.html\",\"owasp\":\"https://www.owasp.org/index.php/Top_10_2013-A5-Security_Misconfiguration\",\"confidence\":\"Medium\",\"severity\":\"Medium\",\"serviceLevel\":\"Enterprise\",\"references\":[\"http://msdn.microsoft.com/en-us/library/system.web.configuration.authorizationsection.aspx\"],\"free\":false,\"name\":\"authorization-missing-deny\"}]}";
+
+        Rules rules = gson.fromJson(rulesString, Rules.class);
+
+        assertNotNull(rules);
+        assertNotNull(rules.getRules());
+    }
+
+
+    @Test
+    public void getServers() throws UnauthorizedException, IOException, ResourceNotFoundException {
+
+        String serversString = "{\"servers\":[{\"server_id\":2,\"name\":\"test_name\",\"hostname\":\"test_hostname\",\"last_startup\":1464286620000,\"last_trace_received\":0,\"last_activity\":1464286980000,\"num_apps\":0,\"path\":\"/Users/test/\",\"status\":\"ONLINE\",\"type\":\"Apache Tomcat 7.0.65\",\"agent_version\":\"3.2.8\",\"assess\":true,\"assessPending\":false,\"defend\":false,\"defendPending\":false,\"container\":\"tomcat\",\"environment\":1,\"logEnhancerPending\":false,\"logLevel\":\"ERROR\",\"noPending\":true,\"assessSensors\":false,\"assess_last_update\":1464188870000},{\"server_id\":1,\"name\":\"test_name_2\",\"hostname\":\"test_host_name_2\",\"last_startup\":1464189060000,\"last_trace_received\":0,\"last_activity\":1464189120000,\"num_apps\":0,\"path\":\"/Users/justinleo/Jar-WebGoat/\",\"status\":\"OFFLINE\",\"type\":\"Apache Tomcat 7.0.59\",\"agent_version\":\"3.2.8\",\"assess\":true,\"assessPending\":false,\"defend\":false,\"defendPending\":false,\"container\":\"other\",\"environment\":1,\"logEnhancerPending\":false,\"logLevel\":\"ERROR\",\"noPending\":true,\"assessSensors\":false,\"assess_last_update\":1463779837000}]}";
+
+        Servers servers = gson.fromJson(serversString, Servers.class);
+
+        assertNotNull(servers);
+        assertNotNull(servers.getServers());
+    }
 }
