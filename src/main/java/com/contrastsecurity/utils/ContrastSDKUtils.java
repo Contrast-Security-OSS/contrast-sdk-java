@@ -1,17 +1,17 @@
 package com.contrastsecurity.utils;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.CharEncoding;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.xml.bind.DatatypeConverter;
 
 public class ContrastSDKUtils {
 
     public static String makeAuthorizationToken(String username, String serviceKey) throws IOException {
         String token = username + ":" + serviceKey;
-        return Base64.encodeBase64String(token.getBytes(CharEncoding.US_ASCII)).trim();
+
+        return DatatypeConverter.printBase64Binary(token.getBytes()).trim();
     }
 
     public static void validateUrl(String url) throws IllegalArgumentException {
