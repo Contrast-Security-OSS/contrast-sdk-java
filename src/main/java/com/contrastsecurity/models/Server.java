@@ -240,11 +240,11 @@ public class Server {
      *
      * @return the int representation of the serverenvironment type
      */
-    public int getEnvironment() {
+    public String getEnvironment() {
         return environment;
     }
 
-    private int environment;
+    private String environment;
 
     /**
      * Return Is server changing Log Enhancers on restart
