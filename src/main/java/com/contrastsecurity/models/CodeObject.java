@@ -29,7 +29,8 @@
 
 package com.contrastsecurity.models;
 
-import org.apache.commons.codec.binary.Base64;
+
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * Represents a primitive/object in a method invocation. The parameters,
@@ -61,7 +62,7 @@ public class CodeObject {
      * @return the value of the object
      */
     public String getValue() {
-        return new String(Base64.decodeBase64(value));
+        return DatatypeConverter.printBase64Binary(value.getBytes()).trim();
     }
     private String value;
 }
