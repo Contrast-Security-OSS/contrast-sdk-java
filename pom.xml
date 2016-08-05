@@ -60,6 +60,12 @@
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -93,5 +99,10 @@
         </plugins>
     </build>
 
+
+    <properties>
+        <localTeamServerUrl>http://localhost:19080/Contrast/api</localTeamServerUrl>
+        <stagingTeamServerUrl>http://teamserver-330.internal.contsec.com/Contrast/api</stagingTeamServerUrl>
+    </properties>
 
 </project>
