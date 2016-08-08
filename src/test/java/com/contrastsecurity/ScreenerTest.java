@@ -49,6 +49,20 @@ public class ScreenerTest {
     }
 
     @Test
+    public void testGetProfileOrganizations() throws IOException, UnauthorizedException {
+        Organizations organizations = contrastSDK.getProfileOrganizations();
+
+        assertTrue(!organizations.getOrganizations().isEmpty());
+    }
+
+    @Test
+    public void testGetProfileDefaultOrganization() throws IOException, UnauthorizedException {
+        Organizations organizations = contrastSDK.getProfileDefaultOrganizations();
+
+        assertTrue(organizations.getOrganization().getName() != null);
+    }
+
+    @Test
     public void testGetApplications() throws IOException, UnauthorizedException {
         String orgId = properties.getProperty("orgId");
 
