@@ -29,7 +29,7 @@ public class FilterForm {
     }
 
     public enum TraceExpandValue {
-        CARD, EVENTS, NOTES, REQUEST, APPLICATION;
+        CARD, EVENTS, NOTES, REQUEST, APPLICATION, SERVERS;
 
         @Override
         public String toString() {

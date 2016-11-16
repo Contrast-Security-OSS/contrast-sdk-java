@@ -3,14 +3,16 @@ package com.contrastsecurity.http;
 import com.contrastsecurity.models.AgentType;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.*;
-import java.util.logging.Filter;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.List;
 
 public class UrlBuilder {
 
     private static UrlBuilder instance = new UrlBuilder();
 
-    private UrlBuilder() {}
+    private UrlBuilder() {
+    }
 
     public static UrlBuilder getInstance() {
         return instance;
@@ -50,27 +52,22 @@ public class UrlBuilder {
         return String.format("/ng/%s/servers/filter%s", organizationId, formString);
     }
 
-    public String getTracesUrl(String organizationId, String appId, EnumSet<FilterForm.TraceExpandValue> expandValues) {
+    public String getAllTracesUrl(String organizationId, String appId, EnumSet<FilterForm.TraceExpandValue> expandValues) {
         return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationId, appId, buildExpand(expandValues));
     }
 
-    public String getTraceListingUrl(String organizationId, String appId) {
-        return String.format("/ng/%s/traces/%s/filter/vulntype/listing", organizationId, appId);
+    public String getTracesByApplicationUrl(String organizationId, String appId, TraceFilterForm form) {
+        String formString = form == null ? "" : form.toString();
+        return String.format("/ng/%s/traces/%s/filter/%s", organizationId, appId, formString);
     }
 
-    public String getTracesWithFilterUrl(String organizationId, String appId, FilterForm form) {
-        String formString = form == null ? "" : form.toString();
-        return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationId, appId, formString);
+    public String getTraceListingUrl(String organizationId, String appId, TraceFilterType traceFilterType) {
+        return String.format("/ng/%s/traces/%s/filter/%s/listing", organizationId, appId, traceFilterType.toString());
     }
 
-    public String getTracesWithFilterUrl(String organizationId, String appId, String traceFilterType, String keycode, FilterForm form) {
+    public String getTracesWithFilterUrl(String organizationId, String appId, TraceFilterType traceFilterType, TraceFilterKeycode traceFilterKeycode, TraceFilterForm form) {
         String formString = form == null ? "" : form.toString();
-        return String.format("/ng/%s/traces/%s/filter/%s/%s/search%s", organizationId, appId, traceFilterType, keycode, formString);
-    }
-
-    public String getTracesByRule(String organizationId, String appId, String ruleId, FilterForm form) {
-        String formString = form == null ? "" : form.toString();
-        return String.format("/ng/%s/traces/%s/filter/vulntype/%s/search%s", organizationId, appId, ruleId, formString);
+        return String.format("/ng/%s/traces/%s/filter/%s/%s/search%s", organizationId, appId, traceFilterType.toString(), traceFilterKeycode.toString(), formString);
     }
 
     public String getRules(String organizationId) {
