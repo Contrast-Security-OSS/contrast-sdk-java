@@ -7,6 +7,12 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
+import static com.contrastsecurity.http.RequestConstants.COMMA_DELIMITER;
+import static com.contrastsecurity.http.RequestConstants.EQUALS_SEPARATOR;
+import static com.contrastsecurity.http.RequestConstants.EXPAND_PARAM;
+import static com.contrastsecurity.http.RequestConstants.QUERY_SEPARATOR;
+import static com.contrastsecurity.utils.ContrastSDKUtils.buildExpand;
+
 public class UrlBuilder {
 
     private static UrlBuilder instance = new UrlBuilder();
@@ -89,34 +95,4 @@ public class UrlBuilder {
 
         return url;
     }
-
-    // ----------------- UTILITIES --------------------------
-    private String buildExpand(String... values) {
-        if (values == null || values.length == 0) {
-            return "";
-        }
-
-        return QUERY_SEPARATOR + EXPAND_PARAM + EQUALS_SEPARATOR + StringUtils.join(values, COMMA_DELIMITER);
-    }
-
-    private String buildExpand(EnumSet<?> values) {
-        if (values == null || values.isEmpty()) {
-            return "";
-        }
-
-        return QUERY_SEPARATOR + EXPAND_PARAM + EQUALS_SEPARATOR + StringUtils.join(values, COMMA_DELIMITER);
-    }
-
-    public static List<String> getSeverityList(String severity) {
-        return SEVERITIES.subList(SEVERITIES.indexOf(severity), SEVERITIES.size());
-    }
-
-    private static final String EXPAND_PARAM = "expand";
-
-    private static final String COMMA_DELIMITER = ",";
-    private static final String QUERY_SEPARATOR = "?";
-    private static final String EQUALS_SEPARATOR = "=";
-    private static final String AND_SEPARATOR = "&";
-
-    public static final List<String> SEVERITIES = Arrays.asList("Note", "Low", "Medium", "High", "Critical");
 }
