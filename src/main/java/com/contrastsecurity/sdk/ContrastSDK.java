@@ -471,7 +471,6 @@ public class ContrastSDK {
         ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
 
         String orgId = conn.getProfileDefaultOrganizations().getOrganization().getOrgUuid();
-        // String orgId = "";
         String appId = "";
 
         Gson gson = new Gson();

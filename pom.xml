@@ -11,7 +11,7 @@
 
     <groupId>com.contrastsecurity</groupId>
     <artifactId>contrast-sdk-java</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.2-SNAPSHOT</version>
 
     <name>Contrast Java SDK</name>
     <description>SDK for accessing and using the Contrast TeamServer REST API in Java</description>
@@ -72,6 +72,11 @@
             <version>1.10.19</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.10</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -117,7 +122,7 @@
 
     <properties>
         <localTeamServerUrl>http://localhost:19080/Contrast/api</localTeamServerUrl>
-        <stagingTeamServerUrl>http://teamserver-330.internal.contsec.com/Contrast/api</stagingTeamServerUrl>
+        <stagingTeamServerUrl>http://teamserver-334.internal.contsec.com/Contrast/api</stagingTeamServerUrl>
     </properties>
 
 </project>
