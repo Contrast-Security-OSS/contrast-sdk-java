@@ -479,11 +479,13 @@ public class ContrastSDK {
     public static void main(String[] args) throws UnauthorizedException, IOException, ResourceNotFoundException {
         ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
 
-        String orgId = conn.getProfileDefaultOrganizations().getOrganization().getOrgUuid();
+        //String orgId = conn.getProfileDefaultOrganizations().getOrganization().getOrgUuid();
         // String orgId = "";
         String appId = "";
 
         Gson gson = new Gson();
+
+        System.out.println(gson.toJson(conn.getProfileOrganizations()));
 
         // Examples
         // System.out.println(gson.toJson(conn.getServers(orgId, null)));

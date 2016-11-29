@@ -64,7 +64,7 @@ public class UrlBuilderTest {
         assertEquals(expectedUrl, resultUrl);
     }
 
-    @Test
+/*    @Test
     public void testTracesUrl() {
         String expectedUrl = "/ng/test-org/traces/test-app/filter/workflow/00001/search";
 
@@ -76,7 +76,7 @@ public class UrlBuilderTest {
         String expectedUrl = "/ng/test-org/traces/test-app/filter/workflow/00001/search";
 
         assertEquals(expectedUrl, urlBuilder.getTracesWithFilterUrl(organizationId, applicationId, new FilterForm()));
-    }
+    }*/
 
     @Test
     public void testAgentUrls() {
