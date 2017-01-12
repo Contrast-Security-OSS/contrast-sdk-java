@@ -1,5 +1,6 @@
 package com.contrastsecurity.utils;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
@@ -9,8 +10,6 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
-import javax.xml.bind.DatatypeConverter;
-
 import static com.contrastsecurity.http.RequestConstants.COMMA_DELIMITER;
 import static com.contrastsecurity.http.RequestConstants.EQUALS_SEPARATOR;
 import static com.contrastsecurity.http.RequestConstants.EXPAND_PARAM;
@@ -19,9 +18,9 @@ import static com.contrastsecurity.http.RequestConstants.QUERY_SEPARATOR;
 public class ContrastSDKUtils {
 
     public static String makeAuthorizationToken(String username, String serviceKey) throws IOException {
-        String token = username + ":" + serviceKey;
+        String token = username.trim() + ":" + serviceKey.trim();
 
-        return DatatypeConverter.printBase64Binary(token.getBytes()).trim();
+        return Base64.encodeBase64String(token.trim().getBytes("UTF-8")).trim();
     }
 
     public static void validateUrl(String url) throws IllegalArgumentException {
