@@ -1,8 +1,13 @@
 package com.contrastsecurity;
 
 import com.contrastsecurity.exceptions.UnauthorizedException;
-import com.contrastsecurity.http.FilterForm;
-import com.contrastsecurity.models.*;
+import com.contrastsecurity.http.TraceFilterForm;
+import com.contrastsecurity.models.AgentType;
+import com.contrastsecurity.models.Application;
+import com.contrastsecurity.models.Applications;
+import com.contrastsecurity.models.Organizations;
+import com.contrastsecurity.models.Servers;
+import com.contrastsecurity.models.Traces;
 import com.contrastsecurity.sdk.ContrastSDK;
 import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
@@ -81,14 +86,6 @@ public class ScreenerTest {
         assertTrue(!servers.getServers().isEmpty());
     }
 
-    @Test
-    public void testGetTraces() throws IOException, UnauthorizedException {
-        String orgId = properties.getProperty("orgId");
-
-        Servers servers = contrastSDK.getServers(orgId, null);
-
-        assertTrue(!servers.getServers().isEmpty());
-    }
 
     @Test
     public void testGetApplicationTraces() throws  IOException, UnauthorizedException {
@@ -102,7 +99,11 @@ public class ScreenerTest {
 
         assertTrue(application.getId() != null);
 
-        Traces traces = contrastSDK.getTraces(orgId, application.getId(), EnumSet.of(FilterForm.TraceExpandValue.EVENTS));
+        TraceFilterForm form = new TraceFilterForm();
+
+        form.setExpand(EnumSet.of(TraceFilterForm.TraceExpandValue.APPLICATION));
+
+        Traces traces = contrastSDK.getTraces(orgId, application.getId(), form);
 
         assertTrue(!traces.getTraces().isEmpty());
     }

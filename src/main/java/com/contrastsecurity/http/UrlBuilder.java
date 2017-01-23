@@ -1,16 +1,9 @@
 package com.contrastsecurity.http;
 
 import com.contrastsecurity.models.AgentType;
-import org.apache.commons.lang.StringUtils;
 
-import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
 
-import static com.contrastsecurity.http.RequestConstants.COMMA_DELIMITER;
-import static com.contrastsecurity.http.RequestConstants.EQUALS_SEPARATOR;
-import static com.contrastsecurity.http.RequestConstants.EXPAND_PARAM;
-import static com.contrastsecurity.http.RequestConstants.QUERY_SEPARATOR;
 import static com.contrastsecurity.utils.ContrastSDKUtils.buildExpand;
 
 public class UrlBuilder {
@@ -56,10 +49,6 @@ public class UrlBuilder {
     public String getServersFilterUrl(String organizationId, FilterForm form) {
         String formString = form == null ? "" : form.toString();
         return String.format("/ng/%s/servers/filter%s", organizationId, formString);
-    }
-
-    public String getAllTracesUrl(String organizationId, String appId, EnumSet<FilterForm.TraceExpandValue> expandValues) {
-        return String.format("/ng/%s/traces/%s/filter/workflow/00001/search%s", organizationId, appId, buildExpand(expandValues));
     }
 
     public String getTracesByApplicationUrl(String organizationId, String appId, TraceFilterForm form) {

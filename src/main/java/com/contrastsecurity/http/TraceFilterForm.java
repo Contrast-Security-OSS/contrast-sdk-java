@@ -47,7 +47,7 @@ public class TraceFilterForm {
     private EnumSet<RuleSeverity> severities;
     private List<String> status;
     private List<String> vulnTypes;
-    private List<String> servers;
+    private List<Long> serverIds;
     private EnumSet<ServerEnvironment> environments;
     private EnumSet<TraceExpandValue> expand;
     private int limit;
@@ -62,7 +62,7 @@ public class TraceFilterForm {
         this.severities = null;
         this.status = null;
         this.vulnTypes = null;
-        this.servers = null;
+        this.serverIds = null;
         this.environments = null;
         this.expand = null;
         this.limit = -1;
@@ -99,8 +99,8 @@ public class TraceFilterForm {
             filters.add("filterTags=" + StringUtils.join(filterTags, ","));
         }
 
-        if (servers != null && !servers.isEmpty()) {
-            filters.add("servers=" + StringUtils.join(servers, ","));
+        if (serverIds != null && !serverIds.isEmpty()) {
+            filters.add("servers=" + StringUtils.join(serverIds, ","));
         }
 
         if (StringUtils.isNotEmpty(sort)) {
