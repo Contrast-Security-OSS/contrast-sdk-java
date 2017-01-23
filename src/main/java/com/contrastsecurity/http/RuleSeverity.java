@@ -19,7 +19,7 @@ public enum RuleSeverity {
 
     @Override
     public String toString() {
-        return this.label.toLowerCase();
+        return this.label.toUpperCase();
     }
 
 }
