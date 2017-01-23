@@ -483,9 +483,10 @@ public class ContrastSDK {
         System.out.println(gson.toJson(conn.getProfileOrganizations()));
 
         // Examples
-        //TraceFilterForm form = new TraceFilterForm();
-        //form.setServerIds(Arrays.asList(1L));
-        //System.out.println(gson.toJson(conn.getTraces(orgId, appId, form)));
+        // TraceFilterForm form = new TraceFilterForm();
+        //form.setSeverities(EnumSet.of(RuleSeverity.LOW, RuleSeverity.MEDIUM, RuleSeverity.HIGH, RuleSeverity.CRITICAL));
+        // form.setServerIds(Arrays.asList(1L));
+        // System.out.println(gson.toJson(conn.getTraces(orgId, appId, form)));
 
         // System.out.println(gson.toJson(conn.getTraceFilters(orgId, appId)));
         // System.out.println(gson.toJson(conn.getServers(orgId, null)));
