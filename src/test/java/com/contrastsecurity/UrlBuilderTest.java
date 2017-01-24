@@ -1,17 +1,14 @@
 package com.contrastsecurity;
 
-import com.contrastsecurity.http.FilterForm;
+import com.contrastsecurity.http.TraceFilterForm;
 import com.contrastsecurity.http.UrlBuilder;
 import com.contrastsecurity.models.AgentType;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class UrlBuilderTest {
 
@@ -66,16 +63,13 @@ public class UrlBuilderTest {
 
     @Test
     public void testTracesUrl() {
-        String expectedUrl = "/ng/test-org/traces/test-app/filter/workflow/00001/search";
+        String expectedUrl = "/ng/test-org/traces/test-app/filter/?expand=application";
 
-        assertEquals(expectedUrl, urlBuilder.getTracesUrl(organizationId, applicationId, null));
-    }
+        TraceFilterForm form = new TraceFilterForm();
 
-    @Test
-    public void testTracesWithFilterUrl() {
-        String expectedUrl = "/ng/test-org/traces/test-app/filter/workflow/00001/search";
+        form.setExpand(EnumSet.of(TraceFilterForm.TraceExpandValue.APPLICATION));
 
-        assertEquals(expectedUrl, urlBuilder.getTracesWithFilterUrl(organizationId, applicationId, new FilterForm()));
+        assertEquals(expectedUrl, urlBuilder.getTracesByApplicationUrl(organizationId, applicationId, form));
     }
 
     @Test

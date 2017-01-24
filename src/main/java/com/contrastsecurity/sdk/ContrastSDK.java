@@ -30,8 +30,23 @@ package com.contrastsecurity.sdk;
 
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
-import com.contrastsecurity.http.*;
-import com.contrastsecurity.models.*;
+import com.contrastsecurity.http.FilterForm;
+import com.contrastsecurity.http.HttpMethod;
+import com.contrastsecurity.http.RequestConstants;
+import com.contrastsecurity.http.ServerFilterForm;
+import com.contrastsecurity.http.TraceFilterForm;
+import com.contrastsecurity.http.TraceFilterKeycode;
+import com.contrastsecurity.http.TraceFilterType;
+import com.contrastsecurity.http.UrlBuilder;
+import com.contrastsecurity.models.AgentType;
+import com.contrastsecurity.models.Applications;
+import com.contrastsecurity.models.Coverage;
+import com.contrastsecurity.models.Libraries;
+import com.contrastsecurity.models.Organizations;
+import com.contrastsecurity.models.Rules;
+import com.contrastsecurity.models.Servers;
+import com.contrastsecurity.models.TraceListing;
+import com.contrastsecurity.models.Traces;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
@@ -42,6 +57,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Entry point for using the Contrast REST API. Make an instance of this class
@@ -83,7 +99,7 @@ public class ContrastSDK {
 
     /**
      * Create a ContrastSDK object that attempts to use the Contrast V3 API.
-     *
+     * <p>
      * This will use the default api url which is https://app.contrastsecurity.com/Contrast/api
      */
     public ContrastSDK(String user, String serviceKey, String apiKey) {
@@ -139,7 +155,16 @@ public class ContrastSDK {
             IOUtils.closeQuietly(is);
         }
     }
-    
+
+    /**
+     * Get summary information about a single app without expandValues.
+     *
+     * @param organizationId the ID of the organization
+     * @param appId          the ID of the application
+     * @return Applications object that contains one Application; wrapper
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
     public Applications getApplication(String organizationId, String appId) throws IOException, UnauthorizedException {
         return getApplication(organizationId, appId, null);
     }
@@ -149,6 +174,7 @@ public class ContrastSDK {
      *
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
+     * @param expandValues   Expand values to filter on
      * @return Applications object that contains one Application; wrapper
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
@@ -211,7 +237,7 @@ public class ContrastSDK {
             IOUtils.closeQuietly(reader);
         }
     }
-    
+
     public Libraries getLibraries(String organizationId, String appId) throws IOException, UnauthorizedException {
         return getLibraries(organizationId, appId, null);
     }
@@ -292,11 +318,11 @@ public class ContrastSDK {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Traces getTraces(String organizationId, String appId, EnumSet<FilterForm.TraceExpandValue> expandValues) throws IOException, UnauthorizedException {
+    public Traces getTraces(String organizationId, String appId, TraceFilterForm form) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesUrl(organizationId, appId, expandValues));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesByApplicationUrl(organizationId, appId, form));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Traces.class);
@@ -305,20 +331,21 @@ public class ContrastSDK {
             IOUtils.closeQuietly(reader);
         }
     }
+
     /**
-     * Get the listing for the traces in the application.
+     * Get the filters for the traces in the application.
      *
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
-     * @return TraceListing object that contains the trace listings for the application
+     * @return TraceListing object that contains the trace filters for the application
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public TraceListing getTraceListing(String organizationId, String appId) throws IOException, UnauthorizedException {
+    public TraceListing getTraceFilters(String organizationId, String appId) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getTraceListingUrl(organizationId, appId));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTraceListingUrl(organizationId, appId, TraceFilterType.VULNTYPE));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, TraceListing.class);
@@ -328,30 +355,6 @@ public class ContrastSDK {
         }
     }
 
-    /**
-     * Get the vulnerabilities in the application whose ID is passed in with a filter.
-     *
-     * @param organizationId the ID of the organization
-     * @param appId          the ID of the application
-     * @param form           FilterForm query parameters
-     * @return Traces object that contains the list of Trace's
-     * @throws UnauthorizedException if the Contrast account failed to authorize
-     * @throws IOException           if there was a communication problem
-     */
-    public Traces getTracesWithFilter(String organizationId, String appId, FilterForm form) throws IOException, UnauthorizedException {
-        InputStream is = null;
-        InputStreamReader reader = null;
-
-        try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesWithFilterUrl(organizationId, appId, form));
-            reader = new InputStreamReader(is);
-
-            return this.gson.fromJson(reader, Traces.class);
-        } finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(reader);
-        }
-    }
 
     /**
      * Get the vulnerabilities in the application whose ID is passed in with a filter.
@@ -365,7 +368,7 @@ public class ContrastSDK {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Traces getTracesWithFilter(String organizationId, String appId, String traceFilterType, String keycode, FilterForm form) throws IOException, UnauthorizedException {
+    public Traces getTracesWithFilter(String organizationId, String appId, TraceFilterType traceFilterType, TraceFilterKeycode keycode, TraceFilterForm form) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
 
@@ -385,18 +388,20 @@ public class ContrastSDK {
      *
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
-     * @param ruleId         the rule ID to filter on
-     * @param form           FilterForm query parameters
+     * @param ruleNames      FilterForm query parameters
      * @return Traces object that contains the list of Trace's
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public Traces getTraceFilterByRule(String organizationId, String appId, String ruleId, FilterForm form) throws IOException, UnauthorizedException {
+    public Traces getTraceFilterByRule(String organizationId, String appId, List<String> ruleNames) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
 
+        TraceFilterForm ruleNameForm = new TraceFilterForm();
+        ruleNameForm.setVulnTypes(ruleNames);
+
         try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesByRule(organizationId, appId, ruleId, form));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesByApplicationUrl(organizationId, appId, ruleNameForm));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Traces.class);
@@ -409,7 +414,7 @@ public class ContrastSDK {
     /**
      * Get the rules for an organization
      *
-     * @param  organizationId the ID of the organization
+     * @param organizationId the ID of the organization
      * @return Traces object that contains the list of Trace's
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
@@ -475,19 +480,25 @@ public class ContrastSDK {
 
         Gson gson = new Gson();
 
+        System.out.println(gson.toJson(conn.getProfileOrganizations()));
+
         // Examples
+        // TraceFilterForm form = new TraceFilterForm();
+        //form.setSeverities(EnumSet.of(RuleSeverity.LOW, RuleSeverity.MEDIUM, RuleSeverity.HIGH, RuleSeverity.CRITICAL));
+        // form.setServerIds(Arrays.asList(1L));
+        // System.out.println(gson.toJson(conn.getTraces(orgId, appId, form)));
+
+        // System.out.println(gson.toJson(conn.getTraceFilters(orgId, appId)));
         // System.out.println(gson.toJson(conn.getServers(orgId, null)));
+        // System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, Arrays.asList("insecure-jsp-access"))));
         // System.out.println(gson.toJson(conn.getRules(orgId)));
-        // System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, "insecure-auth-protocol")));
-        // System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, "reflected-xss", null)));
         // System.out.println(gson.toJson(conn.getApplication(orgId, appId, EnumSet.of(FilterForm.ApplicationExpandValues.SCORES, FilterForm.ApplicationExpandValues.TRACE_BREAKDOWN))));
-        // System.out.println(gson.toJson(conn.getTraces(orgId, appId, EnumSet.of(FilterForm.TraceExpandValue.CARD, FilterForm.TraceExpandValue.EVENTS))));
         // System.out.println(gson.toJson(conn.getProfileDefaultOrganizations()));
         // System.out.println(gson.toJson(conn.getApplications(orgId)));
         // System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
-        // System.out.println(gson.toJson(conn.getTraces(orgId, appId)));
+        // System.out.println(gson.toJson(conn.getTraces(orgId, appId, null)));
         // System.out.println(gson.toJson(conn.getLibraries(orgId, appId)));
-        // System.out.println(gson.toJson(conn.getTraceListing(orgId, appId)));
+        // System.out.println(gson.toJson(conn.getTraceFilters(orgId, appId)));
         // FileUtils.writeByteArrayToFile(new File("contrast.jar"), conn.getAgent(AgentType.JAVA, orgId));
     }
 
