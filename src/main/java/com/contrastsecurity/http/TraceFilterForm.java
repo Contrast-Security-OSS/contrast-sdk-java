@@ -47,8 +47,11 @@ public class TraceFilterForm {
     private EnumSet<RuleSeverity> severities;
     private List<String> status;
     private List<String> vulnTypes;
+    private List<String> appVersionTags;
     private List<Long> serverIds;
     private EnumSet<ServerEnvironment> environments;
+    private List<String> urls;
+    private List<String> modules;
     private EnumSet<TraceExpandValue> expand;
     private int limit;
     private int offset;
@@ -62,8 +65,11 @@ public class TraceFilterForm {
         this.severities = null;
         this.status = null;
         this.vulnTypes = null;
+        this.appVersionTags = null;
         this.serverIds = null;
         this.environments = null;
+        this.urls = null;
+        this.modules = null;
         this.expand = null;
         this.limit = -1;
         this.offset = -1;
@@ -82,7 +88,6 @@ public class TraceFilterForm {
             filters.add("expand=" + StringUtils.join(expand, ","));
         }
 
-
         if (startDate != null) {
             filters.add("startDate=" + startDate.getTime());
         }
@@ -91,24 +96,44 @@ public class TraceFilterForm {
             filters.add("endDate=" + endDate.getTime());
         }
 
+        if (filterTags != null && !filterTags.isEmpty()) {
+            filters.add("filterTags=" + StringUtils.join(filterTags, ","));
+        }
+
         if (severities != null && !severities.isEmpty()) {
             filters.add("severities=" + StringUtils.join(severities, ","));
         }
 
-        if (filterTags != null && !filterTags.isEmpty()) {
-            filters.add("filterTags=" + StringUtils.join(filterTags, ","));
+        if (status != null) {
+            filters.add("status=" + StringUtils.join(status, ","));
+        }
+
+        if (vulnTypes != null && !vulnTypes.isEmpty()) {
+            filters.add("vulnTypes=" + StringUtils.join(vulnTypes, ","));
+        }
+
+        if (appVersionTags != null && !appVersionTags.isEmpty()) {
+            filters.add("appVersionTags=" + StringUtils.join(appVersionTags, ","));
+        }
+
+        if (environments != null && !environments.isEmpty()) {
+            filters.add("environments=" + StringUtils.join(environments, ","));
         }
 
         if (serverIds != null && !serverIds.isEmpty()) {
             filters.add("servers=" + StringUtils.join(serverIds, ","));
         }
 
-        if (StringUtils.isNotEmpty(sort)) {
-            filters.add("sort=" + sort);
+        if (urls != null && !urls.isEmpty()) {
+            filters.add("urls=" + StringUtils.join(urls, ","));
         }
 
-        if (status != null) {
-            filters.add("status=" + StringUtils.join(status, ","));
+        if (modules != null && !modules.isEmpty()) {
+            filters.add("modules=" + StringUtils.join(modules, ","));
+        }
+
+        if (StringUtils.isNotEmpty(sort)) {
+            filters.add("sort=" + sort);
         }
 
         if (limit > -1) {
