@@ -51,6 +51,11 @@ public class UrlBuilder {
         return String.format("/ng/%s/servers/filter%s", organizationId, formString);
     }
 
+    public String getTracesByOrganizationUrl(String organizationId, TraceFilterForm form) {
+        String formString = form == null ? "" : form.toString();
+        return String.format("/ng/%s/orgtraces/filter/%s", organizationId, formString);
+    }
+
     public String getTracesByApplicationUrl(String organizationId, String appId, TraceFilterForm form) {
         String formString = form == null ? "" : form.toString();
         return String.format("/ng/%s/traces/%s/filter/%s", organizationId, appId, formString);
@@ -70,16 +75,18 @@ public class UrlBuilder {
     }
 
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {
-        String url = "";
+        String url;
 
         if (AgentType.JAVA.equals(type)) {
-            url += String.format("/ng/%s/agents/%s/java?jvm=1_6", organizationId, profileName);
+            url = String.format("/ng/%s/agents/%s/java?jvm=1_6", organizationId, profileName);
         } else if (AgentType.JAVA1_5.equals(type)) {
-            url += String.format("/ng/%s/agents/%s/java?jvm=1_5", organizationId, profileName);
+            url = String.format("/ng/%s/agents/%s/java?jvm=1_5", organizationId, profileName);
         } else if (AgentType.DOTNET.equals(type)) {
-            url += String.format("/ng/%s/agents/%s/dotnet", organizationId, profileName);
+            url = String.format("/ng/%s/agents/%s/dotnet", organizationId, profileName);
         } else if (AgentType.NODE.equals(type)) {
-            url += String.format("/ng/%s/agents/%s/node", organizationId, profileName);
+            url = String.format("/ng/%s/agents/%s/node", organizationId, profileName);
+        } else {
+            url = "";
         }
 
         return url;
