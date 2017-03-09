@@ -333,6 +333,28 @@ public class ContrastSDK {
     }
 
     /**
+     * Get the vulnerabilities in the organization whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @return Traces object that contains the list of Trace's
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public Traces getTracesInOrg(String organizationId, TraceFilterForm form) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTracesByOrganizationUrl(organizationId, form));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, Traces.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
      * Get the filters for the traces in the application.
      *
      * @param organizationId the ID of the organization
@@ -393,6 +415,7 @@ public class ContrastSDK {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
+    @Deprecated
     public Traces getTraceFilterByRule(String organizationId, String appId, List<String> ruleNames) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
@@ -490,7 +513,6 @@ public class ContrastSDK {
 
         // System.out.println(gson.toJson(conn.getTraceFilters(orgId, appId)));
         // System.out.println(gson.toJson(conn.getServers(orgId, null)));
-        // System.out.println(gson.toJson(conn.getTraceFilterByRule(orgId, appId, Arrays.asList("insecure-jsp-access"))));
         // System.out.println(gson.toJson(conn.getRules(orgId)));
         // System.out.println(gson.toJson(conn.getApplication(orgId, appId, EnumSet.of(FilterForm.ApplicationExpandValues.SCORES, FilterForm.ApplicationExpandValues.TRACE_BREAKDOWN))));
         // System.out.println(gson.toJson(conn.getProfileDefaultOrganizations()));
