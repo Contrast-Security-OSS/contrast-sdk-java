@@ -71,6 +71,9 @@ public class ContrastSDK {
     private String restApiURL;
     private UrlBuilder urlBuilder;
     private Gson gson;
+    
+    private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
+    private int readTimeout = DEFAULT_READ_TIMEOUT;
 
     public ContrastSDK() {
 
@@ -544,8 +547,42 @@ public class ContrastSDK {
         connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
         connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
         connection.setUseCaches(false);
+        
+        if(connectionTimeout > DEFAULT_CONNECTION_TIMEOUT)
+        	connection.setConnectTimeout(connectionTimeout);
+        if(readTimeout > DEFAULT_READ_TIMEOUT)
+        	connection.setReadTimeout(readTimeout);
+        
         return connection;
     }
+    
+    /**
+     * Sets a custom connection timeout for all SDK requests. This value must be set before a call to makeConnection is done.
+     * @param timeout Timeout value in milliseconds.
+     */
+    public void setConnectionTimeout(final int timeout) {
+    	this.connectionTimeout = timeout;
+    }
+    
+    /**
+     * Set a custom read timeout for all SDK requests. This value must be set before calling makeConnection method in order
+     * to take effect.
+     * @param timeout
+     */
+    public void setReadTimeout(final int timeout) {
+    	this.readTimeout = timeout;
+    }
+    
+    /**
+     * Default connection timeout. If connection timeout its set to this value, custom timeout will be ignored and requests will take 
+     * the default value that its usually assigned to them.
+     */
+    public static final int DEFAULT_CONNECTION_TIMEOUT = -1;
+    /**
+     * Default read timeout. If read timeout its set to this value, custom timeout will be ignored and requests will take
+     * default value that its usually assigned to them.
+     */
+    public static final int DEFAULT_READ_TIMEOUT = -1;
 
     private static final int BAD_REQUEST = 400;
     private static final int SERVER_ERROR = 500;
