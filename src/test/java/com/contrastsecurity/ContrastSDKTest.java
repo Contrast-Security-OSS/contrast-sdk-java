@@ -2,6 +2,7 @@ package com.contrastsecurity;
 
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
+import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.models.Applications;
 import com.contrastsecurity.models.Rules;
 import com.contrastsecurity.models.Servers;
@@ -12,6 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.URLConnection;
 
 import static org.junit.Assert.*;
 
@@ -89,4 +91,33 @@ public class ContrastSDKTest extends ContrastSDK {
         assertNotNull(servers);
         assertNotNull(servers.getServers());
     }
+    
+    @Test
+    public void setCustomTiemouts() throws IOException {
+    	final int connectionTimeout = 1000;
+    	final int readTimeout = 4000;
+    	
+    	contrastSDK.setConnectionTimeout(connectionTimeout);
+    	contrastSDK.setReadTimeout(readTimeout);
+    	
+    	URLConnection conn = contrastSDK.makeConnection("https://www.google.com", HttpMethod.GET.toString());
+    	
+    	assertEquals(connectionTimeout, conn.getConnectTimeout());
+    	assertEquals(readTimeout, conn.getReadTimeout());
+    }
+    
+    @Test
+    public void negativeTimeoutsAreNotSetTest() throws IOException {
+    	final int connectionTimeout = -10;
+    	final int readTimeout = -50;
+    	
+    	contrastSDK.setConnectionTimeout(connectionTimeout);
+    	contrastSDK.setReadTimeout(readTimeout);
+    	
+    	URLConnection conn = contrastSDK.makeConnection("https://www.google.com", HttpMethod.GET.toString());
+    	
+    	assertNotEquals(connectionTimeout, conn.getConnectTimeout());
+    	assertNotEquals(readTimeout, conn.getReadTimeout());
+    }
+    
 }

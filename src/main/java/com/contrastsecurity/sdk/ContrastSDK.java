@@ -71,6 +71,9 @@ public class ContrastSDK {
     private String restApiURL;
     private UrlBuilder urlBuilder;
     private Gson gson;
+    
+    private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
+    private int readTimeout = DEFAULT_READ_TIMEOUT;
 
     public ContrastSDK() {
 
@@ -101,6 +104,9 @@ public class ContrastSDK {
      * Create a ContrastSDK object that attempts to use the Contrast V3 API.
      * <p>
      * This will use the default api url which is https://app.contrastsecurity.com/Contrast/api
+     * @param user Username (e.g., joe@acme.com)
+     * @param serviceKey User service key
+     * @param apiKey API Key
      */
     public ContrastSDK(String user, String serviceKey, String apiKey) {
         this.user = user;
@@ -247,6 +253,7 @@ public class ContrastSDK {
      *
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
+     * @param expandValues   Query params to add more info to response
      * @return Libraries object that contains the list of Library objects
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
@@ -269,6 +276,7 @@ public class ContrastSDK {
      * Return the servers of the monitored Contrast application.
      *
      * @param organizationId the ID of the organization
+     * @param filterForm     FilterForm query parameters
      * @return Servers object that contains the list of Library objects
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
@@ -291,6 +299,7 @@ public class ContrastSDK {
      * Return the servers of the monitored Contrast application.
      *
      * @param organizationId the ID of the organization
+     * @param filterForm     FilterForm query parameters
      * @return Servers object that contains the list of Library objects
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
@@ -314,6 +323,7 @@ public class ContrastSDK {
      *
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
+     * @param form           FilterForm query parameters
      * @return Traces object that contains the list of Trace's
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
@@ -336,6 +346,7 @@ public class ContrastSDK {
      * Get the vulnerabilities in the organization whose ID is passed in.
      *
      * @param organizationId the ID of the organization
+     * @param form FilterForm query parameters
      * @return Traces object that contains the list of Trace's
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
@@ -467,6 +478,7 @@ public class ContrastSDK {
      * @param organizationId the ID of the organization,
      * @return a byte[] array of the contrast.jar file contents, which the user should convert to a new File
      * @throws IOException if there was a communication problem
+     * @throws UnauthorizedException if authentication fails
      */
     public byte[] getAgent(AgentType type, String organizationId, String profileName) throws IOException, UnauthorizedException {
         InputStream is = null;
@@ -490,6 +502,7 @@ public class ContrastSDK {
      * @param organizationId the ID of the organization,
      * @return a byte[] array of the contrast.jar file contents, which the user should convert to a new File
      * @throws IOException if there was a communication problem
+     * @throws UnauthorizedException if authentication fails
      */
     public byte[] getAgent(AgentType type, String organizationId) throws IOException, UnauthorizedException {
         return getAgent(type, organizationId, DEFAULT_AGENT_PROFILE);
@@ -544,8 +557,42 @@ public class ContrastSDK {
         connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
         connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
         connection.setUseCaches(false);
+        
+        if(connectionTimeout > DEFAULT_CONNECTION_TIMEOUT)
+        	connection.setConnectTimeout(connectionTimeout);
+        if(readTimeout > DEFAULT_READ_TIMEOUT)
+        	connection.setReadTimeout(readTimeout);
+        
         return connection;
     }
+    
+    /**
+     * Sets a custom connection timeout for all SDK requests. This value must be set before a call to makeConnection is done.
+     * @param timeout Timeout value in milliseconds.
+     */
+    public void setConnectionTimeout(final int timeout) {
+    	this.connectionTimeout = timeout;
+    }
+    
+    /**
+     * Set a custom read timeout for all SDK requests. This value must be set before calling makeConnection method in order
+     * to take effect.
+     * @param timeout TImeout value in milliseconds
+     */
+    public void setReadTimeout(final int timeout) {
+    	this.readTimeout = timeout;
+    }
+    
+    /**
+     * Default connection timeout. If connection timeout its set to this value, custom timeout will be ignored and requests will take 
+     * the default value that its usually assigned to them.
+     */
+    public static final int DEFAULT_CONNECTION_TIMEOUT = -1;
+    /**
+     * Default read timeout. If read timeout its set to this value, custom timeout will be ignored and requests will take
+     * default value that its usually assigned to them.
+     */
+    public static final int DEFAULT_READ_TIMEOUT = -1;
 
     private static final int BAD_REQUEST = 400;
     private static final int SERVER_ERROR = 500;
