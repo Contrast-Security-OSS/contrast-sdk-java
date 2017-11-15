@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
@@ -76,8 +78,13 @@ public class TraceFilterForm {
         this.sort = "";
     }
 
-    @Override
-    public String toString() {
+    /**
+     * Translate the filters to one or more URL query arguments
+     *
+     * @return The URL query string
+     * @throws UnsupportedEncodingException if any of the filter arguments cannot be encoded
+     */
+    public String toQuery() throws UnsupportedEncodingException {
         List<String> filters = new ArrayList<>();
 
         if (StringUtils.isNotEmpty(filterText)) {
@@ -113,7 +120,7 @@ public class TraceFilterForm {
         }
 
         if (appVersionTags != null && !appVersionTags.isEmpty()) {
-            filters.add("appVersionTags=" + StringUtils.join(appVersionTags, ","));
+            filters.add("appVersionTags=" + URLEncoder.encode(StringUtils.join(appVersionTags, ","), "UTF-8"));
         }
 
         if (environments != null && !environments.isEmpty()) {
@@ -148,6 +155,15 @@ public class TraceFilterForm {
             return "?" + StringUtils.join(filters, "&");
         } else {
             return "";
+        }
+    }
+
+    @Override
+    public String toString() {
+        try{
+            return toQuery();
+        } catch (UnsupportedEncodingException uee) {
+            return "Unable to encode filters";
         }
     }
 }
