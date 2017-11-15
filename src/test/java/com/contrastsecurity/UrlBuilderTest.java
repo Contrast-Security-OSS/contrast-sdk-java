@@ -6,9 +6,13 @@ import com.contrastsecurity.models.AgentType;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class UrlBuilderTest {
 
@@ -69,7 +73,28 @@ public class UrlBuilderTest {
 
         form.setExpand(EnumSet.of(TraceFilterForm.TraceExpandValue.APPLICATION));
 
-        assertEquals(expectedUrl, urlBuilder.getTracesByApplicationUrl(organizationId, applicationId, form));
+        try {
+            assertEquals(expectedUrl, urlBuilder.getTracesByApplicationUrl(organizationId, applicationId, form));
+        } catch (UnsupportedEncodingException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testGetTracesByApplicationUrl() {
+        String expectedUrl = "/ng/test-org/traces/test-app/filter/?appVersionTags=The+application";
+
+        TraceFilterForm form = new TraceFilterForm();
+        List<String> appVersionTags = new ArrayList<String>();
+        appVersionTags.add("The application");
+
+        form.setAppVersionTags(appVersionTags);
+
+        try {
+            assertEquals(expectedUrl, urlBuilder.getTracesByApplicationUrl(organizationId, applicationId, form));
+        } catch (UnsupportedEncodingException e) {
+            fail();
+        }
     }
 
     @Test
