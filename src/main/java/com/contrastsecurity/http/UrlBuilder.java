@@ -2,6 +2,7 @@ package com.contrastsecurity.http;
 
 import com.contrastsecurity.models.AgentType;
 
+import java.io.UnsupportedEncodingException;
 import java.util.EnumSet;
 
 import static com.contrastsecurity.utils.ContrastSDKUtils.buildExpand;
@@ -51,13 +52,13 @@ public class UrlBuilder {
         return String.format("/ng/%s/servers/filter%s", organizationId, formString);
     }
 
-    public String getTracesByOrganizationUrl(String organizationId, TraceFilterForm form) {
-        String formString = form == null ? "" : form.toString();
+    public String getTracesByOrganizationUrl(String organizationId, TraceFilterForm form) throws UnsupportedEncodingException {
+        String formString = form == null ? "" : form.toQuery();
         return String.format("/ng/%s/orgtraces/filter/%s", organizationId, formString);
     }
 
-    public String getTracesByApplicationUrl(String organizationId, String appId, TraceFilterForm form) {
-        String formString = form == null ? "" : form.toString();
+    public String getTracesByApplicationUrl(String organizationId, String appId, TraceFilterForm form) throws UnsupportedEncodingException {
+        String formString = form == null ? "" : form.toQuery();
         return String.format("/ng/%s/traces/%s/filter/%s", organizationId, appId, formString);
     }
 
@@ -65,8 +66,13 @@ public class UrlBuilder {
         return String.format("/ng/%s/traces/%s/filter/%s/listing", organizationId, appId, traceFilterType.toString());
     }
 
-    public String getTracesWithFilterUrl(String organizationId, String appId, TraceFilterType traceFilterType, TraceFilterKeycode traceFilterKeycode, TraceFilterForm form) {
-        String formString = form == null ? "" : form.toString();
+    public String getTracesWithFilterUrl(String organizationId,
+                                         String appId,
+                                         TraceFilterType traceFilterType,
+                                         TraceFilterKeycode traceFilterKeycode,
+                                         TraceFilterForm form)
+            throws UnsupportedEncodingException{
+        String formString = form == null ? "" : form.toQuery();
         return String.format("/ng/%s/traces/%s/filter/%s/%s/search%s", organizationId, appId, traceFilterType.toString(), traceFilterKeycode.toString(), formString);
     }
 
