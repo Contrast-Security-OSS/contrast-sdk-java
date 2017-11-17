@@ -14,7 +14,7 @@ This SDK gives you a quick start for programmatically accessing the [Contrast RE
     <dependency>
         <groupId>com.contrastsecurity</groupId>
         <artifactId>contrast-sdk-java</artifactId>
-        <version>2.3.1</version>
+        <version>2.4</version>
     </dependency>
     ```
 3. Look up the following information from TeamServer
