@@ -90,6 +90,28 @@ public class ContrastSDK {
      * @param restApiURL the base Contrast API URL
      * @throws IllegalArgumentException if the API URL is malformed
      */
+    public ContrastSDK(String user, String serviceKey, String apiKey, String restApiURL) throws IllegalArgumentException {
+        this.user = user;
+        this.serviceKey = serviceKey;
+        this.apiKey = apiKey;
+        this.restApiURL = restApiURL;
+
+        ContrastSDKUtils.validateUrl(this.restApiURL);
+
+        this.urlBuilder = UrlBuilder.getInstance();
+        this.gson = new Gson();
+    }
+
+    /**
+     * Create a ContrastSDK object that will attempt to use the Contrast V3 API
+     *
+     * @param user       Username (e.g., joe@acme.com)
+     * @param serviceKey User service key
+     * @param apiKey     API Key
+     * @param restApiURL the base Contrast API URL
+     * @param proxy Proxy to use
+     * @throws IllegalArgumentException if the API URL is malformed
+     */
     public ContrastSDK(String user, String serviceKey, String apiKey, String restApiURL, Proxy proxy) throws IllegalArgumentException {
         this.user = user;
         this.serviceKey = serviceKey;
