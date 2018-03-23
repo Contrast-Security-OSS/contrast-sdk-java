@@ -13,6 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.net.Proxy;
 import java.net.URLConnection;
 
 import static org.junit.Assert.*;
@@ -24,7 +25,7 @@ public class ContrastSDKTest extends ContrastSDK {
 
     @BeforeClass
     public static void setUp() {
-        contrastSDK = new ContrastSDK("test_user", "testApiKey", "testServiceKey", "http://localhost:19080/Contrast/api");
+        contrastSDK = new ContrastSDK("test_user", "testApiKey", "testServiceKey", "http://localhost:19080/Contrast/api", Proxy.NO_PROXY);
         gson = new Gson();
     }
 
