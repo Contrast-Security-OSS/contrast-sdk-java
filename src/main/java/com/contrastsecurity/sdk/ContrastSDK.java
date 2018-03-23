@@ -82,7 +82,7 @@ public class ContrastSDK {
     }
 
     /**
-     * Create a ContrastSDK object that will attempt to use the Contrast V3 API
+     * Create a ContrastSDK object to use the Contrast V3 API
      *
      * @param user       Username (e.g., joe@acme.com)
      * @param serviceKey User service key
@@ -100,10 +100,11 @@ public class ContrastSDK {
 
         this.urlBuilder = UrlBuilder.getInstance();
         this.gson = new Gson();
+        this.proxy = Proxy.NO_PROXY;
     }
 
     /**
-     * Create a ContrastSDK object that will attempt to use the Contrast V3 API
+     * Create a ContrastSDK object to use the Contrast V3 API through a Proxy.
      *
      * @param user       Username (e.g., joe@acme.com)
      * @param serviceKey User service key
@@ -126,7 +127,7 @@ public class ContrastSDK {
     }
 
     /**
-     * Create a ContrastSDK object that attempts to use the Contrast V3 API.
+     * Create a ContrastSDK object to use the Contrast V3 API
      * <p>
      * This will use the default api url which is https://app.contrastsecurity.com/Contrast/api
      * @param user Username (e.g., joe@acme.com)
@@ -143,6 +144,7 @@ public class ContrastSDK {
 
         this.urlBuilder = UrlBuilder.getInstance();
         this.gson = new Gson();
+        this.proxy = Proxy.NO_PROXY;
     }
 
     /**
@@ -577,13 +579,7 @@ public class ContrastSDK {
     }
 
     public HttpURLConnection makeConnection(String url, String method) throws IOException {
-        HttpURLConnection connection;
-        if (this.proxy == null) {
-            connection = (HttpURLConnection) new URL(url).openConnection();
-        } else {
-            connection = (HttpURLConnection) new URL(url).openConnection(this.proxy);
-        }
-
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection(this.proxy);
         connection.setRequestMethod(method);
         connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
         connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
