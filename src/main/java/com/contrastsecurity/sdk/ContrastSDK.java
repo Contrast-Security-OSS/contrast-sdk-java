@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URL;
 import java.util.EnumSet;
 import java.util.List;
@@ -71,6 +72,7 @@ public class ContrastSDK {
     private String restApiURL;
     private UrlBuilder urlBuilder;
     private Gson gson;
+    Proxy proxy;
     
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private int readTimeout = DEFAULT_READ_TIMEOUT;
@@ -80,7 +82,7 @@ public class ContrastSDK {
     }
 
     /**
-     * Create a ContrastSDK object that will attempt to use the Contrast V3 API
+     * Create a ContrastSDK object to use the Contrast V3 API
      *
      * @param user       Username (e.g., joe@acme.com)
      * @param serviceKey User service key
@@ -98,10 +100,34 @@ public class ContrastSDK {
 
         this.urlBuilder = UrlBuilder.getInstance();
         this.gson = new Gson();
+        this.proxy = Proxy.NO_PROXY;
     }
 
     /**
-     * Create a ContrastSDK object that attempts to use the Contrast V3 API.
+     * Create a ContrastSDK object to use the Contrast V3 API through a Proxy.
+     *
+     * @param user       Username (e.g., joe@acme.com)
+     * @param serviceKey User service key
+     * @param apiKey     API Key
+     * @param restApiURL the base Contrast API URL
+     * @param proxy Proxy to use
+     * @throws IllegalArgumentException if the API URL is malformed
+     */
+    public ContrastSDK(String user, String serviceKey, String apiKey, String restApiURL, Proxy proxy) throws IllegalArgumentException {
+        this.user = user;
+        this.serviceKey = serviceKey;
+        this.apiKey = apiKey;
+        this.restApiURL = restApiURL;
+
+        ContrastSDKUtils.validateUrl(this.restApiURL);
+
+        this.urlBuilder = UrlBuilder.getInstance();
+        this.gson = new Gson();
+        this.proxy = proxy;
+    }
+
+    /**
+     * Create a ContrastSDK object to use the Contrast V3 API
      * <p>
      * This will use the default api url which is https://app.contrastsecurity.com/Contrast/api
      * @param user Username (e.g., joe@acme.com)
@@ -118,6 +144,7 @@ public class ContrastSDK {
 
         this.urlBuilder = UrlBuilder.getInstance();
         this.gson = new Gson();
+        this.proxy = Proxy.NO_PROXY;
     }
 
     /**
@@ -509,7 +536,7 @@ public class ContrastSDK {
     }
 
     public static void main(String[] args) throws UnauthorizedException, IOException, ResourceNotFoundException {
-        ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL);
+        ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL, Proxy.NO_PROXY);
 
         String orgId = conn.getProfileDefaultOrganizations().getOrganization().getOrgUuid();
         String appId = "";
@@ -552,7 +579,7 @@ public class ContrastSDK {
     }
 
     public HttpURLConnection makeConnection(String url, String method) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection(this.proxy);
         connection.setRequestMethod(method);
         connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
         connection.setRequestProperty(RequestConstants.API_KEY, apiKey);

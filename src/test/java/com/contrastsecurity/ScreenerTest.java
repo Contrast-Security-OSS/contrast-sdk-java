@@ -16,6 +16,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Proxy;
 import java.util.EnumSet;
 import java.util.Properties;
 
@@ -37,7 +38,7 @@ public class ScreenerTest {
         contrastSDK = new ContrastSDK(properties.getProperty("username"),
                                       properties.getProperty("serviceKey"),
                                       properties.getProperty("apiKey"),
-                                      properties.getProperty("localTeamServerUrl"));
+                                      properties.getProperty("localTeamServerUrl"), Proxy.NO_PROXY);
     }
 
     @Test
