@@ -47,6 +47,8 @@ import com.contrastsecurity.models.Rules;
 import com.contrastsecurity.models.Servers;
 import com.contrastsecurity.models.TraceListing;
 import com.contrastsecurity.models.Traces;
+import com.contrastsecurity.models.User;
+import com.contrastsecurity.models.Users;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
@@ -162,6 +164,27 @@ public class ContrastSDK {
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Organizations.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    /**
+     * Get all users for an organization.
+     * @param organizationId the ID of the organization
+     * @return A List of User Objects.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public Users getOrganizationUsers(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getOrganizationUsersUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, Users.class);
         } finally {
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(is);
