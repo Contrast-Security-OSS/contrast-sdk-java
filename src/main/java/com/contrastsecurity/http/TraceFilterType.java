@@ -10,7 +10,8 @@ public enum TraceFilterType {
     TIME("time"),
     URL("url"),
     VULNTYPE("vulntype"),
-    SERVER_ENVIRONMENT("server-environment");
+    SERVER_ENVIRONMENT("server-environment"),
+    APP_VERSION_TAGS("appversiontags");
 
     @Getter
     private String label;

@@ -10,10 +10,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
-import static com.contrastsecurity.http.RequestConstants.COMMA_DELIMITER;
-import static com.contrastsecurity.http.RequestConstants.EQUALS_SEPARATOR;
-import static com.contrastsecurity.http.RequestConstants.EXPAND_PARAM;
-import static com.contrastsecurity.http.RequestConstants.QUERY_SEPARATOR;
+import static com.contrastsecurity.http.RequestConstants.*;
 
 public class ContrastSDKUtils {
 
@@ -55,5 +52,5 @@ public class ContrastSDKUtils {
         return SEVERITIES.subList(SEVERITIES.indexOf(severity), SEVERITIES.size());
     }
 
-    public static final List<String> SEVERITIES = Arrays.asList("Note", "Low", "Medium", "High", "Critical");
+    private static final List<String> SEVERITIES = Arrays.asList("Note", "Low", "Medium", "High", "Critical");
 }

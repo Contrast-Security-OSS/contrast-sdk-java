@@ -92,33 +92,30 @@ public class ContrastSDKTest extends ContrastSDK {
         assertNotNull(servers);
         assertNotNull(servers.getServers());
     }
-    
+
     @Test
     public void setCustomTiemouts() throws IOException {
-    	final int connectionTimeout = 1000;
-    	final int readTimeout = 4000;
-    	
-    	contrastSDK.setConnectionTimeout(connectionTimeout);
-    	contrastSDK.setReadTimeout(readTimeout);
-    	
-    	URLConnection conn = contrastSDK.makeConnection("https://www.google.com", HttpMethod.GET.toString());
-    	
-    	assertEquals(connectionTimeout, conn.getConnectTimeout());
-    	assertEquals(readTimeout, conn.getReadTimeout());
+        final int connectionTimeout = 1000;
+        final int readTimeout = 4000;
+
+        contrastSDK.setConnectionTimeout(connectionTimeout);
+        contrastSDK.setReadTimeout(readTimeout);
+
+        URLConnection conn = contrastSDK.makeConnection("https://www.google.com", HttpMethod.GET.toString(), null);
+
+        assertEquals(connectionTimeout, conn.getConnectTimeout());
+        assertEquals(readTimeout, conn.getReadTimeout());
     }
-    
+
     @Test
     public void negativeTimeoutsAreNotSetTest() throws IOException {
-    	final int connectionTimeout = -10;
-    	final int readTimeout = -50;
-    	
-    	contrastSDK.setConnectionTimeout(connectionTimeout);
-    	contrastSDK.setReadTimeout(readTimeout);
-    	
-    	URLConnection conn = contrastSDK.makeConnection("https://www.google.com", HttpMethod.GET.toString());
-    	
-    	assertNotEquals(connectionTimeout, conn.getConnectTimeout());
-    	assertNotEquals(readTimeout, conn.getReadTimeout());
+        final int connectionTimeout = -10;
+        final int readTimeout = -50;
+
+        URLConnection conn = contrastSDK.makeConnection("https://www.google.com", HttpMethod.GET.toString(), null);
+
+        assertNotEquals(connectionTimeout, conn.getConnectTimeout());
+        assertNotEquals(readTimeout, conn.getReadTimeout());
     }
-    
+
 }
