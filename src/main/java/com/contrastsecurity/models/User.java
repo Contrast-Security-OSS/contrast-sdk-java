@@ -73,6 +73,13 @@ public class User {
     @SerializedName("first_name")
     private String firstName;
 
+    /**
+     * Return the status for this user, e.g.:
+     * @return the status of this user (e.g. Active/Locked)
+     */
+    public String getStatus() { return status; }
+    @SerializedName("status_description")
+    private String status;
 
     /**
      * Return the last login details of the user.
