@@ -558,37 +558,6 @@ public class ContrastSDK {
         return getAgent(type, organizationId, DEFAULT_AGENT_PROFILE);
     }
 
-    public static void main(String[] args) throws UnauthorizedException, IOException, ResourceNotFoundException {
-        ContrastSDK conn = new ContrastSDK("contrast_admin", "demo", "demo", LOCALHOST_API_URL, Proxy.NO_PROXY);
-
-        String orgId = conn.getProfileDefaultOrganizations().getOrganization().getOrgUuid();
-        String appId = "";
-
-        Gson gson = new Gson();
-
-        System.out.println(gson.toJson(conn.getProfileOrganizations()));
-
-        // Examples
-        // TraceFilterForm form = new TraceFilterForm();
-        //form.setSeverities(EnumSet.of(RuleSeverity.LOW, RuleSeverity.MEDIUM, RuleSeverity.HIGH, RuleSeverity.CRITICAL));
-        // form.setServerIds(Arrays.asList(1L));
-        // System.out.println(gson.toJson(conn.getTraces(orgId, appId, form)));
-
-        // System.out.println(gson.toJson(conn.getTraceFilters(orgId, appId)));
-        // System.out.println(gson.toJson(conn.getServers(orgId, null)));
-        // System.out.println(gson.toJson(conn.getRules(orgId)));
-        // System.out.println(gson.toJson(conn.getApplication(orgId, appId, EnumSet.of(FilterForm.ApplicationExpandValues.SCORES, FilterForm.ApplicationExpandValues.TRACE_BREAKDOWN))));
-        // System.out.println(gson.toJson(conn.getProfileDefaultOrganizations()));
-        // System.out.println(gson.toJson(conn.getApplications(orgId)));
-        // System.out.println(gson.toJson(conn.getCoverage(orgId, appId)));
-        // System.out.println(gson.toJson(conn.getTraces(orgId, appId, null)));
-        // System.out.println(gson.toJson(conn.getLibraries(orgId, appId)));
-        // System.out.println(gson.toJson(conn.getTraceFilters(orgId, appId)));
-        // FileUtils.writeByteArrayToFile(new File("contrast.jar"), conn.getAgent(AgentType.JAVA, orgId));
-    }
-
-    // ------------------------ Utilities -----------------------------------------------
-
     public InputStream makeRequest(HttpMethod method, String path) throws IOException, UnauthorizedException {
         String url = restApiURL + path;
         HttpURLConnection connection = makeConnection(url, method.toString());
