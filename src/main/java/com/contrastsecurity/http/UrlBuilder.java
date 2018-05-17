@@ -22,6 +22,13 @@ public class UrlBuilder {
         return "/ng/profile/organizations";
     }
 
+    public String getOrganizationGroupsUrl(String organizationId) {
+        return String.format("/ng/%s/groups?base=true", organizationId);
+    }
+    public String getOrganizationGroupDetailsUrl(String organizationId, long groupId) {
+        return String.format("/ng/%s/groups/%s", organizationId, groupId);
+    }
+
     public String getOrganizationUsersUrl(String organizationId) {
         // ddooley buildExpand not needed.  Always want login and signup details to determine inactivity.
         return String.format("/ng/%s/users?expand=login,signup", organizationId);

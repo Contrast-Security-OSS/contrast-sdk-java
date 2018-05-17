@@ -47,8 +47,9 @@ import com.contrastsecurity.models.Rules;
 import com.contrastsecurity.models.Servers;
 import com.contrastsecurity.models.TraceListing;
 import com.contrastsecurity.models.Traces;
-import com.contrastsecurity.models.User;
+import com.contrastsecurity.models.Groups;
 import com.contrastsecurity.models.Users;
+import com.contrastsecurity.models.GroupDetails;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
@@ -185,6 +186,49 @@ public class ContrastSDK {
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Users.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    /**
+     * Get all groups for an organization.
+     * @param organizationId the ID of the organization
+     * @return A List of Group Objects.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public Groups getOrganizationGroups(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getOrganizationGroupsUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, Groups.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    /**
+     * Get all groups details for an group.
+     * @param organizationId the ID of the organization
+     * @param groupID the ID of the group
+     * @return A Group Detail Object.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public GroupDetails getOrganizationGroupDetails(String organizationId, long groupID) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getOrganizationGroupDetailsUrl(organizationId, groupID));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, GroupDetails.class);
         } finally {
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(is);
