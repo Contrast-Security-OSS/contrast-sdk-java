@@ -52,14 +52,18 @@ import com.contrastsecurity.models.Users;
 import com.contrastsecurity.models.GroupDetails;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -191,6 +195,62 @@ public class ContrastSDK {
             IOUtils.closeQuietly(is);
         }
     }
+    /**
+     * ddooley
+     * Create a User in an organization.
+     * Unfortunately can't reuse makeRequest without at least making changes there specific to new POST/PUT requests
+     * ToDo capture commonality into new methods as progress
+     * @param organizationId the ID of the organization
+     * @param UserId the ID of the User
+     * @param firstName the User's first name
+     * @param lastName the User's last name
+     * @param orgRole the ID of the Org Role for the User
+     *                1 Admin
+     *                2 Rules Admin
+     *                3 Edit
+     *                4 View
+     * @param groupIds A list of group Ids. The User will be added to the respective groups
+     *
+     * @return Return HTTP Code.  200 is a success.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public int createUser(String organizationId, String UserId, String firstName, String lastName, long orgRole, ArrayList<Long> groupIds) throws IOException, UnauthorizedException {
+        HttpURLConnection connection = null;
+        try {
+            String url = restApiURL + this.urlBuilder.createUsersUrl(organizationId);
+            /* Create Connection */
+            connection = (HttpURLConnection) new URL(url).openConnection(this.proxy);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
+            connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
+            connection.setUseCaches(false);
+            if (connectionTimeout > DEFAULT_CONNECTION_TIMEOUT)
+                connection.setConnectTimeout(connectionTimeout);
+            if (readTimeout > DEFAULT_READ_TIMEOUT)
+                connection.setReadTimeout(readTimeout);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            connection.connect();
+
+            JsonObject body = buildCreateUserBody(UserId, firstName, lastName, orgRole, groupIds);
+            OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+            wr.write(body.toString());
+            wr.flush();
+
+            int rc = connection.getResponseCode();
+            connection.disconnect();
+            if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+                throw new UnauthorizedException(rc);
+            }
+            return rc;
+        } finally {
+            if (connection != null){
+                connection.disconnect();
+            }
+        }
+    }
 
     /**
      * Get all groups for an organization.
@@ -214,7 +274,7 @@ public class ContrastSDK {
     }
 
     /**
-     * Get all groups details for an group.
+     * Get all groups details for a group.
      * @param organizationId the ID of the organization
      * @param groupID the ID of the group
      * @return A Group Detail Object.
@@ -629,6 +689,42 @@ public class ContrastSDK {
         // System.out.println(gson.toJson(conn.getLibraries(orgId, appId)));
         // System.out.println(gson.toJson(conn.getTraceFilters(orgId, appId)));
         // FileUtils.writeByteArrayToFile(new File("contrast.jar"), conn.getAgent(AgentType.JAVA, orgId));
+    }
+
+    /**
+     * Build JSON object for the body of User Creation POST requests.
+     * @param UserId the ID of the User
+     * @param firstName the User's first name
+     * @param lastName the User's last name
+     * @param orgRole the ID of the Org Role for the User
+     *                1 Admin
+     *                2 Rules Admin
+     *                3 Edit
+     *                4 View
+     * @param groupIds A list of group Ids. The User will be added to the respective groups
+     *
+     * @return Success Code.
+     */
+
+    private JsonObject buildCreateUserBody(String UserId, String firstName, String lastName, long orgRole, ArrayList<Long> groupIds) {
+        /* Build JSON Body */
+        JsonObject body = new JsonObject();
+        body.addProperty("api_only",false);
+        body.addProperty("date_format","MM/dd/yyyy");
+        body.addProperty("enabled", true);
+        body.addProperty("first_name", firstName);
+        JsonArray groups = new JsonArray();
+        for (long l : groupIds) {
+            groups.add(l);
+        }
+        body.add("groups", groups);
+        body.addProperty("last_name", lastName);
+        body.addProperty("protect", false);
+        body.addProperty("role", orgRole);
+        body.addProperty("time_format", "HH:mm");
+        body.addProperty("time_zone", "America/Chicago");
+        body.addProperty("username", UserId);
+        return body;
     }
 
     // ------------------------ Utilities -----------------------------------------------
