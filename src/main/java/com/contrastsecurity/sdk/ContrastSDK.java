@@ -231,10 +231,60 @@ public class ContrastSDK {
                 connection.setReadTimeout(readTimeout);
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");
-
             connection.connect();
+            /* End Create  Connection */
 
             JsonObject body = buildCreateUserBody(UserId, firstName, lastName, orgRole, groupIds);
+            OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+            wr.write(body.toString());
+            wr.flush();
+
+            int rc = connection.getResponseCode();
+            connection.disconnect();
+            if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+                throw new UnauthorizedException(rc);
+            }
+            return rc;
+        } finally {
+            if (connection != null){
+                connection.disconnect();
+            }
+        }
+    }
+    /**
+     * ddooley2
+     * Create a Group in an organization.
+     * Unfortunately can't reuse makeRequest without at least making changes there specific to new POST/PUT requests
+     * ToDo capture commonality into new methods as progress
+     * @param organizationId the ID of the organization
+     * @param name the name of the new group
+     * @param role the role of the new group
+     * @param users A list of usesrs (UUID) that will be added to the group. May be empty i.e. no UI "members" to add right now.
+     *
+     * @return Return HTTP Code.  200 is a success.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public int createGroup(String organizationId, String name, String role, ArrayList<String> users) throws IOException, UnauthorizedException {
+        HttpURLConnection connection = null;
+        try {
+            String url = restApiURL + this.urlBuilder.createGroupsUrl(organizationId);
+            /* Create Connection */
+            connection = (HttpURLConnection) new URL(url).openConnection(this.proxy);
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
+            connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
+            connection.setUseCaches(false);
+            if (connectionTimeout > DEFAULT_CONNECTION_TIMEOUT)
+                connection.setConnectTimeout(connectionTimeout);
+            if (readTimeout > DEFAULT_READ_TIMEOUT)
+                connection.setReadTimeout(readTimeout);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.connect();
+            /* End Create  Connection */
+
+            JsonObject body = buildCreateGroupBody(name, role, users);
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(body.toString());
             wr.flush();
@@ -727,6 +777,35 @@ public class ContrastSDK {
         return body;
     }
 
+    /**
+     * Build JSON object for the body of User Creation POST requests.
+     * @param name the name of the Group
+     * @param role the role of the group as it applies to Applications
+     * @param users A list of users to add to the group.
+     *
+     * @return Success Code.
+     */
+
+    private JsonObject buildCreateGroupBody(String name, String role, ArrayList<String> users) {
+        /* Build JSON Body */
+        JsonObject body = new JsonObject();
+        body.addProperty("name", name);
+        JsonArray userArray = new JsonArray();
+        for (String user : users) {
+            userArray.add(user);
+        }
+        body.add("users", userArray);
+        // Add the Scope JSON Object
+        JsonObject scope = new JsonObject();
+        JsonObject appScope = new JsonObject();
+        appScope.addProperty("onboard_role", role);
+        JsonArray emptyArray = new JsonArray();
+        appScope.add("exceptions", emptyArray);
+        scope.add("app_scope", appScope);
+        body.add("scope", scope);
+
+        return body;
+    }
     // ------------------------ Utilities -----------------------------------------------
 
     public InputStream makeRequest(HttpMethod method, String path) throws IOException, UnauthorizedException {

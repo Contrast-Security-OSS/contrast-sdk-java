@@ -36,6 +36,9 @@ public class UrlBuilder {
     public String createUsersUrl(String organizationId) {
         return String.format("/ng/%s/users", organizationId);
     }
+    public String createGroupsUrl(String organizationId) {
+        return String.format("/ng/%s/groups", organizationId);
+    }
 
     public String getProfileDefaultOrganizationUrl() {
         return "/ng/profile/organizations/default";

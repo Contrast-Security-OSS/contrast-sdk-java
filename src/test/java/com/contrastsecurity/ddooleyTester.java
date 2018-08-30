@@ -25,15 +25,36 @@ public class ddooleyTester {
         ddooleyTester tester = new ddooleyTester();
         tester.readProperties();
 
+        // Testing Group Creation
+        String name = "UHGWM110-000007_Secure_Developer";
+        String role = "edit";
+        ArrayList<String> users = new ArrayList<>();
+        tester.createGroup(name, role, users);
+
         // Testing User Creation
         String id = "david.api@contrast.com";
         ArrayList<Long> groupIds = new ArrayList<Long>(Arrays.asList(805L, 806L));
         long orgRole = 3; //edit
 
-        tester.createUser(id, orgRole, groupIds);
+        //tester.createUser(id, orgRole, groupIds);
         System.out.println("Testing Complete ...");
     }
 
+    private void createGroup(String name, String appRole, ArrayList<String> users) {
+        ContrastSDK contrastSDK = new ContrastSDK(username, serviceKey, apiKey, url);
+        try {
+            System.out.println("Testing Create Group");
+            int returnCode;
+            returnCode = contrastSDK.createGroup("ac0ec4e6-f84a-46b5-8534-7a3a14632bf8", name, appRole, users);
+            System.out.println("Return code is : " + returnCode);
+        } catch (UnauthorizedException e) {
+            System.out.println("Unable to connect to TeamServer. Printing stacktrace ");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.out.println("Unable to create the user. Printing stacktrace ");
+            e.printStackTrace();
+        }
+    }
     private void createUser(String id, long orgRole, ArrayList<Long> groupIds) {
         ContrastSDK contrastSDK = new ContrastSDK(username, serviceKey, apiKey, url);
         try {
