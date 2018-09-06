@@ -252,10 +252,7 @@ public class ContrastSDK {
         }
     }
     /**
-     * ddooley2
-     * Create a Group in an organization.
-     * Unfortunately can't reuse makeRequest without at least making changes there specific to new POST/PUT requests
-     * ToDo capture commonality into new methods as progress
+     * Create a Group in an organization.  Wrapper method.
      * @param organizationId the ID of the organization
      * @param name the name of the new group
      * @param role the role of the new group
@@ -266,12 +263,48 @@ public class ContrastSDK {
      * @throws IOException           if there was a communication problem
      */
     public int createGroup(String organizationId, String name, String role, ArrayList<String> users) throws IOException, UnauthorizedException {
+        return this.touchGroup(organizationId, name, role, "POST", users, -1);
+    }
+
+    /**
+     * Update a Group in an organization.  Wrapper method.
+     * @param organizationId the ID of the organization
+     * @param name the name of the new group
+     * @param role the role of the new group
+     * @param users A list of usesrs (UUID) that will be added to the group. May be empty i.e. no UI "members" to add right now.
+     *
+     * @return Return HTTP Code.  200 is a success.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public int updateGroup(String organizationId, String name, String role, ArrayList<String> users, int groupId) throws IOException, UnauthorizedException {
+        return this.touchGroup(organizationId, name, role, "PUT", users, groupId);
+    }
+
+    /**
+     * Create or Update a Group in an organization.
+     * Unfortunately can't reuse makeRequest without at least making changes there specific to new POST/PUT requests (BODY required)
+     * Can be used to update (PUT) or create (POST)
+     * @param organizationId the ID of the organization
+     * @param name the name of the new group
+     * @param role the role of the new group
+     * @param users A list of usesrs (UUID) that will be added to the group. May be empty i.e. no UI "members" to add right now.
+     *
+     * @return Return HTTP Code.  200 is a success.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public int touchGroup(String organizationId, String name, String role, String method, ArrayList<String> users, int groupID) throws IOException, UnauthorizedException {
         HttpURLConnection connection = null;
         try {
             String url = restApiURL + this.urlBuilder.createGroupsUrl(organizationId);
+            if (groupID > 0) {
+                // Update an existing Group
+                url = url + "/" + Integer.toString(groupID);
+            }
             /* Create Connection */
             connection = (HttpURLConnection) new URL(url).openConnection(this.proxy);
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod(method);
             connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
             connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
             connection.setUseCaches(false);
@@ -282,9 +315,9 @@ public class ContrastSDK {
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");
             connection.connect();
-            /* End Create  Connection */
+            /* End Create Connection */
 
-            JsonObject body = buildCreateGroupBody(name, role, users);
+            JsonObject body = buildGroupBody(name, role, users);
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(body.toString());
             wr.flush();
@@ -786,7 +819,7 @@ public class ContrastSDK {
      * @return Success Code.
      */
 
-    private JsonObject buildCreateGroupBody(String name, String role, ArrayList<String> users) {
+    private JsonObject buildGroupBody(String name, String role, ArrayList<String> users) {
         /* Build JSON Body */
         JsonObject body = new JsonObject();
         body.addProperty("name", name);
