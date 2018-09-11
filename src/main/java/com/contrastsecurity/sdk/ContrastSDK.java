@@ -835,7 +835,7 @@ public class ContrastSDK {
          * The API changes depending on app or all onboarded selected
          * For now Customer O specific, but a bit obscure for others.  Still need to pull this out.
         */
-        if (name.endsWith("_Developer") || name.endsWith("_Analyst")) {
+        if (name.endsWith("_Analyst") || name.endsWith("_Developer")) {
             // This automatically onboards new applications
             appScope.addProperty("onboard_role", role);
         } else {
