@@ -831,7 +831,16 @@ public class ContrastSDK {
         // Add the Scope JSON Object
         JsonObject scope = new JsonObject();
         JsonObject appScope = new JsonObject();
-        appScope.addProperty("onboard_role", role);
+        /*
+         * The API changes depending on app or all onboarded selected
+         * For now Customer O specific, but a bit obscure for others.  Still need to pull this out.
+        */
+        if (name.endsWith("_Developer") || name.endsWith("_Analyst")) {
+            // This automatically onboards new applications
+            appScope.addProperty("onboard_role", role);
+        } else {
+            appScope.addProperty("role", role);
+        }
         JsonArray emptyArray = new JsonArray();
         appScope.add("exceptions", emptyArray);
         scope.add("app_scope", appScope);
