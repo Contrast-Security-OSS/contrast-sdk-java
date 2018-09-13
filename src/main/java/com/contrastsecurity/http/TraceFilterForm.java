@@ -15,6 +15,10 @@ import java.util.List;
 @Setter
 public class TraceFilterForm {
 
+    public void setVulnTypes(List<String> vulnTypes) {
+        this.vulnTypes = vulnTypes;
+    }
+
     public enum ApplicationExpandValues {
         SCORES, TRACE_BREAKDOWN, LICENSE;
 

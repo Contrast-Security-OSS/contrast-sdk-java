@@ -201,7 +201,7 @@ public class ContrastSDK {
      * Unfortunately can't reuse makeRequest without at least making changes there specific to new POST/PUT requests
      * ToDo capture commonality into new methods as progress
      * @param organizationId the ID of the organization
-     * @param UserId the ID of the User
+     * @param userId the ID of the User
      * @param firstName the User's first name
      * @param lastName the User's last name
      * @param orgRole the ID of the Org Role for the User
@@ -215,7 +215,7 @@ public class ContrastSDK {
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public int createUser(String organizationId, String UserId, String firstName, String lastName, long orgRole, ArrayList<Long> groupIds) throws IOException, UnauthorizedException {
+    public int createUser(String organizationId, String userId, String firstName, String lastName, long orgRole, ArrayList<Long> groupIds) throws IOException, UnauthorizedException {
         HttpURLConnection connection = null;
         try {
             String url = restApiURL + this.urlBuilder.createUsersUrl(organizationId);
@@ -234,7 +234,7 @@ public class ContrastSDK {
             connection.connect();
             /* End Create  Connection */
 
-            JsonObject body = buildCreateUserBody(UserId, firstName, lastName, orgRole, groupIds);
+            JsonObject body = buildCreateUserBody(userId, firstName, lastName, orgRole, groupIds);
             OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
             wr.write(body.toString());
             wr.flush();
@@ -251,6 +251,110 @@ public class ContrastSDK {
             }
         }
     }
+    /**
+     * Update a User in an organization.  Can be used to lock, unlock, change group and Org role.
+     * Unfortunately can't reuse makeRequest without at least making changes there specific to new POST/PUT requests
+     * ToDo capture commonality into new methods as progress
+     * @param organizationId the ID of the organization
+     * @param userId the ID of the User
+     * @param orgRole the ID of the Org Role for the User
+     *                1 Admin
+     *                2 Rules Admin
+     *                3 Edit
+     *                4 View
+     * @param groupIds A list of group Ids. The User will be added to the respective groups
+     *
+     * @return Return HTTP Code.  200 is a success.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public int updateUser(String organizationId, String userId, String fname, String lname, long orgRole, ArrayList<Long> groupIds) throws IOException, UnauthorizedException {
+        HttpURLConnection connection = null;
+        try {
+            String url = restApiURL + this.urlBuilder.updateUserUrl(organizationId, userId);
+            /* Create Connection */
+            connection = (HttpURLConnection) new URL(url).openConnection(this.proxy);
+            connection.setRequestMethod("PUT");
+            connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
+            connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
+            connection.setUseCaches(false);
+            if (connectionTimeout > DEFAULT_CONNECTION_TIMEOUT)
+                connection.setConnectTimeout(connectionTimeout);
+            if (readTimeout > DEFAULT_READ_TIMEOUT)
+                connection.setReadTimeout(readTimeout);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.connect();
+            /* End Create  Connection */
+
+            JsonObject body = buildUpdateUserBody(fname, lname, orgRole, groupIds);
+            OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+            wr.write(body.toString());
+            wr.flush();
+
+            int rc = connection.getResponseCode();
+            connection.disconnect();
+            if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+                throw new UnauthorizedException(rc);
+            }
+            return rc;
+        } finally {
+            if (connection != null){
+                connection.disconnect();
+            }
+        }
+    }
+    /**
+     * Update a User in an organization.  Can be used to lock, unlock, change group and Org role.
+     * Unfortunately can't reuse makeRequest without at least making changes there specific to new POST/PUT requests
+     * ToDo capture commonality into new methods as progress
+     * @param organizationId the ID of the organization
+     * @param userId the ID of the User
+     * @param lock True to lock the User, False to Unlock
+     *
+     * @return Return HTTP Code.  200 is a success.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public int lockUser(String organizationId, String userId, boolean lock) throws IOException, UnauthorizedException {
+        HttpURLConnection connection = null;
+        try {
+            String url = restApiURL + this.urlBuilder.updateUserUrl(organizationId, userId);
+            if (lock) {
+                url = url + "/lock";
+            } else {
+                url = url + "/unlock";
+            }
+
+            /* Create Connection */
+            connection = (HttpURLConnection) new URL(url).openConnection(this.proxy);
+            connection.setRequestMethod("PUT");
+            connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
+            connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
+            connection.setUseCaches(false);
+            if (connectionTimeout > DEFAULT_CONNECTION_TIMEOUT)
+                connection.setConnectTimeout(connectionTimeout);
+            if (readTimeout > DEFAULT_READ_TIMEOUT)
+                connection.setReadTimeout(readTimeout);
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.connect();
+            /* End Create  Connection */
+
+            int rc = connection.getResponseCode();
+            connection.disconnect();
+            if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+                throw new UnauthorizedException(rc);
+            }
+            return rc;
+        } finally {
+            if (connection != null){
+                connection.disconnect();
+            }
+        }
+    }
+
+
     /**
      * Create a Group in an organization.  Wrapper method.
      * @param organizationId the ID of the organization
@@ -792,21 +896,55 @@ public class ContrastSDK {
     private JsonObject buildCreateUserBody(String UserId, String firstName, String lastName, long orgRole, ArrayList<Long> groupIds) {
         /* Build JSON Body */
         JsonObject body = new JsonObject();
-        body.addProperty("api_only",false);
-        body.addProperty("date_format","MM/dd/yyyy");
+        body.addProperty("api_only", false);
+        body.addProperty("date_format", "MM/dd/yyyy");
         body.addProperty("enabled", true);
         body.addProperty("first_name", firstName);
+        body.addProperty("last_name", lastName);
         JsonArray groups = new JsonArray();
         for (long l : groupIds) {
             groups.add(l);
         }
         body.add("groups", groups);
-        body.addProperty("last_name", lastName);
         body.addProperty("protect", false);
         body.addProperty("role", orgRole);
         body.addProperty("time_format", "HH:mm");
         body.addProperty("time_zone", "America/Chicago");
         body.addProperty("username", UserId);
+        return body;
+    }
+
+    /**
+     * Build JSON object for the body of User Update PUT requests.
+     * @param firstName the User's first name
+     * @param lastName the User's last name
+     * @param orgRole the ID of the Org Role for the User
+     *                1 Admin
+     *                2 Rules Admin
+     *                3 Edit
+     *                4 View
+     * @param groupIds A list of group Ids. The User will be added to the respective groups
+     *
+     * @return Success Code.
+     */
+
+    private JsonObject buildUpdateUserBody(String firstName, String lastName, long orgRole, ArrayList<Long> groupIds) {
+        /* Build JSON Body */
+        JsonObject body = new JsonObject();
+        body.addProperty("api_only",false);
+        body.addProperty("date_format","MM/dd/yyyy");
+        body.addProperty("enabled", true);
+        body.addProperty("first_name", firstName);
+        body.addProperty("last_name", lastName);
+        JsonArray groups = new JsonArray();
+        for (long l : groupIds) {
+            groups.add(l);
+        }
+        body.add("groups", groups);
+        body.addProperty("protect", false);
+        body.addProperty("role", orgRole);
+        body.addProperty("time_format", "HH:mm");
+        body.addProperty("time_zone", "America/Chicago");
         return body;
     }
 

@@ -36,6 +36,9 @@ public class UrlBuilder {
     public String createUsersUrl(String organizationId) {
         return String.format("/ng/%s/users", organizationId);
     }
+    public String updateUserUrl(String organizationId, String userId) {
+        return String.format("/ng/%s/users/%s", organizationId, userId);
+    }
     public String createGroupsUrl(String organizationId) {
         return String.format("/ng/%s/groups", organizationId);
     }
