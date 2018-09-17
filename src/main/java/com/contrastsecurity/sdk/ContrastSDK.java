@@ -42,6 +42,7 @@ import com.contrastsecurity.models.AgentType;
 import com.contrastsecurity.models.Applications;
 import com.contrastsecurity.models.Coverage;
 import com.contrastsecurity.models.Libraries;
+import com.contrastsecurity.models.NestedUser;
 import com.contrastsecurity.models.Organizations;
 import com.contrastsecurity.models.Rules;
 import com.contrastsecurity.models.Servers;
@@ -197,9 +198,10 @@ public class ContrastSDK {
         }
     }
     /**
-     * Get all users for an organization.
+     * Get user based on Org and Id
      * @param organizationId the ID of the organization
-     * @return A User Objects
+     * @param  userId User ID
+     * @return A User Object
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
@@ -209,8 +211,8 @@ public class ContrastSDK {
         try {
             is = makeRequest(HttpMethod.GET, this.urlBuilder.getUserUrl(organizationId, userId));
             reader = new InputStreamReader(is);
-
-            return this.gson.fromJson(reader, User.class);
+            NestedUser user = this.gson.fromJson(reader, NestedUser.class);
+            return user.getUser();
         } finally {
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(is);
