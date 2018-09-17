@@ -49,6 +49,7 @@ import com.contrastsecurity.models.TraceListing;
 import com.contrastsecurity.models.Traces;
 import com.contrastsecurity.models.Groups;
 import com.contrastsecurity.models.Users;
+import com.contrastsecurity.models.User;
 import com.contrastsecurity.models.GroupDetails;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.google.gson.Gson;
@@ -195,6 +196,27 @@ public class ContrastSDK {
             IOUtils.closeQuietly(is);
         }
     }
+    /**
+     * Get all users for an organization.
+     * @param organizationId the ID of the organization
+     * @return A User Objects
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public User getOrganizationUser(String organizationId, String userId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getUserUrl(organizationId, userId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, User.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
     /**
      * ddooley
      * Create a User in an organization.

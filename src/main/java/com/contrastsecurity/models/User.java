@@ -101,4 +101,13 @@ public class User {
     }
     private SignUp signup = null;
 
+    /**
+     * Return the Group details the user belongs too.
+     *
+     * @return the Group for the user
+     */
+    public List<Group> getGroups() {
+        return this.groups;
+    }
+    private List<Group> groups = null;
 }
