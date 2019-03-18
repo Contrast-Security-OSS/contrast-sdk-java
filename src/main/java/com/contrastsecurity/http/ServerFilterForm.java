@@ -75,7 +75,7 @@ public class ServerFilterForm extends FilterForm {
         filters.add("includeArchived=" + includeArchived);
 
         if (!applicationIds.isEmpty()) {
-            filters.add("applicationIds=" + StringUtils.join(applicationIds, ","));
+            filters.add("applicationsIds=" + StringUtils.join(applicationIds, ","));
         }
 
         if (!logLevels.isEmpty()) {
