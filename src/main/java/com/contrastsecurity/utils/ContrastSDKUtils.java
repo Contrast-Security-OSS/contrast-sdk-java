@@ -38,8 +38,7 @@ public class ContrastSDKUtils {
     public static String ensureApi(String url){
         if(url.endsWith("/Contrast")){
             url = url + "/api";
-        }
-        else if( url.endsWith("/Contrast/")){
+        } else if( url.endsWith("/Contrast/")){
             url = url + "api";
         }
         return url;

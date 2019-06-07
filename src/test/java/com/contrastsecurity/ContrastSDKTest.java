@@ -129,9 +129,10 @@ public class ContrastSDKTest extends ContrastSDK {
         assertEquals(ensureUrlOne, expectedApi);
         assertEquals(ensureUrlTwo, expectedApi);
 
-        final String ensureUrlIncorrect = ContrastSDKUtils.ensureApi("http://localhost:19080/");
-        assertNotEquals(ensureUrlIncorrect, expectedApi);
+        final String unchangedApi = "http://localhost:19080/";
+        final String ensureUnchanged = ContrastSDKUtils.ensureApi(unchangedApi);
 
+        assertEquals(unchangedApi, ensureUnchanged);
     }
     
 }
