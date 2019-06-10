@@ -20,6 +20,7 @@ public class ServerFilterForm extends FilterForm {
     private boolean includeArchived;
     private List<String> applicationIds;
     private List<String> logLevels;
+    private List<String> tags;
 
 
     public ServerFilterForm() {
@@ -28,6 +29,7 @@ public class ServerFilterForm extends FilterForm {
         this.includeArchived = false;
         this.applicationIds = new ArrayList<>();
         this.logLevels = new ArrayList<>();
+        this.tags = new ArrayList<>();
     }
 
     public String getQ() {
@@ -62,6 +64,14 @@ public class ServerFilterForm extends FilterForm {
         this.logLevels = logLevels;
     }
 
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
     @Override
     public String toString() {
         String formString = super.toString();
@@ -75,11 +85,15 @@ public class ServerFilterForm extends FilterForm {
         filters.add("includeArchived=" + includeArchived);
 
         if (!applicationIds.isEmpty()) {
-            filters.add("applicationIds=" + StringUtils.join(applicationIds, ","));
+            filters.add("applicationsIds=" + StringUtils.join(applicationIds, ","));
         }
 
         if (!logLevels.isEmpty()) {
             filters.add("logLevels=" + StringUtils.join(logLevels, ","));
+        }
+
+        if (!tags.isEmpty()) {
+            filters.add("tags=" + StringUtils.join(tags, ","));
         }
 
         String result;
