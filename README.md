@@ -7,8 +7,9 @@ This SDK gives you a quick start for programmatically accessing the [Contrast RE
 * TeamServer account
 
 ### How to use this SDK
-1. Clone the project and run 'clean install' Maven goals to build the artifact with the latest code
-2. Add contrast-sdk-java to your project dependency:
+1. Clone the project
+1. 'mvn clean install' Maven goals to build the artifact with the latest code
+1. Add contrast-sdk-java to your project dependency:
 
     ``` 
     <dependency>
@@ -16,13 +17,12 @@ This SDK gives you a quick start for programmatically accessing the [Contrast RE
         <artifactId>contrast-sdk-java</artifactId>
     </dependency>
     ```
-3. Look up the following information from TeamServer
+1. Look up the following information from Contrast under "Your Account"
     * Username
     * Service Key
     * API Key
-    * TeamServer REST API URL
+    * Contrast REST API URL
         * e.g., http://localhost:19080/Contrast/api
-4. Do what you want!
 
 Code example:
 ```
