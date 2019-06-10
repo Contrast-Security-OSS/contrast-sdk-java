@@ -28,6 +28,8 @@
  */
 package com.contrastsecurity.models;
 
+import com.contrastsecurity.http.ServerFilterForm;
+
 import java.util.List;
 
 /**
@@ -42,6 +44,7 @@ public class Servers {
     public List<Server> getServers() {
         return servers;
     }
+
     private List<Server> servers;
 }
 

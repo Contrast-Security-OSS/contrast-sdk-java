@@ -35,6 +35,17 @@ public class ContrastSDKUtils {
         }
     }
 
+    public static String ensureApi(String url){
+        if(url != null) {
+            if (url.endsWith("/Contrast")) {
+                url = url + "/api";
+            } else if (url.endsWith("/Contrast/")) {
+                url = url + "api";
+            }
+        }
+        return url;
+    }
+
     public static String buildExpand(String... values) {
         if (values == null || values.length == 0) {
             return "";

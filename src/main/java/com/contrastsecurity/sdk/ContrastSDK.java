@@ -99,7 +99,7 @@ public class ContrastSDK {
         this.restApiURL = restApiURL;
 
         ContrastSDKUtils.validateUrl(this.restApiURL);
-
+        this.restApiURL = ContrastSDKUtils.ensureApi(this.restApiURL);
         this.urlBuilder = UrlBuilder.getInstance();
         this.gson = new Gson();
         this.proxy = Proxy.NO_PROXY;
@@ -122,6 +122,7 @@ public class ContrastSDK {
         this.restApiURL = restApiURL;
 
         ContrastSDKUtils.validateUrl(this.restApiURL);
+        this.restApiURL = ContrastSDKUtils.ensureApi(this.restApiURL);
 
         this.urlBuilder = UrlBuilder.getInstance();
         this.gson = new Gson();
@@ -141,9 +142,7 @@ public class ContrastSDK {
         this.serviceKey = serviceKey;
         this.apiKey = apiKey;
         this.restApiURL = DEFAULT_API_URL;
-
         ContrastSDKUtils.validateUrl(this.restApiURL);
-
         this.urlBuilder = UrlBuilder.getInstance();
         this.gson = new Gson();
         this.proxy = Proxy.NO_PROXY;
@@ -560,6 +559,7 @@ public class ContrastSDK {
 
     public InputStream makeRequest(HttpMethod method, String path) throws IOException, UnauthorizedException {
         String url = restApiURL + path;
+
         HttpURLConnection connection = makeConnection(url, method.toString());
         InputStream is = connection.getInputStream();
         int rc = connection.getResponseCode();
@@ -576,12 +576,10 @@ public class ContrastSDK {
         connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
         connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
         connection.setUseCaches(false);
-        
         if(connectionTimeout > DEFAULT_CONNECTION_TIMEOUT)
         	connection.setConnectTimeout(connectionTimeout);
         if(readTimeout > DEFAULT_READ_TIMEOUT)
         	connection.setReadTimeout(readTimeout);
-        
         return connection;
     }
     

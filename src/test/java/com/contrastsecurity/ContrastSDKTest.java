@@ -8,6 +8,7 @@ import com.contrastsecurity.models.Rules;
 import com.contrastsecurity.models.Servers;
 import com.contrastsecurity.models.Traces;
 import com.contrastsecurity.sdk.ContrastSDK;
+import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.google.gson.Gson;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,7 +36,6 @@ public class ContrastSDKTest extends ContrastSDK {
         String applicationString = "{\"application\":{\"app_id\":\"3da856f4-c508-48b8-95a9-514eddefcbf3\",\"archived\":false,\"created\":1461599820000,\"status\":\"offline\",\"path\":\"/WebGoat\",\"name\":\"WebGoat\",\"language\":\"Java\",\"last_seen\":1461737160000,\"total_modules\":1,\"master\":false}}";
 
         Applications app = gson.fromJson(applicationString, Applications.class);
-
         assertNotNull(app);
         assertNotNull(app.getApplication());
 
@@ -97,7 +97,6 @@ public class ContrastSDKTest extends ContrastSDK {
     public void setCustomTiemouts() throws IOException {
     	final int connectionTimeout = 1000;
     	final int readTimeout = 4000;
-    	
     	contrastSDK.setConnectionTimeout(connectionTimeout);
     	contrastSDK.setReadTimeout(readTimeout);
     	
@@ -120,5 +119,40 @@ public class ContrastSDKTest extends ContrastSDK {
     	assertNotEquals(connectionTimeout, conn.getConnectTimeout());
     	assertNotEquals(readTimeout, conn.getReadTimeout());
     }
-    
+
+    @Test
+    public void testEnsureApi() throws IOException {
+        final String expectedApi = "http://localhost:19080/Contrast/api";
+        final String ensureUrlOne = ContrastSDKUtils.ensureApi("http://localhost:19080/Contrast/");
+        final String ensureUrlTwo = ContrastSDKUtils.ensureApi("http://localhost:19080/Contrast");
+
+        assertEquals(expectedApi, ensureUrlOne);
+        assertEquals(expectedApi, ensureUrlTwo);
+
+        final String unchangedApi = "http://localhost:19080/";
+        final String ensureUnchanged = ContrastSDKUtils.ensureApi(unchangedApi);
+
+        assertEquals(unchangedApi, ensureUnchanged);
+    }
+
+    @Test
+    public void testMalformedURL() throws IOException{
+        final String expectedUrl = "htp:/localhost:19080/Contrast/api";
+        final String badUrl = "htp:/localhost:19080/Contrast/";
+        final String actualUrl = ContrastSDKUtils.ensureApi(badUrl);
+        assertEquals(actualUrl, expectedUrl);
+    }
+
+    @Test
+    public void testNullUrl() throws IOException{
+        final String nullUrl = ContrastSDKUtils.ensureApi(null);
+        assertNull(nullUrl);
+    }
+
+    @Test
+    public void blankUrl(){
+        final String blankUrl = ContrastSDKUtils.ensureApi("");
+        final String ensureBlank = "";
+        assertEquals(ensureBlank, blankUrl);
+    }
 }
