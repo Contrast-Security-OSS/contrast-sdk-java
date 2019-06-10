@@ -126,13 +126,33 @@ public class ContrastSDKTest extends ContrastSDK {
         final String ensureUrlOne = ContrastSDKUtils.ensureApi("http://localhost:19080/Contrast/");
         final String ensureUrlTwo = ContrastSDKUtils.ensureApi("http://localhost:19080/Contrast");
 
-        assertEquals(ensureUrlOne, expectedApi);
-        assertEquals(ensureUrlTwo, expectedApi);
+        assertEquals(expectedApi, ensureUrlOne);
+        assertEquals(expectedApi, ensureUrlTwo);
 
         final String unchangedApi = "http://localhost:19080/";
         final String ensureUnchanged = ContrastSDKUtils.ensureApi(unchangedApi);
 
         assertEquals(unchangedApi, ensureUnchanged);
     }
-    
+
+    @Test
+    public void testMalformedURL() throws IOException{
+        final String expectedUrl = "htp:/localhost:19080/Contrast/api";
+        final String badUrl = "htp:/localhost:19080/Contrast/";
+        final String actualUrl = ContrastSDKUtils.ensureApi(badUrl);
+        assertEquals(actualUrl, expectedUrl);
+    }
+
+    @Test
+    public void testNullUrl() throws IOException{
+        final String nullUrl = ContrastSDKUtils.ensureApi(null);
+        assertNull(nullUrl);
+    }
+
+    @Test
+    public void blankUrl(){
+        final String blankUrl = ContrastSDKUtils.ensureApi("");
+        final String ensureBlank = "";
+        assertEquals(ensureBlank, blankUrl);
+    }
 }

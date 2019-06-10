@@ -121,8 +121,6 @@ public class ContrastSDK {
         this.apiKey = apiKey;
         this.restApiURL = restApiURL;
 
-        this.restApiURL = restApiURL;
-
         ContrastSDKUtils.validateUrl(this.restApiURL);
         this.restApiURL = ContrastSDKUtils.ensureApi(this.restApiURL);
 
