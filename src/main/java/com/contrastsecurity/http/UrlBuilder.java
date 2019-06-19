@@ -39,6 +39,10 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications?%s", organizationId, "base=false");
     }
 
+    public String getApplicationsNameUrl(String organizationId) {
+        return String.format("/ng/%s/applications/name?%s", organizationId, "base=false");
+    }
+
     public String getCoverageUrl(String organizationId, String appId) {
         return String.format("/ng/%s/applications/%s/coverage", organizationId, appId);
     }

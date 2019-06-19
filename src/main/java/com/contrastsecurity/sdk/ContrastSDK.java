@@ -262,7 +262,19 @@ public class ContrastSDK {
         try {
             is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationsUrl(organizationId));
             reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, Applications.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
 
+    public Applications getApplicationsNames(String organizationId) throws UnauthorizedException, IOException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationsNameUrl(organizationId));
+            reader = new InputStreamReader(is);
             return this.gson.fromJson(reader, Applications.class);
         } finally {
             IOUtils.closeQuietly(reader);
@@ -615,6 +627,6 @@ public class ContrastSDK {
     private static final int SERVER_ERROR = 500;
 
     private static final String DEFAULT_API_URL = "https://app.contrastsecurity.com/Contrast/api";
-    private static final String LOCALHOST_API_URL = "http://localhost:19080/Contrast/api";
+    private static final String LOCALHOST_API_URL = "http://localhost:19090/Contrast/api";
     private static final String DEFAULT_AGENT_PROFILE = "default";
 }
