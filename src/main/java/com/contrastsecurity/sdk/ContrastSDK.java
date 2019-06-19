@@ -627,6 +627,6 @@ public class ContrastSDK {
     private static final int SERVER_ERROR = 500;
 
     private static final String DEFAULT_API_URL = "https://app.contrastsecurity.com/Contrast/api";
-    private static final String LOCALHOST_API_URL = "http://localhost:19090/Contrast/api";
+    private static final String LOCALHOST_API_URL = "http://localhost:19080/Contrast/api";
     private static final String DEFAULT_AGENT_PROFILE = "default";
 }
