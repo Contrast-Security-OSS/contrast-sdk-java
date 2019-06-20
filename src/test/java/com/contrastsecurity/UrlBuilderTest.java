@@ -50,6 +50,13 @@ public class UrlBuilderTest {
     }
 
     @Test
+    public void testApplicationsNamesUrl() {
+        String expectedUrl = "/ng/test-org/applications/name";
+
+        assertEquals(expectedUrl, urlBuilder.getApplicationsNameUrl(organizationId));
+    }
+
+    @Test
     public void testCoverageUrl() {
         String expectedUrl = "/ng/test-org/applications/test-app/coverage";
 

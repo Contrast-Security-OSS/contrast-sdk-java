@@ -92,32 +92,32 @@ public class ContrastSDKTest extends ContrastSDK {
         assertNotNull(servers);
         assertNotNull(servers.getServers());
     }
-    
+
     @Test
     public void setCustomTiemouts() throws IOException {
-    	final int connectionTimeout = 1000;
-    	final int readTimeout = 4000;
-    	contrastSDK.setConnectionTimeout(connectionTimeout);
-    	contrastSDK.setReadTimeout(readTimeout);
-    	
-    	URLConnection conn = contrastSDK.makeConnection("https://www.google.com", HttpMethod.GET.toString());
-    	
-    	assertEquals(connectionTimeout, conn.getConnectTimeout());
-    	assertEquals(readTimeout, conn.getReadTimeout());
+        final int connectionTimeout = 1000;
+        final int readTimeout = 4000;
+        contrastSDK.setConnectionTimeout(connectionTimeout);
+        contrastSDK.setReadTimeout(readTimeout);
+
+        URLConnection conn = contrastSDK.makeConnection("https://www.google.com", HttpMethod.GET.toString());
+
+        assertEquals(connectionTimeout, conn.getConnectTimeout());
+        assertEquals(readTimeout, conn.getReadTimeout());
     }
-    
+
     @Test
     public void negativeTimeoutsAreNotSetTest() throws IOException {
-    	final int connectionTimeout = -10;
-    	final int readTimeout = -50;
-    	
-    	contrastSDK.setConnectionTimeout(connectionTimeout);
-    	contrastSDK.setReadTimeout(readTimeout);
-    	
-    	URLConnection conn = contrastSDK.makeConnection("https://www.google.com", HttpMethod.GET.toString());
-    	
-    	assertNotEquals(connectionTimeout, conn.getConnectTimeout());
-    	assertNotEquals(readTimeout, conn.getReadTimeout());
+        final int connectionTimeout = -10;
+        final int readTimeout = -50;
+
+        contrastSDK.setConnectionTimeout(connectionTimeout);
+        contrastSDK.setReadTimeout(readTimeout);
+
+        URLConnection conn = contrastSDK.makeConnection("https://www.google.com", HttpMethod.GET.toString());
+
+        assertNotEquals(connectionTimeout, conn.getConnectTimeout());
+        assertNotEquals(readTimeout, conn.getReadTimeout());
     }
 
     @Test
@@ -136,7 +136,7 @@ public class ContrastSDKTest extends ContrastSDK {
     }
 
     @Test
-    public void testMalformedURL() throws IOException{
+    public void testMalformedURL() throws IOException {
         final String expectedUrl = "htp:/localhost:19080/Contrast/api";
         final String badUrl = "htp:/localhost:19080/Contrast/";
         final String actualUrl = ContrastSDKUtils.ensureApi(badUrl);
@@ -144,13 +144,13 @@ public class ContrastSDKTest extends ContrastSDK {
     }
 
     @Test
-    public void testNullUrl() throws IOException{
+    public void testNullUrl() throws IOException {
         final String nullUrl = ContrastSDKUtils.ensureApi(null);
         assertNull(nullUrl);
     }
 
     @Test
-    public void blankUrl(){
+    public void blankUrl() {
         final String blankUrl = ContrastSDKUtils.ensureApi("");
         final String ensureBlank = "";
         assertEquals(ensureBlank, blankUrl);

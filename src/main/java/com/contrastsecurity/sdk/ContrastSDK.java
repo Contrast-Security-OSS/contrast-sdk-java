@@ -262,7 +262,19 @@ public class ContrastSDK {
         try {
             is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationsUrl(organizationId));
             reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, Applications.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
 
+    public Applications getApplicationsNames(String organizationId) throws UnauthorizedException, IOException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationsNameUrl(organizationId));
+            reader = new InputStreamReader(is);
             return this.gson.fromJson(reader, Applications.class);
         } finally {
             IOUtils.closeQuietly(reader);
