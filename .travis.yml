@@ -5,6 +5,3 @@ jdk:
   - oraclejdk8
 script: 
     - mvn -B -e clean compile test 
-after_success:
-    - gpg --import gpg/encrypted_key.gpg
-    - if [ ! -z "$TRAVIS_TAG" ]; then mvn package deploy -B -e --settings settings.xml; fi
