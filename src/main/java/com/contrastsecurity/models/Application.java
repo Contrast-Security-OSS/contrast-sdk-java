@@ -302,4 +302,15 @@ public class Application {
     @SerializedName("attack_label")
     private String attackLabel = "";
 
+    /**
+     * Application's tags.
+     *
+     * @return Application's tags
+     */
+    public String[] getTags() {
+        return this.tags;
+    }
+    @SerializedName("tags")
+    private String[] tags;
+
 }
