@@ -38,17 +38,7 @@ import com.contrastsecurity.http.TraceFilterForm;
 import com.contrastsecurity.http.TraceFilterKeycode;
 import com.contrastsecurity.http.TraceFilterType;
 import com.contrastsecurity.http.UrlBuilder;
-import com.contrastsecurity.models.AgentType;
-import com.contrastsecurity.models.Applications;
-import com.contrastsecurity.models.Coverage;
-import com.contrastsecurity.models.Libraries;
-import com.contrastsecurity.models.Organizations;
-import com.contrastsecurity.models.Rules;
-import com.contrastsecurity.models.Servers;
-import com.contrastsecurity.models.TraceListing;
-import com.contrastsecurity.models.Traces;
-import com.contrastsecurity.models.User;
-import com.contrastsecurity.models.Users;
+import com.contrastsecurity.models.*;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
@@ -146,6 +136,27 @@ public class ContrastSDK {
         this.urlBuilder = UrlBuilder.getInstance();
         this.gson = new Gson();
         this.proxy = Proxy.NO_PROXY;
+    }
+
+    /**
+     * Get all Assess Licensing for an Organizations.
+     * @param organizationId the ID of the organization
+     * @return AssessLicenseOverview with Assess Licensing for an Oeg.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public AssessLicenseOverview getAssessLicensing(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getAssessLicensing(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, AssessLicenseOverview.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
     }
 
     /**

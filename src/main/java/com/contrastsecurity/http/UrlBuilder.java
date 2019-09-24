@@ -89,6 +89,10 @@ public class UrlBuilder {
         return String.format("/ng/%s/rules", organizationId);
     }
 
+    public String getAssessLicensing(String organizationId) {
+        return String.format("/ng/%s/licenses", organizationId);
+    }
+
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {
         String url;
 
