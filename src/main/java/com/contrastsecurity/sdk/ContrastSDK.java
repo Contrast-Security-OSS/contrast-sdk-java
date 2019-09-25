@@ -28,7 +28,6 @@
  */
 package com.contrastsecurity.sdk;
 
-import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.FilterForm;
 import com.contrastsecurity.http.HttpMethod;
@@ -149,10 +148,30 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(HttpMethod.GET, this.urlBuilder.getAssessLicensing(organizationId));
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getAssessLicensingUrl(organizationId));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, AssessLicenseOverview.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+    /**
+     * Get all Vulnerability Trend for an Organizations.
+     * @param organizationId the ID of the organization
+     * @return VulnerabilityTrend with the yearly Vulnerability Trend for an Oeg.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public VulnerabilityTrend getYearlyVulnTrend(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getYearlyVulnTrendUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, VulnerabilityTrend.class);
         } finally {
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(is);
