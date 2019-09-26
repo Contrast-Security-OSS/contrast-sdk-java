@@ -364,6 +364,49 @@ public class ContrastSDK {
     }
 
     /**
+     * Return the library Scores for an Organization.
+     *
+     * @param organizationId the ID of the organization
+     * @return LibraryScores object that contains the Library scores for an Org
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public LibraryScores getLibraryScores(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getLibraryScoresUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, LibraryScores.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+    /**
+     * Return the library Stats for an Organization.
+     *
+     * @param organizationId the ID of the organization
+     * @return LibraryScores object that contains the Library stats for an Org
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public LibraryStats getLibraryStats(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getLibraryStatsUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, LibraryStats.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
      * Return the servers of the monitored Contrast application.
      *
      * @param organizationId the ID of the organization

@@ -51,6 +51,13 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand(expandValues));
     }
 
+    public String getLibraryStatsUrl(String organizationId) {
+        return String.format("/ng/%s/libraries/stats", organizationId);
+    }
+    public String getLibraryScoresUrl(String organizationId) {
+        return String.format("/ng/%s/libraries/breakdown/scores", organizationId);
+    }
+
     public String getServersUrl(String organizationId, FilterForm form) {
         String formString = form == null ? "" : form.toString();
         return String.format("/ng/%s/servers%s", organizationId, formString);
