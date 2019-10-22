@@ -2,6 +2,6 @@ language: java
 sudo: false # faster builds
 script:
 jdk:
-  - oraclejdk8
+  - openjdk8
 script: 
     - mvn -B -e clean compile test 
