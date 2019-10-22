@@ -51,6 +51,13 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand(expandValues));
     }
 
+    public String getLibraryStatsUrl(String organizationId) {
+        return String.format("/ng/%s/libraries/stats", organizationId);
+    }
+    public String getLibraryScoresUrl(String organizationId) {
+        return String.format("/ng/%s/libraries/breakdown/scores", organizationId);
+    }
+
     public String getServersUrl(String organizationId, FilterForm form) {
         String formString = form == null ? "" : form.toString();
         return String.format("/ng/%s/servers%s", organizationId, formString);
@@ -87,6 +94,12 @@ public class UrlBuilder {
 
     public String getRules(String organizationId) {
         return String.format("/ng/%s/rules", organizationId);
+    }
+
+    public String getAssessLicensingUrl(String organizationId) {
+        return String.format("/ng/%s/licenses", organizationId);
+    }
+    public String getYearlyVulnTrendUrl(String organizationId) { return String.format("/ng/%s/orgtraces/stats/trend/year/total", organizationId);
     }
 
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {

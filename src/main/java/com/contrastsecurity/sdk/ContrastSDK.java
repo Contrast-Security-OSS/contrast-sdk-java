@@ -28,7 +28,6 @@
  */
 package com.contrastsecurity.sdk;
 
-import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.FilterForm;
 import com.contrastsecurity.http.HttpMethod;
@@ -38,17 +37,7 @@ import com.contrastsecurity.http.TraceFilterForm;
 import com.contrastsecurity.http.TraceFilterKeycode;
 import com.contrastsecurity.http.TraceFilterType;
 import com.contrastsecurity.http.UrlBuilder;
-import com.contrastsecurity.models.AgentType;
-import com.contrastsecurity.models.Applications;
-import com.contrastsecurity.models.Coverage;
-import com.contrastsecurity.models.Libraries;
-import com.contrastsecurity.models.Organizations;
-import com.contrastsecurity.models.Rules;
-import com.contrastsecurity.models.Servers;
-import com.contrastsecurity.models.TraceListing;
-import com.contrastsecurity.models.Traces;
-import com.contrastsecurity.models.User;
-import com.contrastsecurity.models.Users;
+import com.contrastsecurity.models.*;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
@@ -146,6 +135,47 @@ public class ContrastSDK {
         this.urlBuilder = UrlBuilder.getInstance();
         this.gson = new Gson();
         this.proxy = Proxy.NO_PROXY;
+    }
+
+    /**
+     * Get all Assess Licensing for an Organizations.
+     * @param organizationId the ID of the organization
+     * @return AssessLicenseOverview with Assess Licensing for an Oeg.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public AssessLicenseOverview getAssessLicensing(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getAssessLicensingUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, AssessLicenseOverview.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+    /**
+     * Get all Vulnerability Trend for an Organizations.
+     * @param organizationId the ID of the organization
+     * @return VulnerabilityTrend with the yearly Vulnerability Trend for an Oeg.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public VulnerabilityTrend getYearlyVulnTrend(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getYearlyVulnTrendUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, VulnerabilityTrend.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
     }
 
     /**
@@ -327,6 +357,49 @@ public class ContrastSDK {
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, Libraries.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Return the library Scores for an Organization.
+     *
+     * @param organizationId the ID of the organization
+     * @return LibraryScores object that contains the Library scores for an Org
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public LibraryScores getLibraryScores(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getLibraryScoresUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, LibraryScores.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+    /**
+     * Return the library Stats for an Organization.
+     *
+     * @param organizationId the ID of the organization
+     * @return LibraryScores object that contains the Library stats for an Org
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public LibraryStats getLibraryStats(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getLibraryStatsUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, LibraryStats.class);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
