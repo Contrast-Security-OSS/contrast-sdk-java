@@ -39,7 +39,9 @@ import com.contrastsecurity.http.TraceFilterType;
 import com.contrastsecurity.http.UrlBuilder;
 import com.contrastsecurity.models.*;
 import com.contrastsecurity.utils.ContrastSDKUtils;
+import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -90,7 +92,8 @@ public class ContrastSDK {
         ContrastSDKUtils.validateUrl(this.restApiURL);
         this.restApiURL = ContrastSDKUtils.ensureApi(this.restApiURL);
         this.urlBuilder = UrlBuilder.getInstance();
-        this.gson = new Gson();
+        this.gson = new GsonBuilder()
+                .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();
         this.proxy = Proxy.NO_PROXY;
     }
 

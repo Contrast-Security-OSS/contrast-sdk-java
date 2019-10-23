@@ -11,7 +11,7 @@ import java.util.List;
 public class FilterForm {
 
     public enum ApplicationExpandValues {
-        SCORES, TRACE_BREAKDOWN, LICENSE;
+        SCORES, TRACE_BREAKDOWN, LICENSE, METADATA;
 
         @Override
         public String toString() {

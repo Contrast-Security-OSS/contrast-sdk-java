@@ -313,4 +313,14 @@ public class Application {
     @SerializedName("tags")
     private String[] tags;
 
+
+    /**
+     * Application metadata.
+     *
+     * @return Application's metadata
+     */
+    public MetadataEntity[] getMetadataEntities() {return  metadataEntities;}
+    @SerializedName("metadataEntities")
+    private MetadataEntity[] metadataEntities;
+
 }
