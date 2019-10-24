@@ -3,7 +3,7 @@ package com.contrastsecurity.utils;
 import com.contrastsecurity.models.FreeformMetadata;
 import com.contrastsecurity.models.MetadataEntity;
 import com.contrastsecurity.models.NumericMetadata;
-import com.contrastsecurity.models.PersonOfContactMetadata;
+import com.contrastsecurity.models.PointOfContactMetadata;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
@@ -22,7 +22,7 @@ public class MetadataDeserializer implements JsonDeserializer<MetadataEntity> {
                     return context.deserialize(jsonObject,
                             NumericMetadata.class);
                 case "PERSON_OF_CONTACT":
-                    PersonOfContactMetadata poiMetadata = new PersonOfContactMetadata();
+                    PointOfContactMetadata poiMetadata = new PointOfContactMetadata();
                     poiMetadata.setFieldName(jsonObject.get("fieldName").getAsString());
                     JsonArray subFields = jsonObject.getAsJsonArray("subfields");
                     for (JsonElement subfieldElement: subFields) {

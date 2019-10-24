@@ -1,8 +1,8 @@
 package com.contrastsecurity.models;
 
-public class PersonOfContactMetadata extends MetadataEntity{
+public class PointOfContactMetadata extends MetadataEntity{
 
-    public PersonOfContactMetadata(){
+    public PointOfContactMetadata(){
         type = MetadataType.PERSON_OF_CONTACT;
     }
 

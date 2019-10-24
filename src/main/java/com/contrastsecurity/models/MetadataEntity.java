@@ -43,9 +43,9 @@ public abstract class MetadataEntity {
             throw new InvalidConversionException(type.toString(), MetadataType.NUMERIC.toString());
     }
 
-    public PersonOfContactMetadata getAsPersonOfContactMetadata() throws InvalidConversionException{
+    public PointOfContactMetadata getAsPersonOfContactMetadata() throws InvalidConversionException{
         if(type == MetadataType.PERSON_OF_CONTACT)
-            return (PersonOfContactMetadata) this;
+            return (PointOfContactMetadata) this;
         else
             throw new InvalidConversionException(type.toString(), MetadataType.PERSON_OF_CONTACT.toString());
     }
