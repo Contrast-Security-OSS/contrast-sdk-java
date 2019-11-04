@@ -1,15 +1,16 @@
 package com.contrastsecurity;
 
+import com.contrastsecurity.exceptions.InvalidConversionException;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.HttpMethod;
-import com.contrastsecurity.models.Applications;
-import com.contrastsecurity.models.Rules;
-import com.contrastsecurity.models.Servers;
-import com.contrastsecurity.models.Traces;
+import com.contrastsecurity.models.*;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.utils.ContrastSDKUtils;
+import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -28,6 +29,8 @@ public class ContrastSDKTest extends ContrastSDK {
     public static void setUp() {
         contrastSDK = new ContrastSDK("test_user", "testApiKey", "testServiceKey", "http://localhost:19080/Contrast/api", Proxy.NO_PROXY);
         gson = new Gson();
+        gson = new GsonBuilder()
+                .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();
     }
 
     @Test
@@ -54,6 +57,33 @@ public class ContrastSDKTest extends ContrastSDK {
 
         assertNull(apps.getApplication());
         assertTrue(!apps.getApplications().isEmpty());
+    }
+
+    @Test
+    public void testGetApplicationsWithMetadata() throws UnauthorizedException, IOException, ResourceNotFoundException, InvalidConversionException {
+
+        String applicationsString = "{\"applications\":[{\"app_id\":\"72358543-bbdb-490c-8e3f-1b5f5e9a0bf7\",\"archived\":false,\"created\":1461631080000,\"status\":\"offline\",\"path\":\"/Curl\",\"name\":\"Contrast-Curl\",\"language\":\"Java\",\"last_seen\":1461631080000,\"total_modules\":1,\"master\":false, \"metadataEntities\": [ { \"fieldName\": \"Contact\", \"fieldValue\": \"\", \"type\": \"PERSON_OF_CONTACT\", \"unique\": false, \"subfields\": [ { \"fieldName\": \"Contact Name\", \"fieldValue\": \"Contrast User\", \"type\": \"CONTACT_NAME\" }, { \"fieldName\": \"Contact Email\", \"fieldValue\": \"support@contrastsecurity.com\", \"type\": \"EMAIL\" }, { \"fieldName\": \"Contact Phone\", \"fieldValue\": \"1234567890\", \"type\": \"PHONE\" } ] }, { \"fieldName\": \"bU\", \"fieldValue\": \"PEDS\", \"type\": \"STRING\" }, {\"fieldName\": \"askId\", \"fieldValue\": \"123456789\", \"type\": \"NUMERIC\" }]}, ,{\"app_id\":\"9e88815f-bb0d-44b4-ac5a-f02f661e8947\",\"archived\":false,\"created\":1460582659000,\"status\":\"offline\",\"path\":\"/library\",\"name\":\"sakai-library\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":1,\"master\":false}]}";
+
+        Applications apps = gson.fromJson(applicationsString, Applications.class);
+
+        assertNotNull(apps);
+        assertNotNull(apps.getApplications());
+
+        assertNotNull(apps.getApplications().get(0).getMetadataEntities());
+        MetadataEntity[] metadataEntities = apps.getApplications().get(0).getMetadataEntities();
+        assertEquals(3, apps.getApplications().get(0).getMetadataEntities().length);
+
+        assertNotNull(metadataEntities[0]);
+        assertEquals(metadataEntities[0].getType(), MetadataEntity.MetadataType.PERSON_OF_CONTACT);
+        assertThat(metadataEntities[0].getAsPersonOfContactMetadata(), new IsInstanceOf(PointOfContactMetadata.class));
+
+        assertNotNull(metadataEntities[1]);
+        assertEquals(metadataEntities[1].getType(), MetadataEntity.MetadataType.STRING);
+        assertThat(metadataEntities[1].getAsFreeformMetadata(), new IsInstanceOf(FreeformMetadata.class));
+
+        assertNotNull(metadataEntities[2]);
+        assertEquals(metadataEntities[2].getType(), MetadataEntity.MetadataType.NUMERIC);
+        assertThat(metadataEntities[2].getAsNumericMetadata(), new IsInstanceOf(NumericMetadata.class));
     }
 
     @Test
