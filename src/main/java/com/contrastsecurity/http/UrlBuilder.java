@@ -40,7 +40,7 @@ public class UrlBuilder {
     }
 
     public String getLicensedApplicationsUrl(String organizationId) {
-        return String.format("/ng/%s/applications%s", organizationId, "/filter?expand=license,compliance_policy,skip_links,technologies,trace_severity_breakdown,metadata&sort=appName&quickFilter=LICENSED");
+        return String.format("/ng/%s/applications%s", organizationId, "/filter?sort=appName&quickFilter=LICENSED");
     }
 
     public String getApplicationsNameUrl(String organizationId) {
