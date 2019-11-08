@@ -45,10 +45,12 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -243,6 +245,16 @@ public class ContrastSDK {
     }
 
     public void createApplication(String appName) throws IOException, UnauthorizedException {
+        HashMap<String, String> propertyMap = new HashMap<String, String>();
+
+        //Required
+        propertyMap.put("Application-Name",appName);
+        //Defaults
+        propertyMap.put("Application-Language", "Java");
+        propertyMap.put("Application-Path", "/"+appName);
+
+
+
         makeRequest(HttpMethod.PUT, this.urlBuilder.getCreateApplicationUrl());
     }
 
@@ -648,17 +660,26 @@ public class ContrastSDK {
     }
 
     public InputStream makeRequest(HttpMethod method, String path) throws IOException, UnauthorizedException {
-        return makeRequest(method, path, null);
+        return makeRequest(method, path, null, null);
     }
 
-    public InputStream makeRequest(HttpMethod method, String path, Map<String, String> propertyMap) throws IOException, UnauthorizedException{
+
+    private InputStream makeRequest(HttpMethod method, String path, Map<String, String> propertyMap, String body) throws IOException, UnauthorizedException{
         String url = restApiURL + path;
 
         HttpURLConnection connection = makeConnection(url, method.toString());
+        if(method.equals(HttpMethod.PUT)) {
+            connection.setDoOutput(true);
+        }
         if(propertyMap != null) {
             for(Map.Entry<String, String> property: propertyMap.entrySet()) {
                 connection.setRequestProperty(property.getKey(), property.getValue());
             }
+        }
+        if(body != null) {
+            OutputStream os = connection.getOutputStream();
+            byte[] bodyByte = body.getBytes("utf-8");
+            os.write(bodyByte, 0, bodyByte.length);
         }
         InputStream is = connection.getInputStream();
         int rc = connection.getResponseCode();
