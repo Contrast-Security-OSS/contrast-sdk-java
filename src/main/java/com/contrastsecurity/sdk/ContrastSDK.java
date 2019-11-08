@@ -50,6 +50,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Entry point for using the Contrast REST API. Make an instance of this class
@@ -239,6 +240,10 @@ public class ContrastSDK {
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(is);
         }
+    }
+
+    public void createApplication(String appName) throws IOException, UnauthorizedException {
+        makeRequest(HttpMethod.PUT, this.urlBuilder.getCreateApplicationUrl());
     }
 
     /**
@@ -643,9 +648,18 @@ public class ContrastSDK {
     }
 
     public InputStream makeRequest(HttpMethod method, String path) throws IOException, UnauthorizedException {
+        return makeRequest(method, path, null);
+    }
+
+    public InputStream makeRequest(HttpMethod method, String path, Map<String, String> propertyMap) throws IOException, UnauthorizedException{
         String url = restApiURL + path;
 
         HttpURLConnection connection = makeConnection(url, method.toString());
+        if(propertyMap != null) {
+            for(Map.Entry<String, String> property: propertyMap.entrySet()) {
+                connection.setRequestProperty(property.getKey(), property.getValue());
+            }
+        }
         InputStream is = connection.getInputStream();
         int rc = connection.getResponseCode();
         if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
