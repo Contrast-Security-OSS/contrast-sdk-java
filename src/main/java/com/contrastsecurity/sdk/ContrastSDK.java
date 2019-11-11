@@ -42,6 +42,7 @@ import com.contrastsecurity.models.*;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
+import sun.nio.ch.IOUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -261,7 +262,7 @@ public class ContrastSDK {
      * @throws UnauthorizedException        if the Contrast account failed to authorize
      * @throws ResourceNotFoundException    if there was a problem creating the application
      */
-    public Application createApplication(String organizationId,
+    public String createApplication(String organizationId,
                                   String appName,
                                   String appShortName,
                                   String appLanguage,
@@ -293,10 +294,10 @@ public class ContrastSDK {
         }
 
         //create end point doesn't return appId created
-        List<Application> apps = getApplications(organizationId).getApplications();
+        List<Application> apps = getApplicationsBytextFilter(organizationId,appName).getApplications();
         for(Application app : apps) {
             if(app.getName().equals(appName) && app.getShortName().equals(appShortName)) {
-                return app;
+                return app.getId();
             }
         }
         throw new ResourceNotFoundException("Application", appName);
@@ -309,7 +310,12 @@ public class ContrastSDK {
      * @throws UnauthorizedException    if the Contrast Account Failed to authorize
      */
     private void createServer(Map<String, String> propertyMap) throws IOException, UnauthorizedException {
-        makeRequest(HttpMethod.PUT, this.urlBuilder.getCreateServerUrl(), propertyMap, "{}");
+        InputStream is = null;
+        try {
+            is = makeRequest(HttpMethod.PUT, this.urlBuilder.getCreateServerUrl(), propertyMap, "{}");
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
     }
 
     /**
@@ -369,6 +375,21 @@ public class ContrastSDK {
             IOUtils.closeQuietly(is);
         }
     }
+
+    public Applications getApplicationsBytextFilter(String organizationId, String textFilter) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationsByTextFilterUrl(organizationId, textFilter));;
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, Applications.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+
 
     public Applications getApplicationsNames(String organizationId) throws UnauthorizedException, IOException {
         InputStream is = null;
