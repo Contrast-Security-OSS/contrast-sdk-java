@@ -28,6 +28,7 @@
  */
 package com.contrastsecurity.sdk;
 
+import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.FilterForm;
 import com.contrastsecurity.http.HttpMethod;
@@ -244,18 +245,71 @@ public class ContrastSDK {
         }
     }
 
-    public void createApplication(String appName) throws IOException, UnauthorizedException {
-        HashMap<String, String> propertyMap = new HashMap<String, String>();
+    /**
+     * Creates an application and server on TeamServer.
+     *
+     * @param organizationId                the ID of the organization
+     * @param appName                       the name of the application
+     * @param appShortName                  the shortname/code of the application
+     * @param appLanguage                   the language of the application
+     * @param serverName                    the name of the server
+     * @param serverPath                    the path of the server
+     * @param serverType                    the type of the server
+     * @param agentVersion                  the version of the agent
+     * @return                              an application object representing the application created
+     * @throws IOException                  if there was a communication problem
+     * @throws UnauthorizedException        if the Contrast account failed to authorize
+     * @throws ResourceNotFoundException    if there was a problem creating the application
+     */
+    public Application createApplication(String organizationId,
+                                  String appName,
+                                  String appShortName,
+                                  String appLanguage,
+                                  String serverName,
+                                  String serverPath,
+                                  String serverType,
+                                  String agentVersion)
+            throws IOException, UnauthorizedException, ResourceNotFoundException {
+        HashMap<String, String> propertyMap = new HashMap<>();
 
-        //Required
+        //Application
         propertyMap.put("Application-Name",appName);
-        //Defaults
-        propertyMap.put("Application-Language", "Java");
+        propertyMap.put("Application-Language", appLanguage);
         propertyMap.put("Application-Path", "/"+appName);
+        //Server
+        propertyMap.put("Server-Name", serverName);
+        propertyMap.put("Server-Path", serverPath);
+        propertyMap.put("Server-Type", serverType);
+        propertyMap.put("X-Contrast-Agent",appLanguage+" "+agentVersion);
+        //Other
+        propertyMap.put("cache-control","no-cache");
 
+        createServer(propertyMap);
+        InputStream is = null;
+        try {
+            is = makeRequest(HttpMethod.PUT, this.urlBuilder.getCreateApplicationUrl(), propertyMap, "{code: " + appShortName + "}");
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
 
+        //create end point doesn't return appId created
+        List<Application> apps = getApplications(organizationId).getApplications();
+        for(Application app : apps) {
+            if(app.getName().equals(appName) && app.getShortName().equals(appShortName)) {
+                return app;
+            }
+        }
+        throw new ResourceNotFoundException("Application", appName);
+    }
 
-        makeRequest(HttpMethod.PUT, this.urlBuilder.getCreateApplicationUrl());
+    /**
+     * creates a server on TeamServer
+     * @param propertyMap               map of values needed to create a server
+     * @throws IOException              if there was a communication problem
+     * @throws UnauthorizedException    if the Contrast Account Failed to authorize
+     */
+    private void createServer(Map<String, String> propertyMap) throws IOException, UnauthorizedException {
+        makeRequest(HttpMethod.PUT, this.urlBuilder.getCreateServerUrl(), propertyMap, "{}");
     }
 
     /**
@@ -664,7 +718,7 @@ public class ContrastSDK {
     }
 
 
-    private InputStream makeRequest(HttpMethod method, String path, Map<String, String> propertyMap, String body) throws IOException, UnauthorizedException{
+    public InputStream makeRequest(HttpMethod method, String path, Map<String, String> propertyMap, String body) throws IOException, UnauthorizedException{
         String url = restApiURL + path;
 
         HttpURLConnection connection = makeConnection(url, method.toString());

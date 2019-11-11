@@ -43,6 +43,18 @@ public class UrlBuilderTest {
     }
 
     @Test
+    public void testCreateApplicationUrl() {
+        String expectedUrl = "/ng/applications/create";
+        assertEquals(expectedUrl, urlBuilder.getCreateApplicationUrl());
+    }
+
+    @Test
+    public void testCreateServerUrl() {
+        String expectedUrl = "/ng/servers/";
+        assertEquals(expectedUrl, urlBuilder.getCreateServerUrl());
+    }
+
+    @Test
     public void testApplicationsUrl() {
         String expectedUrl = "/ng/test-org/applications?base=false";
 
