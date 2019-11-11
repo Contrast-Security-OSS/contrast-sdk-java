@@ -299,6 +299,27 @@ public class ContrastSDK {
         }
     }
 
+    /**
+     * Get the list of licensed applications being monitored by Contrast.
+     *
+     * @param organizationId the ID of the organization
+     * @return Applications object that contains the list of Application's
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public Applications getLicensedApplications(String organizationId) throws UnauthorizedException, IOException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getLicensedApplicationsUrl(organizationId));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, Applications.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
     public Applications getApplicationsNames(String organizationId) throws UnauthorizedException, IOException {
         InputStream is = null;
         InputStreamReader reader = null;
