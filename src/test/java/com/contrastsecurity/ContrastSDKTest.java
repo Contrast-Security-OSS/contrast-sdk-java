@@ -7,7 +7,9 @@ import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.models.*;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.utils.ContrastSDKUtils;
+import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,7 +28,8 @@ public class ContrastSDKTest extends ContrastSDK {
     @BeforeClass
     public static void setUp() {
         contrastSDK = new ContrastSDK("test_user", "testApiKey", "testServiceKey", "http://localhost:19080/Contrast/api", Proxy.NO_PROXY);
-        gson = new Gson();
+        gson = new GsonBuilder()
+                .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();;
     }
 
     @Test
