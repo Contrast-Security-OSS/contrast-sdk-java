@@ -182,27 +182,6 @@ public class ContrastSDK {
     }
 
     /**
-     * Get all Vulnerability Trend for an Organizations.
-     * @param organizationId the ID of the organization
-     * @return VulnerabilityTrend with the yearly Vulnerability Trend for an Oeg.
-     * @throws UnauthorizedException if the Contrast account failed to authorize
-     * @throws IOException           if there was a communication problem
-     */
-    public VulnerabilityTrend getYearlyVulnTrendForApplication(String organizationId, String appId) throws IOException, UnauthorizedException {
-        InputStream is = null;
-        InputStreamReader reader = null;
-        try {
-            is = makeRequest(HttpMethod.GET, this.urlBuilder.getYearlyVulnTrendForApplicationUrl(organizationId, appId));
-            reader = new InputStreamReader(is);
-
-            return this.gson.fromJson(reader, VulnerabilityTrend.class);
-        } finally {
-            IOUtils.closeQuietly(reader);
-            IOUtils.closeQuietly(is);
-        }
-    }
-
-    /**
      * Get all organizations for the user profile.
      *
      * @return Organization objects with a list of disabled and valid organizations for the user.
