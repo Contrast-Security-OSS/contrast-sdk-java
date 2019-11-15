@@ -35,12 +35,8 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s%s", organizationId, appId, buildExpand(expandValues));
     }
 
-    public String getCreateApplicationUrl() {
-        return String.format("/ng/applications/create");
-    }
-
-    public String getCreateServerUrl() {
-        return String.format("/ng/servers/");
+    public String getCreateApplicationUrl(String organizationId) {
+        return String.format("/ng/integration/organizations/%s/applications", organizationId);
     }
 
     public String getApplicationsUrl(String organizationId) {

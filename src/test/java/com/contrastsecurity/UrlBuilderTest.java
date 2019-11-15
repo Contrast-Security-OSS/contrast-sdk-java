@@ -44,14 +44,8 @@ public class UrlBuilderTest {
 
     @Test
     public void testCreateApplicationUrl() {
-        String expectedUrl = "/ng/applications/create";
-        assertEquals(expectedUrl, urlBuilder.getCreateApplicationUrl());
-    }
-
-    @Test
-    public void testCreateServerUrl() {
-        String expectedUrl = "/ng/servers/";
-        assertEquals(expectedUrl, urlBuilder.getCreateServerUrl());
+        String expectedUrl = "/ng/integration/organizations/test-org/applications";
+        assertEquals(expectedUrl, urlBuilder.getCreateApplicationUrl(organizationId));
     }
 
     @Test
