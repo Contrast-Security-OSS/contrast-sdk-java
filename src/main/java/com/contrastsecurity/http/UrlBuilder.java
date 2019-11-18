@@ -36,7 +36,7 @@ public class UrlBuilder {
     }
 
     public String getCreateApplicationUrl(String organizationId) {
-        return String.format("/ng/integration/organizations/%s/applications", organizationId);
+        return String.format("/ng/integrations/organizations/%s/applications", organizationId);
     }
 
     public String getApplicationsUrl(String organizationId) {
