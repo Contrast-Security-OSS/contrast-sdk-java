@@ -249,7 +249,7 @@ public class ContrastSDK {
     }
 
     /**
-     * Creates a serverless application that is meant to be instrumented later.
+     * Creates an application without a server that is meant to be instrumented later.
      * @param organizationId
      * @param request
      * @return
