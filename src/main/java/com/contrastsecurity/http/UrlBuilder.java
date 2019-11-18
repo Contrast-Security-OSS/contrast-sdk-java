@@ -43,10 +43,6 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications?%s", organizationId, "base=false");
     }
 
-    public String getApplicationsByTextFilterUrl(String organizationId, String textFilter) {
-        return String.format("/ng/%s/applications?%s&%s", organizationId, "filterText="+textFilter, "base=false");
-    }
-
     public String getApplicationsNameUrl(String organizationId) {
         return String.format("/ng/%s/applications/name", organizationId);
     }
