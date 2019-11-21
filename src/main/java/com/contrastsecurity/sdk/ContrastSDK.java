@@ -266,6 +266,23 @@ public class ContrastSDK {
     }
 
     /**
+     * Gets a single application based on the org, name, and language
+     * @param orgId ID of the organization
+     * @param appName Application name when the application was first created
+     * @param language Language of the application
+     * @return
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public Application getApplicationByNameAndLanguage(String orgId, String appName, AgentType language) throws IOException, UnauthorizedException{
+        try (InputStream is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationByNameAndLanguageUrl(orgId, appName, language.name()));
+             InputStreamReader reader = new InputStreamReader(is)) {
+            Applications response = this.gson.fromJson(reader, Applications.class);
+            return response.getApplication();
+        }
+    }
+
+    /**
      * Private helper method for createApplication to make a request with special error handling
      * @param method
      * @param path
