@@ -49,6 +49,12 @@ public class UrlBuilderTest {
     }
 
     @Test
+    public void testApplicationByNameAndLanguageUrl() {
+        String expectedUrl = "/ng/integrations/organizations/test-org/applications?name=app&language=JAVA";
+        assertEquals(expectedUrl, urlBuilder.getApplicationByNameAndLanguageUrl(organizationId, "app", "JAVA"));
+    }
+
+    @Test
     public void testApplicationsUrl() {
         String expectedUrl = "/ng/test-org/applications?base=false";
 
