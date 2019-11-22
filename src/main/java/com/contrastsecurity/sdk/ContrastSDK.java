@@ -270,7 +270,7 @@ public class ContrastSDK {
      * @param orgId ID of the organization
      * @param appName Application name when the application was first created
      * @param language Language of the application
-     * @return
+     * @return the Application found, returns null if the application is not found
      * @throws IOException
      * @throws UnauthorizedException
      */
