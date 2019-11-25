@@ -28,9 +28,11 @@
  */
 package com.contrastsecurity.sdk;
 
+import com.contrastsecurity.exceptions.ApplicationCreateException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.FilterForm;
 import com.contrastsecurity.http.HttpMethod;
+import com.contrastsecurity.http.MediaType;
 import com.contrastsecurity.http.RequestConstants;
 import com.contrastsecurity.http.ServerFilterForm;
 import com.contrastsecurity.http.TraceFilterForm;
@@ -38,18 +40,23 @@ import com.contrastsecurity.http.TraceFilterKeycode;
 import com.contrastsecurity.http.TraceFilterType;
 import com.contrastsecurity.http.UrlBuilder;
 import com.contrastsecurity.models.*;
+import com.contrastsecurity.models.dtm.ApplicationCreateRequest;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -242,6 +249,95 @@ public class ContrastSDK {
             IOUtils.closeQuietly(reader);
             IOUtils.closeQuietly(is);
         }
+    }
+
+    /**
+     * Creates an application without a server that is meant to be instrumented later.
+     * @param organizationId
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public Application createApplication(String organizationId, ApplicationCreateRequest request)
+            throws IOException, UnauthorizedException, ApplicationCreateException {
+        try (InputStream is = makeCreateRequest(HttpMethod.POST, urlBuilder.getCreateApplicationUrl(organizationId), this.gson.toJson(request), MediaType.JSON);
+            InputStreamReader reader = new InputStreamReader(is)){
+            Applications response = this.gson.fromJson(reader, Applications.class);
+            return response.getApplication();
+        }
+    }
+
+    /**
+     * Gets a single application based on the org, name, and language
+     * @param orgId ID of the organization
+     * @param appName Application name when the application was first created
+     * @param language Language of the application
+     * @return the Application found, returns null if the application is not found
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public Application getApplicationByNameAndLanguage(String orgId, String appName, AgentType language) throws IOException, UnauthorizedException{
+        try (InputStream is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationByNameAndLanguageUrl(orgId, appName, language.name()));
+             InputStreamReader reader = new InputStreamReader(is)) {
+            Applications response = this.gson.fromJson(reader, Applications.class);
+            return response.getApplication();
+        }
+    }
+
+    /**
+     * Private helper method for createApplication to make a request with special error handling
+     * @param method
+     * @param path
+     * @param body
+     * @param mediaType
+     * @return
+     * @throws IOException
+     * @throws UnauthorizedException
+     * @throws ApplicationCreateException
+     */
+    private InputStream makeCreateRequest(HttpMethod method, String path, String body, MediaType mediaType) throws IOException, UnauthorizedException, ApplicationCreateException {
+        String url = restApiURL + path;
+
+        HttpURLConnection connection = makeConnection(url, method.toString());
+        if(mediaType != null && body != null && (method.equals(HttpMethod.PUT) || method.equals(HttpMethod.POST))) {
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type",mediaType.getType());
+            OutputStream os = connection.getOutputStream();
+            byte[] bodyByte = body.getBytes("utf-8");
+            os.write(bodyByte, 0, bodyByte.length);
+        }
+        int rc = connection.getResponseCode();
+        InputStream is;
+        if (CREATE_APPLICATION_ERROR_RESPONSE.contains(rc)) {
+            is = connection.getErrorStream();
+            String message = getErrorMessage(is);
+            throw new ApplicationCreateException(rc, message);
+        } else if(rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+            throw new UnauthorizedException(rc);
+        }
+        is = connection.getInputStream();
+        return is;
+    }
+
+    /**
+     * Private helper method for extracting the messages from an errorstream
+     * @param errorStream
+     * @return
+     * @throws IOException
+     */
+    private String getErrorMessage(InputStream errorStream) throws IOException {
+        InputStreamReader streamReader = new InputStreamReader(errorStream);
+        StringBuilder builder = new StringBuilder();
+        try( BufferedReader bufferedReader = new BufferedReader(streamReader)) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                builder.append(line);
+            }
+        }
+        JsonObject json = this.gson.fromJson(builder.toString(), JsonObject.class);
+        return json.get("messages").getAsString();
+
     }
 
     /**
@@ -722,6 +818,8 @@ public class ContrastSDK {
 
     private static final int BAD_REQUEST = 400;
     private static final int SERVER_ERROR = 500;
+
+    private static final List<Integer> CREATE_APPLICATION_ERROR_RESPONSE = Arrays.asList(400,409,412,500);
 
     private static final String DEFAULT_API_URL = "https://app.contrastsecurity.com/Contrast/api";
     private static final String LOCALHOST_API_URL = "http://localhost:19080/Contrast/api";
