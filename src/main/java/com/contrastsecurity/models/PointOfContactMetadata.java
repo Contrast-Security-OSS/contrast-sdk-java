@@ -3,7 +3,7 @@ package com.contrastsecurity.models;
 public class PointOfContactMetadata extends MetadataEntity{
 
     public PointOfContactMetadata(){
-        type = MetadataType.PERSON_OF_CONTACT;
+        type = MetadataType.POINT_OF_CONTACT;
     }
 
     public void setFieldName(String fieldName) { this.fieldName = fieldName; }

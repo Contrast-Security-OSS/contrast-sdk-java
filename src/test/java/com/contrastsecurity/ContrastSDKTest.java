@@ -73,8 +73,8 @@ public class ContrastSDKTest extends ContrastSDK {
         assertEquals(3, apps.getApplications().get(0).getMetadataEntities().length);
 
         assertNotNull(metadataEntities[0]);
-        assertEquals(metadataEntities[0].getType(), MetadataEntity.MetadataType.PERSON_OF_CONTACT);
-        assertThat(metadataEntities[0].getAsPersonOfContactMetadata(), new IsInstanceOf(PointOfContactMetadata.class));
+        assertEquals(metadataEntities[0].getType(), MetadataEntity.MetadataType.POINT_OF_CONTACT);
+        assertThat(metadataEntities[0].getAsPointOfContactMetadata(), new IsInstanceOf(PointOfContactMetadata.class));
 
         assertNotNull(metadataEntities[1]);
         assertEquals(metadataEntities[1].getType(), MetadataEntity.MetadataType.STRING);
