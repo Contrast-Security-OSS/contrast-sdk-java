@@ -17,7 +17,7 @@ public class ApplicationCreateRequest {
     @NonNull
     private AgentType appLanguage;
 
-    @SerializedName("appPath")
+    @SerializedName("path")
     private String appPath;
 
     @SerializedName("shortName")
