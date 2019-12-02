@@ -129,6 +129,22 @@ public class UrlBuilderTest {
         String expectedDotNetProfile = "/ng/test-org/agents/default/dotnet";
 
         assertEquals(expectedDotNetProfile, urlBuilder.getAgentUrl(AgentType.DOTNET, organizationId, "default"));
+
+        String expectedRubyUrl = "/ng/test-org/agents/default/ruby";
+
+        assertEquals(expectedRubyUrl, urlBuilder.getAgentUrl(AgentType.RUBY, organizationId, "default"));
+
+        String expectedPythonUrl = "/ng/test-org/agents/default/python";
+
+        assertEquals(expectedPythonUrl, urlBuilder.getAgentUrl(AgentType.PYTHON, organizationId, "default"));
+
+        String expectedDotNetCoreUrl = "/ng/test-org/agents/default/dotnet_core";
+
+        assertEquals(expectedDotNetCoreUrl, urlBuilder.getAgentUrl(AgentType.DOTNET_CORE, organizationId, "default"));
+
+        String expectedProxyUrl = "/ng/test-org/agents/default/proxy";
+
+        assertEquals(expectedProxyUrl, urlBuilder.getAgentUrl(AgentType.PROXY, organizationId, "default"));
     }
 
 }
