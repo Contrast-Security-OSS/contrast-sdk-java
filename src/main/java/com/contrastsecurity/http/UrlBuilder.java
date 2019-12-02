@@ -140,7 +140,7 @@ public class UrlBuilder {
                 url = String.format("/ng/%s/agents/%s/dotnet_core", organizationId, profileName);
                 break;
             case PROXY:
-                url = String.format("/ng/%s/agents/%s/proxy", organizationId, profileName);
+                url = String.format("/ng/%s/agents/external/%s/proxy", organizationId, profileName);
                 break;
             default:
                 url = "";

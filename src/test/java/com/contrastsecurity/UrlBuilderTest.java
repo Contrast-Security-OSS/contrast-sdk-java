@@ -142,7 +142,7 @@ public class UrlBuilderTest {
 
         assertEquals(expectedDotNetCoreUrl, urlBuilder.getAgentUrl(AgentType.DOTNET_CORE, organizationId, "default"));
 
-        String expectedProxyUrl = "/ng/test-org/agents/default/proxy";
+        String expectedProxyUrl = "/ng/test-org/agents/external/default/proxy";
 
         assertEquals(expectedProxyUrl, urlBuilder.getAgentUrl(AgentType.PROXY, organizationId, "default"));
     }
