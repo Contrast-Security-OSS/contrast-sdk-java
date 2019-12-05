@@ -117,16 +117,31 @@ public class UrlBuilder {
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {
         String url;
 
-        if (AgentType.JAVA.equals(type)) {
-            url = String.format("/ng/%s/agents/%s/java?jvm=1_6", organizationId, profileName);
-        } else if (AgentType.JAVA1_5.equals(type)) {
-            url = String.format("/ng/%s/agents/%s/java?jvm=1_5", organizationId, profileName);
-        } else if (AgentType.DOTNET.equals(type)) {
-            url = String.format("/ng/%s/agents/%s/dotnet", organizationId, profileName);
-        } else if (AgentType.NODE.equals(type)) {
-            url = String.format("/ng/%s/agents/%s/node", organizationId, profileName);
-        } else {
-            url = "";
+        switch(type) {
+            case JAVA:
+                url = String.format("/ng/%s/agents/%s/java?jvm=1_6", organizationId, profileName);
+                break;
+            case JAVA1_5:
+                url = String.format("/ng/%s/agents/%s/java?jvm=1_5", organizationId, profileName);
+                break;
+            case DOTNET:
+                url = String.format("/ng/%s/agents/%s/dotnet", organizationId, profileName);
+                break;
+            case NODE:
+                url = String.format("/ng/%s/agents/%s/node", organizationId, profileName);
+                break;
+            case RUBY:
+                url = String.format("/ng/%s/agents/%s/ruby", organizationId, profileName);
+                break;
+            case PYTHON:
+                url = String.format("/ng/%s/agents/%s/python", organizationId, profileName);
+                break;
+            case DOTNET_CORE:
+                url = String.format("/ng/%s/agents/%s/dotnet_core", organizationId, profileName);
+                break;
+            default:
+                url = "";
+                break;
         }
 
         return url;

@@ -7,5 +7,9 @@ public enum AgentType {
 	JAVA,
 	JAVA1_5,
 	DOTNET,
-	NODE
+	NODE,
+	RUBY,
+	PROXY,
+	PYTHON,
+	DOTNET_CORE
 }
