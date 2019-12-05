@@ -139,9 +139,6 @@ public class UrlBuilder {
             case DOTNET_CORE:
                 url = String.format("/ng/%s/agents/%s/dotnet_core", organizationId, profileName);
                 break;
-            case PROXY:
-                url = String.format("/ng/%s/agents/external/%s/proxy", organizationId, profileName);
-                break;
             default:
                 url = "";
                 break;
