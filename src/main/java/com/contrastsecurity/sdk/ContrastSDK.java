@@ -699,6 +699,21 @@ public class ContrastSDK {
         }
     }
 
+    public SecurityCheck securityCheck(String organizationId, String applicationName, String applicationVersion, Long timestamp) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+
+        try {
+            is = makeRequest(HttpMethod.POST, urlBuilder.postSecurityCheck(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, SecurityCheck.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
     /**
      * Get the rules for an organization
      *

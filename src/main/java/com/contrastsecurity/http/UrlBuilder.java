@@ -108,6 +108,10 @@ public class UrlBuilder {
         return String.format("/ng/%s/rules", organizationId);
     }
 
+    public String postSecurityCheck(String organizationId) {
+        return String.format("/ng/%s/securityChecks", organizationId);
+    }
+
     public String getAssessLicensingUrl(String organizationId) {
         return String.format("/ng/%s/licenses", organizationId);
     }
