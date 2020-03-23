@@ -101,7 +101,7 @@ public class ContrastSDK {
         this.urlBuilder = UrlBuilder.getInstance();
         this.gson = new GsonBuilder()
                 .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();
-        this.proxy = Proxy.NO_PROXY;
+        this.proxy = null;
     }
 
     /**
@@ -144,7 +144,7 @@ public class ContrastSDK {
         ContrastSDKUtils.validateUrl(this.restApiURL);
         this.urlBuilder = UrlBuilder.getInstance();
         this.gson = new Gson();
-        this.proxy = Proxy.NO_PROXY;
+        this.proxy = null;
     }
 
     /**
@@ -776,7 +776,12 @@ public class ContrastSDK {
     }
 
     public HttpURLConnection makeConnection(String url, String method) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection(this.proxy);
+        HttpURLConnection connection;
+        if (this.proxy == null) {
+            connection = (HttpURLConnection) new URL(url).openConnection();
+        } else {
+            connection = (HttpURLConnection) new URL(url).openConnection(this.proxy);
+        }
         connection.setRequestMethod(method);
         connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
         connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
