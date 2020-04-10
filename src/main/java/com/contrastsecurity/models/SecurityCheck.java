@@ -5,10 +5,6 @@ import lombok.Getter;
 
 @Getter
 public class SecurityCheck {
-    public enum Origin {
-        OTHER,
-        JENKINS
-    }
 
     /**
      * The ID of the security check
@@ -36,7 +32,7 @@ public class SecurityCheck {
      * @return the origin of the security check.
      */
     @SerializedName("origin")
-    private Origin origin;
+    private String origin;
 
     /**
      * The result of the security check

@@ -54,7 +54,7 @@ public class SecurityCheckForm {
      * @returnThe origin of the security check
      */
     @SerializedName("origin")
-    private SecurityCheck.Origin origin = SecurityCheck.Origin.OTHER;
+    private String origin = "OTHER";
 
     /**
      * Filter the application's vulnerabilities using start date in milliseconds.
