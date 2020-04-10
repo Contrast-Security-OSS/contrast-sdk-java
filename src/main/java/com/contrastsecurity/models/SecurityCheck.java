@@ -1,64 +1,58 @@
 package com.contrastsecurity.models;
 
-public class SecurityCheck {
+import com.google.gson.annotations.SerializedName;
+import lombok.Getter;
 
+@Getter
+public class SecurityCheck {
     public enum Origin {
         OTHER,
         JENKINS
     }
 
-    private long id;
+    /**
+     * The ID of the security check
+     * @return the ID of the security check.
+     */
+    @SerializedName("id")
+    private Long id;
+
+    /**
+     * The name of the application verified.
+     * @return the name of the application
+     */
+    @SerializedName("application_name")
     private String applicationName;
+
+    /**
+     * The ID of the application verified.
+     * @return the ID of the application.
+     */
+    @SerializedName("application_id")
     private String applicationId;
+
+    /**
+     * The origin of where the security check was made from.
+     * @return the origin of the security check.
+     */
+    @SerializedName("origin")
     private Origin origin;
-    private String result;
+
+    /**
+     * The result of the security check
+     * true = the application passed all job outcome policies.
+     * false = the application failed a job outcome policy.
+     * @return the result of the security check.
+     */
+    @SerializedName("result")
+    private boolean pass;
+
+
+    /**
+     * The job outcome policy that the application failed.
+     * null if the application passed all job outcome policies.
+     * @reutnr The job outcome policy that the application failed.
+     */
+    @SerializedName("job_outcome_policy")
     private JobOutcomePolicy jobOutcomePolicy;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getApplicationName() {
-        return applicationName;
-    }
-
-    public void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-    }
-
-    public String getApplicationId() {
-        return applicationId;
-    }
-
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
-    }
-
-    public Origin getOrigin() {
-        return origin;
-    }
-
-    public void setOrigin(Origin origin) {
-        this.origin = origin;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
-
-    public JobOutcomePolicy getJobOutcomePolicy() {
-        return jobOutcomePolicy;
-    }
-
-    public void setJobOutcomePolicy(JobOutcomePolicy jobOutcomePolicy) {
-        this.jobOutcomePolicy = jobOutcomePolicy;
-    }
 }
