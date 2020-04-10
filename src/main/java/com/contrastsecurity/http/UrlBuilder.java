@@ -108,7 +108,7 @@ public class UrlBuilder {
         return String.format("/ng/%s/rules", organizationId);
     }
 
-    public String postSecurityCheck(String organizationId) {
+    public String getSecurityCheckUrl(String organizationId) {
         return String.format("/ng/%s/securityChecks", organizationId);
     }
 

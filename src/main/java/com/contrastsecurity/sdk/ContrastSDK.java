@@ -34,6 +34,8 @@ import com.contrastsecurity.http.FilterForm;
 import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.http.MediaType;
 import com.contrastsecurity.http.RequestConstants;
+import com.contrastsecurity.http.SecurityCheckForm;
+import com.contrastsecurity.http.SecurityCheckResponse;
 import com.contrastsecurity.http.ServerFilterForm;
 import com.contrastsecurity.http.TraceFilterForm;
 import com.contrastsecurity.http.TraceFilterKeycode;
@@ -699,15 +701,24 @@ public class ContrastSDK {
         }
     }
 
-    public SecurityCheck securityCheck(String organizationId, String applicationName, String applicationVersion, Long timestamp) throws IOException, UnauthorizedException {
+    /**
+     * Make a security check in a given organization by the security check form
+     *
+     * @param organizationId the ID of the organization
+     * @param securityCheckForm the security check form
+     * @return the security check that was made
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public SecurityCheck makeSecurityCheck(String organizationId, SecurityCheckForm securityCheckForm) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
-
         try {
-            is = makeRequest(HttpMethod.POST, urlBuilder.postSecurityCheck(organizationId));
+            is = makeRequestWithBody(HttpMethod.POST, urlBuilder.getSecurityCheckUrl(organizationId), this.gson.toJson(securityCheckForm), MediaType.JSON);
             reader = new InputStreamReader(is);
 
-            return this.gson.fromJson(reader, SecurityCheck.class);
+            SecurityCheckResponse response = this.gson.fromJson(reader, SecurityCheckResponse.class);
+            return response.getSecurityCheck();
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
@@ -775,6 +786,29 @@ public class ContrastSDK {
      */
     public byte[] getAgent(AgentType type, String organizationId) throws IOException, UnauthorizedException {
         return getAgent(type, organizationId, DEFAULT_AGENT_PROFILE);
+    }
+
+    public InputStream makeRequestWithBody(HttpMethod method, String path, String body, MediaType mediaType) throws IOException, UnauthorizedException {
+        String url = restApiURL + path;
+        OutputStream os = null;
+        HttpURLConnection connection = makeConnection(url, method.toString());
+        if(mediaType != null && body != null && (method.equals(HttpMethod.PUT) || method.equals(HttpMethod.POST))) {
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type",mediaType.getType());
+            os = connection.getOutputStream();
+            byte[] bodyByte = body.getBytes("utf-8");
+            os.write(bodyByte, 0, bodyByte.length);
+        }
+        int rc = connection.getResponseCode();
+        InputStream is = connection.getInputStream();
+        if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+            IOUtils.closeQuietly(is);
+            if(os != null) {
+                IOUtils.closeQuietly(os);
+            }
+            throw new UnauthorizedException(rc);
+        }
+        return is;
     }
 
     public InputStream makeRequest(HttpMethod method, String path) throws IOException, UnauthorizedException {
