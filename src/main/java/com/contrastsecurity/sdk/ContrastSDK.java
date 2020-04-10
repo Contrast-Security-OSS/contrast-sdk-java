@@ -714,7 +714,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequestWithBody(HttpMethod.POST, urlBuilder.postSecurityCheck(organizationId), this.gson.toJson(securityCheckForm), MediaType.JSON);
+            is = makeRequestWithBody(HttpMethod.POST, urlBuilder.getSecurityCheckUrl(organizationId), this.gson.toJson(securityCheckForm), MediaType.JSON);
             reader = new InputStreamReader(is);
 
             SecurityCheckResponse response = this.gson.fromJson(reader, SecurityCheckResponse.class);

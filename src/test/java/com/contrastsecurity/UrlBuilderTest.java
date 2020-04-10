@@ -117,6 +117,12 @@ public class UrlBuilderTest {
     }
 
     @Test
+    public void testSecurityCheckUrl() {
+        String expectedSecurityCheckUrl = "/ng/test-org/securityChecks";
+        assertEquals(expectedSecurityCheckUrl, urlBuilder.getSecurityCheckUrl(organizationId));
+    }
+
+    @Test
     public void testAgentUrls() {
         String expectedJavaUrl = "/ng/test-org/agents/default/java?jvm=1_6";
 
