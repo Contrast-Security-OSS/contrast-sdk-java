@@ -38,10 +38,11 @@ public class SecurityCheck {
      * The result of the security check
      * true = the application passed all job outcome policies.
      * false = the application failed a job outcome policy.
+     * null = no applicable job outcome policy for application.
      * @return the result of the security check.
      */
     @SerializedName("result")
-    private boolean pass;
+    private Boolean result;
 
 
     /**
