@@ -95,8 +95,6 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s/traces/%s/notes?expand=skip_links", organizationId, appId, traceId, formString);
     }
 
-    //api/ng/6db250f7-bcb7-4ce6-9dd9-1173dd5f35c3/applications/3c48d268-3e02-46a9-8fc9-ad8d42660320/traces/34Z8-A2C5-PKD5-M62V/notes?expand=skip_links
-
     public String getVulnTagsByApplicationUrl(String organizationId, String appId) throws UnsupportedEncodingException {
         return String.format("/ng/%s/tags/traces/application/%s", organizationId, appId);
     }

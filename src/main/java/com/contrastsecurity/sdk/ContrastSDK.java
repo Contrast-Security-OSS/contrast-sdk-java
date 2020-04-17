@@ -327,7 +327,7 @@ public class ContrastSDK {
             connection.setRequestProperty("Content-Type",mediaType.getType());
             OutputStream os = connection.getOutputStream();
             byte[] bodyByte = body.getBytes("utf-8");
-            //os.write(bodyByte, 0, bodyByte.length);
+            os.write(bodyByte, 0, bodyByte.length);
         }
         int rc = connection.getResponseCode();
         InputStream is;
