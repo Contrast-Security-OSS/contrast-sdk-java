@@ -90,6 +90,24 @@ public class UrlBuilder {
         return String.format("/ng/%s/traces/%s/filter/%s", organizationId, appId, formString);
     }
 
+    public String getNotesByApplicationUrl(String organizationId, String appId, String traceId, TraceFilterForm form) throws UnsupportedEncodingException {
+        String formString = form == null ? "" : form.toQuery();
+        return String.format("/ng/%s/applications/%s/traces/%s/notes?expand=skip_links", organizationId, appId, traceId, formString);
+    }
+
+    public String getVulnTagsByApplicationUrl(String organizationId, String appId) throws UnsupportedEncodingException {
+        return String.format("/ng/%s/tags/traces/application/%s", organizationId, appId);
+    }
+
+    public String getSessionMetadataForApplicationUrl(String organizationId, String appId, TraceFilterForm form) throws UnsupportedEncodingException {
+        String formString = form == null ? "" : form.toQuery();
+        return String.format("/ng/%s/metadata/session/%s/filters%s&modules=%s", organizationId, appId, form, appId);
+    }
+
+    public String getAttestationReportByApplicationUrl(String organizationId, String appId) throws UnsupportedEncodingException {
+        return String.format("/ng/%s/applications/%s/attestation", organizationId, appId);
+    }
+
     public String getTraceListingUrl(String organizationId, String appId, TraceFilterType traceFilterType) {
         return String.format("/ng/%s/traces/%s/filter/%s/listing", organizationId, appId, traceFilterType.toString());
     }
@@ -112,6 +130,9 @@ public class UrlBuilder {
         return String.format("/ng/%s/licenses", organizationId);
     }
     public String getYearlyVulnTrendUrl(String organizationId) { return String.format("/ng/%s/orgtraces/stats/trend/year/total", organizationId);
+    }
+
+    public String getYearlyNewVulnTrendUrl(String organizationId) { return String.format("/ng/%s/orgtraces/stats/trend/year/new", organizationId);
     }
 
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {

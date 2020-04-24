@@ -41,6 +41,7 @@ import com.contrastsecurity.http.TraceFilterType;
 import com.contrastsecurity.http.UrlBuilder;
 import com.contrastsecurity.models.*;
 import com.contrastsecurity.models.dtm.ApplicationCreateRequest;
+import com.contrastsecurity.models.dtm.AttestationCreateRequest;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
@@ -179,6 +180,27 @@ public class ContrastSDK {
         InputStreamReader reader = null;
         try {
             is = makeRequest(HttpMethod.GET, this.urlBuilder.getYearlyVulnTrendUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, VulnerabilityTrend.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    /**
+     * Get all Vulnerability Trend for an Organizations.
+     * @param organizationId the ID of the organization
+     * @return VulnerabilityTrend with the yearly Vulnerability Trend for an Oeg.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public VulnerabilityTrend getYearlyNewVulnTrend(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getYearlyNewVulnTrendUrl(organizationId));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, VulnerabilityTrend.class);
@@ -588,13 +610,99 @@ public class ContrastSDK {
         try {
             is = makeRequest(HttpMethod.GET, urlBuilder.getTracesByApplicationUrl(organizationId, appId, form));
             reader = new InputStreamReader(is);
-
             return this.gson.fromJson(reader, Traces.class);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
         }
     }
+
+    /**
+     * Get the notes (discussion) for the vulnerability ID in the application whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param appId          the ID of the application
+     * @param traceId        the ID of the vulnerability
+     * @param form           FilterForm query parameters
+     * @return Traces object that contains the list of Trace's
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public TraceNotesResponse getNotes(String organizationId, String appId, String traceId, TraceFilterForm form) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getNotesByApplicationUrl(organizationId, appId, traceId, form));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, TraceNotesResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+
+    /**
+     * Get the available vulnerability tags in the application whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param appId          the ID of the application
+     * @return TagsResponse object that contains the list of Tags
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public TagsResponse getVulnTagsByApplication(String organizationId, String appId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getVulnTagsByApplicationUrl(organizationId, appId));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, TagsResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Get the available session metadata values in the application whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param appId          the ID of the application
+     * @param form           FilterForm query parameters
+     * @return Traces object that contains the list of Trace's
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public MetadataFilterResponse getSessionMetadataForApplication(String organizationId, String appId, TraceFilterForm form) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getSessionMetadataForApplicationUrl(organizationId, appId, form));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, MetadataFilterResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Generate an attestation report for the application whose ID is passed in.
+     * @param organizationId the ID of the organization
+     * @param appId          the ID of the application
+     * @param request
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public void generateAttestationReport(String organizationId, String appId, AttestationCreateRequest request)
+            throws IOException, UnauthorizedException, ApplicationCreateException {
+        System.out.println(this.gson.toJson(request));
+        try (InputStream is = makeCreateRequest(HttpMethod.POST, urlBuilder.getAttestationReportByApplicationUrl(organizationId, appId), this.gson.toJson(request), MediaType.JSON);
+             InputStreamReader reader = new InputStreamReader(is)){
+        }
+    }
+
 
     /**
      * Get the vulnerabilities in the organization whose ID is passed in.
