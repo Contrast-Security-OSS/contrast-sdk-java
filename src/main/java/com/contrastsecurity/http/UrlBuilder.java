@@ -116,6 +116,10 @@ public class UrlBuilder {
         return String.format("/ng/%s/jobOutcomePolicies/enabled/noFillApp", organizationId);
     }
 
+    public String getEnabledJobOutcomePolicyListUrlByApplication(String organizationId, String appId) {
+      return String.format("/ng/%s/jobOutcomePolicies/enabled/noFillApp/%s", organizationId, appId);
+    }
+
     public String getAssessLicensingUrl(String organizationId) {
         return String.format("/ng/%s/licenses", organizationId);
     }

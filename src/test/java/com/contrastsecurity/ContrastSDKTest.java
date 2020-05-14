@@ -142,8 +142,16 @@ public class ContrastSDKTest extends ContrastSDK {
     }
 
     @Test
-    public void testGetJobOutcomePolicies() {
+    public void testGetEnabledJobOutcomePolicies() {
         String jobOutcomePolicyListResponseString = "{'policies':[{'name':'testJobOutcomePolicy','outcome':'SUCCESS'}]}";
+        JobOutcomePolicyListResponse response = gson.fromJson(jobOutcomePolicyListResponseString, JobOutcomePolicyListResponse.class);
+        assertNotNull(response.getPolicies());
+        assertEquals(response.getPolicies().get(0).getName(), "testJobOutcomePolicy");
+    }
+
+    @Test
+    public void testGetEnabledJobOutcomePoliciesByApplication() {
+        String jobOutcomePolicyListResponseString = "{'policies':[{'name':'testJobOutcomePolicy','outcome':'UNSTABLE'}]}";
         JobOutcomePolicyListResponse response = gson.fromJson(jobOutcomePolicyListResponseString, JobOutcomePolicyListResponse.class);
         assertNotNull(response.getPolicies());
         assertEquals(response.getPolicies().get(0).getName(), "testJobOutcomePolicy");

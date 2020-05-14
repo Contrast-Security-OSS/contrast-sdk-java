@@ -727,8 +727,8 @@ public class ContrastSDK {
     }
 
     /**
-     * Gets a list of enabled Job Outcome policies for an organization
-     * @param organizationId The organization
+     * Gets a list of enabled Job Outcome policies in an organization
+     * @param organizationId The organization ID
      * @return The list of enabled Job Outcome Policies
      * @throws IOException
      * @throws UnauthorizedException
@@ -738,6 +738,27 @@ public class ContrastSDK {
         InputStreamReader reader = null;
         try {
             is = makeRequest(HttpMethod.GET, urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            JobOutcomePolicyListResponse response = this.gson.fromJson(reader, JobOutcomePolicyListResponse.class);
+            return response.getPolicies();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Gets a list of enabeld Job Outcome Policies in an organization that applies to an application
+     * @param organizationId The organization ID
+     * @param appId The Application ID
+     * @return the list of enabled Job Outcome Policies that apply to the application
+     */
+    public List<JobOutcomePolicy> getEnabledJoboutcomePoliciesByApplication(String organizationId, String appId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(organizationId, appId));
             reader = new InputStreamReader(is);
 
             JobOutcomePolicyListResponse response = this.gson.fromJson(reader, JobOutcomePolicyListResponse.class);
