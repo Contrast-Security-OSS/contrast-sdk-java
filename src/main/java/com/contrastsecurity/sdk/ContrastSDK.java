@@ -32,6 +32,7 @@ import com.contrastsecurity.exceptions.ApplicationCreateException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.FilterForm;
 import com.contrastsecurity.http.HttpMethod;
+import com.contrastsecurity.http.JobOutcomePolicyListResponse;
 import com.contrastsecurity.http.MediaType;
 import com.contrastsecurity.http.RequestConstants;
 import com.contrastsecurity.http.SecurityCheckForm;
@@ -719,6 +720,28 @@ public class ContrastSDK {
 
             SecurityCheckResponse response = this.gson.fromJson(reader, SecurityCheckResponse.class);
             return response.getSecurityCheck();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Gets a list of enabled Job Outcome policies for an organization
+     * @param organizationId The organization
+     * @return The list of enabled Job Outcome Policies
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public List<JobOutcomePolicy> getEnabledJobOutcomePolicies(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            JobOutcomePolicyListResponse response = this.gson.fromJson(reader, JobOutcomePolicyListResponse.class);
+            return response.getPolicies();
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
