@@ -113,11 +113,11 @@ public class UrlBuilder {
     }
 
     public String getEnabledJobOutcomePolicyListUrl(String organizationId) {
-        return String.format("/ng/%s/jobOutcomePolicies/enabled/noFillApp", organizationId);
+        return String.format("/ng/%s/jobOutcomePolicies/enabled/no-fill-app", organizationId);
     }
 
     public String getEnabledJobOutcomePolicyListUrlByApplication(String organizationId, String appId) {
-      return String.format("/ng/%s/jobOutcomePolicies/enabled/noFillApp/%s", organizationId, appId);
+      return String.format("/ng/%s/jobOutcomePolicies/enabled/no-fill-app/%s", organizationId, appId);
     }
 
     public String getAssessLicensingUrl(String organizationId) {

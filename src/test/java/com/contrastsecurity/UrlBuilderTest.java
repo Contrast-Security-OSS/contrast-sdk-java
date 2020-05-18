@@ -124,13 +124,13 @@ public class UrlBuilderTest {
 
     @Test
     public void testEnabledJobOutcomePolicyListUrl() {
-        String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled/noFillApp";
+        String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled/no-fill-app";
         assertEquals(expectedJobOutcomePolicyListUrl, urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId));
     }
 
     @Test
     public void testEnabledJobOutcomePolicyListUrlByApplication() {
-        String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled/noFillApp/test-app";
+        String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled/no-fill-app/test-app";
         assertEquals(expectedJobOutcomePolicyListUrl, urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(organizationId, applicationId));
     }
 
