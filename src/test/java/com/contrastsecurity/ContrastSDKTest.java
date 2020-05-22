@@ -4,6 +4,7 @@ import com.contrastsecurity.exceptions.InvalidConversionException;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.HttpMethod;
+import com.contrastsecurity.http.JobOutcomePolicyListResponse;
 import com.contrastsecurity.http.RuleSeverity;
 import com.contrastsecurity.http.SecurityCheckResponse;
 import com.contrastsecurity.models.*;
@@ -138,6 +139,22 @@ public class ContrastSDKTest extends ContrastSDK {
         assertEquals(1, jobOutcomePolicy.getSeverities().size());
         assertEquals(1l, jobOutcomePolicy.getSeverities().get(RuleSeverity.MEDIUM).longValue());
 
+    }
+
+    @Test
+    public void testGetEnabledJobOutcomePolicies() {
+        String jobOutcomePolicyListResponseString = "{'policies':[{'name':'testJobOutcomePolicy','outcome':'SUCCESS'}]}";
+        JobOutcomePolicyListResponse response = gson.fromJson(jobOutcomePolicyListResponseString, JobOutcomePolicyListResponse.class);
+        assertNotNull(response.getPolicies());
+        assertEquals(response.getPolicies().get(0).getName(), "testJobOutcomePolicy");
+    }
+
+    @Test
+    public void testGetEnabledJobOutcomePoliciesByApplication() {
+        String jobOutcomePolicyListResponseString = "{'policies':[{'name':'testJobOutcomePolicy','outcome':'UNSTABLE'}]}";
+        JobOutcomePolicyListResponse response = gson.fromJson(jobOutcomePolicyListResponseString, JobOutcomePolicyListResponse.class);
+        assertNotNull(response.getPolicies());
+        assertEquals(response.getPolicies().get(0).getName(), "testJobOutcomePolicy");
     }
 
     @Test

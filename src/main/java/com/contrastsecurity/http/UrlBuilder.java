@@ -112,6 +112,14 @@ public class UrlBuilder {
         return String.format("/ng/%s/securityChecks", organizationId);
     }
 
+    public String getEnabledJobOutcomePolicyListUrl(String organizationId) {
+        return String.format("/ng/%s/jobOutcomePolicies/enabled", organizationId);
+    }
+
+    public String getEnabledJobOutcomePolicyListUrlByApplication(String organizationId, String appId) {
+      return String.format("/ng/%s/jobOutcomePolicies/enabled/%s", organizationId, appId);
+    }
+
     public String getAssessLicensingUrl(String organizationId) {
         return String.format("/ng/%s/licenses", organizationId);
     }
