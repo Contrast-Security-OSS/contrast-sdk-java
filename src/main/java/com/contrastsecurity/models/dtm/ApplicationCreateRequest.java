@@ -20,7 +20,7 @@ public class ApplicationCreateRequest {
     @SerializedName("path")
     private String appPath;
 
-    @SerializedName("shortName")
+    @SerializedName("short_name")
     private String appShortName;
 
     public ApplicationCreateRequest(String appName, AgentType appLanguage) {
