@@ -44,15 +44,6 @@ public class SecurityCheckForm {
     private AgentType agentLanguage;
 
     /**
-     * Filter the application's vulnerabilities using app version tags.
-     * Do not set if you want to verify against all of the application's vulnerabilities.
-     * @param appVersionTags New appVersionTags.
-     * @return The appVersionTags filter
-     */
-    @SerializedName("app_version_tags")
-    private List<String> appVersionTags;
-
-    /**
      * Where the request is being made
      * Default: OTHER
      * @param origin New origin for the security check
@@ -60,15 +51,6 @@ public class SecurityCheckForm {
      */
     @SerializedName("origin")
     private String origin = "OTHER";
-
-    /**
-     * Filter the application's vulnerabilities using start date in milliseconds.
-     * Do not set if you want to verify against all of the application's vulnerabilities.
-     * @param startDate New start date.
-     * @return The start date filter
-     */
-    @SerializedName("start_date")
-    private Long startDate;
 
     public SecurityCheckForm(String applicationId) {
         this.applicationId = applicationId;
