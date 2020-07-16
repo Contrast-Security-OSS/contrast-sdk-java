@@ -169,7 +169,7 @@ public class ContrastSDK {
         }
     }
     /**
-     * Get all Vulnerability Trend for an Organizations.
+     * Get Total (Total Open and Total Closed each month) Vulnerability Trend for an Organizations.
      * @param organizationId the ID of the organization
      * @return VulnerabilityTrend with the yearly Vulnerability Trend for an Oeg.
      * @throws UnauthorizedException if the Contrast account failed to authorize
@@ -190,7 +190,7 @@ public class ContrastSDK {
     }
 
     /**
-     * Get all Vulnerability Trend for an Organizations.
+     * Get New (New Open and New Closed each month) Vulnerability Trend for an Organizations.
      * @param organizationId the ID of the organization
      * @return VulnerabilityTrend with the yearly Vulnerability Trend for an Oeg.
      * @throws UnauthorizedException if the Contrast account failed to authorize
