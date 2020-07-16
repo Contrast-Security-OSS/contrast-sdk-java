@@ -117,6 +117,24 @@ public class UrlBuilderTest {
     }
 
     @Test
+    public void testSecurityCheckUrl() {
+        String expectedSecurityCheckUrl = "/ng/test-org/securityChecks";
+        assertEquals(expectedSecurityCheckUrl, urlBuilder.getSecurityCheckUrl(organizationId));
+    }
+
+    @Test
+    public void testEnabledJobOutcomePolicyListUrl() {
+        String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled";
+        assertEquals(expectedJobOutcomePolicyListUrl, urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId));
+    }
+
+    @Test
+    public void testEnabledJobOutcomePolicyListUrlByApplication() {
+        String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled/test-app";
+        assertEquals(expectedJobOutcomePolicyListUrl, urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(organizationId, applicationId));
+    }
+
+    @Test
     public void testAgentUrls() {
         String expectedJavaUrl = "/ng/test-org/agents/default/java?jvm=1_6";
 

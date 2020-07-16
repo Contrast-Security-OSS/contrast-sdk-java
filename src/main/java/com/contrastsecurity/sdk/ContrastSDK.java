@@ -32,8 +32,11 @@ import com.contrastsecurity.exceptions.ApplicationCreateException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.FilterForm;
 import com.contrastsecurity.http.HttpMethod;
+import com.contrastsecurity.http.JobOutcomePolicyListResponse;
 import com.contrastsecurity.http.MediaType;
 import com.contrastsecurity.http.RequestConstants;
+import com.contrastsecurity.http.SecurityCheckForm;
+import com.contrastsecurity.http.SecurityCheckResponse;
 import com.contrastsecurity.http.ServerFilterForm;
 import com.contrastsecurity.http.TraceFilterForm;
 import com.contrastsecurity.http.TraceFilterKeycode;
@@ -808,6 +811,73 @@ public class ContrastSDK {
     }
 
     /**
+     * Make a security check in a given organization by the security check form
+     *
+     * @param organizationId the ID of the organization
+     * @param securityCheckForm the security check form
+     * @return the security check that was made
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public SecurityCheck makeSecurityCheck(String organizationId, SecurityCheckForm securityCheckForm) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequestWithBody(HttpMethod.POST, urlBuilder.getSecurityCheckUrl(organizationId), this.gson.toJson(securityCheckForm), MediaType.JSON);
+            reader = new InputStreamReader(is);
+
+            SecurityCheckResponse response = this.gson.fromJson(reader, SecurityCheckResponse.class);
+            return response.getSecurityCheck();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Gets a list of enabled Job Outcome policies in an organization
+     * @param organizationId The organization ID
+     * @return The list of enabled Job Outcome Policies
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public List<JobOutcomePolicy> getEnabledJobOutcomePolicies(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            JobOutcomePolicyListResponse response = this.gson.fromJson(reader, JobOutcomePolicyListResponse.class);
+            return response.getPolicies();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Gets a list of enabeld Job Outcome Policies in an organization that applies to an application
+     * @param organizationId The organization ID
+     * @param appId The Application ID
+     * @return the list of enabled Job Outcome Policies that apply to the application
+     */
+    public List<JobOutcomePolicy> getEnabledJoboutcomePoliciesByApplication(String organizationId, String appId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(organizationId, appId));
+            reader = new InputStreamReader(is);
+
+            JobOutcomePolicyListResponse response = this.gson.fromJson(reader, JobOutcomePolicyListResponse.class);
+            return response.getPolicies();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
      * Get the rules for an organization
      *
      * @param organizationId the ID of the organization
@@ -868,6 +938,29 @@ public class ContrastSDK {
      */
     public byte[] getAgent(AgentType type, String organizationId) throws IOException, UnauthorizedException {
         return getAgent(type, organizationId, DEFAULT_AGENT_PROFILE);
+    }
+
+    public InputStream makeRequestWithBody(HttpMethod method, String path, String body, MediaType mediaType) throws IOException, UnauthorizedException {
+        String url = restApiURL + path;
+        OutputStream os = null;
+        HttpURLConnection connection = makeConnection(url, method.toString());
+        if(mediaType != null && body != null && (method.equals(HttpMethod.PUT) || method.equals(HttpMethod.POST))) {
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type",mediaType.getType());
+            os = connection.getOutputStream();
+            byte[] bodyByte = body.getBytes("utf-8");
+            os.write(bodyByte, 0, bodyByte.length);
+        }
+        int rc = connection.getResponseCode();
+        InputStream is = connection.getInputStream();
+        if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+            IOUtils.closeQuietly(is);
+            if(os != null) {
+                IOUtils.closeQuietly(os);
+            }
+            throw new UnauthorizedException(rc);
+        }
+        return is;
     }
 
     public InputStream makeRequest(HttpMethod method, String path) throws IOException, UnauthorizedException {
