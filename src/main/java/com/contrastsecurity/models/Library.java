@@ -126,6 +126,8 @@ public class Library {
 
 	@SerializedName("total_vulnerabilities")
 	private int totalVulnerabilities;
+	@SerializedName("high_vulnerabilities")
+	private int highVulnerabilities;
 	private boolean custom;
 	@SerializedName("lib_score")
 	private double libScore;
@@ -152,6 +154,8 @@ public class Library {
 	public long getLatestReleaseDate() { return latestReleaseDate; }
 
 	public int getTotalVulnerabilities() { return totalVulnerabilities; }
+
+	public int getHighVulnerabilities() { return highVulnerabilities; }
 
 	public boolean getCustom() { return custom; }
 

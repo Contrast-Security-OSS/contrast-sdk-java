@@ -28,28 +28,39 @@
  */
 package com.contrastsecurity.sdk;
 
+import com.contrastsecurity.exceptions.ApplicationCreateException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.FilterForm;
 import com.contrastsecurity.http.HttpMethod;
+import com.contrastsecurity.http.JobOutcomePolicyListResponse;
+import com.contrastsecurity.http.MediaType;
 import com.contrastsecurity.http.RequestConstants;
+import com.contrastsecurity.http.SecurityCheckForm;
+import com.contrastsecurity.http.SecurityCheckResponse;
 import com.contrastsecurity.http.ServerFilterForm;
 import com.contrastsecurity.http.TraceFilterForm;
 import com.contrastsecurity.http.TraceFilterKeycode;
 import com.contrastsecurity.http.TraceFilterType;
 import com.contrastsecurity.http.UrlBuilder;
 import com.contrastsecurity.models.*;
+import com.contrastsecurity.models.dtm.ApplicationCreateRequest;
+import com.contrastsecurity.models.dtm.AttestationCreateRequest;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -161,7 +172,7 @@ public class ContrastSDK {
         }
     }
     /**
-     * Get all Vulnerability Trend for an Organizations.
+     * Get Total (Total Open and Total Closed each month) Vulnerability Trend for an Organizations.
      * @param organizationId the ID of the organization
      * @return VulnerabilityTrend with the yearly Vulnerability Trend for an Oeg.
      * @throws UnauthorizedException if the Contrast account failed to authorize
@@ -172,6 +183,27 @@ public class ContrastSDK {
         InputStreamReader reader = null;
         try {
             is = makeRequest(HttpMethod.GET, this.urlBuilder.getYearlyVulnTrendUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, VulnerabilityTrend.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    /**
+     * Get New (New Open and New Closed each month) Vulnerability Trend for an Organizations.
+     * @param organizationId the ID of the organization
+     * @return VulnerabilityTrend with the yearly Vulnerability Trend for an Oeg.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public VulnerabilityTrend getYearlyNewVulnTrend(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getYearlyNewVulnTrendUrl(organizationId));
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, VulnerabilityTrend.class);
@@ -267,6 +299,95 @@ public class ContrastSDK {
     }
 
     /**
+     * Creates an application without a server that is meant to be instrumented later.
+     * @param organizationId
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public Application createApplication(String organizationId, ApplicationCreateRequest request)
+            throws IOException, UnauthorizedException, ApplicationCreateException {
+        try (InputStream is = makeCreateRequest(HttpMethod.POST, urlBuilder.getCreateApplicationUrl(organizationId), this.gson.toJson(request), MediaType.JSON);
+            InputStreamReader reader = new InputStreamReader(is)){
+            Applications response = this.gson.fromJson(reader, Applications.class);
+            return response.getApplication();
+        }
+    }
+
+    /**
+     * Gets a single application based on the org, name, and language
+     * @param orgId ID of the organization
+     * @param appName Application name when the application was first created
+     * @param language Language of the application
+     * @return the Application found, returns null if the application is not found
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public Application getApplicationByNameAndLanguage(String orgId, String appName, AgentType language) throws IOException, UnauthorizedException{
+        try (InputStream is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationByNameAndLanguageUrl(orgId, appName, language.name()));
+             InputStreamReader reader = new InputStreamReader(is)) {
+            Applications response = this.gson.fromJson(reader, Applications.class);
+            return response.getApplication();
+        }
+    }
+
+    /**
+     * Private helper method for createApplication to make a request with special error handling
+     * @param method
+     * @param path
+     * @param body
+     * @param mediaType
+     * @return
+     * @throws IOException
+     * @throws UnauthorizedException
+     * @throws ApplicationCreateException
+     */
+    private InputStream makeCreateRequest(HttpMethod method, String path, String body, MediaType mediaType) throws IOException, UnauthorizedException, ApplicationCreateException {
+        String url = restApiURL + path;
+
+        HttpURLConnection connection = makeConnection(url, method.toString());
+        if(mediaType != null && body != null && (method.equals(HttpMethod.PUT) || method.equals(HttpMethod.POST))) {
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type",mediaType.getType());
+            OutputStream os = connection.getOutputStream();
+            byte[] bodyByte = body.getBytes("utf-8");
+            os.write(bodyByte, 0, bodyByte.length);
+        }
+        int rc = connection.getResponseCode();
+        InputStream is;
+        if (CREATE_APPLICATION_ERROR_RESPONSE.contains(rc)) {
+            is = connection.getErrorStream();
+            String message = getErrorMessage(is);
+            throw new ApplicationCreateException(rc, message);
+        } else if(rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+            throw new UnauthorizedException(rc);
+        }
+        is = connection.getInputStream();
+        return is;
+    }
+
+    /**
+     * Private helper method for extracting the messages from an errorstream
+     * @param errorStream
+     * @return
+     * @throws IOException
+     */
+    private String getErrorMessage(InputStream errorStream) throws IOException {
+        InputStreamReader streamReader = new InputStreamReader(errorStream);
+        StringBuilder builder = new StringBuilder();
+        try( BufferedReader bufferedReader = new BufferedReader(streamReader)) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                builder.append(line);
+            }
+        }
+        JsonObject json = this.gson.fromJson(builder.toString(), JsonObject.class);
+        return json.get("messages").getAsString();
+
+    }
+
+    /**
      * Get summary information about a single app without expandValues.
      *
      * @param organizationId the ID of the organization
@@ -316,6 +437,27 @@ public class ContrastSDK {
         InputStreamReader reader = null;
         try {
             is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationsUrl(organizationId));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, Applications.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    /**
+     * Get the list of licensed applications being monitored by Contrast.
+     *
+     * @param organizationId the ID of the organization
+     * @return Applications object that contains the list of Application's
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public Applications getLicensedApplications(String organizationId) throws UnauthorizedException, IOException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getLicensedApplicationsUrl(organizationId));
             reader = new InputStreamReader(is);
             return this.gson.fromJson(reader, Applications.class);
         } finally {
@@ -493,13 +635,99 @@ public class ContrastSDK {
         try {
             is = makeRequest(HttpMethod.GET, urlBuilder.getTracesByApplicationUrl(organizationId, appId, form));
             reader = new InputStreamReader(is);
-
             return this.gson.fromJson(reader, Traces.class);
         } finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
         }
     }
+
+    /**
+     * Get the notes (discussion) for the vulnerability ID in the application whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param appId          the ID of the application
+     * @param traceId        the ID of the vulnerability
+     * @param form           FilterForm query parameters
+     * @return Traces object that contains the list of Trace's
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public TraceNotesResponse getNotes(String organizationId, String appId, String traceId, TraceFilterForm form) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getNotesByApplicationUrl(organizationId, appId, traceId, form));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, TraceNotesResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+
+    /**
+     * Get the available vulnerability tags in the application whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param appId          the ID of the application
+     * @return TagsResponse object that contains the list of Tags
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public TagsResponse getVulnTagsByApplication(String organizationId, String appId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getVulnTagsByApplicationUrl(organizationId, appId));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, TagsResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Get the available session metadata values in the application whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param appId          the ID of the application
+     * @param form           FilterForm query parameters
+     * @return Traces object that contains the list of Trace's
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public MetadataFilterResponse getSessionMetadataForApplication(String organizationId, String appId, TraceFilterForm form) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getSessionMetadataForApplicationUrl(organizationId, appId, form));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, MetadataFilterResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Generate an attestation report for the application whose ID is passed in.
+     * @param organizationId the ID of the organization
+     * @param appId          the ID of the application
+     * @param request
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public void generateAttestationReport(String organizationId, String appId, AttestationCreateRequest request)
+            throws IOException, UnauthorizedException, ApplicationCreateException {
+        System.out.println(this.gson.toJson(request));
+        try (InputStream is = makeCreateRequest(HttpMethod.POST, urlBuilder.getAttestationReportByApplicationUrl(organizationId, appId), this.gson.toJson(request), MediaType.JSON);
+             InputStreamReader reader = new InputStreamReader(is)){
+        }
+    }
+
 
     /**
      * Get the vulnerabilities in the organization whose ID is passed in.
@@ -605,6 +833,73 @@ public class ContrastSDK {
     }
 
     /**
+     * Make a security check in a given organization by the security check form
+     *
+     * @param organizationId the ID of the organization
+     * @param securityCheckForm the security check form
+     * @return the security check that was made
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public SecurityCheck makeSecurityCheck(String organizationId, SecurityCheckForm securityCheckForm) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequestWithBody(HttpMethod.POST, urlBuilder.getSecurityCheckUrl(organizationId), this.gson.toJson(securityCheckForm), MediaType.JSON);
+            reader = new InputStreamReader(is);
+
+            SecurityCheckResponse response = this.gson.fromJson(reader, SecurityCheckResponse.class);
+            return response.getSecurityCheck();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Gets a list of enabled Job Outcome policies in an organization
+     * @param organizationId The organization ID
+     * @return The list of enabled Job Outcome Policies
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public List<JobOutcomePolicy> getEnabledJobOutcomePolicies(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            JobOutcomePolicyListResponse response = this.gson.fromJson(reader, JobOutcomePolicyListResponse.class);
+            return response.getPolicies();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Gets a list of enabeld Job Outcome Policies in an organization that applies to an application
+     * @param organizationId The organization ID
+     * @param appId The Application ID
+     * @return the list of enabled Job Outcome Policies that apply to the application
+     */
+    public List<JobOutcomePolicy> getEnabledJoboutcomePoliciesByApplication(String organizationId, String appId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(organizationId, appId));
+            reader = new InputStreamReader(is);
+
+            JobOutcomePolicyListResponse response = this.gson.fromJson(reader, JobOutcomePolicyListResponse.class);
+            return response.getPolicies();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
      * Get the rules for an organization
      *
      * @param organizationId the ID of the organization
@@ -667,6 +962,29 @@ public class ContrastSDK {
         return getAgent(type, organizationId, DEFAULT_AGENT_PROFILE);
     }
 
+    public InputStream makeRequestWithBody(HttpMethod method, String path, String body, MediaType mediaType) throws IOException, UnauthorizedException {
+        String url = restApiURL + path;
+        OutputStream os = null;
+        HttpURLConnection connection = makeConnection(url, method.toString());
+        if(mediaType != null && body != null && (method.equals(HttpMethod.PUT) || method.equals(HttpMethod.POST))) {
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type",mediaType.getType());
+            os = connection.getOutputStream();
+            byte[] bodyByte = body.getBytes("utf-8");
+            os.write(bodyByte, 0, bodyByte.length);
+        }
+        int rc = connection.getResponseCode();
+        InputStream is = connection.getInputStream();
+        if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+            IOUtils.closeQuietly(is);
+            if(os != null) {
+                IOUtils.closeQuietly(os);
+            }
+            throw new UnauthorizedException(rc);
+        }
+        return is;
+    }
+
     public InputStream makeRequest(HttpMethod method, String path) throws IOException, UnauthorizedException {
         String url = restApiURL + path;
 
@@ -723,6 +1041,8 @@ public class ContrastSDK {
 
     private static final int BAD_REQUEST = 400;
     private static final int SERVER_ERROR = 500;
+
+    private static final List<Integer> CREATE_APPLICATION_ERROR_RESPONSE = Arrays.asList(400,409,412,500);
 
     private static final String DEFAULT_API_URL = "https://app.contrastsecurity.com/Contrast/api";
     private static final String LOCALHOST_API_URL = "http://localhost:19080/Contrast/api";

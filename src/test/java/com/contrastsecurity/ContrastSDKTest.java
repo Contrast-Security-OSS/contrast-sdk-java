@@ -4,6 +4,9 @@ import com.contrastsecurity.exceptions.InvalidConversionException;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.HttpMethod;
+import com.contrastsecurity.http.JobOutcomePolicyListResponse;
+import com.contrastsecurity.http.RuleSeverity;
+import com.contrastsecurity.http.SecurityCheckResponse;
 import com.contrastsecurity.models.*;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.utils.ContrastSDKUtils;
@@ -73,8 +76,8 @@ public class ContrastSDKTest extends ContrastSDK {
         assertEquals(3, apps.getApplications().get(0).getMetadataEntities().length);
 
         assertNotNull(metadataEntities[0]);
-        assertEquals(metadataEntities[0].getType(), MetadataEntity.MetadataType.PERSON_OF_CONTACT);
-        assertThat(metadataEntities[0].getAsPersonOfContactMetadata(), new IsInstanceOf(PointOfContactMetadata.class));
+        assertEquals(metadataEntities[0].getType(), MetadataEntity.MetadataType.POINT_OF_CONTACT);
+        assertThat(metadataEntities[0].getAsPointOfContactMetadata(), new IsInstanceOf(PointOfContactMetadata.class));
 
         assertNotNull(metadataEntities[1]);
         assertEquals(metadataEntities[1].getType(), MetadataEntity.MetadataType.STRING);
@@ -120,6 +123,38 @@ public class ContrastSDKTest extends ContrastSDK {
 
         assertNotNull(servers);
         assertNotNull(servers.getServers());
+    }
+
+    @Test
+    public void testMakeSecurityCheck() {
+        String securityCheckResponseString = "{'security_check':{'id':1,'application_name':'testName','application_id':'testId1','origin':'JENKINS','result':false, 'job_outcome_policy':{'name':'testPolicy','outcome':'UNSTABLE','severities':{'MEDIUM':1}}}}";
+
+        SecurityCheckResponse response = gson.fromJson(securityCheckResponseString, SecurityCheckResponse.class);
+        SecurityCheck securityCheck = response.getSecurityCheck();
+        JobOutcomePolicy jobOutcomePolicy = securityCheck.getJobOutcomePolicy();
+        assertEquals(1l, securityCheck.getId().longValue());
+        assertEquals("testName", securityCheck.getApplicationName());
+        assertEquals("testPolicy", jobOutcomePolicy.getName());
+        assertEquals(JobOutcomePolicy.Outcome.UNSTABLE, jobOutcomePolicy.getOutcome());
+        assertEquals(1, jobOutcomePolicy.getSeverities().size());
+        assertEquals(1l, jobOutcomePolicy.getSeverities().get(RuleSeverity.MEDIUM).longValue());
+
+    }
+
+    @Test
+    public void testGetEnabledJobOutcomePolicies() {
+        String jobOutcomePolicyListResponseString = "{'policies':[{'name':'testJobOutcomePolicy','outcome':'SUCCESS'}]}";
+        JobOutcomePolicyListResponse response = gson.fromJson(jobOutcomePolicyListResponseString, JobOutcomePolicyListResponse.class);
+        assertNotNull(response.getPolicies());
+        assertEquals(response.getPolicies().get(0).getName(), "testJobOutcomePolicy");
+    }
+
+    @Test
+    public void testGetEnabledJobOutcomePoliciesByApplication() {
+        String jobOutcomePolicyListResponseString = "{'policies':[{'name':'testJobOutcomePolicy','outcome':'UNSTABLE'}]}";
+        JobOutcomePolicyListResponse response = gson.fromJson(jobOutcomePolicyListResponseString, JobOutcomePolicyListResponse.class);
+        assertNotNull(response.getPolicies());
+        assertEquals(response.getPolicies().get(0).getName(), "testJobOutcomePolicy");
     }
 
     @Test

@@ -35,8 +35,20 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s%s", organizationId, appId, buildExpand(expandValues));
     }
 
+    public String getCreateApplicationUrl(String organizationId) {
+        return String.format("/ng/integrations/organizations/%s/applications", organizationId);
+    }
+
+    public String getApplicationByNameAndLanguageUrl(String organizationId, String appName, String language) {
+        return String.format("/ng/integrations/organizations/%s/applications?name=%s&language=%s", organizationId, appName, language);
+    }
+
     public String getApplicationsUrl(String organizationId) {
         return String.format("/ng/%s/applications?%s", organizationId, "base=false");
+    }
+
+    public String getLicensedApplicationsUrl(String organizationId) {
+        return String.format("/ng/%s/applications%s", organizationId, "/filter?sort=appName&quickFilter=LICENSED&expand=license");
     }
 
     public String getApplicationsNameUrl(String organizationId) {
@@ -78,6 +90,24 @@ public class UrlBuilder {
         return String.format("/ng/%s/traces/%s/filter/%s", organizationId, appId, formString);
     }
 
+    public String getNotesByApplicationUrl(String organizationId, String appId, String traceId, TraceFilterForm form) throws UnsupportedEncodingException {
+        String formString = form == null ? "" : form.toQuery();
+        return String.format("/ng/%s/applications/%s/traces/%s/notes?expand=skip_links", organizationId, appId, traceId, formString);
+    }
+
+    public String getVulnTagsByApplicationUrl(String organizationId, String appId) throws UnsupportedEncodingException {
+        return String.format("/ng/%s/tags/traces/application/%s", organizationId, appId);
+    }
+
+    public String getSessionMetadataForApplicationUrl(String organizationId, String appId, TraceFilterForm form) throws UnsupportedEncodingException {
+        String formString = form == null ? "" : form.toQuery();
+        return String.format("/ng/%s/metadata/session/%s/filters%s&modules=%s", organizationId, appId, form, appId);
+    }
+
+    public String getAttestationReportByApplicationUrl(String organizationId, String appId) throws UnsupportedEncodingException {
+        return String.format("/ng/%s/applications/%s/attestation", organizationId, appId);
+    }
+
     public String getTraceListingUrl(String organizationId, String appId, TraceFilterType traceFilterType) {
         return String.format("/ng/%s/traces/%s/filter/%s/listing", organizationId, appId, traceFilterType.toString());
     }
@@ -96,10 +126,25 @@ public class UrlBuilder {
         return String.format("/ng/%s/rules", organizationId);
     }
 
+    public String getSecurityCheckUrl(String organizationId) {
+        return String.format("/ng/%s/securityChecks", organizationId);
+    }
+
+    public String getEnabledJobOutcomePolicyListUrl(String organizationId) {
+        return String.format("/ng/%s/jobOutcomePolicies/enabled", organizationId);
+    }
+
+    public String getEnabledJobOutcomePolicyListUrlByApplication(String organizationId, String appId) {
+      return String.format("/ng/%s/jobOutcomePolicies/enabled/%s", organizationId, appId);
+    }
+
     public String getAssessLicensingUrl(String organizationId) {
         return String.format("/ng/%s/licenses", organizationId);
     }
     public String getYearlyVulnTrendUrl(String organizationId) { return String.format("/ng/%s/orgtraces/stats/trend/year/total", organizationId);
+    }
+
+    public String getYearlyNewVulnTrendUrl(String organizationId) { return String.format("/ng/%s/orgtraces/stats/trend/year/new", organizationId);
     }
 
     public String getYearlyVulnTrendForApplicationUrl(String organizationId, String appId) { return String.format("/ng/%s/orgtraces/stats/trend/year/total?applications=%s", organizationId, appId);
@@ -108,16 +153,31 @@ public class UrlBuilder {
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {
         String url;
 
-        if (AgentType.JAVA.equals(type)) {
-            url = String.format("/ng/%s/agents/%s/java?jvm=1_6", organizationId, profileName);
-        } else if (AgentType.JAVA1_5.equals(type)) {
-            url = String.format("/ng/%s/agents/%s/java?jvm=1_5", organizationId, profileName);
-        } else if (AgentType.DOTNET.equals(type)) {
-            url = String.format("/ng/%s/agents/%s/dotnet", organizationId, profileName);
-        } else if (AgentType.NODE.equals(type)) {
-            url = String.format("/ng/%s/agents/%s/node", organizationId, profileName);
-        } else {
-            url = "";
+        switch(type) {
+            case JAVA:
+                url = String.format("/ng/%s/agents/%s/java?jvm=1_6", organizationId, profileName);
+                break;
+            case JAVA1_5:
+                url = String.format("/ng/%s/agents/%s/java?jvm=1_5", organizationId, profileName);
+                break;
+            case DOTNET:
+                url = String.format("/ng/%s/agents/%s/dotnet", organizationId, profileName);
+                break;
+            case NODE:
+                url = String.format("/ng/%s/agents/%s/node", organizationId, profileName);
+                break;
+            case RUBY:
+                url = String.format("/ng/%s/agents/%s/ruby", organizationId, profileName);
+                break;
+            case PYTHON:
+                url = String.format("/ng/%s/agents/%s/python", organizationId, profileName);
+                break;
+            case DOTNET_CORE:
+                url = String.format("/ng/%s/agents/%s/dotnet_core", organizationId, profileName);
+                break;
+            default:
+                url = "";
+                break;
         }
 
         return url;

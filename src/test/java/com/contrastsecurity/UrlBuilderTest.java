@@ -43,6 +43,18 @@ public class UrlBuilderTest {
     }
 
     @Test
+    public void testCreateApplicationUrl() {
+        String expectedUrl = "/ng/integrations/organizations/test-org/applications";
+        assertEquals(expectedUrl, urlBuilder.getCreateApplicationUrl(organizationId));
+    }
+
+    @Test
+    public void testApplicationByNameAndLanguageUrl() {
+        String expectedUrl = "/ng/integrations/organizations/test-org/applications?name=app&language=JAVA";
+        assertEquals(expectedUrl, urlBuilder.getApplicationByNameAndLanguageUrl(organizationId, "app", "JAVA"));
+    }
+
+    @Test
     public void testApplicationsUrl() {
         String expectedUrl = "/ng/test-org/applications?base=false";
 
@@ -105,6 +117,24 @@ public class UrlBuilderTest {
     }
 
     @Test
+    public void testSecurityCheckUrl() {
+        String expectedSecurityCheckUrl = "/ng/test-org/securityChecks";
+        assertEquals(expectedSecurityCheckUrl, urlBuilder.getSecurityCheckUrl(organizationId));
+    }
+
+    @Test
+    public void testEnabledJobOutcomePolicyListUrl() {
+        String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled";
+        assertEquals(expectedJobOutcomePolicyListUrl, urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId));
+    }
+
+    @Test
+    public void testEnabledJobOutcomePolicyListUrlByApplication() {
+        String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled/test-app";
+        assertEquals(expectedJobOutcomePolicyListUrl, urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(organizationId, applicationId));
+    }
+
+    @Test
     public void testAgentUrls() {
         String expectedJavaUrl = "/ng/test-org/agents/default/java?jvm=1_6";
 
@@ -117,6 +147,18 @@ public class UrlBuilderTest {
         String expectedDotNetProfile = "/ng/test-org/agents/default/dotnet";
 
         assertEquals(expectedDotNetProfile, urlBuilder.getAgentUrl(AgentType.DOTNET, organizationId, "default"));
+
+        String expectedRubyUrl = "/ng/test-org/agents/default/ruby";
+
+        assertEquals(expectedRubyUrl, urlBuilder.getAgentUrl(AgentType.RUBY, organizationId, "default"));
+
+        String expectedPythonUrl = "/ng/test-org/agents/default/python";
+
+        assertEquals(expectedPythonUrl, urlBuilder.getAgentUrl(AgentType.PYTHON, organizationId, "default"));
+
+        String expectedDotNetCoreUrl = "/ng/test-org/agents/default/dotnet_core";
+
+        assertEquals(expectedDotNetCoreUrl, urlBuilder.getAgentUrl(AgentType.DOTNET_CORE, organizationId, "default"));
     }
 
     @Test

@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 public abstract class MetadataEntity {
 
     public enum MetadataType {
-        STRING, NUMERIC, PERSON_OF_CONTACT;
+        STRING, NUMERIC, POINT_OF_CONTACT;
 
         @Override
         public String toString() {
@@ -30,23 +30,26 @@ public abstract class MetadataEntity {
     public String getFieldName() {return fieldName;}
 
     public FreeformMetadata getAsFreeformMetadata() throws InvalidConversionException{
-        if(type == MetadataType.STRING)
+        if(type == MetadataType.STRING) {
             return (FreeformMetadata) this;
-        else
+        } else {
             throw new InvalidConversionException(type.toString(), MetadataType.STRING.toString());
+        }
     }
 
     public NumericMetadata getAsNumericMetadata() throws InvalidConversionException{
-        if(type == MetadataType.NUMERIC)
+        if(type == MetadataType.NUMERIC) {
             return (NumericMetadata) this;
-        else
+        } else {
             throw new InvalidConversionException(type.toString(), MetadataType.NUMERIC.toString());
+        }
     }
 
-    public PointOfContactMetadata getAsPersonOfContactMetadata() throws InvalidConversionException{
-        if(type == MetadataType.PERSON_OF_CONTACT)
+    public PointOfContactMetadata getAsPointOfContactMetadata() throws InvalidConversionException{
+        if(type == MetadataType.POINT_OF_CONTACT) {
             return (PointOfContactMetadata) this;
-        else
-            throw new InvalidConversionException(type.toString(), MetadataType.PERSON_OF_CONTACT.toString());
+        } else {
+            throw new InvalidConversionException(type.toString(), MetadataType.POINT_OF_CONTACT.toString());
+        }
     }
 }
