@@ -119,4 +119,11 @@ public class UrlBuilderTest {
         assertEquals(expectedDotNetProfile, urlBuilder.getAgentUrl(AgentType.DOTNET, organizationId, "default"));
     }
 
+    @Test
+    public  void testGetYearlyVulnTrendForApplicationUrl(){
+        String expectedApplicationTrendUrl = "/ng/test-org/orgtraces/stats/trend/year/total?applications=test-application";
+
+        assertEquals(expectedApplicationTrendUrl, urlBuilder.getYearlyVulnTrendForApplicationUrl("test-org", "test-application"));
+    }
+
 }
