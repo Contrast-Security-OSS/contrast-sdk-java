@@ -152,6 +152,30 @@ public class ContrastSDK {
     }
 
     /**
+     * Create a ContrastSDK object to use the Contrast V3 API through a Proxy.
+     * <p>
+     * This will use the default api url.
+     * @param user       Username (e.g., joe@acme.com)
+     * @param serviceKey User service key
+     * @param apiKey     API Key
+     * @param proxy Proxy to use
+     * @throws IllegalArgumentException if the API URL is malformed
+     */
+    public ContrastSDK(String user, String serviceKey, String apiKey, Proxy proxy) throws IllegalArgumentException {
+        this.user = user;
+        this.serviceKey = serviceKey;
+        this.apiKey = apiKey;
+        this.restApiURL = DEFAULT_API_URL;
+
+        ContrastSDKUtils.validateUrl(this.restApiURL);
+        this.restApiURL = ContrastSDKUtils.ensureApi(this.restApiURL);
+
+        this.urlBuilder = UrlBuilder.getInstance();
+        this.gson = new Gson();
+        this.proxy = proxy;
+    }
+
+    /**
      * Get all Assess Licensing for an Organizations.
      * @param organizationId the ID of the organization
      * @return AssessLicenseOverview with Assess Licensing for an Oeg.
