@@ -98,7 +98,8 @@ public class ContrastSDK {
         }
 
         public Builder withApiUrl(String apiUrl) {
-            this.restApiURL = apiUrl;
+            ContrastSDKUtils.validateUrl(apiUrl);
+            this.restApiURL = ContrastSDKUtils.ensureApi(apiUrl);
             return this;
         }
 
