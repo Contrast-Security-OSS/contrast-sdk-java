@@ -147,6 +147,9 @@ public class UrlBuilder {
     public String getYearlyNewVulnTrendUrl(String organizationId) { return String.format("/ng/%s/orgtraces/stats/trend/year/new", organizationId);
     }
 
+    public String getYearlyVulnTrendForApplicationUrl(String organizationId, String appId) { return String.format("/ng/%s/orgtraces/stats/trend/year/total?applications=%s", organizationId, appId);
+    }
+
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {
         String url;
 
