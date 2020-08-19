@@ -81,19 +81,59 @@ public class ContrastSDK {
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private int readTimeout = DEFAULT_READ_TIMEOUT;
 
+    public static class Builder {
+        private String user;
+        private String serviceKey;
+        private String apiKey;
+        private Proxy proxy;
+        private String restApiURL;
+
+        public Builder(String user, String serviceKey, String apiKey) {
+            this.user = user;
+            this.serviceKey = serviceKey;
+            this.apiKey = apiKey;
+            this.restApiURL = DEFAULT_API_URL;
+            ContrastSDKUtils.validateUrl(this.restApiURL);
+            this.proxy = Proxy.NO_PROXY;
+        }
+
+        public Builder withApiUrl(String apiUrl) {
+            ContrastSDKUtils.validateUrl(apiUrl);
+            this.restApiURL = ContrastSDKUtils.ensureApi(apiUrl);
+            return this;
+        }
+
+        public Builder withProxy(Proxy proxy) {
+            this.proxy = proxy;
+            return this;
+        }
+
+        public ContrastSDK build() {
+            ContrastSDK sdk = new ContrastSDK(this.user, this.serviceKey, this.apiKey);
+            sdk.restApiURL = this.restApiURL;
+            sdk.proxy = this.proxy;
+            return sdk;
+        }
+    }
+
+    /**
+     * Use ContrastSDK.Builder
+     */
+    @Deprecated
     public ContrastSDK() {
 
     }
 
     /**
      * Create a ContrastSDK object to use the Contrast V3 API
-     *
+     * Deprecated - Please use builder
      * @param user       Username (e.g., joe@acme.com)
      * @param serviceKey User service key
      * @param apiKey     API Key
      * @param restApiURL the base Contrast API URL
      * @throws IllegalArgumentException if the API URL is malformed
      */
+    @Deprecated
     public ContrastSDK(String user, String serviceKey, String apiKey, String restApiURL) throws IllegalArgumentException {
         this.user = user;
         this.serviceKey = serviceKey;
@@ -110,7 +150,7 @@ public class ContrastSDK {
 
     /**
      * Create a ContrastSDK object to use the Contrast V3 API through a Proxy.
-     *
+     * Deprecated - Please use builder
      * @param user       Username (e.g., joe@acme.com)
      * @param serviceKey User service key
      * @param apiKey     API Key
@@ -118,6 +158,7 @@ public class ContrastSDK {
      * @param proxy Proxy to use
      * @throws IllegalArgumentException if the API URL is malformed
      */
+    @Deprecated
     public ContrastSDK(String user, String serviceKey, String apiKey, String restApiURL, Proxy proxy) throws IllegalArgumentException {
         this.user = user;
         this.serviceKey = serviceKey;
@@ -134,12 +175,14 @@ public class ContrastSDK {
 
     /**
      * Create a ContrastSDK object to use the Contrast V3 API
+     * Deprecated - Please use Builder
      * <p>
      * This will use the default api url which is https://app.contrastsecurity.com/Contrast/api
      * @param user Username (e.g., joe@acme.com)
      * @param serviceKey User service key
      * @param apiKey API Key
      */
+    @Deprecated
     public ContrastSDK(String user, String serviceKey, String apiKey) {
         this.user = user;
         this.serviceKey = serviceKey;
