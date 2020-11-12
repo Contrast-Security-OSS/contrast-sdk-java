@@ -62,6 +62,20 @@ public class ContrastSDKTest extends ContrastSDK {
     }
 
     @Test
+    public void testGetFilteredApplications() throws UnauthorizedException, IOException, ResourceNotFoundException {
+
+        String applicationsString = "{\"applications\":[{\"app_id\":\"72358543-bbdb-490c-8e3f-1b5f5e9a0bf7\",\"archived\":false,\"created\":1461631080000,\"status\":\"offline\",\"path\":\"/Curl\",\"name\":\"Contrast-Curl\",\"language\":\"Java\",\"last_seen\":1461631080000,\"total_modules\":1,\"master\":false},{\"app_id\":\"b9acb026-36a6-4f4e-b568-33168b7a5ae6\",\"archived\":false,\"created\":1460582653000,\"status\":\"offline\",\"path\":\"/portal\",\"name\":\"portal\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":1,\"master\":false},{\"app_id\":\"53775e84-90a6-4a64-bafe-2b153c3a40f0\",\"archived\":false,\"created\":1460582640000,\"status\":\"offline\",\"path\":\"/\",\"name\":\"ROOT\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":1,\"master\":false},{\"app_id\":\"9e88815f-bb0d-44b4-ac5a-f02f661e8947\",\"archived\":false,\"created\":1460582659000,\"status\":\"offline\",\"path\":\"/library\",\"name\":\"sakai-library\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":1,\"master\":false},{\"app_id\":\"e9a14797-42e7-4ba4-8282-364fdf37026c\",\"archived\":false,\"created\":1460582916000,\"status\":\"offline\",\"path\":\"/sakai-user-tool\",\"name\":\"sakai-user-tool\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":2,\"master\":true},{\"app_id\":\"469b9147-5736-4b83-9158-657427d4c960\",\"archived\":false,\"created\":1461600682000,\"status\":\"offline\",\"path\":\"/examples\",\"name\":\"Servlet and JSP Examples\",\"language\":\"Java\",\"last_seen\":1461737160000,\"total_modules\":1,\"master\":false},{\"app_id\":\"3da856f4-c508-48b8-95a9-514eddefcbf3\",\"archived\":false,\"created\":1461599820000,\"status\":\"offline\",\"path\":\"/WebGoat\",\"name\":\"WebGoat\",\"language\":\"Java\",\"last_seen\":1461737160000,\"total_modules\":1,\"master\":false}]}";
+
+        Applications apps = gson.fromJson(applicationsString, Applications.class);
+
+        assertNotNull(apps);
+        assertNotNull(apps.getApplications());
+
+        assertNull(apps.getApplication());
+        assertTrue(!apps.getApplications().isEmpty());
+    }
+
+    @Test
     public void testGetApplicationsWithMetadata() throws UnauthorizedException, IOException, ResourceNotFoundException, InvalidConversionException {
 
         String applicationsString = "{\"applications\":[{\"app_id\":\"72358543-bbdb-490c-8e3f-1b5f5e9a0bf7\",\"archived\":false,\"created\":1461631080000,\"status\":\"offline\",\"path\":\"/Curl\",\"name\":\"Contrast-Curl\",\"language\":\"Java\",\"last_seen\":1461631080000,\"total_modules\":1,\"master\":false, \"metadataEntities\": [ { \"fieldName\": \"Contact\", \"fieldValue\": \"\", \"type\": \"PERSON_OF_CONTACT\", \"unique\": false, \"subfields\": [ { \"fieldName\": \"Contact Name\", \"fieldValue\": \"Contrast User\", \"type\": \"CONTACT_NAME\" }, { \"fieldName\": \"Contact Email\", \"fieldValue\": \"support@contrastsecurity.com\", \"type\": \"EMAIL\" }, { \"fieldName\": \"Contact Phone\", \"fieldValue\": \"1234567890\", \"type\": \"PHONE\" } ] }, { \"fieldName\": \"bU\", \"fieldValue\": \"PEDS\", \"type\": \"STRING\" }, {\"fieldName\": \"askId\", \"fieldValue\": \"123456789\", \"type\": \"NUMERIC\" }]}, ,{\"app_id\":\"9e88815f-bb0d-44b4-ac5a-f02f661e8947\",\"archived\":false,\"created\":1460582659000,\"status\":\"offline\",\"path\":\"/library\",\"name\":\"sakai-library\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":1,\"master\":false}]}";
