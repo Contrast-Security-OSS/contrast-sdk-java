@@ -73,6 +73,7 @@ public class ApplicationFilterFilterFormTest {
         assertTrue(qs.contains("filterTechs"));
         assertTrue(qs.contains("filterText"));
         assertTrue(qs.contains("filterVulnSeverities"));
+        assertTrue(qs.contains("environment"));
         assertTrue(qs.contains("quickFilter"));
 
         assertTrue(qs.contains("includeArchived"));
