@@ -5,7 +5,6 @@ import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.FilterForm;
 import com.contrastsecurity.http.RuleSeverity;
 import com.contrastsecurity.http.ServerEnvironment;
-import com.sun.tools.javac.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,11 +46,11 @@ public class ApplicationFilterFilterFormTest {
         filterForm.setEnvironment(EnumSet.of(ServerEnvironment.DEVELOPMENT));
 
         filterForm.setFilterAppCode("test_app_code");
-        filterForm.setFilterCompliance(List.of("owasp"));
-        filterForm.setFilterLanguages(List.of("Java"));
-        filterForm.setFilterServers(List.of("abcdefg"));
-        filterForm.setFilterTags(List.of("tag1"));
-        filterForm.setFilterTechs(List.of("MySQL"));
+        filterForm.setFilterCompliance(Arrays.asList("owasp"));
+        filterForm.setFilterLanguages(Arrays.asList("Java"));
+        filterForm.setFilterServers(Arrays.asList("abcdefg"));
+        filterForm.setFilterTags(Arrays.asList("tag1"));
+        filterForm.setFilterTechs(Arrays.asList("MySQL"));
         filterForm.setFilterText("test");
         filterForm.setFilterVulnSeverities(EnumSet.of(RuleSeverity.CRITICAL));
         filterForm.setEnvironment(EnumSet.of(ServerEnvironment.DEVELOPMENT));
