@@ -52,6 +52,14 @@ public class SecurityCheckForm {
     @SerializedName("origin")
     private String origin = "OTHER";
 
+    /**
+     * The job start time of the jenkins job
+     * @param jobStartTime New value for job start time.
+     * @return the start time of the jenkins job
+     */
+    @SerializedName("job_start_time")
+    private Long jobStartTime;
+
     public SecurityCheckForm(String applicationId) {
         this.applicationId = applicationId;
     }
@@ -59,5 +67,10 @@ public class SecurityCheckForm {
     public SecurityCheckForm(String applicationName, AgentType agentLanguage) {
         this.applicationName = applicationName;
         this.agentLanguage = agentLanguage;
+    }
+
+    public SecurityCheckForm(String applicationId, Long jobStartTime) {
+        this.applicationId = applicationId;
+        this.jobStartTime = jobStartTime;
     }
 }
