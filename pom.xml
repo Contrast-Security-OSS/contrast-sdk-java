@@ -10,7 +10,7 @@
 
     <groupId>com.contrastsecurity</groupId>
     <artifactId>contrast-sdk-java</artifactId>
-    <version>2.16-SNAPSHOT</version>
+    <version>2.16</version>
     
     <organization>
         <name>Contrast Security</name>
@@ -35,7 +35,8 @@
         <connection>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git</connection>
         <url>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git</url>
         <developerConnection>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git</developerConnection>
-    </scm>
+      <tag>contrast-sdk-java-2.16</tag>
+  </scm>
 
     <dependencies>
         <dependency>
