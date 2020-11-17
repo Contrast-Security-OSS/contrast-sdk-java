@@ -32,9 +32,9 @@
     <description>SDK for accessing and using the Contrast TeamServer REST API in Java</description>
 
     <scm>
-        <connection>scm:git:https://github.com:Contrast-Security-OSS/contrast-sdk-java.git</connection>
-        <url>scm:git:https://github.com:Contrast-Security-OSS/contrast-sdk-java.git</url>
-        <developerConnection>scm:git:https://github.com:Contrast-Security-OSS/contrast-sdk-java.git</developerConnection>
+        <connection>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git</connection>
+        <url>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git</url>
+        <developerConnection>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git</developerConnection>
     </scm>
 
     <dependencies>
