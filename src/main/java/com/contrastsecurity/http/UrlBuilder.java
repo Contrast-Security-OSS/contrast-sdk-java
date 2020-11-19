@@ -59,6 +59,11 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s/coverage", organizationId, appId);
     }
 
+    public String getRouteCoverageUrl(String organizationId, String appId) {
+        //String formString = form == null ? "" : form.toString();
+        return String.format("/ng/%s/applications/%s/route?sort=-exercised", organizationId, appId);
+    }
+
     public String getLibrariesUrl(String organizationId, String appId, EnumSet<FilterForm.LibrariesExpandValues> expandValues) {
         return String.format("/ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand(expandValues));
     }
@@ -95,7 +100,7 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s/traces/%s/notes?expand=skip_links", organizationId, appId, traceId, formString);
     }
 
-    public String getVulnTagsByApplicationUrl(String organizationId, String appId) throws UnsupportedEncodingException {
+    public String getVulnTagsByApplicationUrl(String organizationId, String appId) {
         return String.format("/ng/%s/tags/traces/application/%s", organizationId, appId);
     }
 
@@ -104,8 +109,24 @@ public class UrlBuilder {
         return String.format("/ng/%s/metadata/session/%s/filters%s&modules=%s", organizationId, appId, form, appId);
     }
 
-    public String getAttestationReportByApplicationUrl(String organizationId, String appId) throws UnsupportedEncodingException {
+    public String getAttestationReportByApplicationUrl(String organizationId, String appId) {
         return String.format("/ng/%s/applications/%s/attestation", organizationId, appId);
+    }
+
+    public String clearNotifications(String organizationId) {
+        return String.format("/ng/%s/notifications/read", organizationId);
+    }
+
+    public String getNotifications(String organizationId, TraceFilterForm form) {
+        return String.format("/ng/%s/notifications%s",organizationId,form);
+    }
+
+    public String getServerTags(String organizationId, String appId) {
+        return String.format("/ng/%s/tags/servers/list/application/%s",organizationId,appId);
+    }
+
+    public String downloadAttestationReport(String organizationId, String userId, String reportId){
+        return String.format("/ng/%s/reports/download/%s/%s?expand=skip_links",organizationId,userId,reportId);
     }
 
     public String getTraceListingUrl(String organizationId, String appId, TraceFilterType traceFilterType) {

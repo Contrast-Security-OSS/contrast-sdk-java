@@ -14,6 +14,9 @@ public class TraceNoteResource{
     protected String creator;
     public String getCreator() { return creator;};
 
+    @SerializedName("creation")
+    protected String creation;
+    public String getCreation() { return creation;};
 
     public List<NgTraceNoteReadOnlyPropertyResource> getProperties() {
         return properties;
