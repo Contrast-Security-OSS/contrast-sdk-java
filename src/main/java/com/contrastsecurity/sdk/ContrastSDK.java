@@ -30,18 +30,7 @@ package com.contrastsecurity.sdk;
 
 import com.contrastsecurity.exceptions.ApplicationCreateException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
-import com.contrastsecurity.http.FilterForm;
-import com.contrastsecurity.http.HttpMethod;
-import com.contrastsecurity.http.JobOutcomePolicyListResponse;
-import com.contrastsecurity.http.MediaType;
-import com.contrastsecurity.http.RequestConstants;
-import com.contrastsecurity.http.SecurityCheckForm;
-import com.contrastsecurity.http.SecurityCheckResponse;
-import com.contrastsecurity.http.ServerFilterForm;
-import com.contrastsecurity.http.TraceFilterForm;
-import com.contrastsecurity.http.TraceFilterKeycode;
-import com.contrastsecurity.http.TraceFilterType;
-import com.contrastsecurity.http.UrlBuilder;
+import com.contrastsecurity.http.*;
 import com.contrastsecurity.models.*;
 import com.contrastsecurity.models.dtm.ApplicationCreateRequest;
 import com.contrastsecurity.models.dtm.AttestationCreateRequest;
@@ -480,6 +469,28 @@ public class ContrastSDK {
         InputStreamReader reader = null;
         try {
             is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationsUrl(organizationId));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, Applications.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    /**
+     * Get the list of filtered applications being monitored by Contrast.
+     *
+     * @param organizationId the ID of the organization
+     * @param applicationFilterForm  Query params to add more info to response
+     * @return Applications object that contains the list of Application's
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public Applications getFilteredApplications(String organizationId, ApplicationFilterForm applicationFilterForm) throws UnauthorizedException, IOException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationFilterUrl(organizationId, applicationFilterForm));
             reader = new InputStreamReader(is);
             return this.gson.fromJson(reader, Applications.class);
         } finally {
