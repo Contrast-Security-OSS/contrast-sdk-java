@@ -287,7 +287,7 @@ public class ContrastSDK {
      */
     public Application createApplication(String organizationId, ApplicationCreateRequest request)
             throws IOException, UnauthorizedException, ApplicationCreateException {
-        try (InputStream is = makeCreateRequest(HttpMethod.POST, urlBuilder.getCreateApplicationUrl(organizationId), this.gson.toJson(request), MediaType.JSON);
+        try (InputStream is = makeCreateRequest(HttpMethod.POST, urlBuilder.getCreateApplicationUrl(organizationId), this.gson.toJson(request), MediaType.JSON, false);
             InputStreamReader reader = new InputStreamReader(is)){
             Applications response = this.gson.fromJson(reader, Applications.class);
             return response.getApplication();
@@ -322,14 +322,16 @@ public class ContrastSDK {
      * @throws UnauthorizedException
      * @throws ApplicationCreateException
      */
-    private InputStream makeCreateRequest(HttpMethod method, String path, String body, MediaType mediaType) throws IOException, UnauthorizedException, ApplicationCreateException {
+    private InputStream makeCreateRequest(HttpMethod method, String path, String body, MediaType mediaType, boolean setAcceptType) throws IOException, UnauthorizedException, ApplicationCreateException {
         String url = restApiURL + path;
 
         HttpURLConnection connection = makeConnection(url, method.toString());
         if(mediaType != null && body != null && (method.equals(HttpMethod.PUT) || method.equals(HttpMethod.POST))) {
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type",mediaType.getType());
-            connection.setRequestProperty("Accept",mediaType.getType());
+            if(setAcceptType) {
+                connection.setRequestProperty("Accept", mediaType.getType());
+            }
             OutputStream os = connection.getOutputStream();
             byte[] bodyByte = body.getBytes("utf-8");
             os.write(bodyByte, 0, bodyByte.length);
@@ -729,7 +731,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeCreateRequest(HttpMethod.GET, urlBuilder.getAttestationReportByApplicationUrl(organizationId, appId), this.gson.toJson(request), MediaType.JSON);
+            is = makeCreateRequest(HttpMethod.GET, urlBuilder.getAttestationReportByApplicationUrl(organizationId, appId), this.gson.toJson(request), MediaType.JSON, true);
             reader = new InputStreamReader(is);
             return this.gson.fromJson(reader, GenericResponse.class);
         }  finally {
