@@ -35,6 +35,10 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s%s", organizationId, appId, buildExpand(expandValues));
     }
 
+    public String getApplicationFilterUrl(String organizationId, ApplicationFilterForm applicationFilterForm) {
+        return String.format("/ng/%s/applications/filter%s", organizationId, applicationFilterForm.toString());
+    }
+
     public String getCreateApplicationUrl(String organizationId) {
         return String.format("/ng/integrations/organizations/%s/applications", organizationId);
     }
@@ -147,6 +151,18 @@ public class UrlBuilder {
         return String.format("/ng/%s/rules", organizationId);
     }
 
+    public String getSecurityCheckUrl(String organizationId) {
+        return String.format("/ng/%s/securityChecks", organizationId);
+    }
+
+    public String getEnabledJobOutcomePolicyListUrl(String organizationId) {
+        return String.format("/ng/%s/jobOutcomePolicies/enabled", organizationId);
+    }
+
+    public String getEnabledJobOutcomePolicyListUrlByApplication(String organizationId, String appId) {
+      return String.format("/ng/%s/jobOutcomePolicies/enabled/%s", organizationId, appId);
+    }
+
     public String getAssessLicensingUrl(String organizationId) {
         return String.format("/ng/%s/licenses", organizationId);
     }
@@ -154,6 +170,9 @@ public class UrlBuilder {
     }
 
     public String getYearlyNewVulnTrendUrl(String organizationId) { return String.format("/ng/%s/orgtraces/stats/trend/year/new", organizationId);
+    }
+
+    public String getYearlyVulnTrendForApplicationUrl(String organizationId, String appId) { return String.format("/ng/%s/orgtraces/stats/trend/year/total?applications=%s", organizationId, appId);
     }
 
     public String getAgentUrl(AgentType type, String organizationId, String profileName) {

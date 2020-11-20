@@ -1,5 +1,6 @@
 package com.contrastsecurity;
 
+import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.TraceFilterForm;
 import com.contrastsecurity.http.UrlBuilder;
 import com.contrastsecurity.models.AgentType;
@@ -40,6 +41,17 @@ public class UrlBuilderTest {
         String expectedUrl = "/ng/test-org/applications/test-app";
 
         assertEquals(expectedUrl, urlBuilder.getApplicationUrl(organizationId, applicationId, null));
+    }
+
+    @Test
+    public void testFilterApplicationUrl() {
+        String expectedUrl = "/ng/test-org/applications/filter?expand=license&includeArchived=false&includeOnlyLicensed=false&includeMerged=true";
+
+        ApplicationFilterForm form = new ApplicationFilterForm();
+
+        form.setExpand(EnumSet.of(ApplicationFilterForm.ApplicationExpandValues.LICENSE));
+
+        assertEquals(expectedUrl, urlBuilder.getApplicationFilterUrl(organizationId, form));
     }
 
     @Test
@@ -117,6 +129,24 @@ public class UrlBuilderTest {
     }
 
     @Test
+    public void testSecurityCheckUrl() {
+        String expectedSecurityCheckUrl = "/ng/test-org/securityChecks";
+        assertEquals(expectedSecurityCheckUrl, urlBuilder.getSecurityCheckUrl(organizationId));
+    }
+
+    @Test
+    public void testEnabledJobOutcomePolicyListUrl() {
+        String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled";
+        assertEquals(expectedJobOutcomePolicyListUrl, urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId));
+    }
+
+    @Test
+    public void testEnabledJobOutcomePolicyListUrlByApplication() {
+        String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled/test-app";
+        assertEquals(expectedJobOutcomePolicyListUrl, urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(organizationId, applicationId));
+    }
+
+    @Test
     public void testAgentUrls() {
         String expectedJavaUrl = "/ng/test-org/agents/default/java?jvm=1_6";
 
@@ -141,6 +171,13 @@ public class UrlBuilderTest {
         String expectedDotNetCoreUrl = "/ng/test-org/agents/default/dotnet_core";
 
         assertEquals(expectedDotNetCoreUrl, urlBuilder.getAgentUrl(AgentType.DOTNET_CORE, organizationId, "default"));
+    }
+
+    @Test
+    public  void testGetYearlyVulnTrendForApplicationUrl(){
+        String expectedApplicationTrendUrl = "/ng/test-org/orgtraces/stats/trend/year/total?applications=test-application";
+
+        assertEquals(expectedApplicationTrendUrl, urlBuilder.getYearlyVulnTrendForApplicationUrl("test-org", "test-application"));
     }
 
 }
