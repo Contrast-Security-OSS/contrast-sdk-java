@@ -1,15 +1,12 @@
 package com.contrastsecurity.http;
 
 import com.contrastsecurity.models.AgentType;
-import com.contrastsecurity.models.SecurityCheck;
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * Form that is used making security checks
@@ -60,17 +57,23 @@ public class SecurityCheckForm {
     @SerializedName("job_start_time")
     private Long jobStartTime;
 
-    public SecurityCheckForm(String applicationId) {
-        this.applicationId = applicationId;
+    public static SecurityCheckForm securityCheckForm(String applicationId) {
+        return new SecurityCheckForm(applicationId, null);
     }
 
-    public SecurityCheckForm(String applicationName, AgentType agentLanguage) {
-        this.applicationName = applicationName;
+    public SecurityCheckForm(String applicationId, HashMap<String, Object> options) {
+        this.applicationId = applicationId;
+        this.jobStartTime = Long.valueOf(options.get("jobStartTime").toString());
+    }
+
+    public static SecurityCheckForm securityCheckForm(String applicationId, AgentType agentLanguage) {
+        return new SecurityCheckForm(applicationId, agentLanguage, null);
+    }
+
+    public SecurityCheckForm(String applicationId, AgentType agentLanguage,  HashMap<String, Object> options) {
+        this.applicationId = applicationId;
         this.agentLanguage = agentLanguage;
+        this.jobStartTime = Long.valueOf(options.get("jobStartTime").toString());
     }
 
-    public SecurityCheckForm(String applicationId, Long jobStartTime) {
-        this.applicationId = applicationId;
-        this.jobStartTime = jobStartTime;
-    }
 }
