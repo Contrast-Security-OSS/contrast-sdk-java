@@ -66,12 +66,12 @@ public class SecurityCheckForm {
         this.jobStartTime = Long.valueOf(options.get("jobStartTime").toString());
     }
 
-    public static SecurityCheckForm securityCheckForm(String applicationId, AgentType agentLanguage) {
-        return new SecurityCheckForm(applicationId, agentLanguage, null);
+    public static SecurityCheckForm securityCheckForm(String applicationName, AgentType agentLanguage) {
+        return new SecurityCheckForm(applicationName, agentLanguage, null);
     }
 
-    public SecurityCheckForm(String applicationId, AgentType agentLanguage,  HashMap<String, Object> options) {
-        this.applicationId = applicationId;
+    public SecurityCheckForm(String applicationName, AgentType agentLanguage,  HashMap<String, Object> options) {
+        this.applicationId = applicationName;
         this.agentLanguage = agentLanguage;
         this.jobStartTime = Long.valueOf(options.get("jobStartTime").toString());
     }
