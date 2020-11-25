@@ -71,7 +71,7 @@ public class SecurityCheckForm {
     }
 
     public SecurityCheckForm(String applicationName, AgentType agentLanguage,  HashMap<String, Object> options) {
-        this.applicationId = applicationName;
+        this.applicationName = applicationName;
         this.agentLanguage = agentLanguage;
         this.jobStartTime = Long.valueOf(options.get("jobStartTime").toString());
     }
