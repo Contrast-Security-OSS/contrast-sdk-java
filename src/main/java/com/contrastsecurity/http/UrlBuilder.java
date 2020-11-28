@@ -100,7 +100,7 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s/traces/%s/notes?expand=skip_links", organizationId, appId, traceId, formString);
     }
 
-    public String getVulnTagsByApplicationUrl(String organizationId, String appId) {
+    public String getTraceTagsByApplicationUrl(String organizationId, String appId) {
         return String.format("/ng/%s/tags/traces/application/%s", organizationId, appId);
     }
 
@@ -113,19 +113,19 @@ public class UrlBuilder {
         return String.format("/ng/%s/applications/%s/attestation", organizationId, appId);
     }
 
-    public String clearNotifications(String organizationId) {
+    public String clearNotificationsUrl(String organizationId) {
         return String.format("/ng/%s/notifications/read", organizationId);
     }
 
-    public String getNotifications(String organizationId, TraceFilterForm form) {
+    public String getNotificationsUrl(String organizationId, TraceFilterForm form) {
         return String.format("/ng/%s/notifications%s",organizationId,form);
     }
 
-    public String getServerTags(String organizationId, String appId) {
+    public String getServerTagsUrl(String organizationId, String appId) {
         return String.format("/ng/%s/tags/servers/list/application/%s",organizationId,appId);
     }
 
-    public String downloadAttestationReport(String organizationId, String userId, String reportId){
+    public String downloadAttestationReportUrl(String organizationId, String userId, String reportId){
         return String.format("/ng/%s/reports/download/%s/%s?expand=skip_links",organizationId,userId,reportId);
     }
 

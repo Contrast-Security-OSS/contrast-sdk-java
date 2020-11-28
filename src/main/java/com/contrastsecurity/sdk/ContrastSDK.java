@@ -648,6 +648,30 @@ public class ContrastSDK {
     }
 
     /**
+     * Get the vulnerabilities in the application whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param appId          the ID of the application
+     * @param form           FilterForm query parameters
+     * @return TracesWithResponse object that contains the list of Trace's and the Response code
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public TracesWithResponse getTracesWithResponse(String organizationId, String appId, TraceFilterForm form) throws IOException, UnauthorizedException {
+        InputStreamReader reader = null;
+        try {
+            MakeRequestResponse mrr = makeRequestWithResponse(HttpMethod.GET, urlBuilder.getTracesByApplicationUrl(organizationId, appId, form));
+            reader = new InputStreamReader(mrr.is);
+            TracesWithResponse twr = new TracesWithResponse();
+            twr.t = this.gson.fromJson(reader, Traces.class);
+            twr.rc = mrr.rc;
+            return twr;
+        } finally {
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
      * Get the notes (discussion) for the vulnerability ID in the application whose ID is passed in.
      *
      * @param organizationId the ID of the organization
@@ -685,7 +709,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getVulnTagsByApplicationUrl(organizationId, appId));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTraceTagsByApplicationUrl(organizationId, appId));
             reader = new InputStreamReader(is);
             return this.gson.fromJson(reader, TagsResponse.class);
         } finally {
@@ -753,7 +777,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            downloadFile(HttpMethod.POST, urlBuilder.downloadAttestationReport(organizationId, userId, reportId),".");
+            downloadFile(HttpMethod.POST, urlBuilder.downloadAttestationReportUrl(organizationId, userId, reportId),".");
         }  finally {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
@@ -772,7 +796,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getNotifications(organizationId,form));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getNotificationsUrl(organizationId,form));
             reader = new InputStreamReader(is);
             return this.gson.fromJson(reader, NotificationsResponse.class);
         }  finally {
@@ -793,7 +817,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getServerTags(organizationId,appId));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getServerTagsUrl(organizationId,appId));
             reader = new InputStreamReader(is);
             return this.gson.fromJson(reader, ServerTagsResponse.class);
         }  finally {
@@ -813,7 +837,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try{
-            is = makeRequest(HttpMethod.PUT, urlBuilder.clearNotifications(organizationId));
+            is = makeRequest(HttpMethod.PUT, urlBuilder.clearNotificationsUrl(organizationId));
             reader = new InputStreamReader(is);
             return this.gson.fromJson(reader, GenericResponse.class);
         } finally {
@@ -1000,6 +1024,27 @@ public class ContrastSDK {
             throw new UnauthorizedException(rc);
         }
         return is;
+    }
+
+    class MakeRequestResponse {
+        InputStream is;
+        int rc;
+    }
+
+    public MakeRequestResponse makeRequestWithResponse(HttpMethod method, String path) throws IOException, UnauthorizedException {
+        String url = restApiURL + path;
+
+        HttpURLConnection connection = makeConnection(url, method.toString());
+        InputStream is = connection.getInputStream();
+        int rc = connection.getResponseCode();
+        if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+            IOUtils.closeQuietly(is);
+            throw new UnauthorizedException(rc);
+        }
+        MakeRequestResponse mrr = new MakeRequestResponse();
+        mrr.is = is;
+        mrr.rc = rc;
+        return mrr;
     }
 
     public void downloadFile(HttpMethod method, String path, String saveDir) throws IOException, UnauthorizedException {
