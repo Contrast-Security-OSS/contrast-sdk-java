@@ -49,6 +49,7 @@ public class SecurityCheckForm {
 
     /**
      * The job start time of the jenkins job
+     * Some job outcome policies configurations may not work as expected if not set
      * @param jobStartTime New value for job start time.
      * @return the start time of the jenkins job
      */
