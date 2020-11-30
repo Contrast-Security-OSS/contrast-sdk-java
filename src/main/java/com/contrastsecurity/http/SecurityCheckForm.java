@@ -1,15 +1,10 @@
 package com.contrastsecurity.http;
 
 import com.contrastsecurity.models.AgentType;
-import com.contrastsecurity.models.SecurityCheck;
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 /**
  * Form that is used making security checks
@@ -67,10 +62,5 @@ public class SecurityCheckForm {
     public SecurityCheckForm(String applicationName, AgentType agentLanguage) {
         this.applicationName = applicationName;
         this.agentLanguage = agentLanguage;
-    }
-
-    public SecurityCheckForm(String applicationId, Long jobStartTime) {
-        this.applicationId = applicationId;
-        this.jobStartTime = jobStartTime;
     }
 }
