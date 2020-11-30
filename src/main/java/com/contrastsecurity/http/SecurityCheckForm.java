@@ -1,15 +1,10 @@
 package com.contrastsecurity.http;
 
 import com.contrastsecurity.models.AgentType;
-import com.contrastsecurity.models.SecurityCheck;
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 /**
  * Form that is used making security checks
@@ -51,6 +46,15 @@ public class SecurityCheckForm {
      */
     @SerializedName("origin")
     private String origin = "OTHER";
+
+    /**
+     * The job start time of the jenkins job
+     * Some job outcome policy configurations may not work as expected if not set
+     * @param jobStartTime New value for job start time.
+     * @return the start time of the jenkins job
+     */
+    @SerializedName("job_start_time")
+    private Long jobStartTime;
 
     public SecurityCheckForm(String applicationId) {
         this.applicationId = applicationId;
