@@ -1,5 +1,6 @@
 package com.contrastsecurity;
 
+import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.TraceFilterForm;
 import com.contrastsecurity.http.UrlBuilder;
 import com.contrastsecurity.models.AgentType;
@@ -40,6 +41,17 @@ public class UrlBuilderTest {
         String expectedUrl = "/ng/test-org/applications/test-app";
 
         assertEquals(expectedUrl, urlBuilder.getApplicationUrl(organizationId, applicationId, null));
+    }
+
+    @Test
+    public void testFilterApplicationUrl() {
+        String expectedUrl = "/ng/test-org/applications/filter?expand=license&includeArchived=false&includeOnlyLicensed=false&includeMerged=true";
+
+        ApplicationFilterForm form = new ApplicationFilterForm();
+
+        form.setExpand(EnumSet.of(ApplicationFilterForm.ApplicationExpandValues.LICENSE));
+
+        assertEquals(expectedUrl, urlBuilder.getApplicationFilterUrl(organizationId, form));
     }
 
     @Test

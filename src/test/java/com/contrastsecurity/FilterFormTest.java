@@ -8,7 +8,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -30,7 +29,7 @@ public class FilterFormTest {
 
         String qs = filterForm.toString();
 
-        assertTrue(!qs.isEmpty());
+        assertFalse(qs.isEmpty());
 
         assertTrue(qs.contains("limit"));
         assertTrue(qs.contains("offset"));
@@ -47,7 +46,7 @@ public class FilterFormTest {
 
         String qs = filterForm.toString();
 
-        assertTrue(!qs.isEmpty());
+        assertFalse(qs.isEmpty());
 
         assertTrue(qs.contains("expand"));
 
