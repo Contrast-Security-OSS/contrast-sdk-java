@@ -30,15 +30,7 @@ package com.contrastsecurity.sdk;
 
 import com.contrastsecurity.exceptions.ApplicationCreateException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
-import com.contrastsecurity.http.FilterForm;
-import com.contrastsecurity.http.HttpMethod;
-import com.contrastsecurity.http.MediaType;
-import com.contrastsecurity.http.RequestConstants;
-import com.contrastsecurity.http.ServerFilterForm;
-import com.contrastsecurity.http.TraceFilterForm;
-import com.contrastsecurity.http.TraceFilterKeycode;
-import com.contrastsecurity.http.TraceFilterType;
-import com.contrastsecurity.http.UrlBuilder;
+import com.contrastsecurity.http.*;
 import com.contrastsecurity.models.*;
 import com.contrastsecurity.models.dtm.ApplicationCreateRequest;
 import com.contrastsecurity.models.dtm.AttestationCreateRequest;
@@ -80,21 +72,62 @@ public class ContrastSDK {
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private int readTimeout = DEFAULT_READ_TIMEOUT;
 
+
     private static final int BUFFER_SIZE = 4096;
 
+    public static class Builder {
+        private String user;
+        private String serviceKey;
+        private String apiKey;
+        private Proxy proxy;
+        private String restApiURL;
+
+        public Builder(String user, String serviceKey, String apiKey) {
+            this.user = user;
+            this.serviceKey = serviceKey;
+            this.apiKey = apiKey;
+            this.restApiURL = DEFAULT_API_URL;
+            ContrastSDKUtils.validateUrl(this.restApiURL);
+            this.proxy = Proxy.NO_PROXY;
+        }
+
+        public Builder withApiUrl(String apiUrl) {
+            ContrastSDKUtils.validateUrl(apiUrl);
+            this.restApiURL = ContrastSDKUtils.ensureApi(apiUrl);
+            return this;
+        }
+
+        public Builder withProxy(Proxy proxy) {
+            this.proxy = proxy;
+            return this;
+        }
+
+        public ContrastSDK build() {
+            ContrastSDK sdk = new ContrastSDK(this.user, this.serviceKey, this.apiKey);
+            sdk.restApiURL = this.restApiURL;
+            sdk.proxy = this.proxy;
+            return sdk;
+        }
+    }
+
+    /**
+     * Use ContrastSDK.Builder
+     */
+    @Deprecated
     public ContrastSDK() {
 
     }
 
     /**
      * Create a ContrastSDK object to use the Contrast V3 API
-     *
+     * Deprecated - Please use builder
      * @param user       Username (e.g., joe@acme.com)
      * @param serviceKey User service key
      * @param apiKey     API Key
      * @param restApiURL the base Contrast API URL
      * @throws IllegalArgumentException if the API URL is malformed
      */
+    @Deprecated
     public ContrastSDK(String user, String serviceKey, String apiKey, String restApiURL) throws IllegalArgumentException {
         this.user = user;
         this.serviceKey = serviceKey;
@@ -111,7 +144,7 @@ public class ContrastSDK {
 
     /**
      * Create a ContrastSDK object to use the Contrast V3 API through a Proxy.
-     *
+     * Deprecated - Please use builder
      * @param user       Username (e.g., joe@acme.com)
      * @param serviceKey User service key
      * @param apiKey     API Key
@@ -119,6 +152,7 @@ public class ContrastSDK {
      * @param proxy Proxy to use
      * @throws IllegalArgumentException if the API URL is malformed
      */
+    @Deprecated
     public ContrastSDK(String user, String serviceKey, String apiKey, String restApiURL, Proxy proxy) throws IllegalArgumentException {
         this.user = user;
         this.serviceKey = serviceKey;
@@ -135,12 +169,14 @@ public class ContrastSDK {
 
     /**
      * Create a ContrastSDK object to use the Contrast V3 API
+     * Deprecated - Please use Builder
      * <p>
      * This will use the default api url which is https://app.contrastsecurity.com/Contrast/api
      * @param user Username (e.g., joe@acme.com)
      * @param serviceKey User service key
      * @param apiKey API Key
      */
+    @Deprecated
     public ContrastSDK(String user, String serviceKey, String apiKey) {
         this.user = user;
         this.serviceKey = serviceKey;
@@ -213,6 +249,30 @@ public class ContrastSDK {
             IOUtils.closeQuietly(is);
         }
     }
+
+    /**
+     * Get all Vulnerability Trend for an Application.
+     * @param organizationId the ID of the organization
+     * @param appId the ID of the application
+     * @return VulnerabilityTrend with the yearly Vulnerability Trend for an Oeg.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public VulnerabilityTrend getYearlyVulnTrendForApplication(String organizationId, String appId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, this.urlBuilder.getYearlyVulnTrendForApplicationUrl(organizationId, appId));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, VulnerabilityTrend.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+
 
     /**
      * Get all organizations for the user profile.
@@ -288,9 +348,9 @@ public class ContrastSDK {
     public Application createApplication(String organizationId, ApplicationCreateRequest request)
             throws IOException, UnauthorizedException, ApplicationCreateException {
         try (InputStream is = makeCreateRequest(HttpMethod.POST, urlBuilder.getCreateApplicationUrl(organizationId), this.gson.toJson(request), MediaType.JSON, false);
-            InputStreamReader reader = new InputStreamReader(is)){
-            Applications response = this.gson.fromJson(reader, Applications.class);
-            return response.getApplication();
+                InputStreamReader reader = new InputStreamReader(is)){
+                Applications response = this.gson.fromJson(reader, Applications.class);
+                return response.getApplication();
         }
     }
 
@@ -419,6 +479,28 @@ public class ContrastSDK {
         InputStreamReader reader = null;
         try {
             is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationsUrl(organizationId));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, Applications.class);
+        } finally {
+            IOUtils.closeQuietly(reader);
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    /**
+     * Get the list of filtered applications being monitored by Contrast.
+     *
+     * @param organizationId the ID of the organization
+     * @param applicationFilterForm  Query params to add more info to response
+     * @return Applications object that contains the list of Application's
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public Applications getFilteredApplications(String organizationId, ApplicationFilterForm applicationFilterForm) throws UnauthorizedException, IOException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationFilterUrl(organizationId, applicationFilterForm));
             reader = new InputStreamReader(is);
             return this.gson.fromJson(reader, Applications.class);
         } finally {
@@ -670,6 +752,7 @@ public class ContrastSDK {
             IOUtils.closeQuietly(reader);
         }
     }
+
 
     /**
      * Get the notes (discussion) for the vulnerability ID in the application whose ID is passed in.
@@ -951,6 +1034,73 @@ public class ContrastSDK {
     }
 
     /**
+     * Make a security check in a given organization by the security check form
+     *
+     * @param organizationId the ID of the organization
+     * @param securityCheckForm the security check form
+     * @return the security check that was made
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public SecurityCheck makeSecurityCheck(String organizationId, SecurityCheckForm securityCheckForm) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequestWithBody(HttpMethod.POST, urlBuilder.getSecurityCheckUrl(organizationId), this.gson.toJson(securityCheckForm), MediaType.JSON);
+            reader = new InputStreamReader(is);
+
+            SecurityCheckResponse response = this.gson.fromJson(reader, SecurityCheckResponse.class);
+            return response.getSecurityCheck();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Gets a list of enabled Job Outcome policies in an organization
+     * @param organizationId The organization ID
+     * @return The list of enabled Job Outcome Policies
+     * @throws IOException
+     * @throws UnauthorizedException
+     */
+    public List<JobOutcomePolicy> getEnabledJobOutcomePolicies(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId));
+            reader = new InputStreamReader(is);
+
+            JobOutcomePolicyListResponse response = this.gson.fromJson(reader, JobOutcomePolicyListResponse.class);
+            return response.getPolicies();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Gets a list of enabeld Job Outcome Policies in an organization that applies to an application
+     * @param organizationId The organization ID
+     * @param appId The Application ID
+     * @return the list of enabled Job Outcome Policies that apply to the application
+     */
+    public List<JobOutcomePolicy> getEnabledJoboutcomePoliciesByApplication(String organizationId, String appId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(organizationId, appId));
+            reader = new InputStreamReader(is);
+
+            JobOutcomePolicyListResponse response = this.gson.fromJson(reader, JobOutcomePolicyListResponse.class);
+            return response.getPolicies();
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
      * Get the rules for an organization
      *
      * @param organizationId the ID of the organization
@@ -1011,6 +1161,29 @@ public class ContrastSDK {
      */
     public byte[] getAgent(AgentType type, String organizationId) throws IOException, UnauthorizedException {
         return getAgent(type, organizationId, DEFAULT_AGENT_PROFILE);
+    }
+
+    public InputStream makeRequestWithBody(HttpMethod method, String path, String body, MediaType mediaType) throws IOException, UnauthorizedException {
+        String url = restApiURL + path;
+        OutputStream os = null;
+        HttpURLConnection connection = makeConnection(url, method.toString());
+        if(mediaType != null && body != null && (method.equals(HttpMethod.PUT) || method.equals(HttpMethod.POST))) {
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type",mediaType.getType());
+            os = connection.getOutputStream();
+            byte[] bodyByte = body.getBytes("utf-8");
+            os.write(bodyByte, 0, bodyByte.length);
+        }
+        int rc = connection.getResponseCode();
+        InputStream is = connection.getInputStream();
+        if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+            IOUtils.closeQuietly(is);
+            if(os != null) {
+                IOUtils.closeQuietly(os);
+            }
+            throw new UnauthorizedException(rc);
+        }
+        return is;
     }
 
     public InputStream makeRequest(HttpMethod method, String path) throws IOException, UnauthorizedException {

@@ -26,7 +26,9 @@ This SDK gives you a quick start for programmatically accessing the [Contrast RE
 
 Code example:
 ```
-ContrastSDK contrastSDK = new ContrastSDK("test@test.com", "testServiceKey", "testApiKey", "https://apptwo.contrastsecurity.com/Contrast/api");
+ContrastSDK contrastSDK = new ContrastSDK.Builder("contrast_admin", "demo", "demo")
+        .withApiUrl("http://localhost:19080/Contrast/api")
+        .build();
 
 String orgUuid = contrastSDK.getProfileDefaultOrganizations().getOrganization().getOrgUuid();
 
@@ -52,3 +54,10 @@ Ticketbook (2K LOC)
 WebGoat (48K LOC)
 WebGoat7 (106K LOC)
 ```
+
+### Deprecation
+
+The old-style constructor `new ContrastSDK()` has been deprecated in version 2.15. Please migrate your code to use `new ContrastSDK.Builder()`
+
+We will remove the deprecated constructors in version 3.
+

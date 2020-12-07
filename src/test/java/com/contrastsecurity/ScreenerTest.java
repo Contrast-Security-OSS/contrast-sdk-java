@@ -1,13 +1,9 @@
 package com.contrastsecurity;
 
 import com.contrastsecurity.exceptions.UnauthorizedException;
+import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.TraceFilterForm;
-import com.contrastsecurity.models.AgentType;
-import com.contrastsecurity.models.Application;
-import com.contrastsecurity.models.Applications;
-import com.contrastsecurity.models.Organizations;
-import com.contrastsecurity.models.Servers;
-import com.contrastsecurity.models.Traces;
+import com.contrastsecurity.models.*;
 import com.contrastsecurity.sdk.ContrastSDK;
 import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
@@ -16,11 +12,12 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Proxy;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Properties;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ScreenerTest {
 
@@ -35,10 +32,8 @@ public class ScreenerTest {
         properties = new Properties();
         properties.load(propertiesFileInputStream);
 
-        contrastSDK = new ContrastSDK(properties.getProperty("username"),
-                                      properties.getProperty("serviceKey"),
-                                      properties.getProperty("apiKey"),
-                                      properties.getProperty("localTeamServerUrl"), Proxy.NO_PROXY);
+        contrastSDK = new ContrastSDK.Builder(properties.getProperty("username"), properties.getProperty("serviceKey"), properties.getProperty("apiKey"))
+                .withApiUrl(properties.getProperty("localTeamServerUrl")).build();
     }
 
     @Test
@@ -47,8 +42,8 @@ public class ScreenerTest {
 
         try {
             FileUtils.writeByteArrayToFile(contrastJar, contrastSDK.getAgent(AgentType.JAVA, properties.getProperty("orgId")));
-        } catch (IOException |UnauthorizedException e) {
-            assertTrue(true); // pass
+        } catch (IOException | UnauthorizedException e) {
+            assertTrue(true);
         }
 
         assertTrue(contrastJar.exists());
@@ -88,9 +83,8 @@ public class ScreenerTest {
     }
 
 
-
     @Test
-    public void testGetApplicationTraces() throws  IOException, UnauthorizedException {
+    public void testGetApplicationTraces() throws IOException, UnauthorizedException {
         String orgId = properties.getProperty("orgId");
 
         Applications applications = contrastSDK.getApplications(orgId);
@@ -108,5 +102,33 @@ public class ScreenerTest {
         Traces traces = contrastSDK.getTraces(orgId, application.getId(), form);
 
         assertTrue(!traces.getTraces().isEmpty());
+    }
+
+    @Test
+    public void testGetFilteredApplication() throws IOException, UnauthorizedException {
+        String orgId = properties.getProperty("orgId");
+
+        ApplicationFilterForm form = new ApplicationFilterForm();
+
+        Applications applications = contrastSDK.getFilteredApplications(orgId, form);
+
+        assertFalse(applications.getApplications().isEmpty());
+
+        Application application = applications.getApplications().get(0);
+
+        assertNotNull(application.getId());
+
+        List<String> languages = new ArrayList<>();
+        languages.add("Java");
+
+        form.setFilterLanguages(languages);
+
+        form.setIncludeOnlyLicensed(true);
+        form.setIncludeMerged(true);
+        form.setIncludeArchived(true);
+
+        Applications licensedApplications = contrastSDK.getFilteredApplications(orgId, form);
+
+        assertFalse(licensedApplications.getApplications().isEmpty());
     }
 }

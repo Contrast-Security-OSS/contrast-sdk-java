@@ -4,6 +4,9 @@ import com.contrastsecurity.exceptions.InvalidConversionException;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.HttpMethod;
+import com.contrastsecurity.http.JobOutcomePolicyListResponse;
+import com.contrastsecurity.http.RuleSeverity;
+import com.contrastsecurity.http.SecurityCheckResponse;
 import com.contrastsecurity.models.*;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.utils.ContrastSDKUtils;
@@ -27,7 +30,7 @@ public class ContrastSDKTest extends ContrastSDK {
 
     @BeforeClass
     public static void setUp() {
-        contrastSDK = new ContrastSDK("test_user", "testApiKey", "testServiceKey", "http://localhost:19080/Contrast/api", Proxy.NO_PROXY);
+        contrastSDK = new ContrastSDK.Builder("test_user", "testApiKey", "testServiceKey").withApiUrl("http://localhost:19080/Contrast/api").build();
         gson = new GsonBuilder()
                 .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();;
     }
@@ -46,6 +49,20 @@ public class ContrastSDKTest extends ContrastSDK {
 
     @Test
     public void testGetApplications() throws UnauthorizedException, IOException, ResourceNotFoundException {
+
+        String applicationsString = "{\"applications\":[{\"app_id\":\"72358543-bbdb-490c-8e3f-1b5f5e9a0bf7\",\"archived\":false,\"created\":1461631080000,\"status\":\"offline\",\"path\":\"/Curl\",\"name\":\"Contrast-Curl\",\"language\":\"Java\",\"last_seen\":1461631080000,\"total_modules\":1,\"master\":false},{\"app_id\":\"b9acb026-36a6-4f4e-b568-33168b7a5ae6\",\"archived\":false,\"created\":1460582653000,\"status\":\"offline\",\"path\":\"/portal\",\"name\":\"portal\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":1,\"master\":false},{\"app_id\":\"53775e84-90a6-4a64-bafe-2b153c3a40f0\",\"archived\":false,\"created\":1460582640000,\"status\":\"offline\",\"path\":\"/\",\"name\":\"ROOT\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":1,\"master\":false},{\"app_id\":\"9e88815f-bb0d-44b4-ac5a-f02f661e8947\",\"archived\":false,\"created\":1460582659000,\"status\":\"offline\",\"path\":\"/library\",\"name\":\"sakai-library\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":1,\"master\":false},{\"app_id\":\"e9a14797-42e7-4ba4-8282-364fdf37026c\",\"archived\":false,\"created\":1460582916000,\"status\":\"offline\",\"path\":\"/sakai-user-tool\",\"name\":\"sakai-user-tool\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":2,\"master\":true},{\"app_id\":\"469b9147-5736-4b83-9158-657427d4c960\",\"archived\":false,\"created\":1461600682000,\"status\":\"offline\",\"path\":\"/examples\",\"name\":\"Servlet and JSP Examples\",\"language\":\"Java\",\"last_seen\":1461737160000,\"total_modules\":1,\"master\":false},{\"app_id\":\"3da856f4-c508-48b8-95a9-514eddefcbf3\",\"archived\":false,\"created\":1461599820000,\"status\":\"offline\",\"path\":\"/WebGoat\",\"name\":\"WebGoat\",\"language\":\"Java\",\"last_seen\":1461737160000,\"total_modules\":1,\"master\":false}]}";
+
+        Applications apps = gson.fromJson(applicationsString, Applications.class);
+
+        assertNotNull(apps);
+        assertNotNull(apps.getApplications());
+
+        assertNull(apps.getApplication());
+        assertTrue(!apps.getApplications().isEmpty());
+    }
+
+    @Test
+    public void testGetFilteredApplications() throws UnauthorizedException, IOException, ResourceNotFoundException {
 
         String applicationsString = "{\"applications\":[{\"app_id\":\"72358543-bbdb-490c-8e3f-1b5f5e9a0bf7\",\"archived\":false,\"created\":1461631080000,\"status\":\"offline\",\"path\":\"/Curl\",\"name\":\"Contrast-Curl\",\"language\":\"Java\",\"last_seen\":1461631080000,\"total_modules\":1,\"master\":false},{\"app_id\":\"b9acb026-36a6-4f4e-b568-33168b7a5ae6\",\"archived\":false,\"created\":1460582653000,\"status\":\"offline\",\"path\":\"/portal\",\"name\":\"portal\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":1,\"master\":false},{\"app_id\":\"53775e84-90a6-4a64-bafe-2b153c3a40f0\",\"archived\":false,\"created\":1460582640000,\"status\":\"offline\",\"path\":\"/\",\"name\":\"ROOT\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":1,\"master\":false},{\"app_id\":\"9e88815f-bb0d-44b4-ac5a-f02f661e8947\",\"archived\":false,\"created\":1460582659000,\"status\":\"offline\",\"path\":\"/library\",\"name\":\"sakai-library\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":1,\"master\":false},{\"app_id\":\"e9a14797-42e7-4ba4-8282-364fdf37026c\",\"archived\":false,\"created\":1460582916000,\"status\":\"offline\",\"path\":\"/sakai-user-tool\",\"name\":\"sakai-user-tool\",\"language\":\"Java\",\"last_seen\":1460925180000,\"total_modules\":2,\"master\":true},{\"app_id\":\"469b9147-5736-4b83-9158-657427d4c960\",\"archived\":false,\"created\":1461600682000,\"status\":\"offline\",\"path\":\"/examples\",\"name\":\"Servlet and JSP Examples\",\"language\":\"Java\",\"last_seen\":1461737160000,\"total_modules\":1,\"master\":false},{\"app_id\":\"3da856f4-c508-48b8-95a9-514eddefcbf3\",\"archived\":false,\"created\":1461599820000,\"status\":\"offline\",\"path\":\"/WebGoat\",\"name\":\"WebGoat\",\"language\":\"Java\",\"last_seen\":1461737160000,\"total_modules\":1,\"master\":false}]}";
 
@@ -123,6 +140,38 @@ public class ContrastSDKTest extends ContrastSDK {
     }
 
     @Test
+    public void testMakeSecurityCheck() {
+        String securityCheckResponseString = "{'security_check':{'id':1,'application_name':'testName','application_id':'testId1','origin':'JENKINS','result':false, 'job_outcome_policy':{'name':'testPolicy','outcome':'UNSTABLE','severities':{'MEDIUM':1}}}}";
+
+        SecurityCheckResponse response = gson.fromJson(securityCheckResponseString, SecurityCheckResponse.class);
+        SecurityCheck securityCheck = response.getSecurityCheck();
+        JobOutcomePolicy jobOutcomePolicy = securityCheck.getJobOutcomePolicy();
+        assertEquals(1l, securityCheck.getId().longValue());
+        assertEquals("testName", securityCheck.getApplicationName());
+        assertEquals("testPolicy", jobOutcomePolicy.getName());
+        assertEquals(JobOutcomePolicy.Outcome.UNSTABLE, jobOutcomePolicy.getOutcome());
+        assertEquals(1, jobOutcomePolicy.getSeverities().size());
+        assertEquals(1l, jobOutcomePolicy.getSeverities().get(RuleSeverity.MEDIUM).longValue());
+
+    }
+
+    @Test
+    public void testGetEnabledJobOutcomePolicies() {
+        String jobOutcomePolicyListResponseString = "{'policies':[{'name':'testJobOutcomePolicy','outcome':'SUCCESS'}]}";
+        JobOutcomePolicyListResponse response = gson.fromJson(jobOutcomePolicyListResponseString, JobOutcomePolicyListResponse.class);
+        assertNotNull(response.getPolicies());
+        assertEquals(response.getPolicies().get(0).getName(), "testJobOutcomePolicy");
+    }
+
+    @Test
+    public void testGetEnabledJobOutcomePoliciesByApplication() {
+        String jobOutcomePolicyListResponseString = "{'policies':[{'name':'testJobOutcomePolicy','outcome':'UNSTABLE'}]}";
+        JobOutcomePolicyListResponse response = gson.fromJson(jobOutcomePolicyListResponseString, JobOutcomePolicyListResponse.class);
+        assertNotNull(response.getPolicies());
+        assertEquals(response.getPolicies().get(0).getName(), "testJobOutcomePolicy");
+    }
+
+    @Test
     public void setCustomTiemouts() throws IOException {
         final int connectionTimeout = 1000;
         final int readTimeout = 4000;
@@ -184,4 +233,14 @@ public class ContrastSDKTest extends ContrastSDK {
         final String ensureBlank = "";
         assertEquals(ensureBlank, blankUrl);
     }
+
+    @Test
+    public void testApplicationYearlyTrend() {
+        final String exampleApplicationYearlyTrend = "{  \"success\": true,  \"messages\": [    \"Total Vulnerability trend loaded successfully\"  ],  \"open\": [    {      \"timestamp\": 1567310400000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1569902400000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1572580800000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1575176400000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1577854800000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1580533200000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1583038800000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1585713600000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1588305600000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1590984000000,      \"count\": 9,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 9        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1593576000000,      \"count\": 8,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 8        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1596254400000,      \"count\": 8,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 8        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    }  ],  \"closed\": [    {      \"timestamp\": 1567310400000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1569902400000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1572580800000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1575176400000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1577854800000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1580533200000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1583038800000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1585713600000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1588305600000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1590984000000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1593576000000,      \"count\": 1,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 1        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1596254400000,      \"count\": 1,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 1        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    }  ]}";
+        VulnerabilityTrend vulnerabilityTrend = gson.fromJson(exampleApplicationYearlyTrend, VulnerabilityTrend.class);
+        assertNotNull(vulnerabilityTrend);
+        assertNotNull(vulnerabilityTrend.getOpenTrend());
+        assertNotNull(vulnerabilityTrend.getClosedTrend());
+    }
+
 }
