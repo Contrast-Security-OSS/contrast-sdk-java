@@ -848,7 +848,7 @@ public class ContrastSDK {
     }
 
     /**
-     * Generate an attestation report for the application whose ID is passed in.
+     * Download the attestation report whose ID is passed in.
      * @param organizationId the ID of the organization
      * @param userId          the ID of the user
      * @param reportId          the ID of the report
@@ -1197,11 +1197,6 @@ public class ContrastSDK {
             throw new UnauthorizedException(rc);
         }
         return is;
-    }
-
-    class MakeRequestResponse {
-        InputStream is;
-        int rc;
     }
 
     public MakeRequestResponse makeRequestWithResponse(HttpMethod method, String path) throws IOException, UnauthorizedException {
