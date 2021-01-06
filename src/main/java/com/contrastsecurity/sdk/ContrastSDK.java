@@ -71,8 +71,6 @@ public class ContrastSDK {
     
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private int readTimeout = DEFAULT_READ_TIMEOUT;
-
-
     private static final int BUFFER_SIZE = 4096;
 
     public static class Builder {
@@ -272,8 +270,6 @@ public class ContrastSDK {
         }
     }
 
-
-
     /**
      * Get all organizations for the user profile.
      *
@@ -347,10 +343,10 @@ public class ContrastSDK {
      */
     public Application createApplication(String organizationId, ApplicationCreateRequest request)
             throws IOException, UnauthorizedException, ApplicationCreateException {
-        try (InputStream is = makeCreateRequest(HttpMethod.POST, urlBuilder.getCreateApplicationUrl(organizationId), this.gson.toJson(request), MediaType.JSON, false);
-                InputStreamReader reader = new InputStreamReader(is)){
-                Applications response = this.gson.fromJson(reader, Applications.class);
-                return response.getApplication();
+        try (InputStream is = makeCreateRequest(HttpMethod.POST, urlBuilder.getCreateApplicationUrl(organizationId), this.gson.toJson(request), MediaType.JSON,false);
+            InputStreamReader reader = new InputStreamReader(is)){
+            Applications response = this.gson.fromJson(reader, Applications.class);
+            return response.getApplication();
         }
     }
 
@@ -566,6 +562,10 @@ public class ContrastSDK {
         }
     }
 
+    public Libraries getLibraries(String organizationId, String appId) throws IOException, UnauthorizedException {
+        return getLibraries(organizationId, appId, null);
+    }
+
     /**
      * Return route coverage data about the monitored Contrast application.
      *
@@ -587,10 +587,6 @@ public class ContrastSDK {
             IOUtils.closeQuietly(is);
             IOUtils.closeQuietly(reader);
         }
-    }
-
-    public Libraries getLibraries(String organizationId, String appId) throws IOException, UnauthorizedException {
-        return getLibraries(organizationId, appId, null);
     }
 
     /**
@@ -753,7 +749,6 @@ public class ContrastSDK {
         }
     }
 
-
     /**
      * Get the notes (discussion) for the vulnerability ID in the application whose ID is passed in.
      *
@@ -828,7 +823,6 @@ public class ContrastSDK {
      * Generate an attestation report for the application whose ID is passed in.
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
-     *
      * @param request
      * @throws IOException
      * @throws UnauthorizedException
@@ -889,7 +883,7 @@ public class ContrastSDK {
     }
 
     /**
-     * Get notifications for the org.
+     * Get server tags for the app
      * @param organizationId the ID of the organization
      * @param appId           the id of the app
      * @throws IOException
@@ -928,7 +922,6 @@ public class ContrastSDK {
             IOUtils.closeQuietly(reader);
         }
     }
-
 
     /**
      * Get the vulnerabilities in the organization whose ID is passed in.
@@ -1198,6 +1191,7 @@ public class ContrastSDK {
         }
         return is;
     }
+
 
     public MakeRequestResponse makeRequestWithResponse(HttpMethod method, String path) throws IOException, UnauthorizedException {
         String url = restApiURL + path;
