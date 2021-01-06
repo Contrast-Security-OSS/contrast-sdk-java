@@ -46,8 +46,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
@@ -71,7 +69,6 @@ public class ContrastSDK {
     
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private int readTimeout = DEFAULT_READ_TIMEOUT;
-    private static final int BUFFER_SIZE = 4096;
 
     public static class Builder {
         private String user;
@@ -343,7 +340,7 @@ public class ContrastSDK {
      */
     public Application createApplication(String organizationId, ApplicationCreateRequest request)
             throws IOException, UnauthorizedException, ApplicationCreateException {
-        try (InputStream is = makeCreateRequest(HttpMethod.POST, urlBuilder.getCreateApplicationUrl(organizationId), this.gson.toJson(request), MediaType.JSON,false);
+        try (InputStream is = makeCreateRequest(HttpMethod.POST, urlBuilder.getCreateApplicationUrl(organizationId), this.gson.toJson(request), MediaType.JSON);
             InputStreamReader reader = new InputStreamReader(is)){
             Applications response = this.gson.fromJson(reader, Applications.class);
             return response.getApplication();
@@ -378,16 +375,13 @@ public class ContrastSDK {
      * @throws UnauthorizedException
      * @throws ApplicationCreateException
      */
-    private InputStream makeCreateRequest(HttpMethod method, String path, String body, MediaType mediaType, boolean setAcceptType) throws IOException, UnauthorizedException, ApplicationCreateException {
+    private InputStream makeCreateRequest(HttpMethod method, String path, String body, MediaType mediaType) throws IOException, UnauthorizedException, ApplicationCreateException {
         String url = restApiURL + path;
 
         HttpURLConnection connection = makeConnection(url, method.toString());
         if(mediaType != null && body != null && (method.equals(HttpMethod.PUT) || method.equals(HttpMethod.POST))) {
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type",mediaType.getType());
-            if(setAcceptType) {
-                connection.setRequestProperty("Accept", mediaType.getType());
-            }
             OutputStream os = connection.getOutputStream();
             byte[] bodyByte = body.getBytes("utf-8");
             os.write(bodyByte, 0, bodyByte.length);
@@ -567,29 +561,6 @@ public class ContrastSDK {
     }
 
     /**
-     * Return route coverage data about the monitored Contrast application.
-     *
-     * @param organizationId the ID of the organization
-     * @param appId          the ID of the application
-     * @return RouteCoverage object for the given app
-     * @throws UnauthorizedException if the Contrast account failed to authorize
-     * @throws IOException           if there was a communication problem
-     */
-    public RouteCoverageResponse getRouteCoverage(String organizationId, String appId) throws IOException, UnauthorizedException {
-        InputStream is = null;
-        InputStreamReader reader = null;
-        try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getRouteCoverageUrl(organizationId, appId));
-            reader = new InputStreamReader(is);
-
-            return this.gson.fromJson(reader, RouteCoverageResponse.class);
-        } finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(reader);
-        }
-    }
-
-    /**
      * Return the libraries of the monitored Contrast application.
      *
      * @param organizationId the ID of the organization
@@ -726,30 +697,6 @@ public class ContrastSDK {
     }
 
     /**
-     * Get the vulnerabilities in the application whose ID is passed in.
-     *
-     * @param organizationId the ID of the organization
-     * @param appId          the ID of the application
-     * @param form           FilterForm query parameters
-     * @return TracesWithResponse object that contains the list of Trace's and the Response code
-     * @throws UnauthorizedException if the Contrast account failed to authorize
-     * @throws IOException           if there was a communication problem
-     */
-    public TracesWithResponse getTracesWithResponse(String organizationId, String appId, TraceFilterForm form) throws IOException, UnauthorizedException {
-        InputStreamReader reader = null;
-        try {
-            MakeRequestResponse mrr = makeRequestWithResponse(HttpMethod.GET, urlBuilder.getTracesByApplicationUrl(organizationId, appId, form));
-            reader = new InputStreamReader(mrr.is);
-            TracesWithResponse twr = new TracesWithResponse();
-            twr.t = this.gson.fromJson(reader, Traces.class);
-            twr.rc = mrr.rc;
-            return twr;
-        } finally {
-            IOUtils.closeQuietly(reader);
-        }
-    }
-
-    /**
      * Get the notes (discussion) for the vulnerability ID in the application whose ID is passed in.
      *
      * @param organizationId the ID of the organization
@@ -787,7 +734,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getTraceTagsByApplicationUrl(organizationId, appId));
+            is = makeRequest(HttpMethod.GET, urlBuilder.getVulnTagsByApplicationUrl(organizationId, appId));
             reader = new InputStreamReader(is);
             return this.gson.fromJson(reader, TagsResponse.class);
         } finally {
@@ -827,101 +774,14 @@ public class ContrastSDK {
      * @throws IOException
      * @throws UnauthorizedException
      */
-    public GenericResponse generateAttestationReport(String organizationId, String appId, AttestationCreateRequest request)
+    public void generateAttestationReport(String organizationId, String appId, AttestationCreateRequest request)
             throws IOException, UnauthorizedException, ApplicationCreateException {
-        InputStream is = null;
-        InputStreamReader reader = null;
-        try {
-            is = makeCreateRequest(HttpMethod.GET, urlBuilder.getAttestationReportByApplicationUrl(organizationId, appId), this.gson.toJson(request), MediaType.JSON, true);
-            reader = new InputStreamReader(is);
-            return this.gson.fromJson(reader, GenericResponse.class);
-        }  finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(reader);
+        System.out.println(this.gson.toJson(request));
+        try (InputStream is = makeCreateRequest(HttpMethod.POST, urlBuilder.getAttestationReportByApplicationUrl(organizationId, appId), this.gson.toJson(request), MediaType.JSON);
+             InputStreamReader reader = new InputStreamReader(is)){
         }
     }
 
-    /**
-     * Download the attestation report whose ID is passed in.
-     * @param organizationId the ID of the organization
-     * @param userId          the ID of the user
-     * @param reportId          the ID of the report
-     * @throws IOException
-     * @throws UnauthorizedException
-     */
-    public void downloadAttestationReport(String organizationId, String userId, String reportId)
-            throws IOException, UnauthorizedException {
-        InputStream is = null;
-        InputStreamReader reader = null;
-        try {
-            downloadFile(HttpMethod.POST, urlBuilder.downloadAttestationReportUrl(organizationId, userId, reportId),".");
-        }  finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(reader);
-        }
-    }
-
-    /**
-     * Get notifications for the org.
-     * @param organizationId the ID of the organization
-     * @param form           FilterForm query parameters
-     * @throws IOException
-     * @throws UnauthorizedException
-     */
-    public NotificationsResponse getNotifications(String organizationId, TraceFilterForm form)
-            throws IOException, UnauthorizedException {
-        InputStream is = null;
-        InputStreamReader reader = null;
-        try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getNotificationsUrl(organizationId,form));
-            reader = new InputStreamReader(is);
-            return this.gson.fromJson(reader, NotificationsResponse.class);
-        }  finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(reader);
-        }
-    }
-
-    /**
-     * Get server tags for the app
-     * @param organizationId the ID of the organization
-     * @param appId           the id of the app
-     * @throws IOException
-     * @throws UnauthorizedException
-     */
-    public ServerTagsResponse getServerTags(String organizationId, String appId)
-            throws IOException, UnauthorizedException {
-        InputStream is = null;
-        InputStreamReader reader = null;
-        try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getServerTagsUrl(organizationId,appId));
-            reader = new InputStreamReader(is);
-            return this.gson.fromJson(reader, ServerTagsResponse.class);
-        }  finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(reader);
-        }
-    }
-
-    /**
-     * Clear notifications for the user and the org passed in.
-     * @param organizationId the ID of the organization
-     * @throws IOException
-     * @throws UnauthorizedException
-     */
-    public GenericResponse clearNotifications(String organizationId)
-            throws IOException, UnauthorizedException, ApplicationCreateException {
-        InputStream is = null;
-        InputStreamReader reader = null;
-        try{
-            is = makeRequest(HttpMethod.PUT, urlBuilder.clearNotificationsUrl(organizationId));
-            reader = new InputStreamReader(is);
-            return this.gson.fromJson(reader, GenericResponse.class);
-        } finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(reader);
-        }
-    }
 
     /**
      * Get the vulnerabilities in the organization whose ID is passed in.
@@ -1190,77 +1050,6 @@ public class ContrastSDK {
             throw new UnauthorizedException(rc);
         }
         return is;
-    }
-
-
-    public MakeRequestResponse makeRequestWithResponse(HttpMethod method, String path) throws IOException, UnauthorizedException {
-        String url = restApiURL + path;
-
-        HttpURLConnection connection = makeConnection(url, method.toString());
-        InputStream is = connection.getInputStream();
-        int rc = connection.getResponseCode();
-        if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
-            IOUtils.closeQuietly(is);
-            throw new UnauthorizedException(rc);
-        }
-        MakeRequestResponse mrr = new MakeRequestResponse();
-        mrr.is = is;
-        mrr.rc = rc;
-        return mrr;
-    }
-
-    public void downloadFile(HttpMethod method, String path, String saveDir) throws IOException, UnauthorizedException {
-        String fileURL = restApiURL + path;
-        //HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        HttpURLConnection connection = makeConnection(fileURL,method.toString());
-        connection.setRequestProperty("accept","application/json, text/plain, */*");
-        connection.setRequestProperty("accept-encoding", "gzip, deflate, br");
-        //connection.setRequestProperty("cache-control","no-cache");
-        int responseCode = connection.getResponseCode();
-
-        // always check HTTP response code first
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            String fileName = "";
-            String disposition = connection.getHeaderField("Content-Disposition");
-            String contentType = connection.getContentType();
-            int contentLength = connection.getContentLength();
-
-            if (disposition != null) {
-                // extracts file name from header field
-                int index = disposition.indexOf("filename=");
-                if (index > 0) {
-                    fileName = disposition.substring(index + 9,
-                            disposition.length() );
-                }
-            } else {
-                // extracts file name from URL
-                fileName = fileURL.substring(fileURL.lastIndexOf("/") + 1,
-                        fileURL.length());
-            }
-
-            System.out.println("fileName = " + fileName);
-
-            // opens input stream from the HTTP connection
-            InputStream inputStream = connection.getInputStream();
-            String saveFilePath = saveDir + File.separator + fileName;
-
-            // opens an output stream to save into file
-            FileOutputStream outputStream = new FileOutputStream(saveFilePath);
-
-            int bytesRead = -1;
-            byte[] buffer = new byte[BUFFER_SIZE];
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-
-            outputStream.close();
-            inputStream.close();
-
-            System.out.println("File downloaded to " + saveFilePath);
-        } else {
-            System.out.println("No file to download. Server replied HTTP code: " + responseCode);
-        }
-        connection.disconnect();
     }
 
     public HttpURLConnection makeConnection(String url, String method) throws IOException {
