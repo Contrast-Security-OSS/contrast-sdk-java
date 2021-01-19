@@ -37,13 +37,13 @@ public class AttestationCreateRequest {
     @NonNull
     private String[] complianceReports;
 
-    @SerializedName("showVulnerabilityDetails")
+    @SerializedName("showVulnerabilitiesDetails")
     @NonNull
-    private boolean showVulnerabilityDetails;
+    private boolean showVulnerabilitiesDetails;
 
     public AttestationCreateRequest(String[] vulnerabilityStatuses, String[] vulnerabilitySeverities,
                                     String[] vulnerabilityTypes, String[] vulnerabilityTags, String[] serverEnvironments,
-                                    String[] serverTags, String[] complianceReports, boolean showVulnerabilityDetails) {
+                                    String[] serverTags, String[] complianceReports, boolean showVulnerabilitiesDetails) {
         this.vulnerabilityStatuses = vulnerabilityStatuses;
         this.vulnerabilitySeverities = vulnerabilitySeverities;
         this.vulnerabilityTypes = vulnerabilityTypes;
@@ -51,7 +51,7 @@ public class AttestationCreateRequest {
         this.serverEnvironments = serverEnvironments;
         this.serverTags = serverTags;
         this.complianceReports = complianceReports;
-        this.showVulnerabilityDetails=showVulnerabilityDetails;
+        this.showVulnerabilitiesDetails=showVulnerabilitiesDetails;
 
     }
 
