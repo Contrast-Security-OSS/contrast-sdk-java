@@ -56,6 +56,14 @@ public class SecurityCheckForm {
     @SerializedName("job_start_time")
     private Long jobStartTime;
 
+    /**
+     * Filter to be applied to the vulnerabilities if the jop opt in
+     * @param securityCheckFilter the security check filter.
+     * @return the security check filter
+     */
+    @SerializedName("security_check_filter")
+    private SecurityCheckFilter securityCheckFilter;
+
     public SecurityCheckForm(String applicationId) {
         this.applicationId = applicationId;
     }
