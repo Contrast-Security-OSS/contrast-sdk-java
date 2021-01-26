@@ -9,15 +9,14 @@ import lombok.Setter;
 public class SecurityCheckFilter {
   public enum QueryBy {
     APP_VERSION_TAG,
-    START_DATE,
-    NONE
+    START_DATE
   }
 
   /**
    * The criteria to query vulnerabilities by
    */
   @SerializedName("query_by")
-  private QueryBy queryBy = QueryBy.NONE;
+  private QueryBy queryBy;
 
   /**
    * AppVersionTags to match
