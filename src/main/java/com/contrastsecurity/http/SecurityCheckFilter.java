@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class SecurityCheckFilter {
@@ -22,7 +24,7 @@ public class SecurityCheckFilter {
    * AppVersionTags to match
    */
   @SerializedName("app_version_tags")
-  private String[] appVersionTags;
+  private List<String> appVersionTags;
 
   /**
    * startDate to match
