@@ -1,7 +1,8 @@
 language: java
 sudo: false # faster builds
-script:
 jdk:
   - openjdk8
+  - openjdk11
+  - openjdk15
 script: 
     - mvn -B -e clean compile test 
