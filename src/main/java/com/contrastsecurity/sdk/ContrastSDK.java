@@ -544,15 +544,20 @@ public class ContrastSDK {
      *
      * @param organizationId the ID of the organization
      * @param appId          the ID of the application
+     * @param metadata       option session metadata keys and values to return route coverage based on
      * @return RouteCoverage object for the given app
      * @throws UnauthorizedException if the Contrast account failed to authorize
      * @throws IOException           if there was a communication problem
      */
-    public RouteCoverageResponse getRouteCoverage(String organizationId, String appId) throws IOException, UnauthorizedException {
+    public RouteCoverageResponse getRouteCoverage(String organizationId, String appId, RouteCoverageBySessionIDAndMetadataRequest metadata) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeRequest(HttpMethod.GET, urlBuilder.getRouteCoverageUrl(organizationId, appId));
+            if (metadata == null) {
+                is = makeRequest(HttpMethod.GET, urlBuilder.getRouteCoverageUrl(organizationId, appId));
+            } else {
+                is = makeRequestWithBody(HttpMethod.POST, urlBuilder.getRouteCoverageWithMetadataUrl(organizationId, appId), this.gson.toJson(metadata), MediaType.JSON);
+            }
             reader = new InputStreamReader(is);
 
             return this.gson.fromJson(reader, RouteCoverageResponse.class);
@@ -832,7 +837,7 @@ public class ContrastSDK {
         InputStream is = null;
         InputStreamReader reader = null;
         try {
-            is = makeCreateRequest(HttpMethod.GET, urlBuilder.getAttestationReportByApplicationUrl(organizationId, appId), this.gson.toJson(request), MediaType.JSON,true);
+            is = makeCreateRequest(HttpMethod.POST, urlBuilder.getAttestationReportByApplicationUrl(organizationId, appId), this.gson.toJson(request), MediaType.JSON,true);
             reader = new InputStreamReader(is);
             return this.gson.fromJson(reader, GenericResponse.class);
         } finally {

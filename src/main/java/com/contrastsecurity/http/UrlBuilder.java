@@ -64,8 +64,11 @@ public class UrlBuilder {
     }
 
     public String getRouteCoverageUrl(String organizationId, String appId) {
-        //String formString = form == null ? "" : form.toString();
         return String.format("/ng/%s/applications/%s/route?sort=-exercised", organizationId, appId);
+    }
+
+    public String getRouteCoverageWithMetadataUrl(String organizationId, String appId) {
+        return String.format("/ng/%s/applications/%s/route/filter?expand=observations", organizationId, appId);
     }
 
     public String getLibrariesUrl(String organizationId, String appId, EnumSet<FilterForm.LibrariesExpandValues> expandValues) {
