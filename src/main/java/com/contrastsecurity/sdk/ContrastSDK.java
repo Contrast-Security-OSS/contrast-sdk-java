@@ -76,7 +76,7 @@ public class ContrastSDK {
         private String apiKey;
         private Proxy proxy;
         private String restApiURL;
-        private String ideName;
+        private String integrationName;
         private Integer version;
 
         public Builder(String user, String serviceKey, String apiKey) {
@@ -99,8 +99,8 @@ public class ContrastSDK {
             return this;
         }
 
-        public Builder withIdeName(String ideName){
-            this.ideName = ideName;
+        public Builder withIntegrationName(String integrationName){
+            this.integrationName = integrationName;
             return this;
         }
 
