@@ -39,6 +39,7 @@ import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
@@ -66,10 +67,13 @@ public class ContrastSDK {
     private UrlBuilder urlBuilder;
     private Gson gson;
     Proxy proxy;
-    
+    private String integrationName;
+    private String version;
+
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private int readTimeout = DEFAULT_READ_TIMEOUT;
 
+    @Getter
     public static class Builder {
         private String user;
         private String serviceKey;
@@ -113,6 +117,8 @@ public class ContrastSDK {
             ContrastSDK sdk = new ContrastSDK(this.user, this.serviceKey, this.apiKey);
             sdk.restApiURL = this.restApiURL;
             sdk.proxy = this.proxy;
+            sdk.integrationName = this.integrationName;
+            sdk.version = this.version;
             return sdk;
         }
     }
@@ -1056,6 +1062,7 @@ public class ContrastSDK {
 
         HttpURLConnection connection = makeConnection(url, method.toString());
         InputStream is = connection.getInputStream();
+
         int rc = connection.getResponseCode();
         if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
             IOUtils.closeQuietly(is);
