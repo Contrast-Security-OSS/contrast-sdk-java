@@ -104,7 +104,7 @@ public class ContrastSDK {
         }
 
         public Builder withIntegrationName(String integrationName){
-            this.integrationName = integrationName;
+            this.integrationName = String.valueOf(IntegrationName.valueOf(integrationName));
             return this;
         }
 
