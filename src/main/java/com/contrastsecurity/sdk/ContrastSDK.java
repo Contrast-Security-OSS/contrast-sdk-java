@@ -39,7 +39,6 @@ import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import lombok.Getter;
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
@@ -73,7 +72,6 @@ public class ContrastSDK {
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private int readTimeout = DEFAULT_READ_TIMEOUT;
 
-    @Getter
     public static class Builder {
         private String user;
         private String serviceKey;
