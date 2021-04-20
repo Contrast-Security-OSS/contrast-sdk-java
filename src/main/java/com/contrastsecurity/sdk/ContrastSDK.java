@@ -66,11 +66,11 @@ public class ContrastSDK {
     private UrlBuilder urlBuilder;
     private Gson gson;
     Proxy proxy;
-    private String integrationName;
-    private String version;
-
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private int readTimeout = DEFAULT_READ_TIMEOUT;
+    private static final int BUFFER_SIZE = 4096;
+    private String integrationName;
+    private String version;
 
     public static class Builder {
         private String user;
@@ -1081,7 +1081,7 @@ public class ContrastSDK {
         	connection.setReadTimeout(readTimeout);
         return connection;
     }
-    
+
     /**
      * Sets a custom connection timeout for all SDK requests. This value must be set before a call to makeConnection is done.
      * @param timeout Timeout value in milliseconds.
@@ -1089,7 +1089,7 @@ public class ContrastSDK {
     public void setConnectionTimeout(final int timeout) {
     	this.connectionTimeout = timeout;
     }
-    
+
     /**
      * Set a custom read timeout for all SDK requests. This value must be set before calling makeConnection method in order
      * to take effect.
@@ -1098,9 +1098,9 @@ public class ContrastSDK {
     public void setReadTimeout(final int timeout) {
     	this.readTimeout = timeout;
     }
-    
+
     /**
-     * Default connection timeout. If connection timeout its set to this value, custom timeout will be ignored and requests will take 
+     * Default connection timeout. If connection timeout its set to this value, custom timeout will be ignored and requests will take
      * the default value that its usually assigned to them.
      */
     public static final int DEFAULT_CONNECTION_TIMEOUT = -1;
