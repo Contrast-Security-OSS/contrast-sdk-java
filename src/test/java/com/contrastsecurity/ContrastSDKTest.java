@@ -18,7 +18,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.Proxy;
 import java.net.URLConnection;
 
 import static org.junit.Assert.*;
