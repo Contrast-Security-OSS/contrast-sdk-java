@@ -68,6 +68,8 @@ public class ContrastSDK {
     private UrlBuilder urlBuilder;
     private Gson gson;
     Proxy proxy;
+    private String integrationName;
+    private String version;
 
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private int readTimeout = DEFAULT_READ_TIMEOUT;
@@ -79,6 +81,8 @@ public class ContrastSDK {
         private String apiKey;
         private Proxy proxy;
         private String restApiURL;
+        private String integrationName;
+        private String version;
 
         public Builder(String user, String serviceKey, String apiKey) {
             this.user = user;
@@ -100,10 +104,22 @@ public class ContrastSDK {
             return this;
         }
 
+        public Builder withIntegrationName(String integrationName){
+            this.integrationName = String.valueOf(IntegrationName.valueOf(integrationName));
+            return this;
+        }
+
+        public Builder withVersion(String version){
+            this.version = version;
+            return this;
+        }
+
         public ContrastSDK build() {
             ContrastSDK sdk = new ContrastSDK(this.user, this.serviceKey, this.apiKey);
             sdk.restApiURL = this.restApiURL;
             sdk.proxy = this.proxy;
+            sdk.integrationName = this.integrationName;
+            sdk.version = this.version;
             return sdk;
         }
     }
@@ -1187,6 +1203,7 @@ public class ContrastSDK {
 
         HttpURLConnection connection = makeConnection(url, method.toString());
         InputStream is = connection.getInputStream();
+
         int rc = connection.getResponseCode();
         if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
             IOUtils.closeQuietly(is);
