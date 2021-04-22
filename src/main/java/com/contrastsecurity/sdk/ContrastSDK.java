@@ -39,6 +39,7 @@ import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import lombok.Getter;
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
@@ -64,6 +65,7 @@ public class ContrastSDK {
     private String apiKey;
     private String serviceKey;
     private String user;
+    @Getter
     private String restApiURL;
     private UrlBuilder urlBuilder;
     private Gson gson;
