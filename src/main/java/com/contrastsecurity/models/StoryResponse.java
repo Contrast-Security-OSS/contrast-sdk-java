@@ -1,15 +1,14 @@
 package com.contrastsecurity.models;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
-public class TagsResponse {
+public class StoryResponse {
     private String success;
     private List<String> messages;
+    private Story story;
 
-    @SerializedName("tags")
-    private List<String> tags;
+    public StoryResponse() {
+    }
 
     public String getSuccess() {
         return success;
@@ -27,12 +26,11 @@ public class TagsResponse {
         this.messages = messages;
     }
 
-    public List<String> getTags() {
-        return tags;
+    public Story getStory() {
+        return story;
     }
 
-    public void setTags(List<String> tags) {
-        this.tags = tags;
+    public void setStory(Story story) {
+        this.story = story;
     }
 }
-

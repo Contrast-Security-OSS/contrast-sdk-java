@@ -4,6 +4,7 @@ import com.contrastsecurity.exceptions.InvalidConversionException;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.HttpMethod;
+import com.contrastsecurity.http.IntegrationName;
 import com.contrastsecurity.http.JobOutcomePolicyListResponse;
 import com.contrastsecurity.http.RuleSeverity;
 import com.contrastsecurity.http.SecurityCheckResponse;
@@ -29,7 +30,7 @@ public class ContrastSDKTest extends ContrastSDK {
 
     @BeforeClass
     public static void setUp() {
-        contrastSDK = new ContrastSDK.Builder("test_user", "testApiKey", "testServiceKey").withApiUrl("http://localhost:19080/Contrast/api").build();
+        contrastSDK = new ContrastSDK.Builder("test_user", "testApiKey", "testServiceKey").withApiUrl("http://localhost:19080/Contrast/api").withVersion("1.0.0").withIntegrationName(IntegrationName.VSCODE_IDE).build();
         gson = new GsonBuilder()
                 .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();
     }

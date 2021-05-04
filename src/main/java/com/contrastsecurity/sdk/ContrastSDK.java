@@ -38,7 +38,10 @@ import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.Getter;
 import org.apache.commons.io.IOUtils;
 
@@ -52,9 +55,13 @@ import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Entry point for using the Contrast REST API. Make an instance of this class
@@ -66,11 +73,11 @@ public class ContrastSDK {
     private String serviceKey;
     private String user;
     @Getter
-    private String restApiURL;
+    private static String restApiURL;
     private UrlBuilder urlBuilder;
     private Gson gson;
     Proxy proxy;
-    private String integrationName;
+    private IntegrationName integrationName;
     private String version;
 
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
@@ -83,7 +90,7 @@ public class ContrastSDK {
         private String apiKey;
         private Proxy proxy;
         private String restApiURL;
-        private String integrationName;
+        private IntegrationName integrationName;
         private String version;
 
         public Builder(String user, String serviceKey, String apiKey) {
@@ -106,8 +113,8 @@ public class ContrastSDK {
             return this;
         }
 
-        public Builder withIntegrationName(String integrationName){
-            this.integrationName = String.valueOf(IntegrationName.valueOf(integrationName));
+        public Builder withIntegrationName(IntegrationName integrationName){
+            this.integrationName = integrationName;
             return this;
         }
 
@@ -796,6 +803,135 @@ public class ContrastSDK {
         }
     }
 
+    public RecommendationResponse getRecommendation(String orgUuid, String traceId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getRecommendationByTraceId(orgUuid, traceId));
+            reader = new InputStreamReader(is);
+            return gson.fromJson(reader, RecommendationResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    public StoryResponse getStory(String orgUuid, String traceId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getStoryByTraceId(orgUuid, traceId));
+            reader = new InputStreamReader(is);
+
+            String inputString = IOUtils.toString(is, "UTF-8");
+            System.out.print(inputString);
+            StoryResponse story = gson.fromJson(inputString, StoryResponse.class);
+            JsonObject object = (JsonObject) new JsonParser().parse(inputString);
+            JsonObject storyObject = (JsonObject) object.get("story");
+            if (storyObject != null) {
+                JsonArray chaptersArray = (JsonArray) storyObject.get("chapters");
+                List<Chapter> chapters = story.getStory().getChapters();
+                if (chapters == null) {
+                    chapters = new ArrayList<>();
+                } else {
+                    chapters.clear();
+                }
+                for (int i = 0; i < chaptersArray.size(); i++) {
+                    JsonObject member = (JsonObject) chaptersArray.get(i);
+                    Chapter chapter = gson.fromJson(member, Chapter.class);
+                    chapters.add(chapter);
+                    JsonObject properties = (JsonObject) member.get("properties");
+                    if (properties != null) {
+                        Set<Entry<String, JsonElement>> entries = properties.entrySet();
+                        Iterator<Entry<String, JsonElement>> iter = entries.iterator();
+                        List<PropertyResource> propertyResources = new ArrayList<>();
+                        chapter.setPropertyResources(propertyResources);
+                        while (iter.hasNext()) {
+                            Entry<String, JsonElement> prop = iter.next();
+                            // String key = prop.getKey();
+                            JsonElement entryValue = prop.getValue();
+                            if (entryValue != null && entryValue.isJsonObject()) {
+                                JsonObject obj = (JsonObject) entryValue;
+                                JsonElement name = obj.get("name");
+                                JsonElement value = obj.get("value");
+                                if (name != null && value != null) {
+                                    PropertyResource propertyResource = new PropertyResource();
+                                    propertyResource.setName(name.getAsString());
+                                    propertyResource.setValue(value.getAsString());
+                                    propertyResources.add(propertyResource);
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+            return story;
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    public EventSummaryResponse getEventSummary(String orgUuid, String traceId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getEventSummary(orgUuid, traceId));
+            reader = new InputStreamReader(is);
+            EventSummaryResponse resource = gson.fromJson(reader, EventSummaryResponse.class);
+            for (EventResource event : resource.getEvents()) {
+                if (event.getCollapsedEvents() != null && !event.getCollapsedEvents().isEmpty()) {
+                    getCollapsedEventsDetails(event, orgUuid, traceId);
+                } else {
+                    EventDetails eventDetails = getEventDetails(orgUuid, traceId, event);
+                    event.setEvent(eventDetails.getEvent());
+                }
+            }
+            return resource;
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+
+    }
+
+    private void getCollapsedEventsDetails(EventResource parentEvent, final String orgUuid, final String traceId) throws IOException, UnauthorizedException {
+        for (EventResource event : parentEvent.getCollapsedEvents()) {
+            EventDetails eventDetails = getEventDetails(orgUuid, traceId, event);
+            event.setEvent(eventDetails.getEvent());
+            event.setParent(parentEvent);
+        }
+    }
+
+    private EventDetails getEventDetails(String orgUuid, String traceId, EventResource event)
+            throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET,urlBuilder.getEventDetails(orgUuid, traceId, event.getId()));
+            reader = new InputStreamReader(is);
+            return gson.fromJson(reader, EventDetails.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    public HttpRequestResponse getHttpRequest(String orgUuid, String traceId)
+            throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getHttpRequestByTraceId(orgUuid, traceId));
+            reader = new InputStreamReader(is);
+            return gson.fromJson(reader, HttpRequestResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
 
     /**
      * Get the available vulnerability tags in the application whose ID is passed in.
@@ -923,6 +1059,61 @@ public class ContrastSDK {
         }
     }
 
+
+    public TagsResponse deleteTag(String orgUuid, String traceId, String tag) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            String tagsUrl = urlBuilder.deleteTag(orgUuid, traceId);
+            is = makeRequestWithBody(HttpMethod.DELETE, tagsUrl, tag, MediaType.JSON);
+            reader = new InputStreamReader(is);
+            return gson.fromJson(reader, TagsResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    public TagsResponse getTagsByTrace(String organizationId, String traceId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTagsByTrace(organizationId, traceId));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, TagsResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    public TagsResponse getTagsByOrganization(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTagsByOrganization(organizationId));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, TagsResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    public TagsResponse setTags(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            String tagsUrl = urlBuilder.getTagsByOrganization(organizationId);
+            is = makeRequest(HttpMethod.PUT, tagsUrl);
+            reader = new InputStreamReader(is);
+            return gson.fromJson(reader, TagsResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
     /**
      * Clear notifications for the org.
      *
@@ -990,6 +1181,20 @@ public class ContrastSDK {
         }
     }
 
+    public TraceListing getTraceFiltersByType(String organizationId, String appId, TraceFilterType type) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTraceListingUrl(organizationId, appId, type));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, TraceListing.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
 
     /**
      * Get the vulnerabilities in the application whose ID is passed in with a filter.
@@ -1017,6 +1222,25 @@ public class ContrastSDK {
             IOUtils.closeQuietly(reader);
         }
     }
+
+
+    public GenericResponse setTraceStatus(String organizationId, String statusRequest) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+
+        try {
+            is = makeRequestWithBody(HttpMethod.PUT, urlBuilder.setTraceStatus(organizationId), statusRequest, MediaType.JSON);
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, GenericResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+
+
 
     /**
      * Get the vulnerabilities in the application by the rule.
@@ -1290,6 +1514,14 @@ public class ContrastSDK {
         connection.setRequestMethod(method);
         connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
         connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
+
+        if(integrationName != null){
+            connection.setRequestProperty(RequestConstants.X_TELEMETRY_INTEGRATION_NAME, String.valueOf(integrationName));
+        }
+        if(version != null){
+            connection.setRequestProperty(RequestConstants.X_TELEMETRY_INTEGRATION_VERSION, version);
+        }
+
         connection.setUseCaches(false);
         if(connectionTimeout > DEFAULT_CONNECTION_TIMEOUT)
             connection.setConnectTimeout(connectionTimeout);

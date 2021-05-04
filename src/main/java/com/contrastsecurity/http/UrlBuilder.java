@@ -102,9 +102,42 @@ public class UrlBuilder {
         return String.format("/ng/%s/traces/%s/filter/%s", organizationId, appId, formString);
     }
 
+    public String getRecommendationByTraceId(String organizationId, String traceId){
+        return String.format("/ng/%s/traces/%s/recommendation", organizationId, traceId);
+    }
+
+    public String getStoryByTraceId(String organizationId, String traceId){
+        return String.format("/ng/%s/traces/%s/story", organizationId, traceId);
+    }
+
+    public String getHttpRequestByTraceId(String organizationId, String traceId){
+        return String.format("/ng/%s/traces/%s/httprequest", organizationId, traceId);
+    }
+
+    public String getEventSummary(String organizationId, String traceId){
+        return String.format("/ng/%s/traces/%s/events/summary", organizationId, traceId);
+    }
+
+    public String getEventDetails(String organizationId, String traceId, String eventId){
+        return String.format("/ng/%s/traces/%s/events/%s/details", organizationId, traceId, eventId);
+    }
+
+
     public String getNotesByApplicationUrl(String organizationId, String appId, String traceId, TraceFilterForm form) throws UnsupportedEncodingException {
         String formString = form == null ? "" : form.toQuery();
-        return String.format("/ng/%s/applications/%s/traces/%s/notes?expand=skip_links", organizationId, appId, traceId, formString);
+        return String.format("/ng/%s/applications/%s/traces/%s/notes", organizationId, appId, traceId, formString);
+    }
+
+    public String getTagsByOrganization(String organizationId){
+        return String.format("/ng/%s/tags/traces", organizationId);
+    }
+
+    public String getTagsByTrace(String organizationId, String traceId){
+        return String.format("/ng/%s/tags/traces/trace/%s", organizationId, traceId);
+    }
+
+    public String deleteTag(String organizationId, String traceId){
+        return String.format("/ng/%s/tags/trace/%s", organizationId, traceId);
     }
 
     public String getTraceTagsByApplicationUrl(String organizationId, String appId) {
@@ -134,6 +167,10 @@ public class UrlBuilder {
 
     public String downloadAttestationReportUrl(String organizationId, String userId, String reportId){
         return String.format("/ng/%s/reports/download/%s/%s?expand=skip_links",organizationId,userId,reportId);
+    }
+
+    public String setTraceStatus(String organizationId){
+        return String.format("/ng/%s/orgtraces/mark", organizationId);
     }
 
     public String getTraceListingUrl(String organizationId, String appId, TraceFilterType traceFilterType) {
