@@ -122,13 +122,12 @@ public class UrlBuilder {
         return String.format("/ng/%s/traces/%s/events/%s/details", organizationId, traceId, eventId);
     }
 
-
     public String getNotesByApplicationUrl(String organizationId, String appId, String traceId, TraceFilterForm form) throws UnsupportedEncodingException {
         String formString = form == null ? "" : form.toQuery();
         return String.format("/ng/%s/applications/%s/traces/%s/notes", organizationId, appId, traceId, formString);
     }
 
-    public String getTagsByOrganization(String organizationId){
+    public String getOrCreateTagsByOrganization(String organizationId){
         return String.format("/ng/%s/tags/traces", organizationId);
     }
 

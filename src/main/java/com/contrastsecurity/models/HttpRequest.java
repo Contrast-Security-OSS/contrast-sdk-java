@@ -82,4 +82,7 @@ public class HttpRequest {
 		return parameters;
 	}
 	private List<NameValuePair> parameters;
+
+	public String getText() { return text; }
+	private String text;
 }

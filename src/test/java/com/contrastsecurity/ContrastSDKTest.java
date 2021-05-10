@@ -20,6 +20,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -243,4 +245,71 @@ public class ContrastSDKTest extends ContrastSDK {
         assertNotNull(vulnerabilityTrend.getClosedTrend());
     }
 
+
+    @Test
+    public void testRecommendation(){
+            final String recommendation = "{ \"success\" : true, \"messages\" : [ \"Vulnerability recommendation loaded successfully\" ], \"recommendation\" : { \"text\" : \"test recommendation\", \"formattedTextVariables\" : { } }, \"owasp\" : \"OWASP link\", \"cwe\" : \"CWE link\", \"custom_recommendation\" : { \"text\" : \"custom recommendation\", \"formattedText\" : \"custom recommendation\", \"formattedTextVariables\" : { } }, \"rule_references\" : { \"text\" : \"rule reference\", \"formattedText\" : \"rule reference\", \"formattedTextVariables\" : { } }, \"custom_rule_references\" : { \"text\" : \"test custom\", \"formattedText\" : \"test custom\", \"formattedTextVariables\" : { } } }";
+        RecommendationResponse vulnerabilityRecommendation = gson.fromJson(recommendation, RecommendationResponse.class);
+        assertNotNull(vulnerabilityRecommendation);
+
+        assertEquals(vulnerabilityRecommendation.getRecommendation().getText(), "test recommendation");
+        assertEquals(vulnerabilityRecommendation.getCustomRecommendation().getText(), "custom recommendation");
+        assertEquals(vulnerabilityRecommendation.getCustomRuleReferences().getText(), "test custom");
+        assertEquals(vulnerabilityRecommendation.getCwe(), "CWE link");
+        assertEquals(vulnerabilityRecommendation.getOwasp(), "OWASP link");
+        assertEquals(vulnerabilityRecommendation.getRuleReferences().getText(), "rule reference");
+    }
+
+    @Test
+    public void testStory(){
+        final String storyString = "{ \"success\" : true, \"messages\" : [ \"Vulnerability story loaded successfully\" ], \"story\" : { \"traceId\" : \"testID\", \"chapters\" : [ { \"type\" : \"source\", \"introText\" : \"test intro\", \"introTextFormat\" : \"test intro formatted\", \"introTextVariables\" : { \"source0\" : \"\\Test variable 1\" }, \"body\" : \"test body 1\", \"bodyFormat\" : \"test body formatted\", \"bodyFormatVariables\" : { \"paramNameKey1\" : \"test param 1\", \"paramValueKey1\" : \"test param 2\", \"urlVariableKey\" : \"test param 3\" } }, { \"type\" : \"location\", \"introText\" : \"intro text 2\", \"introTextFormat\" : \"intro text 2 formatted\", \"introTextVariables\" : { }, \"body\" : \"test body 2\", \"bodyFormat\" : \"test body 2 formatted\", \"bodyFormatVariables\" : { \"line\" : \"test line number\", \"methodName\" : \"test method name\", \"className\" : \"test class name\" } }, { \"type\" : \"dataflow\", \"introText\" : \"test chapter intro text\", \"introTextFormat\" : \"test chapter intro text formatted\", \"introTextVariables\" : { }, \"body\" : \"test body 3\", \"bodyFormat\" : \"test body 3 formatted\", \"bodyFormatVariables\" : { \"untrustedTaintedKey0\" : \"variable 3\" }, \"vector\" : null } ], \"risk\" : { \"text\" : \"test risk\", \"formattedTextVariables\" : { } } }, \"custom_risk\" : { \"test custom risk\" : \"\", \"formattedText\" : \"\", \"formattedTextVariables\" : { } } }";
+        StoryResponse storyResponse = gson.fromJson(storyString, StoryResponse.class);
+        Story story = storyResponse.getStory();
+        assertNotNull(story);
+
+        List<Chapter> chapters = story.getChapters();
+
+        assertFalse(chapters.isEmpty());
+        chapters.forEach(chapter -> {
+            int index = Integer.parseInt(String.valueOf(chapters.indexOf(chapter))) + 1;
+            assertEquals(chapter.getBody(), "test body " + index);
+        });
+    }
+
+    @Test
+    public void testTags(){
+        final String tagsString = "{ \"success\" : true, \"messages\" : [ \"Tags for vulnerability loaded successfully\" ], \"tags\" : [ \"tag1\", \"tag2\", \"tag3\", \"tag4\" ] }";
+        TagsResponse tags = gson.fromJson(tagsString, TagsResponse .class);
+
+        assertFalse(tags.getTags().isEmpty());
+
+        Tags tagsObject = new Tags(tags.getTags());
+
+        assertFalse(tagsObject.getTags().isEmpty());
+    }
+
+    @Test
+    public void testHttpRequest(){
+        final String httpRequest = "{ \"success\" : true, \"messages\" : [ \"Vulnerability HTTP Request loaded successfully\" ], \"http_request\" : { \"text\" : \"test request method\", \"formattedText\" : \"test request method formatted\", \"formattedTextVariables\" : { \"headerNameKey6\" : \"Host\"  } } }";
+        HttpRequestResponse http = gson.fromJson(httpRequest, HttpRequestResponse.class);
+
+        assertNotNull(http.getHttpRequest());
+
+        assertEquals(http.getHttpRequest().getText(), "test request method");
+    }
+
+    @Test
+    public void testEventSummary(){
+        final String eventString = "{\"success\" : true,\"messages\" : [ \"Vulnerability events summary loaded successfully\" ], \"risk\" : \"test risk\", \"showEvidence\" : false,\"showEvents\" : true,\"events\" : [ { \"id\" : \"612\", \"important\" : true,\"type\" : \"Creation\",\"description\" : \"Test description 1\",\"extraDetails\" : null, \"codeView\" : { \"lines\" : [ {\"fragments\" : [ { \"type\" : \"NORMAL_CODE\", \"value\" : \"code\" }, {\"type\" : \"CODE_STRING\",\"value\" : \"code\"}, {\"type\" : \"NORMAL_CODE\",\"value\" : \"code\"} ],\"text\" : \"code\" } ],\"nested\" : false},\"probableStartLocationView\" : { \"lines\" : [ { \"fragments\" : [ {\"type\" : \"STACKTRACE_LINE\",\"value\" : \"code\"} ],\"text\" : \"code\"} ],\"nested\" : false},\"dataView\" : {\"lines\" : [ {\"fragments\" : [ { \"type\" : \"TEXT\", \"value\" : \"code\" }, {\"type\" : \"TAINT_VALUE\",\"value\" : \"code\"} ], \"text\" : \"code\"} ],\"nested\" : false},\"collapsedEvents\" : [ ], \"dupes\" : 0}, { \"id\" : \"613\",\"important\" : true,\"type\" : \"Trigger\",\"description\" : \"Test description 2\",\"extraDetails\" : null,\"codeView\" : {\"lines\" : [ {\"fragments\" : [ { \"type\" : \"NORMAL_CODE\",\"value\" : \"code\"}, {\"type\" : \"CODE_STRING\",\"value\" : \"code\"}, {\"type\" : \"NORMAL_CODE\",\"value\" : \")\"} ],\"text\" : \"code\"} ],\"nested\" : false},\"probableStartLocationView\" : {\"lines\" : [ { \"fragments\" : [ {\"type\" : \"STACKTRACE_LINE\",\"value\" : \"code\"} ],\"text\" : \"code\"} ],\"nested\" : false},\"dataView\" : { \"lines\" : [ {\"fragments\" : [ {\"type\" : \"TAINT_VALUE\",\"value\" : \"code\"} ],\"text\" : \"code\"} ], \"nested\" : false}, \"collapsedEvents\" : [ ], \"dupes\" : 0} ]}";
+        EventSummaryResponse event = gson.fromJson(eventString, EventSummaryResponse.class);
+        assertNotNull(event);
+
+        List<EventResource> eventResources = event.getEvents();
+        assertFalse(eventResources.isEmpty());
+
+        assertEquals(event.getRisk(), "test risk");
+
+        assertTrue(event.getShowEvents());
+        assertFalse(event.getShowEvidence());
+    }
 }
