@@ -115,8 +115,6 @@ public class EventResource extends EventModel {
         if (items == null) {
             if (event != null) {
                 List<EventItem> eventItems = new ArrayList<>();
-                //EventItem eventItem = new EventItem(this, "", "at " + probableStartLocation, false);
-                //eventItems.add(eventItem);
                 EventItem eventItem = new EventItem(this, BOLD, "Class.Method", false);
                 eventItems.add(eventItem);
                 eventItem = new EventItem(this, CONTENT, event.getClazz() + '.' + event.getMethod(), false);

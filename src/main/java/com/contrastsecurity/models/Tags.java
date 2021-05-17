@@ -8,13 +8,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Tags {
-    @Expose
     private List<String> links;
-    private List<Tag> tagsObject;
-    @Expose
+    private transient List<Tag> tagsObject;
+
     @SerializedName("tags")
     private List<String> tagNames;
-    @Expose
+
     @SerializedName("traces_id")
     private List<String> tracesId;
 

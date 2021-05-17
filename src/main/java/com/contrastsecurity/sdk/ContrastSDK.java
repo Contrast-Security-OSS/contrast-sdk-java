@@ -160,8 +160,7 @@ public class ContrastSDK {
         ContrastSDKUtils.validateUrl(this.restApiURL);
         this.restApiURL = ContrastSDKUtils.ensureApi(this.restApiURL);
         this.urlBuilder = UrlBuilder.getInstance();
-        this.gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
-                .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();
+        this.gson = new GsonBuilder().registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();
         this.proxy = Proxy.NO_PROXY;
     }
 
@@ -1192,8 +1191,7 @@ public class ContrastSDK {
     public TagsResponse createTag(String organizationId, Tags tags) throws IOException, UnauthorizedException {
         InputStream is = null;
         InputStreamReader reader = null;
-        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
-                .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();
         try {
             String tagsUrl = urlBuilder.getOrCreateTagsByOrganization(organizationId);
             is = makeRequestWithBody(HttpMethod.PUT, tagsUrl, gson.toJson(tags.setTagNamesAndGetTagObject()), MediaType.JSON);
