@@ -134,71 +134,13 @@ public class ContrastSDK {
     }
 
     /**
-     * Use ContrastSDK.Builder
-     */
-    @Deprecated
-    public ContrastSDK() {
-
-    }
-
-    /**
      * Create a ContrastSDK object to use the Contrast V3 API
-     * Deprecated - Please use builder
-     * @param user       Username (e.g., joe@acme.com)
-     * @param serviceKey User service key
-     * @param apiKey     API Key
-     * @param restApiURL the base Contrast API URL
-     * @throws IllegalArgumentException if the API URL is malformed
-     */
-    @Deprecated
-    public ContrastSDK(String user, String serviceKey, String apiKey, String restApiURL) throws IllegalArgumentException {
-        this.user = user;
-        this.serviceKey = serviceKey;
-        this.apiKey = apiKey;
-        this.restApiURL = restApiURL;
-
-        ContrastSDKUtils.validateUrl(this.restApiURL);
-        this.restApiURL = ContrastSDKUtils.ensureApi(this.restApiURL);
-        this.urlBuilder = UrlBuilder.getInstance();
-        this.gson = new GsonBuilder().registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();
-        this.proxy = Proxy.NO_PROXY;
-    }
-
-    /**
-     * Create a ContrastSDK object to use the Contrast V3 API through a Proxy.
-     * Deprecated - Please use builder
-     * @param user       Username (e.g., joe@acme.com)
-     * @param serviceKey User service key
-     * @param apiKey     API Key
-     * @param restApiURL the base Contrast API URL
-     * @param proxy Proxy to use
-     * @throws IllegalArgumentException if the API URL is malformed
-     */
-    @Deprecated
-    public ContrastSDK(String user, String serviceKey, String apiKey, String restApiURL, Proxy proxy) throws IllegalArgumentException {
-        this.user = user;
-        this.serviceKey = serviceKey;
-        this.apiKey = apiKey;
-        this.restApiURL = restApiURL;
-
-        ContrastSDKUtils.validateUrl(this.restApiURL);
-        this.restApiURL = ContrastSDKUtils.ensureApi(this.restApiURL);
-
-        this.urlBuilder = UrlBuilder.getInstance();
-        this.gson = new Gson();
-        this.proxy = proxy;
-    }
-
-    /**
-     * Create a ContrastSDK object to use the Contrast V3 API
-     * Deprecated - Please use Builder
      * <p>
      * This will use the default api url which is https://app.contrastsecurity.com/Contrast/api
      * @param user Username (e.g., joe@acme.com)
      * @param serviceKey User service key
      * @param apiKey API Key
      */
-    @Deprecated
     public ContrastSDK(String user, String serviceKey, String apiKey) {
         this.user = user;
         this.serviceKey = serviceKey;
