@@ -2,7 +2,7 @@
 This SDK gives you a quick start for programmatically accessing the [Contrast REST API](https://docs.contrastsecurity.com/tools-about.html#api-about) using Java.
 
 ### Requirements
-* JDK 7/8
+* JDK 8
 * Maven
 * TeamServer account
 
@@ -55,9 +55,4 @@ WebGoat (48K LOC)
 WebGoat7 (106K LOC)
 ```
 
-### Deprecation
-
-The old-style constructor `new ContrastSDK()` has been deprecated in version 2.15. Please migrate your code to use `new ContrastSDK.Builder()`
-
-We will remove the deprecated constructors in version 3.
 
