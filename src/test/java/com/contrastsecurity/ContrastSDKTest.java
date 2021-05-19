@@ -31,7 +31,7 @@ public class ContrastSDKTest extends ContrastSDK {
     public static void setUp() {
         contrastSDK = new ContrastSDK.Builder("test_user", "testApiKey", "testServiceKey").withApiUrl("http://localhost:19080/Contrast/api").build();
         gson = new GsonBuilder()
-                .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();;
+                .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();
     }
 
     @Test
