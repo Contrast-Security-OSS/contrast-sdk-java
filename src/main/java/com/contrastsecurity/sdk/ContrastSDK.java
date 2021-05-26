@@ -145,7 +145,7 @@ public class ContrastSDK {
      * @param serviceKey User service key
      * @param apiKey API Key
      */
-    public ContrastSDK(String user, String serviceKey, String apiKey) {
+    private ContrastSDK(String user, String serviceKey, String apiKey) {
         this.user = user;
         this.serviceKey = serviceKey;
         this.apiKey = apiKey;
