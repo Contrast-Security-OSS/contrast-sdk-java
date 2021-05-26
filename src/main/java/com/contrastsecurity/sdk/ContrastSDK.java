@@ -133,6 +133,10 @@ public class ContrastSDK {
         }
     }
 
+    public ContrastSDK() {
+
+    }
+
     /**
      * Create a ContrastSDK object to use the Contrast V3 API
      * <p>
