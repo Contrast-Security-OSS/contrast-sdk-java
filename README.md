@@ -60,6 +60,24 @@ WebGoat (48K LOC)
 WebGoat7 (106K LOC)
 ```
 
+
 ## Building
 
+Requires JDK 11 to build
+
 Use `./mvnw verify` to build and test changes to the project
+
+
+### Formatting
+
+To avoid distracting white space changes in pull requests and wasteful bickering
+about format preferences, Contrast uses the google-java-format opinionated Java
+code formatter to automatically format all code to a common specification.
+
+Developers are expected to configure their editors to automatically apply this
+format (plugins exist for both IDEA and Eclipse). Alternatively, developers can
+apply the formatting before committing changes using the Maven plugin:
+
+```shell
+./mvnw spotless:apply
+```

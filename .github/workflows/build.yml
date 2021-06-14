@@ -30,4 +30,5 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Maven Verify
-        run: ./mvnw --batch-mode verify
+        # Skip formatting check on all but JDK 11, because formatter does not support 1.8 and there's no point to running this check on every JDK
+        run: ./mvnw --batch-mode -Dspotless.check.skip=${{ matrix.java != '11' }} verify

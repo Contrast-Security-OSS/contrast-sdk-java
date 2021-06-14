@@ -200,6 +200,41 @@
                     <target>8</target>
                 </configuration>
             </plugin>
+          <plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <version>2.12.0</version>
+            <configuration>
+              <formats>
+                <format>
+                  <includes>
+                    <include>pom.xml</include>
+                    <include>README.md</include>
+                    <include>.github/workflows/**/*.yml</include>
+                    <include>src/**/*.java</include>
+                    <include>src/**/*.xml</include>
+                    <include>src/**/*.properties</include>
+                  </includes>
+                  <trimTrailingWhitespace />
+                  <endWithNewline />
+                </format>
+              </formats>
+              <java>
+                <googleJavaFormat>
+                  <version>1.9</version>
+                </googleJavaFormat>
+                <removeUnusedImports />
+              </java>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+                <phase>test-compile</phase>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
     </build>
 
