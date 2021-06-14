@@ -4,12 +4,15 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class TagsResponse {
+public class HttpRequestResponse {
     private String success;
     private List<String> messages;
+    @SerializedName("http_request")
+    private HttpRequest httpRequest;
+    private String reason;
 
-    @SerializedName("tags")
-    private List<String> tags;
+    public HttpRequestResponse() {
+    }
 
     public String getSuccess() {
         return success;
@@ -27,12 +30,20 @@ public class TagsResponse {
         this.messages = messages;
     }
 
-    public List<String> getTags() {
-        return tags;
+    public HttpRequest getHttpRequest() {
+        return httpRequest;
     }
 
-    public void setTags(List<String> tags) {
-        this.tags = tags;
+    public void setHttpRequest(HttpRequest httpRequest) {
+        this.httpRequest = httpRequest;
     }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
 }
-

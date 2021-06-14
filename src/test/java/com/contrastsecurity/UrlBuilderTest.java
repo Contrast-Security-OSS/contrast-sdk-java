@@ -19,12 +19,15 @@ public class UrlBuilderTest {
 
     private static String applicationId;
     private static String organizationId;
+    private static String testTrace;
     private static UrlBuilder urlBuilder;
 
     @BeforeClass
     public static void setUp() {
         applicationId = "test-app";
         organizationId = "test-org";
+        testTrace = "test-trace";
+
 
         urlBuilder = UrlBuilder.getInstance();
     }
@@ -144,6 +147,60 @@ public class UrlBuilderTest {
     public void testEnabledJobOutcomePolicyListUrlByApplication() {
         String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled/test-app";
         assertEquals(expectedJobOutcomePolicyListUrl, urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(organizationId, applicationId));
+    }
+
+    @Test
+    public void testGetRecommendationByTraceIdUrl() {
+        String expectedRecommendationUrl = "/ng/test-org/traces/test-trace/recommendation";
+        assertEquals(expectedRecommendationUrl, urlBuilder.getRecommendationByTraceId(organizationId, testTrace));
+    }
+
+    @Test
+    public void testGetStoryByTraceIdUrl() {
+        String expectedStoryUrl = "/ng/test-org/traces/test-trace/story";
+        assertEquals(expectedStoryUrl, urlBuilder.getStoryByTraceId(organizationId, testTrace));
+    }
+
+    @Test
+    public void testGetHttpRequestByTraceIdUrl() {
+        String expectedHttpUrl = "/ng/test-org/traces/test-trace/httprequest";
+        assertEquals(expectedHttpUrl, urlBuilder.getHttpRequestByTraceId(organizationId, testTrace));
+    }
+
+    @Test
+    public void testGetEventSummaryUrl() {
+        String expectedEventSummaryUrl = "/ng/test-org/traces/test-trace/events/summary";
+        assertEquals(expectedEventSummaryUrl, urlBuilder.getEventSummary(organizationId, testTrace));
+    }
+
+    @Test
+    public void testGetEventDetailsUrl() {
+        String expectedEventDetailsUrl = "/ng/test-org/traces/test-trace/events/event-id/details";
+        assertEquals(expectedEventDetailsUrl, urlBuilder.getEventDetails(organizationId, testTrace, "event-id"));
+    }
+
+    @Test
+    public void testGetOrCreateTagsByOrganizationUrl(){
+        String expectedGetOrCreateTagsUrl = "/ng/test-org/tags/traces";
+        assertEquals(expectedGetOrCreateTagsUrl, urlBuilder.getOrCreateTagsByOrganization(organizationId));
+    }
+
+    @Test
+    public void testGetTagsByTraceUrl(){
+        String expectedTagsUrl = "/ng/test-org/tags/traces/trace/test-trace";
+        assertEquals(expectedTagsUrl , urlBuilder.getTagsByTrace(organizationId, testTrace));
+    }
+
+    @Test
+    public void testDeleteTagUrl(){
+        String expectedTagsUrl = "/ng/test-org/tags/trace/test-trace";
+        assertEquals(expectedTagsUrl , urlBuilder.deleteTag(organizationId, testTrace));
+    }
+
+    @Test
+    public void testSetStatusUrl(){
+        String expectedTagsUrl = "/ng/test-org/orgtraces/mark";
+        assertEquals(expectedTagsUrl , urlBuilder.setTraceStatus(organizationId));
     }
 
     @Test

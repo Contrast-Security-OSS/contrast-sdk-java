@@ -38,7 +38,10 @@ import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.Getter;
 import org.apache.commons.io.IOUtils;
 
@@ -52,9 +55,13 @@ import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * Entry point for using the Contrast REST API. Make an instance of this class
@@ -70,7 +77,7 @@ public class ContrastSDK {
     private UrlBuilder urlBuilder;
     private Gson gson;
     Proxy proxy;
-    private String integrationName;
+    private IntegrationName integrationName;
     private String version;
 
     private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
@@ -83,7 +90,7 @@ public class ContrastSDK {
         private String apiKey;
         private Proxy proxy;
         private String restApiURL;
-        private String integrationName;
+        private IntegrationName integrationName;
         private String version;
 
         public Builder(String user, String serviceKey, String apiKey) {
@@ -106,8 +113,8 @@ public class ContrastSDK {
             return this;
         }
 
-        public Builder withIntegrationName(String integrationName){
-            this.integrationName = String.valueOf(IntegrationName.valueOf(integrationName));
+        public Builder withIntegrationName(IntegrationName integrationName){
+            this.integrationName = integrationName;
             return this;
         }
 
@@ -126,74 +133,19 @@ public class ContrastSDK {
         }
     }
 
-    /**
-     * Use ContrastSDK.Builder
-     */
-    @Deprecated
-    public ContrastSDK() {
+    protected ContrastSDK() {
 
     }
 
     /**
      * Create a ContrastSDK object to use the Contrast V3 API
-     * Deprecated - Please use builder
-     * @param user       Username (e.g., joe@acme.com)
-     * @param serviceKey User service key
-     * @param apiKey     API Key
-     * @param restApiURL the base Contrast API URL
-     * @throws IllegalArgumentException if the API URL is malformed
-     */
-    @Deprecated
-    public ContrastSDK(String user, String serviceKey, String apiKey, String restApiURL) throws IllegalArgumentException {
-        this.user = user;
-        this.serviceKey = serviceKey;
-        this.apiKey = apiKey;
-        this.restApiURL = restApiURL;
-
-        ContrastSDKUtils.validateUrl(this.restApiURL);
-        this.restApiURL = ContrastSDKUtils.ensureApi(this.restApiURL);
-        this.urlBuilder = UrlBuilder.getInstance();
-        this.gson = new GsonBuilder()
-                .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();
-        this.proxy = Proxy.NO_PROXY;
-    }
-
-    /**
-     * Create a ContrastSDK object to use the Contrast V3 API through a Proxy.
-     * Deprecated - Please use builder
-     * @param user       Username (e.g., joe@acme.com)
-     * @param serviceKey User service key
-     * @param apiKey     API Key
-     * @param restApiURL the base Contrast API URL
-     * @param proxy Proxy to use
-     * @throws IllegalArgumentException if the API URL is malformed
-     */
-    @Deprecated
-    public ContrastSDK(String user, String serviceKey, String apiKey, String restApiURL, Proxy proxy) throws IllegalArgumentException {
-        this.user = user;
-        this.serviceKey = serviceKey;
-        this.apiKey = apiKey;
-        this.restApiURL = restApiURL;
-
-        ContrastSDKUtils.validateUrl(this.restApiURL);
-        this.restApiURL = ContrastSDKUtils.ensureApi(this.restApiURL);
-
-        this.urlBuilder = UrlBuilder.getInstance();
-        this.gson = new Gson();
-        this.proxy = proxy;
-    }
-
-    /**
-     * Create a ContrastSDK object to use the Contrast V3 API
-     * Deprecated - Please use Builder
      * <p>
      * This will use the default api url which is https://app.contrastsecurity.com/Contrast/api
      * @param user Username (e.g., joe@acme.com)
      * @param serviceKey User service key
      * @param apiKey API Key
      */
-    @Deprecated
-    public ContrastSDK(String user, String serviceKey, String apiKey) {
+    private ContrastSDK(String user, String serviceKey, String apiKey) {
         this.user = user;
         this.serviceKey = serviceKey;
         this.apiKey = apiKey;
@@ -796,6 +748,189 @@ public class ContrastSDK {
         }
     }
 
+    /**
+     * Get the recommendation for the vulnerability ID that is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param traceId        the ID of the vulnerability
+     * @return RecommendationResponse object that contains the recommendation text, cwe and owasp links, rule references, and any custom recommendations or rule references, and response
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public RecommendationResponse getRecommendation(String organizationId, String traceId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getRecommendationByTraceId(organizationId, traceId));
+            reader = new InputStreamReader(is);
+            return gson.fromJson(reader, RecommendationResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Get the story for the vulnerability ID that is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param traceId        the ID of the vulnerability
+     * @return StoryResponse object that contains the story, which contains a list of chapters, and a set properties
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public StoryResponse getStory(String organizationId, String traceId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getStoryByTraceId(organizationId, traceId));
+            reader = new InputStreamReader(is);
+
+            String inputString = IOUtils.toString(is, "UTF-8");
+            StoryResponse story = gson.fromJson(inputString, StoryResponse.class);
+            JsonObject object = (JsonObject) new JsonParser().parse(inputString);
+            JsonObject storyObject = (JsonObject) object.get("story");
+            if (storyObject != null) {
+                JsonArray chaptersArray = (JsonArray) storyObject.get("chapters");
+                List<Chapter> chapters = story.getStory().getChapters();
+                if (chapters == null) {
+                    chapters = new ArrayList<>();
+                } else {
+                    chapters.clear();
+                }
+                for (int i = 0; i < chaptersArray.size(); i++) {
+                    JsonObject member = (JsonObject) chaptersArray.get(i);
+                    Chapter chapter = gson.fromJson(member, Chapter.class);
+                    chapters.add(chapter);
+                    JsonObject properties = (JsonObject) member.get("properties");
+                    if (properties != null) {
+                        Set<Entry<String, JsonElement>> entries = properties.entrySet();
+                        Iterator<Entry<String, JsonElement>> iter = entries.iterator();
+                        List<PropertyResource> propertyResources = new ArrayList<>();
+                        chapter.setPropertyResources(propertyResources);
+                        while (iter.hasNext()) {
+                            Entry<String, JsonElement> prop = iter.next();
+                            // String key = prop.getKey();
+                            JsonElement entryValue = prop.getValue();
+                            if (entryValue != null && entryValue.isJsonObject()) {
+                                JsonObject obj = (JsonObject) entryValue;
+                                JsonElement name = obj.get("name");
+                                JsonElement value = obj.get("value");
+                                if (name != null && value != null) {
+                                    PropertyResource propertyResource = new PropertyResource();
+                                    propertyResource.setName(name.getAsString());
+                                    propertyResource.setValue(value.getAsString());
+                                    propertyResources.add(propertyResource);
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+            return story;
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Get the event for the vulnerability ID that is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param traceId        the ID of the vulnerability
+     * @return EventSummaryResponse object that contains the risk, evidence, and list of events
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public EventSummaryResponse getEventSummary(String organizationId, String traceId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getEventSummary(organizationId, traceId));
+            reader = new InputStreamReader(is);
+            EventSummaryResponse eventResource = gson.fromJson(reader, EventSummaryResponse.class);
+            for (EventResource event : eventResource.getEvents()) {
+                if (event.getCollapsedEvents() != null && !event.getCollapsedEvents().isEmpty()) {
+                    getCollapsedEventsDetails(event, organizationId, traceId);
+                } else {
+                    EventDetails eventDetails = getEventDetails(event, organizationId, traceId);
+                    event.setEvent(eventDetails.getEvent());
+                }
+            }
+            return eventResource;
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+
+    }
+
+    /**
+     * Set the collapsed event details and each parent event to track the list of events in order for the vulnerability ID that is passed in.
+     *
+     * @param parentEvent the resource of the event to get details of
+     * @param organizationId the ID of the organization
+     * @param traceId        the ID of the vulnerability
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    private void getCollapsedEventsDetails(EventResource parentEvent, final String organizationId , final String traceId) throws IOException, UnauthorizedException {
+        for (EventResource event : parentEvent.getCollapsedEvents()) {
+            EventDetails eventDetails = getEventDetails(event, organizationId, traceId);
+            event.setEvent(eventDetails.getEvent());
+            event.setParent(parentEvent);
+        }
+    }
+
+    /**
+     * Get the collapsed event details for the vulnerability ID that is passed in.
+     *
+     * @param event the resource of the event to get details of
+     * @param organizationId the ID of the organization
+     * @param traceId        the ID of the vulnerability
+     * @return EventDetails object that contains collapsed details of the given event
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    private EventDetails getEventDetails(EventResource event, String organizationId, String traceId)
+            throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET,urlBuilder.getEventDetails(organizationId, traceId, event.getId()));
+            reader = new InputStreamReader(is);
+            return gson.fromJson(reader, EventDetails.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Get the http request for the vulnerability ID that is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param traceId        the ID of the vulnerability
+     * @return HttpRequestResponse object that contains the request object and the reason text.
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public HttpRequestResponse getHttpRequest(String organizationId, String traceId)
+            throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getHttpRequestByTraceId(organizationId, traceId));
+            reader = new InputStreamReader(is);
+            return gson.fromJson(reader, HttpRequestResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
 
     /**
      * Get the available vulnerability tags in the application whose ID is passed in.
@@ -923,6 +1058,97 @@ public class ContrastSDK {
         }
     }
 
+
+    /**
+     * Delete the tag for the vulnerability whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param traceId the ID of the vulnerability
+     * @param tag the tag name/value to delete
+     * @return TagsResponse object that contains the http response and success message
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public TagsResponse deleteVulnerabilityTag(String organizationId, String traceId, Tag tag) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            String tagsUrl = urlBuilder.deleteTag(organizationId, traceId);
+            is = makeRequestWithBody(HttpMethod.DELETE, tagsUrl, gson.toJson(tag), MediaType.JSON);
+            reader = new InputStreamReader(is);
+            return gson.fromJson(reader, TagsResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Get the tags for the vulnerability whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @param traceId the ID of the vulnerability
+     * @return TagsResponse object that contains the http response and success message and the list of Tags
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public TagsResponse getTagsByTrace(String organizationId, String traceId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTagsByTrace(organizationId, traceId));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, TagsResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Get the vulnerability tags for the organization whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @return TagsResponse object that contains the http response and success message and the list of Tags
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public TagsResponse getTraceTagsByOrganization(String organizationId) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getOrCreateTagsByOrganization(organizationId));
+            reader = new InputStreamReader(is);
+            return this.gson.fromJson(reader, TagsResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+    /**
+     * Create a vulnerability tag for the organization whose ID is passed in.
+     *
+     * @param organizationId the ID of the organization
+     * @return TagsResponse object that contains the http response and success message
+     * @throws UnauthorizedException if the Contrast account failed to authorize
+     * @throws IOException           if there was a communication problem
+     */
+    public TagsResponse createTag(String organizationId, Tags tags) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        Gson gson = new GsonBuilder().registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer()).create();
+        try {
+            String tagsUrl = urlBuilder.getOrCreateTagsByOrganization(organizationId);
+            is = makeRequestWithBody(HttpMethod.PUT, tagsUrl, gson.toJson(tags.setTagNamesAndGetTagObject()), MediaType.JSON);
+            reader = new InputStreamReader(is);
+            return gson.fromJson(reader, TagsResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
     /**
      * Clear notifications for the org.
      *
@@ -990,6 +1216,20 @@ public class ContrastSDK {
         }
     }
 
+    public TraceListing getTraceFiltersByType(String organizationId, String appId, TraceFilterType type) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+        try {
+            is = makeRequest(HttpMethod.GET, urlBuilder.getTraceListingUrl(organizationId, appId, type));
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, TraceListing.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
 
     /**
      * Get the vulnerabilities in the application whose ID is passed in with a filter.
@@ -1017,6 +1257,25 @@ public class ContrastSDK {
             IOUtils.closeQuietly(reader);
         }
     }
+
+
+    public GenericResponse setTraceStatus(String organizationId, String statusRequest) throws IOException, UnauthorizedException {
+        InputStream is = null;
+        InputStreamReader reader = null;
+
+        try {
+            is = makeRequestWithBody(HttpMethod.PUT, urlBuilder.setTraceStatus(organizationId), statusRequest, MediaType.JSON);
+            reader = new InputStreamReader(is);
+
+            return this.gson.fromJson(reader, GenericResponse.class);
+        } finally {
+            IOUtils.closeQuietly(is);
+            IOUtils.closeQuietly(reader);
+        }
+    }
+
+
+
 
     /**
      * Get the vulnerabilities in the application by the rule.
@@ -1181,7 +1440,7 @@ public class ContrastSDK {
         String url = restApiURL + path;
         OutputStream os = null;
         HttpURLConnection connection = makeConnection(url, method.toString());
-        if(mediaType != null && body != null && (method.equals(HttpMethod.PUT) || method.equals(HttpMethod.POST))) {
+        if(mediaType != null && body != null && (method.equals(HttpMethod.PUT) || method.equals(HttpMethod.POST) || method.equals(HttpMethod.DELETE))) {
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type",mediaType.getType());
             os = connection.getOutputStream();
@@ -1290,6 +1549,14 @@ public class ContrastSDK {
         connection.setRequestMethod(method);
         connection.setRequestProperty(RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
         connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
+
+        if(integrationName != null){
+            connection.setRequestProperty(RequestConstants.X_TELEMETRY_INTEGRATION_NAME, String.valueOf(integrationName));
+        }
+        if(version != null){
+            connection.setRequestProperty(RequestConstants.X_TELEMETRY_INTEGRATION_VERSION, version);
+        }
+
         connection.setUseCaches(false);
         if(connectionTimeout > DEFAULT_CONNECTION_TIMEOUT)
             connection.setConnectTimeout(connectionTimeout);

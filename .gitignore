@@ -8,3 +8,4 @@
 *.sh
 *.jar
 release.properties
+.java-version
