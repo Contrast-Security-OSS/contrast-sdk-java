@@ -1,8 +1,0 @@
-language: java
-sudo: false # faster builds
-jdk:
-  - openjdk8
-  - openjdk11
-  - openjdk15
-script: 
-    - mvn -B -e clean compile test 
