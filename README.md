@@ -1,20 +1,24 @@
 # Contrast TeamServer Java SDK
+
 This SDK gives you a quick start for programmatically accessing the [Contrast REST API](https://docs.contrastsecurity.com/tools-about.html#api-about) using Java.
 
-### Requirements
-* JDK 8
-* Maven
-* TeamServer account
 
-### How to use this SDK
-1. Clone the project
-1. 'mvn clean install' Maven goals to build the artifact with the latest code
-1. Add contrast-sdk-java to your project dependency:
+## Requirements
 
-    ``` 
+* JDK 1.8
+* Contrast Account
+
+
+## How to use this SDK
+
+1. Add the
+   [contrast-sdk-java](https://search.maven.org/artifact/com.contrastsecurity/contrast-sdk-java)
+   dependency from Maven Central to your project. For example:
+    ```xml
     <dependency>
         <groupId>com.contrastsecurity</groupId>
         <artifactId>contrast-sdk-java</artifactId>
+        <verison>3.0.0</version>
     </dependency>
     ```
 1. Look up the following information from Contrast under "Your Account"
@@ -22,10 +26,11 @@ This SDK gives you a quick start for programmatically accessing the [Contrast RE
     * Service Key
     * API Key
     * Contrast REST API URL
-        * e.g., http://localhost:19080/Contrast/api
+        * e.g., https://app.contrastsecurity.com/Contrast/api
 
 Code example:
-```
+
+```java
 ContrastSDK contrastSDK = new ContrastSDK.Builder("contrast_admin", "demo", "demo")
         .withApiUrl("http://localhost:19080/Contrast/api")
         .build();
@@ -55,4 +60,6 @@ WebGoat (48K LOC)
 WebGoat7 (106K LOC)
 ```
 
+## Building
 
+Use `./mvnw verify` to build and test changes to the project
