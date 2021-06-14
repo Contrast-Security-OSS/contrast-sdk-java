@@ -1,0 +1,5 @@
+# Unix-style newlines with a newline ending every file
+# Corresponds to general Spotless rules configured in pom.xml
+[*]
+end_of_line = lf
+insert_final_newline = true
