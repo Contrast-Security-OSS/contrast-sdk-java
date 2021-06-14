@@ -73,7 +73,7 @@ public class ContrastSDK {
     private String serviceKey;
     private String user;
     @Getter
-    private static String restApiURL;
+    private String restApiURL;
     private UrlBuilder urlBuilder;
     private Gson gson;
     Proxy proxy;
@@ -133,7 +133,7 @@ public class ContrastSDK {
         }
     }
 
-    public ContrastSDK() {
+    protected ContrastSDK() {
 
     }
 
