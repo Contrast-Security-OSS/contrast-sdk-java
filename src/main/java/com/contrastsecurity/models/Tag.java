@@ -2,29 +2,28 @@ package com.contrastsecurity.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
-/**
- * An Tag to delete.
- */
+/** An Tag to delete. */
 public class Tag {
-    @SerializedName("tag")
-    private String name;
-    public String getName() {
-        if(name != null) {
-            return name;
-        } else {
-            return "testFailure";
-        }
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
+  @SerializedName("tag")
+  private String name;
 
-    public Tag(String name) {
-        this.name = name;
+  public String getName() {
+    if (name != null) {
+      return name;
+    } else {
+      return "testFailure";
     }
-    public Tag() {
-        this.name = "";
-    }
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public Tag(String name) {
+    this.name = name;
+  }
+
+  public Tag() {
+    this.name = "";
+  }
 }

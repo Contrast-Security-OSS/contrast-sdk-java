@@ -1,95 +1,100 @@
 package com.contrastsecurity.models;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class Event {
-    @SerializedName("object")
-    private String fObject;
-    private String method;
-    private List<Parameter> parameters;
-    private List<Stacktrace> stacktraces;
-    @SerializedName("class")
-    private String clazz;
-    @SerializedName("object_tracked")
-    private boolean objectTracked;
-    @SerializedName("return")
-    private String fReturn;
-    @SerializedName("return_tracked")
-    private boolean returnTracked;
-    @SerializedName("last_custom_frame")
-    private int lastCustomFrame;
+  @SerializedName("object")
+  private String fObject;
 
-    public String getfObject() {
-        return fObject;
-    }
+  private String method;
+  private List<Parameter> parameters;
+  private List<Stacktrace> stacktraces;
 
-    public void setfObject(String fObject) {
-        this.fObject = fObject;
-    }
+  @SerializedName("class")
+  private String clazz;
 
-    public String getMethod() {
-        return method;
-    }
+  @SerializedName("object_tracked")
+  private boolean objectTracked;
 
-    public void setMethod(String method) {
-        this.method = method;
-    }
+  @SerializedName("return")
+  private String fReturn;
 
-    public List<Stacktrace> getStacktraces() {
-        return stacktraces;
-    }
+  @SerializedName("return_tracked")
+  private boolean returnTracked;
 
-    public void setStacktraces(List<Stacktrace> stacktraces) {
-        this.stacktraces = stacktraces;
-    }
+  @SerializedName("last_custom_frame")
+  private int lastCustomFrame;
 
-    public String getClazz() {
-        return clazz;
-    }
+  public String getfObject() {
+    return fObject;
+  }
 
-    public void setClazz(String clazz) {
-        this.clazz = clazz;
-    }
+  public void setfObject(String fObject) {
+    this.fObject = fObject;
+  }
 
-    public boolean isObjectTracked() {
-        return objectTracked;
-    }
+  public String getMethod() {
+    return method;
+  }
 
-    public void setObjectTracked(boolean objectTracked) {
-        this.objectTracked = objectTracked;
-    }
+  public void setMethod(String method) {
+    this.method = method;
+  }
 
-    public String getfReturn() {
-        return fReturn;
-    }
+  public List<Stacktrace> getStacktraces() {
+    return stacktraces;
+  }
 
-    public void setfReturn(String fReturn) {
-        this.fReturn = fReturn;
-    }
+  public void setStacktraces(List<Stacktrace> stacktraces) {
+    this.stacktraces = stacktraces;
+  }
 
-    public boolean isReturnTracked() {
-        return returnTracked;
-    }
+  public String getClazz() {
+    return clazz;
+  }
 
-    public void setReturnTracked(boolean returnTracked) {
-        this.returnTracked = returnTracked;
-    }
+  public void setClazz(String clazz) {
+    this.clazz = clazz;
+  }
 
-    public int getLastCustomFrame() {
-        return lastCustomFrame;
-    }
+  public boolean isObjectTracked() {
+    return objectTracked;
+  }
 
-    public void setLastCustomFrame(int lastCustomFrame) {
-        this.lastCustomFrame = lastCustomFrame;
-    }
+  public void setObjectTracked(boolean objectTracked) {
+    this.objectTracked = objectTracked;
+  }
 
-    public List<Parameter> getParameters() {
-        return parameters;
-    }
+  public String getfReturn() {
+    return fReturn;
+  }
 
-    public void setParameters(List<Parameter> parameters) {
-        this.parameters = parameters;
-    }
+  public void setfReturn(String fReturn) {
+    this.fReturn = fReturn;
+  }
+
+  public boolean isReturnTracked() {
+    return returnTracked;
+  }
+
+  public void setReturnTracked(boolean returnTracked) {
+    this.returnTracked = returnTracked;
+  }
+
+  public int getLastCustomFrame() {
+    return lastCustomFrame;
+  }
+
+  public void setLastCustomFrame(int lastCustomFrame) {
+    this.lastCustomFrame = lastCustomFrame;
+  }
+
+  public List<Parameter> getParameters() {
+    return parameters;
+  }
+
+  public void setParameters(List<Parameter> parameters) {
+    this.parameters = parameters;
+  }
 }

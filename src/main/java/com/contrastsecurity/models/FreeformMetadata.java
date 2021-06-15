@@ -4,12 +4,15 @@ import com.google.gson.annotations.SerializedName;
 
 public class FreeformMetadata extends MetadataEntity {
 
-    public FreeformMetadata(){
-        type = MetadataType.STRING;
-    }
+  public FreeformMetadata() {
+    type = MetadataType.STRING;
+  }
 
-    @SerializedName("fieldValue")
-    protected String fieldValue;
+  @SerializedName("fieldValue")
+  protected String fieldValue;
 
-    public String getFieldValue() { return  fieldValue;};
+  public String getFieldValue() {
+    return fieldValue;
+  }
+  ;
 }

@@ -2,14 +2,13 @@ package com.contrastsecurity.models;
 
 public class EventModel {
 
-    Object parent;
+  Object parent;
 
-    public Object getParent() {
-        return parent;
-    }
+  public Object getParent() {
+    return parent;
+  }
 
-    public void setParent(Object parent) {
-        this.parent = parent;
-    }
-
+  public void setParent(Object parent) {
+    this.parent = parent;
+  }
 }

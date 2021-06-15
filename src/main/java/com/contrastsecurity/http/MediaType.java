@@ -1,15 +1,15 @@
 package com.contrastsecurity.http;
 
 public enum MediaType {
-    JSON("application/json");
+  JSON("application/json");
 
-    private String type;
+  private String type;
 
-    MediaType(String type) {
-        this.type = type;
-    }
+  MediaType(String type) {
+    this.type = type;
+  }
 
-    public String getType(){
-        return type;
-    }
+  public String getType() {
+    return type;
+  }
 }

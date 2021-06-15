@@ -3,21 +3,18 @@ package com.contrastsecurity.http;
 import lombok.Getter;
 
 public enum ServerEnvironment {
+  DEVELOPMENT("Development"),
+  QA("QA"),
+  PRODUCTION("Production");
 
-    DEVELOPMENT("Development"),
-    QA("QA"),
-    PRODUCTION("Production");
+  @Getter private String label;
 
-    @Getter
-    private String label;
+  ServerEnvironment(String label) {
+    this.label = label;
+  }
 
-    ServerEnvironment(String label) {
-        this.label = label;
-    }
-
-    @Override
-    public String toString() {
-        return this.label.toLowerCase();
-    }
-
+  @Override
+  public String toString() {
+    return this.label.toLowerCase();
+  }
 }

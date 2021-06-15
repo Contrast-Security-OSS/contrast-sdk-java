@@ -30,7 +30,7 @@ package com.contrastsecurity.exceptions;
 
 public class InvalidConversionException extends Exception {
 
-	public InvalidConversionException(String from, String to) {
-		super("Cannot convert metadata from " + from + ", to " + to);
-	}
+  public InvalidConversionException(String from, String to) {
+    super("Cannot convert metadata from " + from + ", to " + to);
+  }
 }

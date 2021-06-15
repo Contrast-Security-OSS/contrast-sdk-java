@@ -28,23 +28,18 @@
  */
 package com.contrastsecurity.models;
 
-import com.contrastsecurity.http.ServerFilterForm;
-
 import java.util.List;
 
-/**
- * Base class for api calls with servers
- */
+/** Base class for api calls with servers */
 public class Servers {
-    /**
-     * Return the servers objects
-     *
-     * @return a list of servers
-     */
-    public List<Server> getServers() {
-        return servers;
-    }
+  /**
+   * Return the servers objects
+   *
+   * @return a list of servers
+   */
+  public List<Server> getServers() {
+    return servers;
+  }
 
-    private List<Server> servers;
+  private List<Server> servers;
 }
-

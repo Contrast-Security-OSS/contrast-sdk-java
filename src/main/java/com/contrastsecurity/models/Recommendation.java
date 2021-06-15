@@ -4,34 +4,33 @@ import java.util.Map;
 
 public class Recommendation {
 
-    private String text;
-    private String formattedText;
-    private Map<String, String> formattedTextVariables;
+  private String text;
+  private String formattedText;
+  private Map<String, String> formattedTextVariables;
 
-    public Recommendation() {
-    }
+  public Recommendation() {}
 
-    public String getText() {
-        return text;
-    }
+  public String getText() {
+    return text;
+  }
 
-    public void setText(String text) {
-        this.text = text;
-    }
+  public void setText(String text) {
+    this.text = text;
+  }
 
-    public String getFormattedText() {
-        return formattedText;
-    }
+  public String getFormattedText() {
+    return formattedText;
+  }
 
-    public void setFormattedText(String formattedText) {
-        this.formattedText = formattedText;
-    }
+  public void setFormattedText(String formattedText) {
+    this.formattedText = formattedText;
+  }
 
-    public Map<String, String> getFormattedTextVariables() {
-        return formattedTextVariables;
-    }
+  public Map<String, String> getFormattedTextVariables() {
+    return formattedTextVariables;
+  }
 
-    public void setFormattedTextVariables(Map<String, String> formattedTextVariables) {
-        this.formattedTextVariables = formattedTextVariables;
-    }
+  public void setFormattedTextVariables(Map<String, String> formattedTextVariables) {
+    this.formattedTextVariables = formattedTextVariables;
+  }
 }

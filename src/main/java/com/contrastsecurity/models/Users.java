@@ -28,34 +28,30 @@
  */
 package com.contrastsecurity.models;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
-/**
- * Base class for api calls with users
- */
+/** Base class for api calls with users */
 public class Users {
 
-    /**
-     * Return the number of users
-     *
-     * @return the count of users
-     */
-    public Integer getCount() {
-        return count;
-    }
-    private Integer count;
+  /**
+   * Return the number of users
+   *
+   * @return the count of users
+   */
+  public Integer getCount() {
+    return count;
+  }
 
-    /**
-     * Return the user objects
-     *
-     * @return a list of users
-     */
-    public List<User> getUsers() {
-        return users;
-    }
-    private List<User> users;
+  private Integer count;
 
+  /**
+   * Return the user objects
+   *
+   * @return a list of users
+   */
+  public List<User> getUsers() {
+    return users;
+  }
+
+  private List<User> users;
 }
-

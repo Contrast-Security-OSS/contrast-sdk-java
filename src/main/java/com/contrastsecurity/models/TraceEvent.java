@@ -28,36 +28,42 @@
  */
 package com.contrastsecurity.models;
 
-import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
-
 /**
- * Several TraceEvents make up a vulnerability, or, "trace". They
- * represent a method invocation that Contrast monitored.
+ * Several TraceEvents make up a vulnerability, or, "trace". They represent a method invocation that
+ * Contrast monitored.
  */
 public class TraceEvent {
 
-	/**
-	 * Return the id for the event in the trace
-	 * @return the id of the event
-     */
-	public long getEventId() { return eventId; }
-	private long eventId;
+  /**
+   * Return the id for the event in the trace
+   *
+   * @return the id of the event
+   */
+  public long getEventId() {
+    return eventId;
+  }
 
-	/**
-	 * Return the code context for the event
-	 * @return code context for the event
-	 */
-	private String codeContext;
-	public String getCodeContext() { return codeContext; }
-    
-    /**
-     * Return the type of event this is, e.g., Creation, P2O, Trigger, etc.
-     * @return the type of event this is
-     */
-    public String getType() {
-		return type;
-	}
-    private String type;
+  private long eventId;
+
+  /**
+   * Return the code context for the event
+   *
+   * @return code context for the event
+   */
+  private String codeContext;
+
+  public String getCodeContext() {
+    return codeContext;
+  }
+
+  /**
+   * Return the type of event this is, e.g., Creation, P2O, Trigger, etc.
+   *
+   * @return the type of event this is
+   */
+  public String getType() {
+    return type;
+  }
+
+  private String type;
 }

@@ -1,85 +1,88 @@
 package com.contrastsecurity.models;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class RecommendationResponse {
-    private boolean success;
-    private List<String> messages;
-    @SerializedName("recommendation")
-    private Recommendation recommendation;
-    private String owasp;
-    private String cwe;
-    @SerializedName("custom_recommendation")
-    private CustomRecommendation customRecommendation;
-    @SerializedName("rule_references")
-    private RuleReferences ruleReferences;
-    @SerializedName("custom_rule_references")
-    private CustomRuleReferences customRuleReferences;
+  private boolean success;
+  private List<String> messages;
 
-    public boolean isSuccess() {
-        return success;
-    }
+  @SerializedName("recommendation")
+  private Recommendation recommendation;
 
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
+  private String owasp;
+  private String cwe;
 
-    public List<String> getMessages() {
-        return messages;
-    }
+  @SerializedName("custom_recommendation")
+  private CustomRecommendation customRecommendation;
 
-    public void setMessages(List<String> messages) {
-        this.messages = messages;
-    }
+  @SerializedName("rule_references")
+  private RuleReferences ruleReferences;
 
-    public Recommendation getRecommendation() {
-        return recommendation;
-    }
+  @SerializedName("custom_rule_references")
+  private CustomRuleReferences customRuleReferences;
 
-    public void setRecommendation(Recommendation recommendation) {
-        this.recommendation = recommendation;
-    }
+  public boolean isSuccess() {
+    return success;
+  }
 
-    public String getOwasp() {
-        return owasp;
-    }
+  public void setSuccess(boolean success) {
+    this.success = success;
+  }
 
-    public void setOwasp(String owasp) {
-        this.owasp = owasp;
-    }
+  public List<String> getMessages() {
+    return messages;
+  }
 
-    public String getCwe() {
-        return cwe;
-    }
+  public void setMessages(List<String> messages) {
+    this.messages = messages;
+  }
 
-    public void setCwe(String cwe) {
-        this.cwe = cwe;
-    }
+  public Recommendation getRecommendation() {
+    return recommendation;
+  }
 
-    public CustomRecommendation getCustomRecommendation() {
-        return customRecommendation;
-    }
+  public void setRecommendation(Recommendation recommendation) {
+    this.recommendation = recommendation;
+  }
 
-    public void setCustomRecommendation(CustomRecommendation customRecommendation) {
-        this.customRecommendation = customRecommendation;
-    }
+  public String getOwasp() {
+    return owasp;
+  }
 
-    public RuleReferences getRuleReferences() {
-        return ruleReferences;
-    }
+  public void setOwasp(String owasp) {
+    this.owasp = owasp;
+  }
 
-    public void setRuleReferences(RuleReferences ruleReferences) {
-        this.ruleReferences = ruleReferences;
-    }
+  public String getCwe() {
+    return cwe;
+  }
 
-    public CustomRuleReferences getCustomRuleReferences() {
-        return customRuleReferences;
-    }
+  public void setCwe(String cwe) {
+    this.cwe = cwe;
+  }
 
-    public void setCustomRuleReferences(CustomRuleReferences customRuleReferences) {
-        this.customRuleReferences = customRuleReferences;
-    }
+  public CustomRecommendation getCustomRecommendation() {
+    return customRecommendation;
+  }
 
+  public void setCustomRecommendation(CustomRecommendation customRecommendation) {
+    this.customRecommendation = customRecommendation;
+  }
+
+  public RuleReferences getRuleReferences() {
+    return ruleReferences;
+  }
+
+  public void setRuleReferences(RuleReferences ruleReferences) {
+    this.ruleReferences = ruleReferences;
+  }
+
+  public CustomRuleReferences getCustomRuleReferences() {
+    return customRuleReferences;
+  }
+
+  public void setCustomRuleReferences(CustomRuleReferences customRuleReferences) {
+    this.customRuleReferences = customRuleReferences;
+  }
 }

@@ -30,17 +30,18 @@ package com.contrastsecurity.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 public class RouteCoverageResponse {
-	public Integer getCount() {
-		return count;
-	}
-	@SerializedName("count")
-	private int count;
-	public Integer getExercisedCount() {
-		return exercisedCount;
-	}
-	@SerializedName("exercised_count")
-	private int exercisedCount;
+  public Integer getCount() {
+    return count;
+  }
+
+  @SerializedName("count")
+  private int count;
+
+  public Integer getExercisedCount() {
+    return exercisedCount;
+  }
+
+  @SerializedName("exercised_count")
+  private int exercisedCount;
 }

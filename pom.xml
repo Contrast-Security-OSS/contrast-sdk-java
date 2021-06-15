@@ -155,32 +155,32 @@
                   <execution>
                     <id>attach-sources</id>
                     <phase>package</phase>
-                    <goals><goal>jar-no-fork</goal></goals> 
+                    <goals><goal>jar-no-fork</goal></goals>
                   </execution>
                 </executions>
              </plugin>
-             <plugin> 
+             <plugin>
                <artifactId>maven-javadoc-plugin</artifactId>
                  <configuration>
                      <detectJavaApiLink>false</detectJavaApiLink>
                  </configuration>
-               <executions> 
-                 <execution> 
+               <executions>
+                 <execution>
                    <id>attach-javadocs</id>
                    <phase>package</phase>
-                   <goals><goal>jar</goal></goals> 
-                 </execution> 
-               </executions> 
+                   <goals><goal>jar</goal></goals>
+                 </execution>
+               </executions>
              </plugin>
-             <plugin> 
-                <artifactId>maven-deploy-plugin</artifactId> 
-                <executions> 
-                  <execution> 
+             <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <executions>
+                  <execution>
                     <id>deploy</id>
                     <phase>deploy</phase>
-                    <goals><goal>deploy</goal></goals> 
-                  </execution> 
-                </executions> 
+                    <goals><goal>deploy</goal></goals>
+                  </execution>
+                </executions>
             </plugin>
            <plugin>
               <groupId>org.apache.maven.plugins</groupId>

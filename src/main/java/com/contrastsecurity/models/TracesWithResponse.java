@@ -28,9 +28,7 @@
  */
 package com.contrastsecurity.models;
 
-import java.util.List;
-
-public class TracesWithResponse{
-    public Traces t;
-    public int rc;
+public class TracesWithResponse {
+  public Traces t;
+  public int rc;
 }

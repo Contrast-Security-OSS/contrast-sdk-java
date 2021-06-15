@@ -32,20 +32,27 @@ import com.google.gson.annotations.SerializedName;
 
 public class SignUp {
 
-    /**
-     * Return the signup time for this user, e.g.:
-     * @return the signUp date for this user
-     */
-    public long getDate() { return date; }
-    @SerializedName("signup_date")
-    private long date;
+  /**
+   * Return the signup time for this user, e.g.:
+   *
+   * @return the signUp date for this user
+   */
+  public long getDate() {
+    return date;
+  }
 
-    /**
-     * Return the signup accepted terms for this user, e.g.:
-     * @return the acceptedTerms for this user
-     */
-    public boolean getAcceptedTerms() { return acceptedTerms; }
-    @SerializedName("accept_terms")
-    private boolean acceptedTerms;
+  @SerializedName("signup_date")
+  private long date;
 
+  /**
+   * Return the signup accepted terms for this user, e.g.:
+   *
+   * @return the acceptedTerms for this user
+   */
+  public boolean getAcceptedTerms() {
+    return acceptedTerms;
+  }
+
+  @SerializedName("accept_terms")
+  private boolean acceptedTerms;
 }

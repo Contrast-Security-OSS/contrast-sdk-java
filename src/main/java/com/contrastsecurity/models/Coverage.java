@@ -30,18 +30,17 @@ package com.contrastsecurity.models;
 
 import java.util.List;
 
-/**
- * A model of an application's sitemap coverage.
- */
+/** A model of an application's sitemap coverage. */
 public class Coverage {
 
-	/**
-	 * The class coverage model if the language is class-oriented
-	 * 
-	 * @return the classes in the application, if there are any
-	 */
-	public List<URLEntry> getUrls() {
-		return urls;
-	}
-	private List<URLEntry> urls;
+  /**
+   * The class coverage model if the language is class-oriented
+   *
+   * @return the classes in the application, if there are any
+   */
+  public List<URLEntry> getUrls() {
+    return urls;
+  }
+
+  private List<URLEntry> urls;
 }

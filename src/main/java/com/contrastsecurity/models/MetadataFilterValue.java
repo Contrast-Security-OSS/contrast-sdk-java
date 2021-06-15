@@ -2,16 +2,23 @@ package com.contrastsecurity.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class MetadataFilterValue{
+public class MetadataFilterValue {
 
-    @SerializedName("count")
-    protected int count = 0;
-    public int getCount() { return count;};
+  @SerializedName("count")
+  protected int count = 0;
 
-    //sub field values?
+  public int getCount() {
+    return count;
+  }
+  ;
 
-    @SerializedName("value")
-    protected String value;
-    public String getValue() { return value;};
+  // sub field values?
 
+  @SerializedName("value")
+  protected String value;
+
+  public String getValue() {
+    return value;
+  }
+  ;
 }
