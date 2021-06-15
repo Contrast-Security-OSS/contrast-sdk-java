@@ -29,12 +29,15 @@
 
 package com.contrastsecurity.models;
 
-import javax.xml.bind.DatatypeConverter;
-
 /**
  * Represents a primitive/object in a method invocation. The parameters, "this", and return value
  * are modeled with this object.
+ *
+ * @deprecated because this object contains accessors for fields that can never be set. At best it's
+ *     not useful and at worst it produces {@code NullPointerException}. It was drafted 7 years ago
+ *     and never used.
  */
+@Deprecated
 public class CodeObject {
 
   /**
@@ -65,7 +68,7 @@ public class CodeObject {
    * @return the value of the object
    */
   public String getValue() {
-    return DatatypeConverter.printBase64Binary(value.getBytes()).trim();
+    throw new NullPointerException("value is always null");
   }
 
   private String value;
