@@ -1,49 +1,48 @@
 package com.contrastsecurity.models;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class HttpRequestResponse {
-    private String success;
-    private List<String> messages;
-    @SerializedName("http_request")
-    private HttpRequest httpRequest;
-    private String reason;
+  private String success;
+  private List<String> messages;
 
-    public HttpRequestResponse() {
-    }
+  @SerializedName("http_request")
+  private HttpRequest httpRequest;
 
-    public String getSuccess() {
-        return success;
-    }
+  private String reason;
 
-    public void setSuccess(String success) {
-        this.success = success;
-    }
+  public HttpRequestResponse() {}
 
-    public List<String> getMessages() {
-        return messages;
-    }
+  public String getSuccess() {
+    return success;
+  }
 
-    public void setMessages(List<String> messages) {
-        this.messages = messages;
-    }
+  public void setSuccess(String success) {
+    this.success = success;
+  }
 
-    public HttpRequest getHttpRequest() {
-        return httpRequest;
-    }
+  public List<String> getMessages() {
+    return messages;
+  }
 
-    public void setHttpRequest(HttpRequest httpRequest) {
-        this.httpRequest = httpRequest;
-    }
+  public void setMessages(List<String> messages) {
+    this.messages = messages;
+  }
 
-    public String getReason() {
-        return reason;
-    }
+  public HttpRequest getHttpRequest() {
+    return httpRequest;
+  }
 
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
+  public void setHttpRequest(HttpRequest httpRequest) {
+    this.httpRequest = httpRequest;
+  }
 
+  public String getReason() {
+    return reason;
+  }
+
+  public void setReason(String reason) {
+    this.reason = reason;
+  }
 }

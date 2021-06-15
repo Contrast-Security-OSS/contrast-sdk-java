@@ -30,30 +30,28 @@ package com.contrastsecurity.models;
 
 import java.util.List;
 
-/**
- * Base class for api calls with traces
- */
+/** Base class for api calls with traces */
 public class Traces {
 
-    /**
-     * Return the number of traces
-     *
-     * @return the count of traces
-     */
-    public Integer getCount() {
-        return count;
-    }
-    private Integer count;
+  /**
+   * Return the number of traces
+   *
+   * @return the count of traces
+   */
+  public Integer getCount() {
+    return count;
+  }
 
-    /**
-     * Return the trace objects
-     *
-     * @return a list of traces
-     */
-    public List<Trace> getTraces() {
-        return traces;
-    }
-    private List<Trace> traces;
+  private Integer count;
 
+  /**
+   * Return the trace objects
+   *
+   * @return a list of traces
+   */
+  public List<Trace> getTraces() {
+    return traces;
+  }
+
+  private List<Trace> traces;
 }
-

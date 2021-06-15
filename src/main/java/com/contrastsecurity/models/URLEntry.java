@@ -30,31 +30,35 @@ package com.contrastsecurity.models;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * A URI that's been observed under monitoring.
- */
+/** A URI that's been observed under monitoring. */
 public class URLEntry {
 
-	/**
-	 * Return the URL
-	 * @return the URL
-	 */
-	public String getUrl() {
-		return url;
-	}
-	private String url;
+  /**
+   * Return the URL
+   *
+   * @return the URL
+   */
+  public String getUrl() {
+    return url;
+  }
 
-	public boolean getVulnerable() { return vulnerable;}
-	private boolean vulnerable = false;
-	
-	/**
-	 * Return the last time this URI was observed under monitoring.
-	 * @return the last time this URI was observed under monitoring
-	 */
-	public Long getLastTimeSeen() { 
-		return lastTimeSeen;
-	}
-	@SerializedName("last_time_seen")
-	private Long lastTimeSeen;
-	
+  private String url;
+
+  public boolean getVulnerable() {
+    return vulnerable;
+  }
+
+  private boolean vulnerable = false;
+
+  /**
+   * Return the last time this URI was observed under monitoring.
+   *
+   * @return the last time this URI was observed under monitoring
+   */
+  public Long getLastTimeSeen() {
+    return lastTimeSeen;
+  }
+
+  @SerializedName("last_time_seen")
+  private Long lastTimeSeen;
 }

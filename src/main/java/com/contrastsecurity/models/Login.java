@@ -32,28 +32,39 @@ import com.google.gson.annotations.SerializedName;
 
 public class Login {
 
-    /**
-     * Return the host address for this login, e.g.:
-     * @return the host of this login
-     */
-    public String getHost() { return host; }
-    @SerializedName("last_host_address")
-    private String host;
+  /**
+   * Return the host address for this login, e.g.:
+   *
+   * @return the host of this login
+   */
+  public String getHost() {
+    return host;
+  }
 
-    /**
-     * Return the last login time for this login, e.g.:
-     * @return the lastLogin of this login
-     */
-    public long getLastLogin() { return lastLogin; }
-    @SerializedName("last_login_time")
-    private long lastLogin;
+  @SerializedName("last_host_address")
+  private String host;
 
-    /**
-     * Return the number of failed attempts for this login, e.g.:
-     * @return the failedAttempts of this login
-     */
-    public int getFailedAttempts() { return failedAttempts; }
-    @SerializedName("failed_attempts")
-    private int failedAttempts;
+  /**
+   * Return the last login time for this login, e.g.:
+   *
+   * @return the lastLogin of this login
+   */
+  public long getLastLogin() {
+    return lastLogin;
+  }
 
+  @SerializedName("last_login_time")
+  private long lastLogin;
+
+  /**
+   * Return the number of failed attempts for this login, e.g.:
+   *
+   * @return the failedAttempts of this login
+   */
+  public int getFailedAttempts() {
+    return failedAttempts;
+  }
+
+  @SerializedName("failed_attempts")
+  private int failedAttempts;
 }

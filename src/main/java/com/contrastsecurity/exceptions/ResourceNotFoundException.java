@@ -29,11 +29,10 @@
 package com.contrastsecurity.exceptions;
 
 public class ResourceNotFoundException extends Exception {
-	
-	private static final long serialVersionUID = -4132985938344669390L;
 
-	public ResourceNotFoundException(String type, String id) {
-		super(String.format("Resource '%s' of id '%s' was not found", type, id));
-	}
+  private static final long serialVersionUID = -4132985938344669390L;
 
+  public ResourceNotFoundException(String type, String id) {
+    super(String.format("Resource '%s' of id '%s' was not found", type, id));
+  }
 }

@@ -28,19 +28,18 @@
  */
 package com.contrastsecurity.models;
 
-/**
- * HTTP name=value pair model.
- */
+/** HTTP name=value pair model. */
 public class NameValuePair {
-	
-	public String getName() {
-		return name;
-	}
-	private String name;
-	
-	public String getValue() {
-		return value;
-	}
-	private String value;
-	
+
+  public String getName() {
+    return name;
+  }
+
+  private String name;
+
+  public String getValue() {
+    return value;
+  }
+
+  private String value;
 }

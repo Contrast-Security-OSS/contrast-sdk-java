@@ -4,23 +4,41 @@ import com.google.gson.annotations.SerializedName;
 
 public class TraceNote {
 
-    public long getCreation() { return creation;}
-    private long creation;
+  public long getCreation() {
+    return creation;
+  }
 
-    public String getCreator() { return creator; }
-    private String creator;
+  private long creation;
 
-    public long getLastModification() { return lastModification; }
-    @SerializedName("last_modification")
-    private long lastModification;
+  public String getCreator() {
+    return creator;
+  }
 
-    public String getLastUpdater() { return lastUpdater; }
-    @SerializedName("last_updater")
-    private String lastUpdater;
+  private String creator;
 
-    public String getNote() { return note; }
-    private String note;
+  public long getLastModification() {
+    return lastModification;
+  }
 
-    public String getId() { return id; }
-    private String id;
+  @SerializedName("last_modification")
+  private long lastModification;
+
+  public String getLastUpdater() {
+    return lastUpdater;
+  }
+
+  @SerializedName("last_updater")
+  private String lastUpdater;
+
+  public String getNote() {
+    return note;
+  }
+
+  private String note;
+
+  public String getId() {
+    return id;
+  }
+
+  private String id;
 }

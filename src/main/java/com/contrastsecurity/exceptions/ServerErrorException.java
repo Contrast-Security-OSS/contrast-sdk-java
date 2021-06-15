@@ -30,10 +30,9 @@ package com.contrastsecurity.exceptions;
 
 public class ServerErrorException extends Exception {
 
-    public ServerErrorException(int rc) {
-        super("Received response code: " + rc);
-    }
+  public ServerErrorException(int rc) {
+    super("Received response code: " + rc);
+  }
 
-    private static final long serialVersionUID = -9049287248312255189L;
+  private static final long serialVersionUID = -9049287248312255189L;
 }
-

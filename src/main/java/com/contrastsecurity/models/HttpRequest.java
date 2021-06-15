@@ -29,61 +29,73 @@
 package com.contrastsecurity.models;
 
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
-/**
- * An HTTP request.
- */
+/** An HTTP request. */
 public class HttpRequest {
 
-	public int getPort() {
-		return port;
-	}
-	private int port;
-	
-	public String getProtocol() {
-		return protocol;
-	}
-	private String protocol;
-	
-	public String getMethod() {
-		return method;
-	}
-	private String method;
-	
-	public String getUri() {
-		return uri;
-	}
-	private String uri;
+  public int getPort() {
+    return port;
+  }
 
-	public String getUrl() {
-		return url;
-	}
-	private String url;
+  private int port;
 
-	public String getVersion() {
-		return version;
-	}
-	private String version;
-	
-	public String getQueryString() {
-		return queryString;
-	}
-	@SerializedName("query_string")
-	private String queryString;
-	
-	public List<NameValuePair> getHeaders() {
-		return headers;
-	}
-	private List<NameValuePair> headers;
-	
-	public List<NameValuePair> getParameters() {
-		return parameters;
-	}
-	private List<NameValuePair> parameters;
+  public String getProtocol() {
+    return protocol;
+  }
 
-	public String getText() { return text; }
-	public void setText(String text) { this.text = text; }
-	private String text;
+  private String protocol;
+
+  public String getMethod() {
+    return method;
+  }
+
+  private String method;
+
+  public String getUri() {
+    return uri;
+  }
+
+  private String uri;
+
+  public String getUrl() {
+    return url;
+  }
+
+  private String url;
+
+  public String getVersion() {
+    return version;
+  }
+
+  private String version;
+
+  public String getQueryString() {
+    return queryString;
+  }
+
+  @SerializedName("query_string")
+  private String queryString;
+
+  public List<NameValuePair> getHeaders() {
+    return headers;
+  }
+
+  private List<NameValuePair> headers;
+
+  public List<NameValuePair> getParameters() {
+    return parameters;
+  }
+
+  private List<NameValuePair> parameters;
+
+  public String getText() {
+    return text;
+  }
+
+  public void setText(String text) {
+    this.text = text;
+  }
+
+  private String text;
 }

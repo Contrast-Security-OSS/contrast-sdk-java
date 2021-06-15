@@ -9,24 +9,22 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ApplicationCreateRequest {
-    @SerializedName("name")
-    @NonNull
-    private String appName;
+  @SerializedName("name")
+  @NonNull
+  private String appName;
 
-    @SerializedName("language")
-    @NonNull
-    private AgentType appLanguage;
+  @SerializedName("language")
+  @NonNull
+  private AgentType appLanguage;
 
-    @SerializedName("path")
-    private String appPath;
+  @SerializedName("path")
+  private String appPath;
 
-    @SerializedName("short_name")
-    private String appShortName;
+  @SerializedName("short_name")
+  private String appShortName;
 
-    public ApplicationCreateRequest(String appName, AgentType appLanguage) {
-        this.appName = appName;
-        this.appLanguage = appLanguage;
-    }
-
-
+  public ApplicationCreateRequest(String appName, AgentType appLanguage) {
+    this.appName = appName;
+    this.appLanguage = appLanguage;
+  }
 }

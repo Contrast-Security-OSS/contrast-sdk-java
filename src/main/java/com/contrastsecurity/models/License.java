@@ -2,12 +2,21 @@ package com.contrastsecurity.models;
 
 public class License {
 
-    public long getStart() { return start; }
-    private long start;
+  public long getStart() {
+    return start;
+  }
 
-    public long getEnd() { return end; }
-    private long end;
+  private long start;
 
-    public String getLevel() { return level; }
-    private String level;
+  public long getEnd() {
+    return end;
+  }
+
+  private long end;
+
+  public String getLevel() {
+    return level;
+  }
+
+  private String level;
 }

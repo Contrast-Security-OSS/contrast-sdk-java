@@ -1,14 +1,12 @@
 package com.contrastsecurity;
 
+import static org.junit.Assert.*;
+
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.TraceFilterForm;
 import com.contrastsecurity.models.*;
 import com.contrastsecurity.sdk.ContrastSDK;
-import org.apache.commons.io.FileUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,119 +14,125 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
-
-import static org.junit.Assert.*;
+import org.apache.commons.io.FileUtils;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class ScreenerTest {
 
-    private static ContrastSDK contrastSDK;
-    private static final String TEST_PROPERTIES = "test.properties";
-    private static Properties properties;
+  private static ContrastSDK contrastSDK;
+  private static final String TEST_PROPERTIES = "test.properties";
+  private static Properties properties;
 
+  @BeforeClass
+  public static void setUp() throws IOException {
+    InputStream propertiesFileInputStream =
+        Thread.currentThread().getContextClassLoader().getResourceAsStream(TEST_PROPERTIES);
+    properties = new Properties();
+    properties.load(propertiesFileInputStream);
 
-    @BeforeClass
-    public static void setUp() throws IOException {
-        InputStream propertiesFileInputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(TEST_PROPERTIES);
-        properties = new Properties();
-        properties.load(propertiesFileInputStream);
+    contrastSDK =
+        new ContrastSDK.Builder(
+                properties.getProperty("username"),
+                properties.getProperty("serviceKey"),
+                properties.getProperty("apiKey"))
+            .withApiUrl(properties.getProperty("localTeamServerUrl"))
+            .build();
+  }
 
-        contrastSDK = new ContrastSDK.Builder(properties.getProperty("username"), properties.getProperty("serviceKey"), properties.getProperty("apiKey"))
-                .withApiUrl(properties.getProperty("localTeamServerUrl")).build();
+  @Test
+  public void testDownloadAgent() throws IOException {
+    File contrastJar = new File("contrast.jar");
+
+    try {
+      FileUtils.writeByteArrayToFile(
+          contrastJar, contrastSDK.getAgent(AgentType.JAVA, properties.getProperty("orgId")));
+    } catch (IOException | UnauthorizedException e) {
+      assertTrue(true);
     }
 
-    @Test
-    public void testDownloadAgent() throws IOException {
-        File contrastJar = new File("contrast.jar");
+    assertTrue(contrastJar.exists());
+    assertTrue(FileUtils.sizeOf(contrastJar) > 0);
+  }
 
-        try {
-            FileUtils.writeByteArrayToFile(contrastJar, contrastSDK.getAgent(AgentType.JAVA, properties.getProperty("orgId")));
-        } catch (IOException | UnauthorizedException e) {
-            assertTrue(true);
-        }
+  @Test
+  public void testGetProfileOrganizations() throws IOException, UnauthorizedException {
+    Organizations organizations = contrastSDK.getProfileOrganizations();
 
-        assertTrue(contrastJar.exists());
-        assertTrue(FileUtils.sizeOf(contrastJar) > 0);
-    }
+    assertTrue(!organizations.getOrganizations().isEmpty());
+  }
 
-    @Test
-    public void testGetProfileOrganizations() throws IOException, UnauthorizedException {
-        Organizations organizations = contrastSDK.getProfileOrganizations();
+  @Test
+  public void testGetProfileDefaultOrganization() throws IOException, UnauthorizedException {
+    Organizations organizations = contrastSDK.getProfileDefaultOrganizations();
 
-        assertTrue(!organizations.getOrganizations().isEmpty());
-    }
+    assertTrue(organizations.getOrganization().getName() != null);
+  }
 
-    @Test
-    public void testGetProfileDefaultOrganization() throws IOException, UnauthorizedException {
-        Organizations organizations = contrastSDK.getProfileDefaultOrganizations();
+  @Test
+  public void testGetApplications() throws IOException, UnauthorizedException {
+    String orgId = properties.getProperty("orgId");
 
-        assertTrue(organizations.getOrganization().getName() != null);
-    }
+    Applications applications = contrastSDK.getApplications(orgId);
 
-    @Test
-    public void testGetApplications() throws IOException, UnauthorizedException {
-        String orgId = properties.getProperty("orgId");
+    assertTrue(!applications.getApplications().isEmpty());
+  }
 
-        Applications applications = contrastSDK.getApplications(orgId);
+  @Test
+  public void testGetServers() throws IOException, UnauthorizedException {
+    String orgId = properties.getProperty("orgId");
 
-        assertTrue(!applications.getApplications().isEmpty());
-    }
+    Servers servers = contrastSDK.getServers(orgId, null);
 
-    @Test
-    public void testGetServers() throws IOException, UnauthorizedException {
-        String orgId = properties.getProperty("orgId");
+    assertTrue(!servers.getServers().isEmpty());
+  }
 
-        Servers servers = contrastSDK.getServers(orgId, null);
+  @Test
+  public void testGetApplicationTraces() throws IOException, UnauthorizedException {
+    String orgId = properties.getProperty("orgId");
 
-        assertTrue(!servers.getServers().isEmpty());
-    }
+    Applications applications = contrastSDK.getApplications(orgId);
 
+    assertTrue(!applications.getApplications().isEmpty());
 
-    @Test
-    public void testGetApplicationTraces() throws IOException, UnauthorizedException {
-        String orgId = properties.getProperty("orgId");
+    Application application = applications.getApplications().get(0);
 
-        Applications applications = contrastSDK.getApplications(orgId);
+    assertTrue(application.getId() != null);
 
-        assertTrue(!applications.getApplications().isEmpty());
+    TraceFilterForm form = new TraceFilterForm();
 
-        Application application = applications.getApplications().get(0);
+    form.setExpand(EnumSet.of(TraceFilterForm.TraceExpandValue.APPLICATION));
 
-        assertTrue(application.getId() != null);
+    Traces traces = contrastSDK.getTraces(orgId, application.getId(), form);
 
-        TraceFilterForm form = new TraceFilterForm();
+    assertTrue(!traces.getTraces().isEmpty());
+  }
 
-        form.setExpand(EnumSet.of(TraceFilterForm.TraceExpandValue.APPLICATION));
+  @Test
+  public void testGetFilteredApplication() throws IOException, UnauthorizedException {
+    String orgId = properties.getProperty("orgId");
 
-        Traces traces = contrastSDK.getTraces(orgId, application.getId(), form);
+    ApplicationFilterForm form = new ApplicationFilterForm();
 
-        assertTrue(!traces.getTraces().isEmpty());
-    }
+    Applications applications = contrastSDK.getFilteredApplications(orgId, form);
 
-    @Test
-    public void testGetFilteredApplication() throws IOException, UnauthorizedException {
-        String orgId = properties.getProperty("orgId");
+    assertFalse(applications.getApplications().isEmpty());
 
-        ApplicationFilterForm form = new ApplicationFilterForm();
+    Application application = applications.getApplications().get(0);
 
-        Applications applications = contrastSDK.getFilteredApplications(orgId, form);
+    assertNotNull(application.getId());
 
-        assertFalse(applications.getApplications().isEmpty());
+    List<String> languages = new ArrayList<>();
+    languages.add("Java");
 
-        Application application = applications.getApplications().get(0);
+    form.setFilterLanguages(languages);
 
-        assertNotNull(application.getId());
+    form.setIncludeOnlyLicensed(true);
+    form.setIncludeMerged(true);
+    form.setIncludeArchived(true);
 
-        List<String> languages = new ArrayList<>();
-        languages.add("Java");
+    Applications licensedApplications = contrastSDK.getFilteredApplications(orgId, form);
 
-        form.setFilterLanguages(languages);
-
-        form.setIncludeOnlyLicensed(true);
-        form.setIncludeMerged(true);
-        form.setIncludeArchived(true);
-
-        Applications licensedApplications = contrastSDK.getFilteredApplications(orgId, form);
-
-        assertFalse(licensedApplications.getApplications().isEmpty());
-    }
+    assertFalse(licensedApplications.getApplications().isEmpty());
+  }
 }

@@ -1,32 +1,46 @@
 package com.contrastsecurity.models;
 
-
 import com.google.gson.annotations.SerializedName;
 
 public class Scores {
 
-    public Integer getGrade() { return this.grade; }
-    private Integer grade = 0;
+  public Integer getGrade() {
+    return this.grade;
+  }
 
-    public String getLetterGrade() { return this.letterGrade; }
-    @SerializedName("letter_grade")
-    private String letterGrade = "";
+  private Integer grade = 0;
 
-    public ScoreMetric getPlatformScore() { return this.platform; }
-    private ScoreMetric platform = null;
+  public String getLetterGrade() {
+    return this.letterGrade;
+  }
 
-    public ScoreMetric getSecurityScore() { return this.security; }
-    private ScoreMetric security = null;
+  @SerializedName("letter_grade")
+  private String letterGrade = "";
 
+  public ScoreMetric getPlatformScore() {
+    return this.platform;
+  }
 
-    class ScoreMetric {
-        public Integer getGrade() { return this.grade; }
-        private Integer grade = 0;
+  private ScoreMetric platform = null;
 
-        public String getLetterGrade() { return this.letterGrade; }
-        @SerializedName("letter_grade")
-        private String letterGrade = "";
+  public ScoreMetric getSecurityScore() {
+    return this.security;
+  }
 
+  private ScoreMetric security = null;
+
+  class ScoreMetric {
+    public Integer getGrade() {
+      return this.grade;
     }
 
+    private Integer grade = 0;
+
+    public String getLetterGrade() {
+      return this.letterGrade;
+    }
+
+    @SerializedName("letter_grade")
+    private String letterGrade = "";
+  }
 }

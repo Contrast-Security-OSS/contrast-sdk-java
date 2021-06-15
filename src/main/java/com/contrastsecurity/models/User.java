@@ -30,68 +30,76 @@ package com.contrastsecurity.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
-/**
- * A User in Contrast.
- */
+/** A User in Contrast. */
 public class User {
 
-    /**
-     * Return the uuid for this user, e.g.:
-     * @return the uuid of this user
-     */
-    public String getUUID() {
-        return uuid;
-    }
-    @SerializedName("user_uid")
-    private String uuid;
+  /**
+   * Return the uuid for this user, e.g.:
+   *
+   * @return the uuid of this user
+   */
+  public String getUUID() {
+    return uuid;
+  }
 
-    /**
-     * Return the api_only for this user, e.g.:
-     * @return true if this user is an API Only user
-     */
-    public boolean getAPI() {
-        return api;
-    }
-    @SerializedName("api_only")
-    private boolean api;
+  @SerializedName("user_uid")
+  private String uuid;
 
-    /**
-     * Return the last_name for this user, e.g.:
-     * @return the lastName of this user
-     */
-    public String getLastName() { return lastName; }
-    @SerializedName("last_name")
-    private String lastName;
+  /**
+   * Return the api_only for this user, e.g.:
+   *
+   * @return true if this user is an API Only user
+   */
+  public boolean getAPI() {
+    return api;
+  }
 
-    /**
-     * Return the first_name for this user, e.g.:
-     * @return the firstName of this user
-     */
-    public String getFirstName() { return firstName; }
-    @SerializedName("first_name")
-    private String firstName;
+  @SerializedName("api_only")
+  private boolean api;
 
+  /**
+   * Return the last_name for this user, e.g.:
+   *
+   * @return the lastName of this user
+   */
+  public String getLastName() {
+    return lastName;
+  }
 
-    /**
-     * Return the last login details of the user.
-     *
-     * @return the login for the user
-     */
-    public Login getLogin() {
-        return this.login;
-    }
-    private Login login = null;
+  @SerializedName("last_name")
+  private String lastName;
 
-    /**
-     * Return the signup details of the user.
-     *
-     * @return the signup for the user
-     */
-    public SignUp getSignUp() {
-        return this.signup;
-    }
-    private SignUp signup = null;
+  /**
+   * Return the first_name for this user, e.g.:
+   *
+   * @return the firstName of this user
+   */
+  public String getFirstName() {
+    return firstName;
+  }
 
+  @SerializedName("first_name")
+  private String firstName;
+
+  /**
+   * Return the last login details of the user.
+   *
+   * @return the login for the user
+   */
+  public Login getLogin() {
+    return this.login;
+  }
+
+  private Login login = null;
+
+  /**
+   * Return the signup details of the user.
+   *
+   * @return the signup for the user
+   */
+  public SignUp getSignUp() {
+    return this.signup;
+  }
+
+  private SignUp signup = null;
 }
