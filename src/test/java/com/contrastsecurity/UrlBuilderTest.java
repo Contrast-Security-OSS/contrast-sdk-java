@@ -135,6 +135,17 @@ public class UrlBuilderTest {
   }
 
   @Test
+  public void testGetTracesByMetadataUrl() {
+    String expectedUrl = "/ng/test-org/traces/test-app/filter";
+
+    try {
+      assertEquals(expectedUrl, urlBuilder.getTracesByMetadataUrl(organizationId, applicationId));
+    } catch (UnsupportedEncodingException e) {
+      fail();
+    }
+  }
+
+  @Test
   public void testSecurityCheckUrl() {
     String expectedSecurityCheckUrl = "/ng/test-org/securityChecks";
     assertEquals(expectedSecurityCheckUrl, urlBuilder.getSecurityCheckUrl(organizationId));

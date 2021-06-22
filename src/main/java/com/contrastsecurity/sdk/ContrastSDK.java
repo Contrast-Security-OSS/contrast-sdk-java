@@ -762,6 +762,37 @@ public class ContrastSDK {
   }
 
   /**
+   * Get the vulnerabilities in the application that match specific metadata filters.
+   *
+   * @param organizationId the ID of the organization
+   * @param appId the ID of the application
+   * @param filters TraceMetadataFilters filters to query on
+   * @return Traces object that contains the list of Trace's
+   * @throws UnauthorizedException if the Contrast account failed to authorize
+   * @throws IOException if there was a communication problem
+   */
+  public Traces getTracesByMetadata(
+      String organizationId, String appId, TraceMetadataFilters filters)
+      throws IOException, UnauthorizedException {
+    InputStream is = null;
+    InputStreamReader reader = null;
+    System.out.println(this.gson.toJson(filters));
+    try {
+      is =
+          makeRequestWithBody(
+              HttpMethod.POST,
+              urlBuilder.getTracesByMetadataUrl(organizationId, appId),
+              this.gson.toJson(filters),
+              MediaType.JSON);
+      reader = new InputStreamReader(is);
+      return this.gson.fromJson(reader, Traces.class);
+    } finally {
+      IOUtils.closeQuietly(is);
+      IOUtils.closeQuietly(reader);
+    }
+  }
+
+  /**
    * Get the vulnerabilities in the application whose ID is passed in.
    *
    * @param organizationId the ID of the organization

@@ -162,12 +162,19 @@ public class UrlBuilder {
     return String.format("/ng/%s/tags/traces/application/%s", organizationId, appId);
   }
 
+  public String getTracesByMetadataUrl(String organizationId, String appId)
+      throws UnsupportedEncodingException {
+    return String.format("/ng/%s/traces/%s/filter", organizationId, appId);
+  }
+
   public String getSessionMetadataForApplicationUrl(
       String organizationId, String appId, TraceFilterForm form)
       throws UnsupportedEncodingException {
-    String formString = form == null ? "" : form.toQuery();
+    String formString = form == null ? "?" : form.toQuery();
+    formString = formString.isEmpty() ? "?" : String.format("%s&", formString);
+
     return String.format(
-        "/ng/%s/metadata/session/%s/filters%s&modules=%s", organizationId, appId, form, appId);
+        "/ng/%s/metadata/session/%s/filters%smodules=%s", organizationId, appId, formString, appId);
   }
 
   public String getAttestationReportByApplicationUrl(String organizationId, String appId) {
