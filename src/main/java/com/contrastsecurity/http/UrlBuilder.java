@@ -162,7 +162,7 @@ public class UrlBuilder {
     return String.format("/ng/%s/tags/traces/application/%s", organizationId, appId);
   }
 
-  public String getTracesByMetadataUrl(String organizationId, String appId)
+  public String getTracesWithBodyUrl(String organizationId, String appId)
       throws UnsupportedEncodingException {
     return String.format("/ng/%s/traces/%s/filter", organizationId, appId);
   }

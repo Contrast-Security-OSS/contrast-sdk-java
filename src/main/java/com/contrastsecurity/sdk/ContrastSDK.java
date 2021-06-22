@@ -771,17 +771,15 @@ public class ContrastSDK {
    * @throws UnauthorizedException if the Contrast account failed to authorize
    * @throws IOException if there was a communication problem
    */
-  public Traces getTracesByMetadata(
-      String organizationId, String appId, TraceMetadataFilters filters)
+  public Traces getTraces(String organizationId, String appId, TraceFilterBody filters)
       throws IOException, UnauthorizedException {
     InputStream is = null;
     InputStreamReader reader = null;
-    System.out.println(this.gson.toJson(filters));
     try {
       is =
           makeRequestWithBody(
               HttpMethod.POST,
-              urlBuilder.getTracesByMetadataUrl(organizationId, appId),
+              urlBuilder.getTracesWithBodyUrl(organizationId, appId),
               this.gson.toJson(filters),
               MediaType.JSON);
       reader = new InputStreamReader(is);

@@ -226,7 +226,7 @@
     <properties>
         <localTeamServerUrl>http://localhost:19080/Contrast/api</localTeamServerUrl>
         <stagingTeamServerUrl>http://teamserver-334.internal.contsec.com/Contrast/api</stagingTeamServerUrl>
-
+        <java.version>11</java.version>
         <versions.maven-source-plugin>3.0.1</versions.maven-source-plugin>
         <versions.maven-javadoc-plugin>3.0.0</versions.maven-javadoc-plugin>
         <versions.maven-gpg-plugin>1.6</versions.maven-gpg-plugin>

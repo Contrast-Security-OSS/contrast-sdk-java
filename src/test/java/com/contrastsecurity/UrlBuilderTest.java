@@ -135,11 +135,11 @@ public class UrlBuilderTest {
   }
 
   @Test
-  public void testGetTracesByMetadataUrl() {
+  public void testGetTracesWithBodyUrl() {
     String expectedUrl = "/ng/test-org/traces/test-app/filter";
 
     try {
-      assertEquals(expectedUrl, urlBuilder.getTracesByMetadataUrl(organizationId, applicationId));
+      assertEquals(expectedUrl, urlBuilder.getTracesWithBodyUrl(organizationId, applicationId));
     } catch (UnsupportedEncodingException e) {
       fail();
     }
