@@ -1716,10 +1716,10 @@ public class ContrastSDK {
 
     if (integrationName != null) {
       connection.setRequestProperty(
-          RequestConstants.X_TELEMETRY_INTEGRATION_NAME, String.valueOf(integrationName));
+          RequestConstants.TELEMETRY_INTEGRATION_NAME, String.valueOf(integrationName));
     }
     if (version != null) {
-      connection.setRequestProperty(RequestConstants.X_TELEMETRY_INTEGRATION_VERSION, version);
+      connection.setRequestProperty(RequestConstants.TELEMETRY_INTEGRATION_VERSION, version);
     }
 
     connection.setUseCaches(false);
