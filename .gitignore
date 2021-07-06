@@ -210,6 +210,9 @@ local.properties
 .recommenders
 .classpath
 
+# VSCode
+.vscode/
+
 # External tool builders
 .externalToolBuilders/
 
