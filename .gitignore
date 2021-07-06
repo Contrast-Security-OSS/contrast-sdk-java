@@ -127,7 +127,8 @@ fabric.properties
 .LSOverride
 
 # Icon must end with two \r
-Icon
+Icon
+
 
 # Thumbnails
 ._*
@@ -207,6 +208,9 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+
+# VSCode
+.vscode/
 
 # External tool builders
 .externalToolBuilders/
