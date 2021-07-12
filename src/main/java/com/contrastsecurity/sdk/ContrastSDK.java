@@ -744,7 +744,10 @@ public class ContrastSDK {
    * @return Traces object that contains the list of Trace's
    * @throws UnauthorizedException if the Contrast account failed to authorize
    * @throws IOException if there was a communication problem
+   * 
+   * @deprecated Use {@link #getTraces(String, String, TraceFilterBody) getTraces} instead.
    */
+  @Deprecated
   public Traces getTraces(String organizationId, String appId, TraceFilterForm form)
       throws IOException, UnauthorizedException {
     InputStream is = null;
