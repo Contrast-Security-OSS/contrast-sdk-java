@@ -346,4 +346,18 @@ public class ContrastSDKTest extends ContrastSDK {
     assertTrue(event.getShowEvents());
     assertFalse(event.getShowEvidence());
   }
+
+  @Test
+  public void testGetTraceMetadataFilters() {
+
+    String traceMetadataString =
+        "{\"count\":1,\"traces\":[{\"title\":\"foo\",\"language\":\"Java\",\"status\":\"Reported\",\"uuid\":\"bar\",\"rule_name\":\"baz\",\"severity\":\"Medium\",\"likelihood\":\"High\",\"impact\":\"Low\",\"confidence\":\"High\",\"first_time_seen\":100000000,\"last_time_seen\":100000000,\"category\":\"Secure Communications\",\"platform\":\"foo\",\"total_traces_received\":5,\"visible\":true}]}";
+
+    Traces traces = gson.fromJson(traceMetadataString, Traces.class);
+
+    assertNotNull(traces);
+    assertNotNull(traces.getTraces());
+
+    assertTrue(traces.getCount() > 0);
+  }
 }

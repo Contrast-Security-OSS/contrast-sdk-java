@@ -744,7 +744,9 @@ public class ContrastSDK {
    * @return Traces object that contains the list of Trace's
    * @throws UnauthorizedException if the Contrast account failed to authorize
    * @throws IOException if there was a communication problem
+   * @deprecated Use {@link #getTraces(String, String, TraceFilterBody) getTraces} instead.
    */
+  @Deprecated
   public Traces getTraces(String organizationId, String appId, TraceFilterForm form)
       throws IOException, UnauthorizedException {
     InputStream is = null;
@@ -753,6 +755,35 @@ public class ContrastSDK {
       is =
           makeRequest(
               HttpMethod.GET, urlBuilder.getTracesByApplicationUrl(organizationId, appId, form));
+      reader = new InputStreamReader(is);
+      return this.gson.fromJson(reader, Traces.class);
+    } finally {
+      IOUtils.closeQuietly(is);
+      IOUtils.closeQuietly(reader);
+    }
+  }
+
+  /**
+   * Get the vulnerabilities in the application that match specific metadata filters.
+   *
+   * @param organizationId the ID of the organization
+   * @param appId the ID of the application
+   * @param filters TraceMetadataFilters filters to query on
+   * @return Traces object that contains the list of Trace's
+   * @throws UnauthorizedException if the Contrast account failed to authorize
+   * @throws IOException if there was a communication problem
+   */
+  public Traces getTraces(String organizationId, String appId, TraceFilterBody filters)
+      throws IOException, UnauthorizedException {
+    InputStream is = null;
+    InputStreamReader reader = null;
+    try {
+      is =
+          makeRequestWithBody(
+              HttpMethod.POST,
+              urlBuilder.getTracesWithBodyUrl(organizationId, appId),
+              this.gson.toJson(filters),
+              MediaType.JSON);
       reader = new InputStreamReader(is);
       return this.gson.fromJson(reader, Traces.class);
     } finally {
