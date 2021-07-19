@@ -34,7 +34,7 @@ public class ContrastSDKTest extends ContrastSDK {
         new ContrastSDK.Builder("test_user", "testApiKey", "testServiceKey")
             .withApiUrl("http://localhost:19080/Contrast/api")
             .withVersion("1.0.0")
-            .withIntegrationName(IntegrationName.VSCODE_IDE)
+            .withIntegrationName(IntegrationName.INTELLIJ_INTEGRATION)
             .build();
     gson =
         new GsonBuilder()
