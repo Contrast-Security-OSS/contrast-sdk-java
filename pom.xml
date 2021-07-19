@@ -10,7 +10,7 @@
 
     <groupId>com.contrastsecurity</groupId>
     <artifactId>contrast-sdk-java</artifactId>
-    <version>3.3</version>
+    <version>3.3-SNAPSHOT</version>
 
     <organization>
         <name>Contrast Security</name>
