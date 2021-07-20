@@ -1,11 +1,8 @@
 package com.contrastsecurity.http;
 
 public enum IntegrationName {
-  ECLIPSE_IDE,
-  VSCODE_IDE,
-  INTELLIJ_IDE,
-  VS_IDE,
-  VSMAC_IDE,
+  ECLIPSE_INTEGRATION,
+  INTELLIJ_INTEGRATION,
   JENKINS_CI,
   AZURE_DEV_OPS,
   CIRCLE_CI,
