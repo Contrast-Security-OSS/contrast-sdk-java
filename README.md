@@ -1,6 +1,6 @@
 # Contrast TeamServer Java SDK
 
-This SDK gives you a quick start for programmatically accessing the [Contrast REST API](https://docs.contrastsecurity.com/tools-about.html#api-about) using Java.
+This SDK gives you a quick start for programmatically accessing the [Contrast REST API](https://api.contrastsecurity.com/) using Java.
 
 
 ## Requirements
