@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.EnumSet;
 import java.util.List;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 
 public class ContrastSDKUtils {
@@ -20,7 +20,7 @@ public class ContrastSDKUtils {
       throws IOException {
     String token = username.trim() + ":" + serviceKey.trim();
 
-    return Base64.encodeBase64String(token.trim().getBytes("UTF-8")).trim();
+    return Base64.getEncoder().encodeToString(token.trim().getBytes("UTF-8")).trim();
   }
 
   public static void validateUrl(String url) throws IllegalArgumentException {
