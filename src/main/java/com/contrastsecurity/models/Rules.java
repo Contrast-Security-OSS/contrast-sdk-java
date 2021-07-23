@@ -26,6 +26,7 @@ public class Rules {
     private List<String> languages;
     private boolean free;
     private String name;
+    private String test;
 
     public String getDescription() {
       return description;
