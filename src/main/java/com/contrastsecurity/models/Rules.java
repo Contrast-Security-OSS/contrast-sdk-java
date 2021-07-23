@@ -23,6 +23,7 @@ public class Rules {
     private String severity;
     private String serviceLevel;
     private List<String> references;
+    private List<String> languages;
     private boolean free;
     private String name;
 
@@ -72,6 +73,10 @@ public class Rules {
 
     public List<String> getReferences() {
       return references;
+    }
+    
+    public List<String> getLanguages() {
+      return languages;
     }
 
     public boolean isFree() {
