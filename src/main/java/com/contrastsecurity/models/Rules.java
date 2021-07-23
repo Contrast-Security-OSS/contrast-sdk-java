@@ -74,7 +74,7 @@ public class Rules {
     public List<String> getReferences() {
       return references;
     }
-    
+
     public List<String> getLanguages() {
       return languages;
     }
