@@ -171,7 +171,7 @@ public class Server {
 
   @SerializedName("agent_version")
   private String agentVersion;
-  
+
   /**
    * Return the latest version of the Contrast agent for this server.
    *
