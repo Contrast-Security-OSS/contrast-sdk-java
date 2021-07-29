@@ -16,11 +16,26 @@ public class ServerFilterForm extends FilterForm {
     }
   }
 
+  public enum ServerQuickFilterType {
+    ALL,
+    PROTECTED,
+    UNPROTECTED,
+    ONLINE,
+    OFFLINE,
+    OUT_OF_DATE;
+
+    @Override
+    public String toString() {
+      return name();
+    }
+  }
+
   private String q;
   private boolean includeArchived;
   private List<String> applicationIds;
   private List<String> logLevels;
   private List<String> tags;
+  private ServerQuickFilterType quickFilter;
 
   public ServerFilterForm() {
     super();
@@ -71,6 +86,14 @@ public class ServerFilterForm extends FilterForm {
     this.tags = tags;
   }
 
+  public ServerQuickFilterType getQuickFilter() {
+    return quickFilter;
+  }
+
+  public void setQuickFilter(ServerQuickFilterType quickFilter) {
+    this.quickFilter = quickFilter;
+  }
+
   @Override
   public String toString() {
     String formString = super.toString();
@@ -93,6 +116,10 @@ public class ServerFilterForm extends FilterForm {
 
     if (!tags.isEmpty()) {
       filters.add("tags=" + StringUtils.join(tags, ","));
+    }
+
+    if (quickFilter != null) {
+      filters.add("quickFilter=" + quickFilter.toString());
     }
 
     String result;
