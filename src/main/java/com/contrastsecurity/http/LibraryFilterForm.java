@@ -2,7 +2,7 @@ package com.contrastsecurity.http;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import java.util.stream.Collectors;
 
 public class LibraryFilterForm extends FilterForm {
 
@@ -146,31 +146,32 @@ public class LibraryFilterForm extends FilterForm {
     List<String> filters = new ArrayList<>();
 
     if (!apps.isEmpty()) {
-      filters.add("apps=" + StringUtils.join(apps, ","));
+      filters.add("apps=" + String.join(",", apps));
     }
 
     if (!servers.isEmpty()) {
-      filters.add("servers=" + StringUtils.join(servers, ","));
+      filters.add(
+          "servers=" + servers.stream().map(String::valueOf).collect(Collectors.joining(",")));
     }
 
     if (!tags.isEmpty()) {
-      filters.add("tags=" + StringUtils.join(tags, ","));
+      filters.add("tags=" + String.join(",", tags));
     }
 
-    if (!StringUtils.isEmpty(q)) {
+    if (q != null && q.isEmpty()) {
       filters.add("q=" + q);
     }
 
     if (!languages.isEmpty()) {
-      filters.add("languages=" + StringUtils.join(languages, ","));
+      filters.add("languages=" + String.join(",", languages));
     }
 
     if (!licenses.isEmpty()) {
-      filters.add("licenses=" + StringUtils.join(licenses, ","));
+      filters.add("licenses=" + String.join(",", licenses));
     }
 
     if (!grades.isEmpty()) {
-      filters.add("grades=" + StringUtils.join(grades, ","));
+      filters.add("grades=" + String.join(",", grades));
     }
 
     if (quickFilter != null) {
@@ -183,12 +184,12 @@ public class LibraryFilterForm extends FilterForm {
     String result;
 
     if (!filters.isEmpty()) {
-      result = StringUtils.join(filters, "&");
+      result = String.join("&", filters);
     } else {
       return formString;
     }
 
-    if (StringUtils.isNotEmpty(formString)) {
+    if (formString != null && !formString.isEmpty()) {
       return formString + "&" + result;
     } else {
       return "?" + result;

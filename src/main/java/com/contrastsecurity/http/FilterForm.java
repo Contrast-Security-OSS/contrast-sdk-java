@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import java.util.stream.Collectors;
 
 public class FilterForm {
 
@@ -131,7 +131,8 @@ public class FilterForm {
     List<String> filters = new ArrayList<>();
 
     if (expand != null && !expand.isEmpty()) {
-      filters.add("expand=" + StringUtils.join(expand, ","));
+      filters.add(
+          "expand=" + expand.stream().map(Object::toString).collect(Collectors.joining(",")));
     }
 
     if (limit > 0) {
@@ -151,19 +152,19 @@ public class FilterForm {
     }
 
     if (!severities.isEmpty()) {
-      filters.add("severities=" + StringUtils.join(severities, ","));
+      filters.add("severities=" + String.join(",", severities));
     }
 
-    if (!StringUtils.isEmpty(sort)) {
+    if (!(sort == null || sort.isEmpty())) {
       filters.add("sort=" + sort);
     }
 
-    if (!StringUtils.isEmpty(status)) {
+    if (!(status == null || status.isEmpty())) {
       filters.add("status=" + status);
     }
 
     if (!filters.isEmpty()) {
-      return "?" + StringUtils.join(filters, "&");
+      return "?" + String.join("&", filters);
     } else {
       return "";
     }

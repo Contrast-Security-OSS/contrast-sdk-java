@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang.StringUtils;
 
 @Getter
 @Setter
@@ -97,12 +97,13 @@ public class TraceFilterForm {
   public String toQuery() throws UnsupportedEncodingException {
     List<String> filters = new ArrayList<>();
 
-    if (StringUtils.isNotEmpty(filterText)) {
+    if ((filterText != null && !filterText.isEmpty())) {
       filters.add(filterText);
     }
 
     if (expand != null && !expand.isEmpty()) {
-      filters.add("expand=" + StringUtils.join(expand, ","));
+      filters.add(
+          "expand=" + expand.stream().map(Object::toString).collect(Collectors.joining(",")));
     }
 
     if (startDate != null) {
@@ -114,43 +115,47 @@ public class TraceFilterForm {
     }
 
     if (filterTags != null && !filterTags.isEmpty()) {
-      filters.add("filterTags=" + StringUtils.join(filterTags, ","));
+      filters.add("filterTags=" + String.join(",", filterTags));
     }
 
     if (severities != null && !severities.isEmpty()) {
-      filters.add("severities=" + StringUtils.join(severities, ","));
+      filters.add(
+          "severities="
+              + severities.stream().map(Object::toString).collect(Collectors.joining(",")));
     }
 
     if (status != null) {
-      filters.add("status=" + StringUtils.join(status, ","));
+      filters.add("status=" + String.join(",", status));
     }
 
     if (vulnTypes != null && !vulnTypes.isEmpty()) {
-      filters.add("vulnTypes=" + StringUtils.join(vulnTypes, ","));
+      filters.add("vulnTypes=" + String.join(",", vulnTypes));
     }
 
     if (appVersionTags != null && !appVersionTags.isEmpty()) {
-      filters.add(
-          "appVersionTags=" + URLEncoder.encode(StringUtils.join(appVersionTags, ","), "UTF-8"));
+      filters.add("appVersionTags=" + URLEncoder.encode(String.join(",", appVersionTags), "UTF-8"));
     }
 
     if (environments != null && !environments.isEmpty()) {
-      filters.add("environments=" + StringUtils.join(environments, ","));
+      filters.add(
+          "environments="
+              + environments.stream().map(Object::toString).collect(Collectors.joining(",")));
     }
 
     if (serverIds != null && !serverIds.isEmpty()) {
-      filters.add("servers=" + StringUtils.join(serverIds, ","));
+      filters.add(
+          "servers=" + serverIds.stream().map(String::valueOf).collect(Collectors.joining(",")));
     }
 
     if (urls != null && !urls.isEmpty()) {
-      filters.add("urls=" + StringUtils.join(urls, ","));
+      filters.add("urls=" + String.join(",", urls));
     }
 
     if (modules != null && !modules.isEmpty()) {
-      filters.add("modules=" + StringUtils.join(modules, ","));
+      filters.add("modules=" + String.join(",", modules));
     }
 
-    if (StringUtils.isNotEmpty(sort)) {
+    if ((sort != null && !sort.isEmpty())) {
       filters.add("sort=" + sort);
     }
 
@@ -163,7 +168,7 @@ public class TraceFilterForm {
     }
 
     if (!filters.isEmpty()) {
-      return "?" + StringUtils.join(filters, "&");
+      return "?" + String.join("&", filters);
     } else {
       return "";
     }

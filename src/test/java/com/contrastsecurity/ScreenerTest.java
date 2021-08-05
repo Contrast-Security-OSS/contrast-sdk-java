@@ -5,18 +5,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.TraceFilterForm;
-import com.contrastsecurity.models.*;
+import com.contrastsecurity.models.AgentType;
+import com.contrastsecurity.models.Application;
+import com.contrastsecurity.models.Applications;
+import com.contrastsecurity.models.Organizations;
+import com.contrastsecurity.models.Servers;
+import com.contrastsecurity.models.Traces;
 import com.contrastsecurity.sdk.ContrastSDK;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 final class ScreenerTest {
 
@@ -41,18 +47,14 @@ final class ScreenerTest {
   }
 
   @Test
-  public void testDownloadAgent() throws IOException {
-    File contrastJar = new File("contrast.jar");
+  public void testDownloadAgent(@TempDir final Path temp)
+      throws IOException, UnauthorizedException {
+    final Path jar = temp.resolve("contrast-agent.jar");
+    final byte[] bytes = contrastSDK.getAgent(AgentType.JAVA, properties.getProperty("orgId"));
+    Files.write(jar, bytes);
 
-    try {
-      FileUtils.writeByteArrayToFile(
-          contrastJar, contrastSDK.getAgent(AgentType.JAVA, properties.getProperty("orgId")));
-    } catch (IOException | UnauthorizedException e) {
-      assertThat(true).isTrue();
-    }
-
-    assertThat(contrastJar.exists()).isTrue();
-    assertThat(FileUtils.sizeOf(contrastJar) > 0).isTrue();
+    assertThat(jar).exists();
+    assertThat(Files.size(jar)).isGreaterThan(0);
   }
 
   @Test

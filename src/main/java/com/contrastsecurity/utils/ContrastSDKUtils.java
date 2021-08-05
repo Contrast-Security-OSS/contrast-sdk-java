@@ -5,22 +5,21 @@ import static com.contrastsecurity.http.RequestConstants.EQUALS_SEPARATOR;
 import static com.contrastsecurity.http.RequestConstants.EXPAND_PARAM;
 import static com.contrastsecurity.http.RequestConstants.QUERY_SEPARATOR;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.EnumSet;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import java.util.stream.Collectors;
 
 public class ContrastSDKUtils {
 
-  public static String makeAuthorizationToken(String username, String serviceKey)
-      throws IOException {
+  public static String makeAuthorizationToken(String username, String serviceKey) {
     String token = username.trim() + ":" + serviceKey.trim();
 
-    return Base64.getEncoder().encodeToString(token.trim().getBytes("UTF-8")).trim();
+    return Base64.getEncoder().encodeToString(token.trim().getBytes(StandardCharsets.UTF_8)).trim();
   }
 
   public static void validateUrl(String url) throws IllegalArgumentException {
@@ -51,10 +50,7 @@ public class ContrastSDKUtils {
       return "";
     }
 
-    return QUERY_SEPARATOR
-        + EXPAND_PARAM
-        + EQUALS_SEPARATOR
-        + StringUtils.join(values, COMMA_DELIMITER);
+    return QUERY_SEPARATOR + EXPAND_PARAM + EQUALS_SEPARATOR + String.join(COMMA_DELIMITER, values);
   }
 
   public static String buildExpand(EnumSet<?> values) {
@@ -65,7 +61,8 @@ public class ContrastSDKUtils {
     return QUERY_SEPARATOR
         + EXPAND_PARAM
         + EQUALS_SEPARATOR
-        + StringUtils.join(values, COMMA_DELIMITER);
+        + String.join(
+            COMMA_DELIMITER, values.stream().map(Object::toString).collect(Collectors.toSet()));
   }
 
   public static List<String> getSeverityList(String severity) {

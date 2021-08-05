@@ -2,7 +2,6 @@ package com.contrastsecurity.http;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 public class ServerFilterForm extends FilterForm {
 
@@ -100,22 +99,22 @@ public class ServerFilterForm extends FilterForm {
 
     List<String> filters = new ArrayList<>();
 
-    if (!StringUtils.isEmpty(q)) {
+    if (!(q == null || q.isEmpty())) {
       filters.add("q=" + q);
     }
 
     filters.add("includeArchived=" + includeArchived);
 
     if (!applicationIds.isEmpty()) {
-      filters.add("applicationsIds=" + StringUtils.join(applicationIds, ","));
+      filters.add("applicationsIds=" + String.join(",", applicationIds));
     }
 
     if (!logLevels.isEmpty()) {
-      filters.add("logLevels=" + StringUtils.join(logLevels, ","));
+      filters.add("logLevels=" + String.join(",", logLevels));
     }
 
     if (!tags.isEmpty()) {
-      filters.add("tags=" + StringUtils.join(tags, ","));
+      filters.add("tags=" + String.join(",", tags));
     }
 
     if (quickFilter != null) {
@@ -125,12 +124,12 @@ public class ServerFilterForm extends FilterForm {
     String result;
 
     if (!filters.isEmpty()) {
-      result = StringUtils.join(filters, "&");
+      result = String.join("&", filters);
     } else {
       return formString;
     }
 
-    if (!StringUtils.isEmpty(formString)) {
+    if (!(formString == null || formString.isEmpty())) {
       return formString + "&" + result;
     } else {
       return "?" + result;
