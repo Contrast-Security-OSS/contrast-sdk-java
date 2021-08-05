@@ -1,6 +1,11 @@
 package com.contrastsecurity;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.contrastsecurity.exceptions.InvalidConversionException;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
@@ -10,7 +15,23 @@ import com.contrastsecurity.http.IntegrationName;
 import com.contrastsecurity.http.JobOutcomePolicyListResponse;
 import com.contrastsecurity.http.RuleSeverity;
 import com.contrastsecurity.http.SecurityCheckResponse;
-import com.contrastsecurity.models.*;
+import com.contrastsecurity.models.Applications;
+import com.contrastsecurity.models.Chapter;
+import com.contrastsecurity.models.EventResource;
+import com.contrastsecurity.models.EventSummaryResponse;
+import com.contrastsecurity.models.HttpRequestResponse;
+import com.contrastsecurity.models.JobOutcomePolicy;
+import com.contrastsecurity.models.MetadataEntity;
+import com.contrastsecurity.models.RecommendationResponse;
+import com.contrastsecurity.models.Rules;
+import com.contrastsecurity.models.SecurityCheck;
+import com.contrastsecurity.models.Servers;
+import com.contrastsecurity.models.Story;
+import com.contrastsecurity.models.StoryResponse;
+import com.contrastsecurity.models.Tags;
+import com.contrastsecurity.models.TagsResponse;
+import com.contrastsecurity.models.Traces;
+import com.contrastsecurity.models.VulnerabilityTrend;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.contrastsecurity.utils.MetadataDeserializer;
@@ -19,16 +40,15 @@ import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.net.URLConnection;
 import java.util.List;
-import org.hamcrest.core.IsInstanceOf;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-public class ContrastSDKTest extends ContrastSDK {
+final class ContrastSDKTest extends ContrastSDK {
 
   private static ContrastSDK contrastSDK;
   private static Gson gson;
 
-  @BeforeClass
+  @BeforeAll
   public static void setUp() {
     contrastSDK =
         new ContrastSDK.Builder("test_user", "testApiKey", "testServiceKey")
@@ -107,18 +127,12 @@ public class ContrastSDKTest extends ContrastSDK {
 
     assertNotNull(metadataEntities[0]);
     assertEquals(metadataEntities[0].getType(), MetadataEntity.MetadataType.POINT_OF_CONTACT);
-    assertThat(
-        metadataEntities[0].getAsPointOfContactMetadata(),
-        new IsInstanceOf(PointOfContactMetadata.class));
 
     assertNotNull(metadataEntities[1]);
     assertEquals(metadataEntities[1].getType(), MetadataEntity.MetadataType.STRING);
-    assertThat(
-        metadataEntities[1].getAsFreeformMetadata(), new IsInstanceOf(FreeformMetadata.class));
 
     assertNotNull(metadataEntities[2]);
     assertEquals(metadataEntities[2].getType(), MetadataEntity.MetadataType.NUMERIC);
-    assertThat(metadataEntities[2].getAsNumericMetadata(), new IsInstanceOf(NumericMetadata.class));
   }
 
   @Test

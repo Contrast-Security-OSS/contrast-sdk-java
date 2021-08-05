@@ -1,6 +1,8 @@
 package com.contrastsecurity;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.ApplicationFilterForm;
@@ -15,16 +17,16 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-public class ScreenerTest {
+final class ScreenerTest {
 
   private static ContrastSDK contrastSDK;
   private static final String TEST_PROPERTIES = "test.properties";
   private static Properties properties;
 
-  @BeforeClass
+  @BeforeAll
   public static void setUp() throws IOException {
     InputStream propertiesFileInputStream =
         Thread.currentThread().getContextClassLoader().getResourceAsStream(TEST_PROPERTIES);
@@ -40,7 +42,7 @@ public class ScreenerTest {
             .build();
   }
 
-  @Test
+  @org.junit.jupiter.api.Test
   public void testDownloadAgent() throws IOException {
     File contrastJar = new File("contrast.jar");
 
@@ -62,14 +64,14 @@ public class ScreenerTest {
     assertTrue(!organizations.getOrganizations().isEmpty());
   }
 
-  @Test
+  @org.junit.jupiter.api.Test
   public void testGetProfileDefaultOrganization() throws IOException, UnauthorizedException {
     Organizations organizations = contrastSDK.getProfileDefaultOrganizations();
 
     assertTrue(organizations.getOrganization().getName() != null);
   }
 
-  @Test
+  @org.junit.jupiter.api.Test
   public void testGetApplications() throws IOException, UnauthorizedException {
     String orgId = properties.getProperty("orgId");
 
@@ -78,7 +80,7 @@ public class ScreenerTest {
     assertTrue(!applications.getApplications().isEmpty());
   }
 
-  @Test
+  @org.junit.jupiter.api.Test
   public void testGetServers() throws IOException, UnauthorizedException {
     String orgId = properties.getProperty("orgId");
 

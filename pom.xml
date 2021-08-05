@@ -37,16 +37,14 @@
 
   <properties>
     <localTeamServerUrl>http://localhost:19080/Contrast/api</localTeamServerUrl>
+    <versions.maven-source-plugin>3.0.1</versions.maven-source-plugin>
+    <versions.maven-javadoc-plugin>3.0.0</versions.maven-javadoc-plugin>
+    <versions.maven-gpg-plugin>1.6</versions.maven-gpg-plugin>
+    <versions.nexus-staging-maven-plugin>1.6.8</versions.nexus-staging-maven-plugin>
+    <versions.junit-jupiter>5.7.1</versions.junit-jupiter>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13.1</version>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -67,6 +65,19 @@
       <artifactId>gson</artifactId>
       <version>2.6.2</version>
     </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${versions.junit-jupiter}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${versions.junit-jupiter}</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
