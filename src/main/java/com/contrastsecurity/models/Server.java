@@ -173,7 +173,19 @@ public class Server {
   private String agentVersion;
 
   /**
-   * Return the latest version of the Contrast agent for this server.
+   * If the agent on this server is out of date.
+   *
+   * @return if the agent on this server is out of date
+   */
+  public boolean isAgentOutOfDate() {
+    return agentOutOfDate;
+  }
+
+  @SerializedName("out_of_date")
+  private boolean agentOutOfDate;
+
+  /**
+   * Return the latest version available version of the agent.
    *
    * @return the latest version of the Contrast agent
    */
