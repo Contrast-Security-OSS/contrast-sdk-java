@@ -187,7 +187,7 @@ public class Server {
   /**
    * Return the latest version available version of the agent.
    *
-   * @return the latest version of the Contrast agent
+   * @return the latest version available version of the agent
    */
   public String getLatestAgentVersion() {
     return latestAgentVersion;
