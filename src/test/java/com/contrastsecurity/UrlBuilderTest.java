@@ -1,7 +1,7 @@
 package com.contrastsecurity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.TraceFilterForm;
@@ -11,17 +11,17 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-public class UrlBuilderTest {
+final class UrlBuilderTest {
 
   private static String applicationId;
   private static String organizationId;
   private static String testTrace;
   private static UrlBuilder urlBuilder;
 
-  @BeforeClass
+  @BeforeAll
   public static void setUp() {
     applicationId = "test-app";
     organizationId = "test-org";
@@ -77,7 +77,7 @@ public class UrlBuilderTest {
     assertEquals(expectedUrl, urlBuilder.getApplicationsUrl(organizationId));
   }
 
-  @Test
+  @org.junit.jupiter.api.Test
   public void testApplicationsNamesUrl() {
     String expectedUrl = "/ng/test-org/applications/name";
 
@@ -187,7 +187,7 @@ public class UrlBuilderTest {
     assertEquals(expectedHttpUrl, urlBuilder.getHttpRequestByTraceId(organizationId, testTrace));
   }
 
-  @Test
+  @org.junit.jupiter.api.Test
   public void testGetEventSummaryUrl() {
     String expectedEventSummaryUrl = "/ng/test-org/traces/test-trace/events/summary";
     assertEquals(expectedEventSummaryUrl, urlBuilder.getEventSummary(organizationId, testTrace));
@@ -219,7 +219,7 @@ public class UrlBuilderTest {
     assertEquals(expectedTagsUrl, urlBuilder.deleteTag(organizationId, testTrace));
   }
 
-  @Test
+  @org.junit.jupiter.api.Test
   public void testSetStatusUrl() {
     String expectedTagsUrl = "/ng/test-org/orgtraces/mark";
     assertEquals(expectedTagsUrl, urlBuilder.setTraceStatus(organizationId));
