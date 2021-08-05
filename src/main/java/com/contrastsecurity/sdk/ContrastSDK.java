@@ -30,8 +30,60 @@ package com.contrastsecurity.sdk;
 
 import com.contrastsecurity.exceptions.ApplicationCreateException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
-import com.contrastsecurity.http.*;
-import com.contrastsecurity.models.*;
+import com.contrastsecurity.http.ApplicationFilterForm;
+import com.contrastsecurity.http.FilterForm;
+import com.contrastsecurity.http.HttpMethod;
+import com.contrastsecurity.http.IntegrationName;
+import com.contrastsecurity.http.JobOutcomePolicyListResponse;
+import com.contrastsecurity.http.LibraryFilterForm;
+import com.contrastsecurity.http.MediaType;
+import com.contrastsecurity.http.RequestConstants;
+import com.contrastsecurity.http.SecurityCheckForm;
+import com.contrastsecurity.http.SecurityCheckResponse;
+import com.contrastsecurity.http.ServerFilterForm;
+import com.contrastsecurity.http.TraceFilterForm;
+import com.contrastsecurity.http.TraceFilterKeycode;
+import com.contrastsecurity.http.TraceFilterType;
+import com.contrastsecurity.http.UrlBuilder;
+import com.contrastsecurity.models.AgentType;
+import com.contrastsecurity.models.Application;
+import com.contrastsecurity.models.Applications;
+import com.contrastsecurity.models.AssessLicenseOverview;
+import com.contrastsecurity.models.Chapter;
+import com.contrastsecurity.models.Coverage;
+import com.contrastsecurity.models.EventDetails;
+import com.contrastsecurity.models.EventResource;
+import com.contrastsecurity.models.EventSummaryResponse;
+import com.contrastsecurity.models.GenericResponse;
+import com.contrastsecurity.models.HttpRequestResponse;
+import com.contrastsecurity.models.JobOutcomePolicy;
+import com.contrastsecurity.models.Libraries;
+import com.contrastsecurity.models.LibraryScores;
+import com.contrastsecurity.models.LibraryStats;
+import com.contrastsecurity.models.MakeRequestResponse;
+import com.contrastsecurity.models.MetadataEntity;
+import com.contrastsecurity.models.MetadataFilterResponse;
+import com.contrastsecurity.models.NotificationsResponse;
+import com.contrastsecurity.models.Organizations;
+import com.contrastsecurity.models.PropertyResource;
+import com.contrastsecurity.models.RecommendationResponse;
+import com.contrastsecurity.models.RouteCoverageBySessionIDAndMetadataRequest;
+import com.contrastsecurity.models.RouteCoverageResponse;
+import com.contrastsecurity.models.Rules;
+import com.contrastsecurity.models.SecurityCheck;
+import com.contrastsecurity.models.ServerTagsResponse;
+import com.contrastsecurity.models.Servers;
+import com.contrastsecurity.models.StoryResponse;
+import com.contrastsecurity.models.Tag;
+import com.contrastsecurity.models.Tags;
+import com.contrastsecurity.models.TagsResponse;
+import com.contrastsecurity.models.TraceFilterBody;
+import com.contrastsecurity.models.TraceListing;
+import com.contrastsecurity.models.TraceNotesResponse;
+import com.contrastsecurity.models.Traces;
+import com.contrastsecurity.models.TracesWithResponse;
+import com.contrastsecurity.models.Users;
+import com.contrastsecurity.models.VulnerabilityTrend;
 import com.contrastsecurity.models.dtm.ApplicationCreateRequest;
 import com.contrastsecurity.models.dtm.AttestationCreateRequest;
 import com.contrastsecurity.utils.ContrastSDKUtils;
@@ -43,15 +95,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -60,7 +115,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import lombok.Getter;
-import org.apache.commons.io.IOUtils;
 
 /**
  * Entry point for using the Contrast REST API. Make an instance of this class and call methods.
@@ -163,16 +217,10 @@ public class ContrastSDK {
    */
   public AssessLicenseOverview getAssessLicensing(String organizationId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, this.urlBuilder.getAssessLicensingUrl(organizationId));
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, this.urlBuilder.getAssessLicensingUrl(organizationId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, AssessLicenseOverview.class);
-    } finally {
-      IOUtils.closeQuietly(reader);
-      IOUtils.closeQuietly(is);
     }
   }
   /**
@@ -185,16 +233,10 @@ public class ContrastSDK {
    */
   public VulnerabilityTrend getYearlyVulnTrend(String organizationId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, this.urlBuilder.getYearlyVulnTrendUrl(organizationId));
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, this.urlBuilder.getYearlyVulnTrendUrl(organizationId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, VulnerabilityTrend.class);
-    } finally {
-      IOUtils.closeQuietly(reader);
-      IOUtils.closeQuietly(is);
     }
   }
 
@@ -208,16 +250,11 @@ public class ContrastSDK {
    */
   public VulnerabilityTrend getYearlyNewVulnTrend(String organizationId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, this.urlBuilder.getYearlyNewVulnTrendUrl(organizationId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, this.urlBuilder.getYearlyNewVulnTrendUrl(organizationId));
+        Reader reader = new InputStreamReader(is)) {
 
       return this.gson.fromJson(reader, VulnerabilityTrend.class);
-    } finally {
-      IOUtils.closeQuietly(reader);
-      IOUtils.closeQuietly(is);
     }
   }
 
@@ -232,19 +269,12 @@ public class ContrastSDK {
    */
   public VulnerabilityTrend getYearlyVulnTrendForApplication(String organizationId, String appId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET,
-              this.urlBuilder.getYearlyVulnTrendForApplicationUrl(organizationId, appId));
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET,
+                this.urlBuilder.getYearlyVulnTrendForApplicationUrl(organizationId, appId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, VulnerabilityTrend.class);
-    } finally {
-      IOUtils.closeQuietly(reader);
-      IOUtils.closeQuietly(is);
     }
   }
 
@@ -256,16 +286,11 @@ public class ContrastSDK {
    * @throws IOException if there was a communication problem
    */
   public Organizations getProfileOrganizations() throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, this.urlBuilder.getProfileOrganizationsUrl());
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, this.urlBuilder.getProfileOrganizationsUrl());
+        Reader reader = new InputStreamReader(is)) {
 
       return this.gson.fromJson(reader, Organizations.class);
-    } finally {
-      IOUtils.closeQuietly(reader);
-      IOUtils.closeQuietly(is);
     }
   }
 
@@ -279,16 +304,11 @@ public class ContrastSDK {
    */
   public Users getOrganizationUsers(String organizationId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, this.urlBuilder.getOrganizationUsersUrl(organizationId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, this.urlBuilder.getOrganizationUsersUrl(organizationId));
+        Reader reader = new InputStreamReader(is)) {
 
       return this.gson.fromJson(reader, Users.class);
-    } finally {
-      IOUtils.closeQuietly(reader);
-      IOUtils.closeQuietly(is);
     }
   }
 
@@ -300,16 +320,11 @@ public class ContrastSDK {
    * @throws IOException if there was a communication problem
    */
   public Organizations getProfileDefaultOrganizations() throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, this.urlBuilder.getProfileDefaultOrganizationUrl());
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, this.urlBuilder.getProfileDefaultOrganizationUrl());
+        Reader reader = new InputStreamReader(is)) {
 
       return this.gson.fromJson(reader, Organizations.class);
-    } finally {
-      IOUtils.closeQuietly(reader);
-      IOUtils.closeQuietly(is);
     }
   }
 
@@ -449,19 +464,13 @@ public class ContrastSDK {
   public Applications getApplication(
       String organizationId, String appId, EnumSet<FilterForm.ApplicationExpandValues> expandValues)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET,
-              this.urlBuilder.getApplicationUrl(organizationId, appId, expandValues));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET,
+                this.urlBuilder.getApplicationUrl(organizationId, appId, expandValues));
+        Reader reader = new InputStreamReader(is)) {
 
       return this.gson.fromJson(reader, Applications.class);
-    } finally {
-      IOUtils.closeQuietly(reader);
-      IOUtils.closeQuietly(is);
     }
   }
 
@@ -475,15 +484,10 @@ public class ContrastSDK {
    */
   public Applications getApplications(String organizationId)
       throws UnauthorizedException, IOException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationsUrl(organizationId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getApplicationsUrl(organizationId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, Applications.class);
-    } finally {
-      IOUtils.closeQuietly(reader);
-      IOUtils.closeQuietly(is);
     }
   }
 
@@ -499,18 +503,12 @@ public class ContrastSDK {
   public Applications getFilteredApplications(
       String organizationId, ApplicationFilterForm applicationFilterForm)
       throws UnauthorizedException, IOException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET,
-              urlBuilder.getApplicationFilterUrl(organizationId, applicationFilterForm));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET,
+                urlBuilder.getApplicationFilterUrl(organizationId, applicationFilterForm));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, Applications.class);
-    } finally {
-      IOUtils.closeQuietly(reader);
-      IOUtils.closeQuietly(is);
     }
   }
 
@@ -524,29 +522,19 @@ public class ContrastSDK {
    */
   public Applications getLicensedApplications(String organizationId)
       throws UnauthorizedException, IOException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getLicensedApplicationsUrl(organizationId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getLicensedApplicationsUrl(organizationId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, Applications.class);
-    } finally {
-      IOUtils.closeQuietly(reader);
-      IOUtils.closeQuietly(is);
     }
   }
 
   public Applications getApplicationsNames(String organizationId)
       throws UnauthorizedException, IOException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getApplicationsNameUrl(organizationId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getApplicationsNameUrl(organizationId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, Applications.class);
-    } finally {
-      IOUtils.closeQuietly(reader);
-      IOUtils.closeQuietly(is);
     }
   }
 
@@ -563,25 +551,16 @@ public class ContrastSDK {
   public RouteCoverageResponse getRouteCoverage(
       String organizationId, String appId, RouteCoverageBySessionIDAndMetadataRequest metadata)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      if (metadata == null) {
-        is = makeRequest(HttpMethod.GET, urlBuilder.getRouteCoverageUrl(organizationId, appId));
-      } else {
-        is =
-            makeRequestWithBody(
-                HttpMethod.POST,
-                urlBuilder.getRouteCoverageWithMetadataUrl(organizationId, appId),
-                this.gson.toJson(metadata),
-                MediaType.JSON);
-      }
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            metadata == null
+                ? makeRequest(HttpMethod.GET, urlBuilder.getRouteCoverageUrl(organizationId, appId))
+                : makeRequestWithBody(
+                    HttpMethod.POST,
+                    urlBuilder.getRouteCoverageWithMetadataUrl(organizationId, appId),
+                    this.gson.toJson(metadata),
+                    MediaType.JSON);
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, RouteCoverageResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -596,16 +575,10 @@ public class ContrastSDK {
    */
   public Coverage getCoverage(String organizationId, String appId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getCoverageUrl(organizationId, appId));
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getCoverageUrl(organizationId, appId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, Coverage.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -620,16 +593,10 @@ public class ContrastSDK {
    */
   public Libraries getLibraries(String organizationId, LibraryFilterForm filterForm)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getLibrariesUrl(organizationId, filterForm));
-      reader = new InputStreamReader(is);
-
-      return this.gson.fromJson(reader, Libraries.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getLibrariesUrl(organizationId, filterForm));
+        Reader reader = new InputStreamReader(is)) {
+      return gson.fromJson(reader, Libraries.class);
     }
   }
 
@@ -644,17 +611,11 @@ public class ContrastSDK {
    */
   public Libraries getLibrariesWithFilter(String organizationId, LibraryFilterForm filterForm)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(HttpMethod.GET, urlBuilder.getLibrariesFilterUrl(organizationId, filterForm));
-      reader = new InputStreamReader(is);
-
-      return this.gson.fromJson(reader, Libraries.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET, urlBuilder.getLibrariesFilterUrl(organizationId, filterForm));
+        Reader reader = new InputStreamReader(is)) {
+      return gson.fromJson(reader, Libraries.class);
     }
   }
 
@@ -676,18 +637,11 @@ public class ContrastSDK {
   public Libraries getLibraries(
       String organizationId, String appId, EnumSet<FilterForm.LibrariesExpandValues> expandValues)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET, urlBuilder.getLibrariesUrl(organizationId, appId, expandValues));
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET, urlBuilder.getLibrariesUrl(organizationId, appId, expandValues));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, Libraries.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -698,24 +652,17 @@ public class ContrastSDK {
    * @param appId the ID of the application
    * @param filterForm FilterForm query parameters
    * @return Libraries object that contains the list of Library objects
-   * @throws UnauthorizedException if the Contrast account failed to authorize
    * @throws IOException if there was a communication problem
    */
   public Libraries getLibrariesWithFilter(
       String organizationId, String appId, LibraryFilterForm filterForm)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET, urlBuilder.getLibrariesFilterUrl(organizationId, appId, filterForm));
-      reader = new InputStreamReader(is);
-
-      return this.gson.fromJson(reader, Libraries.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET,
+                urlBuilder.getLibrariesFilterUrl(organizationId, appId, filterForm));
+        Reader reader = new InputStreamReader(is)) {
+      return gson.fromJson(reader, Libraries.class);
     }
   }
 
@@ -729,16 +676,11 @@ public class ContrastSDK {
    */
   public LibraryScores getLibraryScores(String organizationId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getLibraryScoresUrl(organizationId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getLibraryScoresUrl(organizationId));
+        Reader reader = new InputStreamReader(is)) {
 
       return this.gson.fromJson(reader, LibraryScores.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
   /**
@@ -751,16 +693,11 @@ public class ContrastSDK {
    */
   public LibraryStats getLibraryStats(String organizationId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getLibraryStatsUrl(organizationId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getLibraryStatsUrl(organizationId));
+        Reader reader = new InputStreamReader(is)) {
 
       return this.gson.fromJson(reader, LibraryStats.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -775,16 +712,11 @@ public class ContrastSDK {
    */
   public Servers getServers(String organizationId, ServerFilterForm filterForm)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getServersUrl(organizationId, filterForm));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getServersUrl(organizationId, filterForm));
+        Reader reader = new InputStreamReader(is)) {
 
       return this.gson.fromJson(reader, Servers.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -799,16 +731,12 @@ public class ContrastSDK {
    */
   public Servers getServersWithFilter(String organizationId, ServerFilterForm filterForm)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getServersFilterUrl(organizationId, filterForm));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET, urlBuilder.getServersFilterUrl(organizationId, filterForm));
+        Reader reader = new InputStreamReader(is)) {
 
       return this.gson.fromJson(reader, Servers.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -826,17 +754,11 @@ public class ContrastSDK {
   @Deprecated
   public Traces getTraces(String organizationId, String appId, TraceFilterForm form)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET, urlBuilder.getTracesByApplicationUrl(organizationId, appId, form));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET, urlBuilder.getTracesByApplicationUrl(organizationId, appId, form));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, Traces.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -852,20 +774,14 @@ public class ContrastSDK {
    */
   public Traces getTraces(String organizationId, String appId, TraceFilterBody filters)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequestWithBody(
-              HttpMethod.POST,
-              urlBuilder.getTracesWithBodyUrl(organizationId, appId),
-              this.gson.toJson(filters),
-              MediaType.JSON);
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequestWithBody(
+                HttpMethod.POST,
+                urlBuilder.getTracesWithBodyUrl(organizationId, appId),
+                this.gson.toJson(filters),
+                MediaType.JSON);
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, Traces.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -882,18 +798,14 @@ public class ContrastSDK {
   public TracesWithResponse getTracesWithResponse(
       String organizationId, String appId, TraceFilterForm form)
       throws IOException, UnauthorizedException {
-    InputStreamReader reader = null;
-    try {
-      MakeRequestResponse mrr =
-          makeRequestWithResponse(
-              HttpMethod.GET, urlBuilder.getTracesByApplicationUrl(organizationId, appId, form));
-      reader = new InputStreamReader(mrr.is);
+    MakeRequestResponse mrr =
+        makeRequestWithResponse(
+            HttpMethod.GET, urlBuilder.getTracesByApplicationUrl(organizationId, appId, form));
+    try (Reader reader = new InputStreamReader(mrr.is)) {
       TracesWithResponse twr = new TracesWithResponse();
       twr.t = this.gson.fromJson(reader, Traces.class);
       twr.rc = mrr.rc;
       return twr;
-    } finally {
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -911,18 +823,12 @@ public class ContrastSDK {
   public TraceNotesResponse getNotes(
       String organizationId, String appId, String traceId, TraceFilterForm form)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET,
-              urlBuilder.getNotesByApplicationUrl(organizationId, appId, traceId, form));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET,
+                urlBuilder.getNotesByApplicationUrl(organizationId, appId, traceId, form));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, TraceNotesResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -938,17 +844,11 @@ public class ContrastSDK {
    */
   public RecommendationResponse getRecommendation(String organizationId, String traceId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET, urlBuilder.getRecommendationByTraceId(organizationId, traceId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET, urlBuilder.getRecommendationByTraceId(organizationId, traceId));
+        Reader reader = new InputStreamReader(is)) {
       return gson.fromJson(reader, RecommendationResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -964,58 +864,58 @@ public class ContrastSDK {
    */
   public StoryResponse getStory(String organizationId, String traceId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getStoryByTraceId(organizationId, traceId));
-      reader = new InputStreamReader(is);
-
-      String inputString = IOUtils.toString(is, "UTF-8");
-      StoryResponse story = gson.fromJson(inputString, StoryResponse.class);
-      JsonObject object = (JsonObject) new JsonParser().parse(inputString);
-      JsonObject storyObject = (JsonObject) object.get("story");
-      if (storyObject != null) {
-        JsonArray chaptersArray = (JsonArray) storyObject.get("chapters");
-        List<Chapter> chapters = story.getStory().getChapters();
-        if (chapters == null) {
-          chapters = new ArrayList<>();
-        } else {
-          chapters.clear();
-        }
-        for (int i = 0; i < chaptersArray.size(); i++) {
-          JsonObject member = (JsonObject) chaptersArray.get(i);
-          Chapter chapter = gson.fromJson(member, Chapter.class);
-          chapters.add(chapter);
-          JsonObject properties = (JsonObject) member.get("properties");
-          if (properties != null) {
-            Set<Entry<String, JsonElement>> entries = properties.entrySet();
-            Iterator<Entry<String, JsonElement>> iter = entries.iterator();
-            List<PropertyResource> propertyResources = new ArrayList<>();
-            chapter.setPropertyResources(propertyResources);
-            while (iter.hasNext()) {
-              Entry<String, JsonElement> prop = iter.next();
-              // String key = prop.getKey();
-              JsonElement entryValue = prop.getValue();
-              if (entryValue != null && entryValue.isJsonObject()) {
-                JsonObject obj = (JsonObject) entryValue;
-                JsonElement name = obj.get("name");
-                JsonElement value = obj.get("value");
-                if (name != null && value != null) {
-                  PropertyResource propertyResource = new PropertyResource();
-                  propertyResource.setName(name.getAsString());
-                  propertyResource.setValue(value.getAsString());
-                  propertyResources.add(propertyResource);
-                }
+    final String inputString;
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getStoryByTraceId(organizationId, traceId));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+      final byte[] buffer = new byte[4096];
+      int read;
+      while ((read = is.read(buffer)) > 0) {
+        bos.write(buffer, 0, read);
+      }
+      inputString = bos.toString(StandardCharsets.UTF_8.name());
+    }
+    StoryResponse story = gson.fromJson(inputString, StoryResponse.class);
+    JsonObject object = (JsonObject) new JsonParser().parse(inputString);
+    JsonObject storyObject = (JsonObject) object.get("story");
+    if (storyObject != null) {
+      JsonArray chaptersArray = (JsonArray) storyObject.get("chapters");
+      List<Chapter> chapters = story.getStory().getChapters();
+      if (chapters == null) {
+        chapters = new ArrayList<>();
+      } else {
+        chapters.clear();
+      }
+      for (int i = 0; i < chaptersArray.size(); i++) {
+        JsonObject member = (JsonObject) chaptersArray.get(i);
+        Chapter chapter = gson.fromJson(member, Chapter.class);
+        chapters.add(chapter);
+        JsonObject properties = (JsonObject) member.get("properties");
+        if (properties != null) {
+          Set<Entry<String, JsonElement>> entries = properties.entrySet();
+          Iterator<Entry<String, JsonElement>> iter = entries.iterator();
+          List<PropertyResource> propertyResources = new ArrayList<>();
+          chapter.setPropertyResources(propertyResources);
+          while (iter.hasNext()) {
+            Entry<String, JsonElement> prop = iter.next();
+            // String key = prop.getKey();
+            JsonElement entryValue = prop.getValue();
+            if (entryValue != null && entryValue.isJsonObject()) {
+              JsonObject obj = (JsonObject) entryValue;
+              JsonElement name = obj.get("name");
+              JsonElement value = obj.get("value");
+              if (name != null && value != null) {
+                PropertyResource propertyResource = new PropertyResource();
+                propertyResource.setName(name.getAsString());
+                propertyResource.setValue(value.getAsString());
+                propertyResources.add(propertyResource);
               }
             }
           }
         }
       }
-      return story;
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
+    return story;
   }
 
   /**
@@ -1029,11 +929,9 @@ public class ContrastSDK {
    */
   public EventSummaryResponse getEventSummary(String organizationId, String traceId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getEventSummary(organizationId, traceId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getEventSummary(organizationId, traceId));
+        Reader reader = new InputStreamReader(is)) {
       EventSummaryResponse eventResource = gson.fromJson(reader, EventSummaryResponse.class);
       for (EventResource event : eventResource.getEvents()) {
         if (event.getCollapsedEvents() != null && !event.getCollapsedEvents().isEmpty()) {
@@ -1044,9 +942,6 @@ public class ContrastSDK {
         }
       }
       return eventResource;
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1082,17 +977,12 @@ public class ContrastSDK {
    */
   private EventDetails getEventDetails(EventResource event, String organizationId, String traceId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET, urlBuilder.getEventDetails(organizationId, traceId, event.getId()));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET,
+                urlBuilder.getEventDetails(organizationId, traceId, event.getId()));
+        Reader reader = new InputStreamReader(is)) {
       return gson.fromJson(reader, EventDetails.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1107,15 +997,11 @@ public class ContrastSDK {
    */
   public HttpRequestResponse getHttpRequest(String organizationId, String traceId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getHttpRequestByTraceId(organizationId, traceId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET, urlBuilder.getHttpRequestByTraceId(organizationId, traceId));
+        Reader reader = new InputStreamReader(is)) {
       return gson.fromJson(reader, HttpRequestResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1130,17 +1016,11 @@ public class ContrastSDK {
    */
   public TagsResponse getVulnTagsByApplication(String organizationId, String appId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET, urlBuilder.getTraceTagsByApplicationUrl(organizationId, appId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET, urlBuilder.getTraceTagsByApplicationUrl(organizationId, appId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, TagsResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1157,18 +1037,12 @@ public class ContrastSDK {
   public MetadataFilterResponse getSessionMetadataForApplication(
       String organizationId, String appId, TraceFilterForm form)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET,
-              urlBuilder.getSessionMetadataForApplicationUrl(organizationId, appId, form));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET,
+                urlBuilder.getSessionMetadataForApplicationUrl(organizationId, appId, form));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, MetadataFilterResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1184,21 +1058,15 @@ public class ContrastSDK {
   public GenericResponse generateAttestationReport(
       String organizationId, String appId, AttestationCreateRequest request)
       throws IOException, UnauthorizedException, ApplicationCreateException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeCreateRequest(
-              HttpMethod.POST,
-              urlBuilder.getAttestationReportByApplicationUrl(organizationId, appId),
-              this.gson.toJson(request),
-              MediaType.JSON,
-              true);
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeCreateRequest(
+                HttpMethod.POST,
+                urlBuilder.getAttestationReportByApplicationUrl(organizationId, appId),
+                this.gson.toJson(request),
+                MediaType.JSON,
+                true);
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, GenericResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1230,16 +1098,11 @@ public class ContrastSDK {
    */
   public NotificationsResponse getNotifications(String organizationId, TraceFilterForm form)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getNotificationsUrl(organizationId, form));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getNotificationsUrl(organizationId, form));
+        Reader reader = new InputStreamReader(is)) {
 
       return this.gson.fromJson(reader, NotificationsResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1254,15 +1117,10 @@ public class ContrastSDK {
    */
   public ServerTagsResponse getServerTags(String organizationId, String appId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getServerTagsUrl(organizationId, appId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getServerTagsUrl(organizationId, appId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, ServerTagsResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1278,16 +1136,11 @@ public class ContrastSDK {
    */
   public TagsResponse deleteVulnerabilityTag(String organizationId, String traceId, Tag tag)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      String tagsUrl = urlBuilder.deleteTag(organizationId, traceId);
-      is = makeRequestWithBody(HttpMethod.DELETE, tagsUrl, gson.toJson(tag), MediaType.JSON);
-      reader = new InputStreamReader(is);
+    String tagsUrl = urlBuilder.deleteTag(organizationId, traceId);
+    try (InputStream is =
+            makeRequestWithBody(HttpMethod.DELETE, tagsUrl, gson.toJson(tag), MediaType.JSON);
+        Reader reader = new InputStreamReader(is)) {
       return gson.fromJson(reader, TagsResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1303,15 +1156,10 @@ public class ContrastSDK {
    */
   public TagsResponse getTagsByTrace(String organizationId, String traceId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getTagsByTrace(organizationId, traceId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getTagsByTrace(organizationId, traceId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, TagsResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1326,15 +1174,10 @@ public class ContrastSDK {
    */
   public TagsResponse getTraceTagsByOrganization(String organizationId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getOrCreateTagsByOrganization(organizationId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getOrCreateTagsByOrganization(organizationId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, TagsResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1348,25 +1191,19 @@ public class ContrastSDK {
    */
   public TagsResponse createTag(String organizationId, Tags tags)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
     Gson gson =
         new GsonBuilder()
             .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer())
             .create();
-    try {
-      String tagsUrl = urlBuilder.getOrCreateTagsByOrganization(organizationId);
-      is =
-          makeRequestWithBody(
-              HttpMethod.PUT,
-              tagsUrl,
-              gson.toJson(tags.setTagNamesAndGetTagObject()),
-              MediaType.JSON);
-      reader = new InputStreamReader(is);
+    String tagsUrl = urlBuilder.getOrCreateTagsByOrganization(organizationId);
+    try (InputStream is =
+            makeRequestWithBody(
+                HttpMethod.PUT,
+                tagsUrl,
+                gson.toJson(tags.setTagNamesAndGetTagObject()),
+                MediaType.JSON);
+        Reader reader = new InputStreamReader(is)) {
       return gson.fromJson(reader, TagsResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1380,15 +1217,10 @@ public class ContrastSDK {
    */
   public GenericResponse clearNotifications(String organizationId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.PUT, urlBuilder.clearNotificationsUrl(organizationId));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.PUT, urlBuilder.clearNotificationsUrl(organizationId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, GenericResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1403,16 +1235,12 @@ public class ContrastSDK {
    */
   public Traces getTracesInOrg(String organizationId, TraceFilterForm form)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getTracesByOrganizationUrl(organizationId, form));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET, urlBuilder.getTracesByOrganizationUrl(organizationId, form));
+        Reader reader = new InputStreamReader(is)) {
 
       return this.gson.fromJson(reader, Traces.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1427,35 +1255,24 @@ public class ContrastSDK {
    */
   public TraceListing getTraceFilters(String organizationId, String appId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET,
-              urlBuilder.getTraceListingUrl(organizationId, appId, TraceFilterType.VULNTYPE));
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET,
+                urlBuilder.getTraceListingUrl(organizationId, appId, TraceFilterType.VULNTYPE));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, TraceListing.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
   public TraceListing getTraceFiltersByType(
       String organizationId, String appId, TraceFilterType type)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getTraceListingUrl(organizationId, appId, type));
-      reader = new InputStreamReader(is);
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET, urlBuilder.getTraceListingUrl(organizationId, appId, type));
+        Reader reader = new InputStreamReader(is)) {
 
       return this.gson.fromJson(reader, TraceListing.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1478,42 +1295,26 @@ public class ContrastSDK {
       TraceFilterKeycode keycode,
       TraceFilterForm form)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET,
-              urlBuilder.getTracesWithFilterUrl(
-                  organizationId, appId, traceFilterType, keycode, form));
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET,
+                urlBuilder.getTracesWithFilterUrl(
+                    organizationId, appId, traceFilterType, keycode, form));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, Traces.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
   public GenericResponse setTraceStatus(String organizationId, String statusRequest)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-
-    try {
-      is =
-          makeRequestWithBody(
-              HttpMethod.PUT,
-              urlBuilder.setTraceStatus(organizationId),
-              statusRequest,
-              MediaType.JSON);
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            makeRequestWithBody(
+                HttpMethod.PUT,
+                urlBuilder.setTraceStatus(organizationId),
+                statusRequest,
+                MediaType.JSON);
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, GenericResponse.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1530,23 +1331,14 @@ public class ContrastSDK {
   @Deprecated
   public Traces getTraceFilterByRule(String organizationId, String appId, List<String> ruleNames)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-
     TraceFilterForm ruleNameForm = new TraceFilterForm();
     ruleNameForm.setVulnTypes(ruleNames);
-
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET,
-              urlBuilder.getTracesByApplicationUrl(organizationId, appId, ruleNameForm));
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET,
+                urlBuilder.getTracesByApplicationUrl(organizationId, appId, ruleNameForm));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, Traces.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1561,22 +1353,15 @@ public class ContrastSDK {
    */
   public SecurityCheck makeSecurityCheck(String organizationId, SecurityCheckForm securityCheckForm)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequestWithBody(
-              HttpMethod.POST,
-              urlBuilder.getSecurityCheckUrl(organizationId),
-              this.gson.toJson(securityCheckForm),
-              MediaType.JSON);
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            makeRequestWithBody(
+                HttpMethod.POST,
+                urlBuilder.getSecurityCheckUrl(organizationId),
+                this.gson.toJson(securityCheckForm),
+                MediaType.JSON);
+        Reader reader = new InputStreamReader(is)) {
       SecurityCheckResponse response = this.gson.fromJson(reader, SecurityCheckResponse.class);
       return response.getSecurityCheck();
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1590,19 +1375,13 @@ public class ContrastSDK {
    */
   public List<JobOutcomePolicy> getEnabledJobOutcomePolicies(String organizationId)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(HttpMethod.GET, urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId));
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET, urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId));
+        Reader reader = new InputStreamReader(is)) {
       JobOutcomePolicyListResponse response =
           this.gson.fromJson(reader, JobOutcomePolicyListResponse.class);
       return response.getPolicies();
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1615,21 +1394,14 @@ public class ContrastSDK {
    */
   public List<JobOutcomePolicy> getEnabledJoboutcomePoliciesByApplication(
       String organizationId, String appId) throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-    try {
-      is =
-          makeRequest(
-              HttpMethod.GET,
-              urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(organizationId, appId));
-      reader = new InputStreamReader(is);
-
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET,
+                urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(organizationId, appId));
+        Reader reader = new InputStreamReader(is)) {
       JobOutcomePolicyListResponse response =
           this.gson.fromJson(reader, JobOutcomePolicyListResponse.class);
       return response.getPolicies();
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1642,17 +1414,9 @@ public class ContrastSDK {
    * @throws IOException if there was a communication problem
    */
   public Rules getRules(String organizationId) throws IOException, UnauthorizedException {
-    InputStream is = null;
-    InputStreamReader reader = null;
-
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getRules(organizationId));
-      reader = new InputStreamReader(is);
-
+    try (InputStream is = makeRequest(HttpMethod.GET, urlBuilder.getRules(organizationId));
+        Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, Rules.class);
-    } finally {
-      IOUtils.closeQuietly(is);
-      IOUtils.closeQuietly(reader);
     }
   }
 
@@ -1671,13 +1435,15 @@ public class ContrastSDK {
    */
   public byte[] getAgent(AgentType type, String organizationId, String profileName)
       throws IOException, UnauthorizedException {
-    InputStream is = null;
-    try {
-      is = makeRequest(HttpMethod.GET, urlBuilder.getAgentUrl(type, organizationId, profileName));
-
-      return IOUtils.toByteArray(is);
-    } finally {
-      IOUtils.closeQuietly(is);
+    try (InputStream is =
+            makeRequest(HttpMethod.GET, urlBuilder.getAgentUrl(type, organizationId, profileName));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+      final byte[] buffer = new byte[4096];
+      int read;
+      while ((read = is.read(buffer)) > 0) {
+        bos.write(buffer, 0, read);
+      }
+      return bos.toByteArray();
     }
   }
 
@@ -1704,7 +1470,6 @@ public class ContrastSDK {
       HttpMethod method, String path, String body, MediaType mediaType)
       throws IOException, UnauthorizedException {
     String url = restApiURL + path;
-    OutputStream os = null;
     HttpURLConnection connection = makeConnection(url, method.toString());
     if (mediaType != null
         && body != null
@@ -1713,17 +1478,15 @@ public class ContrastSDK {
             || method.equals(HttpMethod.DELETE))) {
       connection.setDoOutput(true);
       connection.setRequestProperty("Content-Type", mediaType.getType());
-      os = connection.getOutputStream();
-      byte[] bodyByte = body.getBytes("utf-8");
-      os.write(bodyByte, 0, bodyByte.length);
-    }
-    int rc = connection.getResponseCode();
-    InputStream is = connection.getInputStream();
-    if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
-      IOUtils.closeQuietly(is);
-      if (os != null) {
-        IOUtils.closeQuietly(os);
+      try (OutputStream os = connection.getOutputStream()) {
+        byte[] bodyByte = body.getBytes(StandardCharsets.UTF_8);
+        os.write(bodyByte, 0, bodyByte.length);
       }
+    }
+    final InputStream is = connection.getInputStream();
+    int rc = connection.getResponseCode();
+    if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+      is.close();
       throw new UnauthorizedException(rc);
     }
     return is;
@@ -1732,13 +1495,11 @@ public class ContrastSDK {
   public InputStream makeRequest(HttpMethod method, String path)
       throws IOException, UnauthorizedException {
     String url = restApiURL + path;
-
     HttpURLConnection connection = makeConnection(url, method.toString());
-    InputStream is = connection.getInputStream();
-
+    final InputStream is = connection.getInputStream();
     int rc = connection.getResponseCode();
     if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
-      IOUtils.closeQuietly(is);
+      is.close();
       throw new UnauthorizedException(rc);
     }
     return is;
@@ -1752,7 +1513,7 @@ public class ContrastSDK {
     InputStream is = connection.getInputStream();
     int rc = connection.getResponseCode();
     if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
-      IOUtils.closeQuietly(is);
+      is.close();
       throw new UnauthorizedException(rc);
     }
     MakeRequestResponse mrr = new MakeRequestResponse();

@@ -3,7 +3,8 @@ package com.contrastsecurity.http;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ApplicationFilterForm extends FilterForm {
 
@@ -189,40 +190,44 @@ public class ApplicationFilterForm extends FilterForm {
 
     List<String> filters = new ArrayList<>();
 
-    if (StringUtils.isNotEmpty(filterText)) {
+    if ((filterText != null && !filterText.isEmpty())) {
       filters.add("filterText=" + filterText);
     }
 
-    if (StringUtils.isNotEmpty(filterAppCode)) {
+    if ((filterAppCode != null && !filterAppCode.isEmpty())) {
       filters.add("filterAppCode=" + filterAppCode);
     }
 
     if (!filterServers.isEmpty()) {
-      filters.add("filterServers=" + StringUtils.join(filterServers, ","));
+      filters.add("filterServers=" + String.join(",", filterServers));
     }
 
     if (!filterTechs.isEmpty()) {
-      filters.add("filterTechs=" + StringUtils.join(filterTechs, ","));
+      filters.add("filterTechs=" + String.join(",", filterTechs));
     }
 
     if (!filterTags.isEmpty()) {
-      filters.add("filterTags=" + StringUtils.join(filterTags, ","));
+      filters.add("filterTags=" + String.join(",", filterTags));
     }
 
     if (!filterCompliance.isEmpty()) {
-      filters.add("filterCompliance=" + StringUtils.join(filterCompliance, ","));
+      filters.add("filterCompliance=" + String.join(",", filterCompliance));
     }
 
     if (!filterLanguages.isEmpty()) {
-      filters.add("filterLanguages=" + StringUtils.join(filterLanguages, ","));
+      filters.add("filterLanguages=" + String.join(",", filterLanguages));
     }
 
     if (environment != null && !environment.isEmpty()) {
-      filters.add("environments=" + StringUtils.join(environment, ","));
+      final Set<String> environments =
+          environment.stream().map(Object::toString).collect(Collectors.toSet());
+      filters.add("environments=" + String.join(",", environments));
     }
 
     if (filterVulnSeverities != null && !filterVulnSeverities.isEmpty()) {
-      filters.add("filterVulnSeverities=" + StringUtils.join(filterVulnSeverities, ","));
+      final Set<String> severities =
+          filterVulnSeverities.stream().map(Object::toString).collect(Collectors.toSet());
+      filters.add("filterVulnSeverities=" + String.join(",", severities));
     }
 
     filters.add("includeArchived=" + includeArchived);
@@ -236,12 +241,12 @@ public class ApplicationFilterForm extends FilterForm {
     String result;
 
     if (!filters.isEmpty()) {
-      result = StringUtils.join(filters, "&");
+      result = String.join("&", filters);
     } else {
       return formString;
     }
 
-    if (StringUtils.isNotEmpty(formString)) {
+    if ((formString != null && !formString.isEmpty())) {
       return formString + "&" + result;
     } else {
       return "?" + result;
