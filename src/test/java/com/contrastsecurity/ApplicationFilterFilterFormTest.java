@@ -1,7 +1,6 @@
 package com.contrastsecurity;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.FilterForm;
@@ -30,13 +29,13 @@ final class ApplicationFilterFilterFormTest {
 
     String qs = filterForm.toString();
 
-    assertFalse(qs.isEmpty());
+    assertThat(qs.isEmpty()).isFalse();
 
-    assertTrue(qs.contains("limit"));
-    assertTrue(qs.contains("offset"));
-    assertTrue(qs.contains("status"));
-    assertFalse(qs.contains("sort"));
-    assertFalse(qs.contains("startDate"));
+    assertThat(qs.contains("limit")).isTrue();
+    assertThat(qs.contains("offset")).isTrue();
+    assertThat(qs.contains("status")).isTrue();
+    assertThat(qs.contains("sort")).isFalse();
+    assertThat(qs.contains("startDate")).isFalse();
   }
 
   @Test
@@ -60,22 +59,22 @@ final class ApplicationFilterFilterFormTest {
 
     String qs = filterForm.toString();
 
-    assertFalse(qs.isEmpty());
+    assertThat(qs.isEmpty()).isFalse();
 
-    assertTrue(qs.contains("filterAppCode"));
-    assertTrue(qs.contains("filterCompliance"));
-    assertTrue(qs.contains("filterLanguages"));
-    assertTrue(qs.contains("filterServers"));
-    assertTrue(qs.contains("filterTags"));
-    assertTrue(qs.contains("filterTechs"));
-    assertTrue(qs.contains("filterText"));
-    assertTrue(qs.contains("filterVulnSeverities"));
-    assertTrue(qs.contains("environment"));
-    assertTrue(qs.contains("quickFilter"));
+    assertThat(qs.contains("filterAppCode")).isTrue();
+    assertThat(qs.contains("filterCompliance")).isTrue();
+    assertThat(qs.contains("filterLanguages")).isTrue();
+    assertThat(qs.contains("filterServers")).isTrue();
+    assertThat(qs.contains("filterTags")).isTrue();
+    assertThat(qs.contains("filterTechs")).isTrue();
+    assertThat(qs.contains("filterText")).isTrue();
+    assertThat(qs.contains("filterVulnSeverities")).isTrue();
+    assertThat(qs.contains("environment")).isTrue();
+    assertThat(qs.contains("quickFilter")).isTrue();
 
-    assertTrue(qs.contains("includeArchived"));
-    assertTrue(qs.contains("includeMerged"));
-    assertTrue(qs.contains("includeOnlyLicensed"));
+    assertThat(qs.contains("includeArchived")).isTrue();
+    assertThat(qs.contains("includeMerged")).isTrue();
+    assertThat(qs.contains("includeOnlyLicensed")).isTrue();
   }
 
   @Test
@@ -88,16 +87,16 @@ final class ApplicationFilterFilterFormTest {
 
     String qs = filterForm.toString();
 
-    assertFalse(qs.isEmpty());
+    assertThat(qs.isEmpty()).isFalse();
 
-    assertTrue(qs.contains("expand"));
+    assertThat(qs.contains("expand")).isTrue();
 
     String expandValues = qs.split("=")[1];
     ArrayList<String> values = new ArrayList<>(Arrays.asList(expandValues.split(",")));
 
-    assertTrue(values.contains("scores"));
-    assertFalse(values.contains("apps"));
-    assertFalse(values.contains("test"));
-    assertFalse(values.contains("libs"));
+    assertThat(values.contains("scores")).isTrue();
+    assertThat(values.contains("apps")).isFalse();
+    assertThat(values.contains("test")).isFalse();
+    assertThat(values.contains("libs")).isFalse();
   }
 }
