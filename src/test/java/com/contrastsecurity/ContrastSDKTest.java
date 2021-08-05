@@ -1,11 +1,6 @@
 package com.contrastsecurity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.contrastsecurity.exceptions.InvalidConversionException;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
@@ -70,10 +65,10 @@ final class ContrastSDKTest extends ContrastSDK {
         "{\"application\":{\"app_id\":\"3da856f4-c508-48b8-95a9-514eddefcbf3\",\"archived\":false,\"created\":1461599820000,\"status\":\"offline\",\"path\":\"/WebGoat\",\"name\":\"WebGoat\",\"language\":\"Java\",\"last_seen\":1461737160000,\"total_modules\":1,\"master\":false}}";
 
     Applications app = gson.fromJson(applicationString, Applications.class);
-    assertNotNull(app);
-    assertNotNull(app.getApplication());
+    assertThat(app).isNotNull();
+    assertThat(app.getApplication()).isNotNull();
 
-    assertNull(app.getApplications());
+    assertThat(app.getApplications()).isNull();
   }
 
   @Test
@@ -85,11 +80,11 @@ final class ContrastSDKTest extends ContrastSDK {
 
     Applications apps = gson.fromJson(applicationsString, Applications.class);
 
-    assertNotNull(apps);
-    assertNotNull(apps.getApplications());
+    assertThat(apps).isNotNull();
+    assertThat(apps.getApplications()).isNotNull();
 
-    assertNull(apps.getApplication());
-    assertTrue(!apps.getApplications().isEmpty());
+    assertThat(apps.getApplication()).isNull();
+    assertThat(!apps.getApplications().isEmpty()).isTrue();
   }
 
   @Test
@@ -101,11 +96,11 @@ final class ContrastSDKTest extends ContrastSDK {
 
     Applications apps = gson.fromJson(applicationsString, Applications.class);
 
-    assertNotNull(apps);
-    assertNotNull(apps.getApplications());
+    assertThat(apps).isNotNull();
+    assertThat(apps.getApplications()).isNotNull();
 
-    assertNull(apps.getApplication());
-    assertTrue(!apps.getApplications().isEmpty());
+    assertThat(apps.getApplication()).isNull();
+    assertThat(!apps.getApplications().isEmpty()).isTrue();
   }
 
   @Test
@@ -118,21 +113,22 @@ final class ContrastSDKTest extends ContrastSDK {
 
     Applications apps = gson.fromJson(applicationsString, Applications.class);
 
-    assertNotNull(apps);
-    assertNotNull(apps.getApplications());
+    assertThat(apps).isNotNull();
+    assertThat(apps.getApplications()).isNotNull();
 
-    assertNotNull(apps.getApplications().get(0).getMetadataEntities());
+    assertThat(apps.getApplications().get(0).getMetadataEntities()).isNotNull();
     MetadataEntity[] metadataEntities = apps.getApplications().get(0).getMetadataEntities();
-    assertEquals(3, apps.getApplications().get(0).getMetadataEntities().length);
+    assertThat(apps.getApplications().get(0).getMetadataEntities().length).isEqualTo(3);
 
-    assertNotNull(metadataEntities[0]);
-    assertEquals(metadataEntities[0].getType(), MetadataEntity.MetadataType.POINT_OF_CONTACT);
+    assertThat(metadataEntities[0]).isNotNull();
+    assertThat(MetadataEntity.MetadataType.POINT_OF_CONTACT)
+        .isEqualTo(metadataEntities[0].getType());
 
-    assertNotNull(metadataEntities[1]);
-    assertEquals(metadataEntities[1].getType(), MetadataEntity.MetadataType.STRING);
+    assertThat(metadataEntities[1]).isNotNull();
+    assertThat(MetadataEntity.MetadataType.STRING).isEqualTo(metadataEntities[1].getType());
 
-    assertNotNull(metadataEntities[2]);
-    assertEquals(metadataEntities[2].getType(), MetadataEntity.MetadataType.NUMERIC);
+    assertThat(metadataEntities[2]).isNotNull();
+    assertThat(MetadataEntity.MetadataType.NUMERIC).isEqualTo(metadataEntities[2].getType());
   }
 
   @Test
@@ -143,10 +139,10 @@ final class ContrastSDKTest extends ContrastSDK {
 
     Traces traces = gson.fromJson(tracesString, Traces.class);
 
-    assertNotNull(traces);
-    assertNotNull(traces.getTraces());
+    assertThat(traces).isNotNull();
+    assertThat(traces.getTraces()).isNotNull();
 
-    assertTrue(traces.getCount() > 0);
+    assertThat(traces.getCount() > 0).isTrue();
   }
 
   @Test
@@ -157,8 +153,8 @@ final class ContrastSDKTest extends ContrastSDK {
 
     Rules rules = gson.fromJson(rulesString, Rules.class);
 
-    assertNotNull(rules);
-    assertNotNull(rules.getRules());
+    assertThat(rules).isNotNull();
+    assertThat(rules.getRules()).isNotNull();
   }
 
   @Test
@@ -169,8 +165,8 @@ final class ContrastSDKTest extends ContrastSDK {
 
     Servers servers = gson.fromJson(serversString, Servers.class);
 
-    assertNotNull(servers);
-    assertNotNull(servers.getServers());
+    assertThat(servers).isNotNull();
+    assertThat(servers.getServers()).isNotNull();
   }
 
   @Test
@@ -182,12 +178,12 @@ final class ContrastSDKTest extends ContrastSDK {
         gson.fromJson(securityCheckResponseString, SecurityCheckResponse.class);
     SecurityCheck securityCheck = response.getSecurityCheck();
     JobOutcomePolicy jobOutcomePolicy = securityCheck.getJobOutcomePolicy();
-    assertEquals(1l, securityCheck.getId().longValue());
-    assertEquals("testName", securityCheck.getApplicationName());
-    assertEquals("testPolicy", jobOutcomePolicy.getName());
-    assertEquals(JobOutcomePolicy.Outcome.UNSTABLE, jobOutcomePolicy.getOutcome());
-    assertEquals(1, jobOutcomePolicy.getSeverities().size());
-    assertEquals(1l, jobOutcomePolicy.getSeverities().get(RuleSeverity.MEDIUM).longValue());
+    assertThat(securityCheck.getId().longValue()).isEqualTo(1l);
+    assertThat(securityCheck.getApplicationName()).isEqualTo("testName");
+    assertThat(jobOutcomePolicy.getName()).isEqualTo("testPolicy");
+    assertThat(jobOutcomePolicy.getOutcome()).isEqualTo(JobOutcomePolicy.Outcome.UNSTABLE);
+    assertThat(jobOutcomePolicy.getSeverities().size()).isEqualTo(1);
+    assertThat(jobOutcomePolicy.getSeverities().get(RuleSeverity.MEDIUM).longValue()).isEqualTo(1l);
   }
 
   @Test
@@ -196,8 +192,8 @@ final class ContrastSDKTest extends ContrastSDK {
         "{'policies':[{'name':'testJobOutcomePolicy','outcome':'SUCCESS'}]}";
     JobOutcomePolicyListResponse response =
         gson.fromJson(jobOutcomePolicyListResponseString, JobOutcomePolicyListResponse.class);
-    assertNotNull(response.getPolicies());
-    assertEquals(response.getPolicies().get(0).getName(), "testJobOutcomePolicy");
+    assertThat(response.getPolicies()).isNotNull();
+    assertThat("testJobOutcomePolicy").isEqualTo(response.getPolicies().get(0).getName());
   }
 
   @Test
@@ -206,8 +202,8 @@ final class ContrastSDKTest extends ContrastSDK {
         "{'policies':[{'name':'testJobOutcomePolicy','outcome':'UNSTABLE'}]}";
     JobOutcomePolicyListResponse response =
         gson.fromJson(jobOutcomePolicyListResponseString, JobOutcomePolicyListResponse.class);
-    assertNotNull(response.getPolicies());
-    assertEquals(response.getPolicies().get(0).getName(), "testJobOutcomePolicy");
+    assertThat(response.getPolicies()).isNotNull();
+    assertThat("testJobOutcomePolicy").isEqualTo(response.getPolicies().get(0).getName());
   }
 
   @Test
@@ -220,8 +216,8 @@ final class ContrastSDKTest extends ContrastSDK {
     URLConnection conn =
         contrastSDK.makeConnection("https://www.google.com", HttpMethod.GET.toString());
 
-    assertEquals(connectionTimeout, conn.getConnectTimeout());
-    assertEquals(readTimeout, conn.getReadTimeout());
+    assertThat(conn.getConnectTimeout()).isEqualTo(connectionTimeout);
+    assertThat(conn.getReadTimeout()).isEqualTo(readTimeout);
   }
 
   @Test
@@ -235,8 +231,8 @@ final class ContrastSDKTest extends ContrastSDK {
     URLConnection conn =
         contrastSDK.makeConnection("https://www.google.com", HttpMethod.GET.toString());
 
-    assertNotEquals(connectionTimeout, conn.getConnectTimeout());
-    assertNotEquals(readTimeout, conn.getReadTimeout());
+    assertThat(conn.getConnectTimeout()).isNotEqualTo(connectionTimeout);
+    assertThat(conn.getReadTimeout()).isNotEqualTo(readTimeout);
   }
 
   @Test
@@ -245,13 +241,13 @@ final class ContrastSDKTest extends ContrastSDK {
     final String ensureUrlOne = ContrastSDKUtils.ensureApi("http://localhost:19080/Contrast/");
     final String ensureUrlTwo = ContrastSDKUtils.ensureApi("http://localhost:19080/Contrast");
 
-    assertEquals(expectedApi, ensureUrlOne);
-    assertEquals(expectedApi, ensureUrlTwo);
+    assertThat(ensureUrlOne).isEqualTo(expectedApi);
+    assertThat(ensureUrlTwo).isEqualTo(expectedApi);
 
     final String unchangedApi = "http://localhost:19080/";
     final String ensureUnchanged = ContrastSDKUtils.ensureApi(unchangedApi);
 
-    assertEquals(unchangedApi, ensureUnchanged);
+    assertThat(ensureUnchanged).isEqualTo(unchangedApi);
   }
 
   @Test
@@ -259,20 +255,20 @@ final class ContrastSDKTest extends ContrastSDK {
     final String expectedUrl = "htp:/localhost:19080/Contrast/api";
     final String badUrl = "htp:/localhost:19080/Contrast/";
     final String actualUrl = ContrastSDKUtils.ensureApi(badUrl);
-    assertEquals(actualUrl, expectedUrl);
+    assertThat(expectedUrl).isEqualTo(actualUrl);
   }
 
   @Test
   public void testNullUrl() throws IOException {
     final String nullUrl = ContrastSDKUtils.ensureApi(null);
-    assertNull(nullUrl);
+    assertThat(nullUrl).isNull();
   }
 
   @Test
   public void blankUrl() {
     final String blankUrl = ContrastSDKUtils.ensureApi("");
     final String ensureBlank = "";
-    assertEquals(ensureBlank, blankUrl);
+    assertThat(blankUrl).isEqualTo(ensureBlank);
   }
 
   @Test
@@ -281,9 +277,9 @@ final class ContrastSDKTest extends ContrastSDK {
         "{  \"success\": true,  \"messages\": [    \"Total Vulnerability trend loaded successfully\"  ],  \"open\": [    {      \"timestamp\": 1567310400000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1569902400000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1572580800000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1575176400000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1577854800000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1580533200000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1583038800000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1585713600000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1588305600000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 0        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1590984000000,      \"count\": 9,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 9        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1593576000000,      \"count\": 8,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 8        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1596254400000,      \"count\": 8,      \"statusBreakdown\": [        {          \"name\": \"Reported\",          \"value\": 8        },        {          \"name\": \"Suspicious\",          \"value\": 0        },        {          \"name\": \"Confirmed\",          \"value\": 0        }      ]    }  ],  \"closed\": [    {      \"timestamp\": 1567310400000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1569902400000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1572580800000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1575176400000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1577854800000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1580533200000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1583038800000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1585713600000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1588305600000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1590984000000,      \"count\": 0,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 0        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1593576000000,      \"count\": 1,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 1        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    },    {      \"timestamp\": 1596254400000,      \"count\": 1,      \"statusBreakdown\": [        {          \"name\": \"NotAProblem\",          \"value\": 1        },        {          \"name\": \"Remediated\",          \"value\": 0        },        {          \"name\": \"Fixed\",          \"value\": 0        },        {          \"name\": \"AutoRemediated\",          \"value\": 0        }      ]    }  ]}";
     VulnerabilityTrend vulnerabilityTrend =
         gson.fromJson(exampleApplicationYearlyTrend, VulnerabilityTrend.class);
-    assertNotNull(vulnerabilityTrend);
-    assertNotNull(vulnerabilityTrend.getOpenTrend());
-    assertNotNull(vulnerabilityTrend.getClosedTrend());
+    assertThat(vulnerabilityTrend).isNotNull();
+    assertThat(vulnerabilityTrend.getOpenTrend()).isNotNull();
+    assertThat(vulnerabilityTrend.getClosedTrend()).isNotNull();
   }
 
   @Test
@@ -292,15 +288,18 @@ final class ContrastSDKTest extends ContrastSDK {
         "{ \"success\" : true, \"messages\" : [ \"Vulnerability recommendation loaded successfully\" ], \"recommendation\" : { \"text\" : \"test recommendation\", \"formattedTextVariables\" : { } }, \"owasp\" : \"OWASP link\", \"cwe\" : \"CWE link\", \"custom_recommendation\" : { \"text\" : \"custom recommendation\", \"formattedText\" : \"custom recommendation\", \"formattedTextVariables\" : { } }, \"rule_references\" : { \"text\" : \"rule reference\", \"formattedText\" : \"rule reference\", \"formattedTextVariables\" : { } }, \"custom_rule_references\" : { \"text\" : \"test custom\", \"formattedText\" : \"test custom\", \"formattedTextVariables\" : { } } }";
     RecommendationResponse vulnerabilityRecommendation =
         gson.fromJson(recommendation, RecommendationResponse.class);
-    assertNotNull(vulnerabilityRecommendation);
+    assertThat(vulnerabilityRecommendation).isNotNull();
 
-    assertEquals(vulnerabilityRecommendation.getRecommendation().getText(), "test recommendation");
-    assertEquals(
-        vulnerabilityRecommendation.getCustomRecommendation().getText(), "custom recommendation");
-    assertEquals(vulnerabilityRecommendation.getCustomRuleReferences().getText(), "test custom");
-    assertEquals(vulnerabilityRecommendation.getCwe(), "CWE link");
-    assertEquals(vulnerabilityRecommendation.getOwasp(), "OWASP link");
-    assertEquals(vulnerabilityRecommendation.getRuleReferences().getText(), "rule reference");
+    assertThat("test recommendation")
+        .isEqualTo(vulnerabilityRecommendation.getRecommendation().getText());
+    assertThat("custom recommendation")
+        .isEqualTo(vulnerabilityRecommendation.getCustomRecommendation().getText());
+    assertThat("test custom")
+        .isEqualTo(vulnerabilityRecommendation.getCustomRuleReferences().getText());
+    assertThat("CWE link").isEqualTo(vulnerabilityRecommendation.getCwe());
+    assertThat("OWASP link").isEqualTo(vulnerabilityRecommendation.getOwasp());
+    assertThat("rule reference")
+        .isEqualTo(vulnerabilityRecommendation.getRuleReferences().getText());
   }
 
   @Test
@@ -309,15 +308,15 @@ final class ContrastSDKTest extends ContrastSDK {
         "{ \"success\" : true, \"messages\" : [ \"Vulnerability story loaded successfully\" ], \"story\" : { \"traceId\" : \"testID\", \"chapters\" : [ { \"type\" : \"source\", \"introText\" : \"test intro\", \"introTextFormat\" : \"test intro formatted\", \"introTextVariables\" : { \"source0\" : \"\\Test variable 1\" }, \"body\" : \"test body 1\", \"bodyFormat\" : \"test body formatted\", \"bodyFormatVariables\" : { \"paramNameKey1\" : \"test param 1\", \"paramValueKey1\" : \"test param 2\", \"urlVariableKey\" : \"test param 3\" } }, { \"type\" : \"location\", \"introText\" : \"intro text 2\", \"introTextFormat\" : \"intro text 2 formatted\", \"introTextVariables\" : { }, \"body\" : \"test body 2\", \"bodyFormat\" : \"test body 2 formatted\", \"bodyFormatVariables\" : { \"line\" : \"test line number\", \"methodName\" : \"test method name\", \"className\" : \"test class name\" } }, { \"type\" : \"dataflow\", \"introText\" : \"test chapter intro text\", \"introTextFormat\" : \"test chapter intro text formatted\", \"introTextVariables\" : { }, \"body\" : \"test body 3\", \"bodyFormat\" : \"test body 3 formatted\", \"bodyFormatVariables\" : { \"untrustedTaintedKey0\" : \"variable 3\" }, \"vector\" : null } ], \"risk\" : { \"text\" : \"test risk\", \"formattedTextVariables\" : { } } }, \"custom_risk\" : { \"test custom risk\" : \"\", \"formattedText\" : \"\", \"formattedTextVariables\" : { } } }";
     StoryResponse storyResponse = gson.fromJson(storyString, StoryResponse.class);
     Story story = storyResponse.getStory();
-    assertNotNull(story);
+    assertThat(story).isNotNull();
 
     List<Chapter> chapters = story.getChapters();
 
-    assertFalse(chapters.isEmpty());
+    assertThat(chapters.isEmpty()).isFalse();
     chapters.forEach(
         chapter -> {
           int index = Integer.parseInt(String.valueOf(chapters.indexOf(chapter))) + 1;
-          assertEquals(chapter.getBody(), "test body " + index);
+          assertThat("test body " + index).isEqualTo(chapter.getBody());
         });
   }
 
@@ -327,11 +326,11 @@ final class ContrastSDKTest extends ContrastSDK {
         "{ \"success\" : true, \"messages\" : [ \"Tags for vulnerability loaded successfully\" ], \"tags\" : [ \"tag1\", \"tag2\", \"tag3\", \"tag4\" ] }";
     TagsResponse tags = gson.fromJson(tagsString, TagsResponse.class);
 
-    assertFalse(tags.getTags().isEmpty());
+    assertThat(tags.getTags().isEmpty()).isFalse();
 
     Tags tagsObject = new Tags(tags.getTags());
 
-    assertFalse(tagsObject.getTags().isEmpty());
+    assertThat(tagsObject.getTags().isEmpty()).isFalse();
   }
 
   @Test
@@ -340,9 +339,9 @@ final class ContrastSDKTest extends ContrastSDK {
         "{ \"success\" : true, \"messages\" : [ \"Vulnerability HTTP Request loaded successfully\" ], \"http_request\" : { \"text\" : \"test request method\", \"formattedText\" : \"test request method formatted\", \"formattedTextVariables\" : { \"headerNameKey6\" : \"Host\"  } } }";
     HttpRequestResponse http = gson.fromJson(httpRequest, HttpRequestResponse.class);
 
-    assertNotNull(http.getHttpRequest());
+    assertThat(http.getHttpRequest()).isNotNull();
 
-    assertEquals(http.getHttpRequest().getText(), "test request method");
+    assertThat("test request method").isEqualTo(http.getHttpRequest().getText());
   }
 
   @Test
@@ -350,15 +349,15 @@ final class ContrastSDKTest extends ContrastSDK {
     final String eventString =
         "{\"success\" : true,\"messages\" : [ \"Vulnerability events summary loaded successfully\" ], \"risk\" : \"test risk\", \"showEvidence\" : false,\"showEvents\" : true,\"events\" : [ { \"id\" : \"612\", \"important\" : true,\"type\" : \"Creation\",\"description\" : \"Test description 1\",\"extraDetails\" : null, \"codeView\" : { \"lines\" : [ {\"fragments\" : [ { \"type\" : \"NORMAL_CODE\", \"value\" : \"code\" }, {\"type\" : \"CODE_STRING\",\"value\" : \"code\"}, {\"type\" : \"NORMAL_CODE\",\"value\" : \"code\"} ],\"text\" : \"code\" } ],\"nested\" : false},\"probableStartLocationView\" : { \"lines\" : [ { \"fragments\" : [ {\"type\" : \"STACKTRACE_LINE\",\"value\" : \"code\"} ],\"text\" : \"code\"} ],\"nested\" : false},\"dataView\" : {\"lines\" : [ {\"fragments\" : [ { \"type\" : \"TEXT\", \"value\" : \"code\" }, {\"type\" : \"TAINT_VALUE\",\"value\" : \"code\"} ], \"text\" : \"code\"} ],\"nested\" : false},\"collapsedEvents\" : [ ], \"dupes\" : 0}, { \"id\" : \"613\",\"important\" : true,\"type\" : \"Trigger\",\"description\" : \"Test description 2\",\"extraDetails\" : null,\"codeView\" : {\"lines\" : [ {\"fragments\" : [ { \"type\" : \"NORMAL_CODE\",\"value\" : \"code\"}, {\"type\" : \"CODE_STRING\",\"value\" : \"code\"}, {\"type\" : \"NORMAL_CODE\",\"value\" : \")\"} ],\"text\" : \"code\"} ],\"nested\" : false},\"probableStartLocationView\" : {\"lines\" : [ { \"fragments\" : [ {\"type\" : \"STACKTRACE_LINE\",\"value\" : \"code\"} ],\"text\" : \"code\"} ],\"nested\" : false},\"dataView\" : { \"lines\" : [ {\"fragments\" : [ {\"type\" : \"TAINT_VALUE\",\"value\" : \"code\"} ],\"text\" : \"code\"} ], \"nested\" : false}, \"collapsedEvents\" : [ ], \"dupes\" : 0} ]}";
     EventSummaryResponse event = gson.fromJson(eventString, EventSummaryResponse.class);
-    assertNotNull(event);
+    assertThat(event).isNotNull();
 
     List<EventResource> eventResources = event.getEvents();
-    assertFalse(eventResources.isEmpty());
+    assertThat(eventResources.isEmpty()).isFalse();
 
-    assertEquals(event.getRisk(), "test risk");
+    assertThat("test risk").isEqualTo(event.getRisk());
 
-    assertTrue(event.getShowEvents());
-    assertFalse(event.getShowEvidence());
+    assertThat(event.getShowEvents()).isTrue();
+    assertThat(event.getShowEvidence()).isFalse();
   }
 
   @Test
@@ -369,9 +368,9 @@ final class ContrastSDKTest extends ContrastSDK {
 
     Traces traces = gson.fromJson(traceMetadataString, Traces.class);
 
-    assertNotNull(traces);
-    assertNotNull(traces.getTraces());
+    assertThat(traces).isNotNull();
+    assertThat(traces.getTraces()).isNotNull();
 
-    assertTrue(traces.getCount() > 0);
+    assertThat(traces.getCount() > 0).isTrue();
   }
 }

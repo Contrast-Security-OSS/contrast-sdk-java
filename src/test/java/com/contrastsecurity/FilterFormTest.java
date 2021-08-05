@@ -1,7 +1,6 @@
 package com.contrastsecurity;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.contrastsecurity.http.FilterForm;
 import java.util.ArrayList;
@@ -27,16 +26,16 @@ final class FilterFormTest {
 
     String qs = filterForm.toString();
 
-    assertFalse(qs.isEmpty());
+    assertThat(qs.isEmpty()).isFalse();
 
-    assertTrue(qs.contains("limit"));
-    assertTrue(qs.contains("offset"));
-    assertTrue(qs.contains("status"));
-    assertFalse(qs.contains("sort"));
-    assertFalse(qs.contains("startDate"));
+    assertThat(qs.contains("limit")).isTrue();
+    assertThat(qs.contains("offset")).isTrue();
+    assertThat(qs.contains("status")).isTrue();
+    assertThat(qs.contains("sort")).isFalse();
+    assertThat(qs.contains("startDate")).isFalse();
   }
 
-  @org.junit.jupiter.api.Test
+  @Test
   public void testExpand() {
     EnumSet<FilterForm.ApplicationExpandValues> expand =
         EnumSet.of(
@@ -46,18 +45,18 @@ final class FilterFormTest {
 
     String qs = filterForm.toString();
 
-    assertFalse(qs.isEmpty());
+    assertThat(qs.isEmpty()).isFalse();
 
-    assertTrue(qs.contains("expand"));
+    assertThat(qs.contains("expand")).isTrue();
 
     String expandValues = qs.split("=")[1];
     ArrayList<String> values = new ArrayList<>(Arrays.asList(expandValues.split(",")));
 
-    assertTrue(values.contains("scores"));
-    assertTrue(values.contains("license"));
+    assertThat(values.contains("scores")).isTrue();
+    assertThat(values.contains("license")).isTrue();
 
-    assertFalse(values.contains("apps"));
-    assertFalse(values.contains("test"));
-    assertFalse(values.contains("libs"));
+    assertThat(values.contains("apps")).isFalse();
+    assertThat(values.contains("test")).isFalse();
+    assertThat(values.contains("libs")).isFalse();
   }
 }

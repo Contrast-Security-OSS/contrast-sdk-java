@@ -1,8 +1,6 @@
 package com.contrastsecurity;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.ApplicationFilterForm;
@@ -42,7 +40,7 @@ final class ScreenerTest {
             .build();
   }
 
-  @org.junit.jupiter.api.Test
+  @Test
   public void testDownloadAgent() throws IOException {
     File contrastJar = new File("contrast.jar");
 
@@ -50,43 +48,43 @@ final class ScreenerTest {
       FileUtils.writeByteArrayToFile(
           contrastJar, contrastSDK.getAgent(AgentType.JAVA, properties.getProperty("orgId")));
     } catch (IOException | UnauthorizedException e) {
-      assertTrue(true);
+      assertThat(true).isTrue();
     }
 
-    assertTrue(contrastJar.exists());
-    assertTrue(FileUtils.sizeOf(contrastJar) > 0);
+    assertThat(contrastJar.exists()).isTrue();
+    assertThat(FileUtils.sizeOf(contrastJar) > 0).isTrue();
   }
 
   @Test
   public void testGetProfileOrganizations() throws IOException, UnauthorizedException {
     Organizations organizations = contrastSDK.getProfileOrganizations();
 
-    assertTrue(!organizations.getOrganizations().isEmpty());
+    assertThat(!organizations.getOrganizations().isEmpty()).isTrue();
   }
 
-  @org.junit.jupiter.api.Test
+  @Test
   public void testGetProfileDefaultOrganization() throws IOException, UnauthorizedException {
     Organizations organizations = contrastSDK.getProfileDefaultOrganizations();
 
-    assertTrue(organizations.getOrganization().getName() != null);
+    assertThat(organizations.getOrganization().getName() != null).isTrue();
   }
 
-  @org.junit.jupiter.api.Test
+  @Test
   public void testGetApplications() throws IOException, UnauthorizedException {
     String orgId = properties.getProperty("orgId");
 
     Applications applications = contrastSDK.getApplications(orgId);
 
-    assertTrue(!applications.getApplications().isEmpty());
+    assertThat(!applications.getApplications().isEmpty()).isTrue();
   }
 
-  @org.junit.jupiter.api.Test
+  @Test
   public void testGetServers() throws IOException, UnauthorizedException {
     String orgId = properties.getProperty("orgId");
 
     Servers servers = contrastSDK.getServers(orgId, null);
 
-    assertTrue(!servers.getServers().isEmpty());
+    assertThat(!servers.getServers().isEmpty()).isTrue();
   }
 
   @Test
@@ -95,11 +93,11 @@ final class ScreenerTest {
 
     Applications applications = contrastSDK.getApplications(orgId);
 
-    assertTrue(!applications.getApplications().isEmpty());
+    assertThat(!applications.getApplications().isEmpty()).isTrue();
 
     Application application = applications.getApplications().get(0);
 
-    assertTrue(application.getId() != null);
+    assertThat(application.getId() != null).isTrue();
 
     TraceFilterForm form = new TraceFilterForm();
 
@@ -107,7 +105,7 @@ final class ScreenerTest {
 
     Traces traces = contrastSDK.getTraces(orgId, application.getId(), form);
 
-    assertTrue(!traces.getTraces().isEmpty());
+    assertThat(!traces.getTraces().isEmpty()).isTrue();
   }
 
   @Test
@@ -118,11 +116,11 @@ final class ScreenerTest {
 
     Applications applications = contrastSDK.getFilteredApplications(orgId, form);
 
-    assertFalse(applications.getApplications().isEmpty());
+    assertThat(applications.getApplications().isEmpty()).isFalse();
 
     Application application = applications.getApplications().get(0);
 
-    assertNotNull(application.getId());
+    assertThat(application.getId()).isNotNull();
 
     List<String> languages = new ArrayList<>();
     languages.add("Java");
@@ -135,6 +133,6 @@ final class ScreenerTest {
 
     Applications licensedApplications = contrastSDK.getFilteredApplications(orgId, form);
 
-    assertFalse(licensedApplications.getApplications().isEmpty());
+    assertThat(licensedApplications.getApplications().isEmpty()).isFalse();
   }
 }
