@@ -609,6 +609,55 @@ public class ContrastSDK {
     }
   }
 
+  /**
+   * Return the libraries of the Contrast organization.
+   *
+   * @param organizationId the ID of the organization
+   * @param filterForm FilterForm query parameters
+   * @return Libraries object that contains the list of Library objects
+   * @throws UnauthorizedException if the Contrast account failed to authorize
+   * @throws IOException if there was a communication problem
+   */
+  public Libraries getLibraries(String organizationId, LibraryFilterForm filterForm)
+      throws IOException, UnauthorizedException {
+    InputStream is = null;
+    InputStreamReader reader = null;
+    try {
+      is = makeRequest(HttpMethod.GET, urlBuilder.getLibrariesUrl(organizationId, filterForm));
+      reader = new InputStreamReader(is);
+
+      return this.gson.fromJson(reader, Libraries.class);
+    } finally {
+      IOUtils.closeQuietly(is);
+      IOUtils.closeQuietly(reader);
+    }
+  }
+
+  /**
+   * Return the libraries of the Contrast organization.
+   *
+   * @param organizationId the ID of the organization
+   * @param filterForm FilterForm query parameters
+   * @return Libraries object that contains the list of Library objects
+   * @throws UnauthorizedException if the Contrast account failed to authorize
+   * @throws IOException if there was a communication problem
+   */
+  public Libraries getLibrariesWithFilter(String organizationId, LibraryFilterForm filterForm)
+      throws IOException, UnauthorizedException {
+    InputStream is = null;
+    InputStreamReader reader = null;
+    try {
+      is =
+          makeRequest(HttpMethod.GET, urlBuilder.getLibrariesFilterUrl(organizationId, filterForm));
+      reader = new InputStreamReader(is);
+
+      return this.gson.fromJson(reader, Libraries.class);
+    } finally {
+      IOUtils.closeQuietly(is);
+      IOUtils.closeQuietly(reader);
+    }
+  }
+
   public Libraries getLibraries(String organizationId, String appId)
       throws IOException, UnauthorizedException {
     return getLibraries(organizationId, appId, null);
@@ -633,6 +682,34 @@ public class ContrastSDK {
       is =
           makeRequest(
               HttpMethod.GET, urlBuilder.getLibrariesUrl(organizationId, appId, expandValues));
+      reader = new InputStreamReader(is);
+
+      return this.gson.fromJson(reader, Libraries.class);
+    } finally {
+      IOUtils.closeQuietly(is);
+      IOUtils.closeQuietly(reader);
+    }
+  }
+
+  /**
+   * Return the libraries of the monitored Contrast application.
+   *
+   * @param organizationId the ID of the organization
+   * @param appId the ID of the application
+   * @param filterForm FilterForm query parameters
+   * @return Libraries object that contains the list of Library objects
+   * @throws UnauthorizedException if the Contrast account failed to authorize
+   * @throws IOException if there was a communication problem
+   */
+  public Libraries getLibrariesWithFilter(
+      String organizationId, String appId, LibraryFilterForm filterForm)
+      throws IOException, UnauthorizedException {
+    InputStream is = null;
+    InputStreamReader reader = null;
+    try {
+      is =
+          makeRequest(
+              HttpMethod.GET, urlBuilder.getLibrariesFilterUrl(organizationId, appId, filterForm));
       reader = new InputStreamReader(is);
 
       return this.gson.fromJson(reader, Libraries.class);
