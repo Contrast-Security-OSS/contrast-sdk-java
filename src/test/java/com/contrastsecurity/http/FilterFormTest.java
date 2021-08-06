@@ -1,8 +1,7 @@
-package com.contrastsecurity;
+package com.contrastsecurity.http;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.contrastsecurity.http.FilterForm;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
