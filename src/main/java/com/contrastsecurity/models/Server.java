@@ -185,9 +185,9 @@ public class Server {
   private boolean agentOutOfDate;
 
   /**
-   * Return the latest version available version of the agent.
+   * Return the latest available version of the agent.
    *
-   * @return the latest version available version of the agent
+   * @return the latest available version of the agent
    */
   public String getLatestAgentVersion() {
     return latestAgentVersion;
