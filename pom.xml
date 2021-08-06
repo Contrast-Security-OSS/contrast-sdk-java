@@ -69,6 +69,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>au.com.dius.pact.consumer</groupId>
+      <artifactId>junit5</artifactId>
+      <version>4.2.9</version>
+    </dependency>
+    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>1.18.18</version>
@@ -88,7 +93,6 @@
             </goals>
             <configuration>
               <rules>
-                <dependencyConvergence/>
                 <requirePluginVersions/>
                 <requireSameVersions>
                   <plugins>
