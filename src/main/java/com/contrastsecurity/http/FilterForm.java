@@ -6,9 +6,7 @@ import java.util.EnumSet;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
-/**
- * @deprecated FilterForms are being replaced with {@link Query}
- */
+/** @deprecated FilterForms are being replaced with {@link Query} */
 @Deprecated
 public class FilterForm {
 
