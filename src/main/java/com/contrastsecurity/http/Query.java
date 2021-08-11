@@ -1,8 +1,11 @@
 package com.contrastsecurity.http;
 
 import com.contrastsecurity.exceptions.QueryException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 public class Query<T extends Query<T>> {
   private EnumSet<?> expand;
@@ -97,6 +100,36 @@ public class Query<T extends Query<T>> {
    * @throws QueryException when an exception occurs converting to url parameters
    */
   public String toQuery() throws QueryException {
-    return super.toString();
+    List<String> filters = new ArrayList<>();
+
+    if (expand != null && !expand.isEmpty()) {
+      filters.add("expand=" + StringUtils.join(expand, ","));
+    }
+
+    if (limit > 0) {
+      filters.add("limit=" + limit);
+    }
+
+    if (offset > 0) {
+      filters.add("offset=" + offset);
+    }
+
+    if (startDate != null) {
+      filters.add("startDate=" + startDate.getTime());
+    }
+
+    if (endDate != null) {
+      filters.add("endDate=" + endDate.getTime());
+    }
+
+    if (!StringUtils.isEmpty(sort)) {
+      filters.add("sort=" + sort);
+    }
+
+    if (!filters.isEmpty()) {
+      return "?" + StringUtils.join(filters, "&");
+    } else {
+      return "";
+    }
   }
 }
