@@ -29,7 +29,6 @@
 package com.contrastsecurity.sdk;
 
 import com.contrastsecurity.exceptions.ApplicationCreateException;
-import com.contrastsecurity.exceptions.ContrastException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.FilterForm;
@@ -65,13 +64,11 @@ import com.contrastsecurity.models.MetadataEntity;
 import com.contrastsecurity.models.MetadataFilterResponse;
 import com.contrastsecurity.models.NotificationsResponse;
 import com.contrastsecurity.models.Organizations;
-import com.contrastsecurity.models.Project;
 import com.contrastsecurity.models.PropertyResource;
 import com.contrastsecurity.models.RecommendationResponse;
 import com.contrastsecurity.models.RouteCoverageBySessionIDAndMetadataRequest;
 import com.contrastsecurity.models.RouteCoverageResponse;
 import com.contrastsecurity.models.Rules;
-import com.contrastsecurity.models.ScanPagedResult;
 import com.contrastsecurity.models.SecurityCheck;
 import com.contrastsecurity.models.ServerTagsResponse;
 import com.contrastsecurity.models.Servers;
@@ -88,6 +85,7 @@ import com.contrastsecurity.models.Users;
 import com.contrastsecurity.models.VulnerabilityTrend;
 import com.contrastsecurity.models.dtm.ApplicationCreateRequest;
 import com.contrastsecurity.models.dtm.AttestationCreateRequest;
+import com.contrastsecurity.scan.ScanManager;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
@@ -96,7 +94,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -109,7 +106,6 @@ import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -223,30 +219,8 @@ public class ContrastSDK {
         .collect(Collectors.joining(" "));
   }
 
-  public Project findProjectByName(final String organizationId, final String projectName)
-      throws IOException, UnauthorizedException {
-    // requests made with ContrastSDK.makeRequest must have their path prepended with "/"
-    final String uri =
-        String.join("/", "", "sast", "organizations", organizationId, "projects")
-            + "?unique=true&name="
-            + URLEncoder.encode(projectName, StandardCharsets.UTF_8.name());
-    final ScanPagedResult<Project> page;
-    try (Reader reader = new InputStreamReader(makeRequest(HttpMethod.GET, uri))) {
-      page = gson.fromJson(reader, new TypeToken<ScanPagedResult<Project>>() {}.getType());
-    }
-
-    // the Scan API reuses a paged response structure even when we specify the query parameter
-    // "unique=true". When "unique=true", there should be at most one scan. If this is not true,
-    // throw an exception, because something is wrong with the Scan API.
-    if (page.getTotalElements() > 1) {
-      throw new ContrastException(
-          "Expected Contrast to return exactly one project with the given name, or no projects, but returned "
-              + page.getTotalElements()
-              + " projects");
-    }
-
-    // return the project, or null if no such project is found
-    return page.getTotalElements() == 1 ? page.getContent().get(0) : null;
+  public ScanManager scan() {
+    throw new UnsupportedOperationException("Not yet implemented");
   }
 
   /**
