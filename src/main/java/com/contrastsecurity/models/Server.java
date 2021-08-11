@@ -173,6 +173,30 @@ public class Server {
   private String agentVersion;
 
   /**
+   * If the agent on this server is out of date.
+   *
+   * @return if the agent on this server is out of date
+   */
+  public boolean isAgentOutOfDate() {
+    return agentOutOfDate;
+  }
+
+  @SerializedName("out_of_date")
+  private boolean agentOutOfDate;
+
+  /**
+   * Return the latest available version of the agent.
+   *
+   * @return the latest available version of the agent
+   */
+  public String getLatestAgentVersion() {
+    return latestAgentVersion;
+  }
+
+  @SerializedName("latest_agent_version")
+  private String latestAgentVersion;
+
+  /**
    * Return the server assess value
    *
    * @return assess value
