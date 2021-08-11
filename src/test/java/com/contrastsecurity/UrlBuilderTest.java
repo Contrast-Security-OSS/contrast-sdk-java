@@ -1,7 +1,6 @@
 package com.contrastsecurity;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.TraceFilterForm;
@@ -11,17 +10,17 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-public class UrlBuilderTest {
+final class UrlBuilderTest {
 
   private static String applicationId;
   private static String organizationId;
   private static String testTrace;
   private static UrlBuilder urlBuilder;
 
-  @BeforeClass
+  @BeforeAll
   public static void setUp() {
     applicationId = "test-app";
     organizationId = "test-org";
@@ -34,14 +33,15 @@ public class UrlBuilderTest {
   public void testProfileOrganizationsUrl() {
     String expectedUrl = "/ng/profile/organizations";
 
-    assertEquals(expectedUrl, urlBuilder.getProfileOrganizationsUrl());
+    assertThat(urlBuilder.getProfileOrganizationsUrl()).isEqualTo(expectedUrl);
   }
 
   @Test
   public void testApplicationUrl() {
     String expectedUrl = "/ng/test-org/applications/test-app";
 
-    assertEquals(expectedUrl, urlBuilder.getApplicationUrl(organizationId, applicationId, null));
+    assertThat(urlBuilder.getApplicationUrl(organizationId, applicationId, null))
+        .isEqualTo(expectedUrl);
   }
 
   @Test
@@ -53,42 +53,42 @@ public class UrlBuilderTest {
 
     form.setExpand(EnumSet.of(ApplicationFilterForm.ApplicationExpandValues.LICENSE));
 
-    assertEquals(expectedUrl, urlBuilder.getApplicationFilterUrl(organizationId, form));
+    assertThat(urlBuilder.getApplicationFilterUrl(organizationId, form)).isEqualTo(expectedUrl);
   }
 
   @Test
   public void testCreateApplicationUrl() {
     String expectedUrl = "/ng/integrations/organizations/test-org/applications";
-    assertEquals(expectedUrl, urlBuilder.getCreateApplicationUrl(organizationId));
+    assertThat(urlBuilder.getCreateApplicationUrl(organizationId)).isEqualTo(expectedUrl);
   }
 
   @Test
   public void testApplicationByNameAndLanguageUrl() {
     String expectedUrl =
         "/ng/integrations/organizations/test-org/applications?name=app&language=JAVA";
-    assertEquals(
-        expectedUrl, urlBuilder.getApplicationByNameAndLanguageUrl(organizationId, "app", "JAVA"));
+    assertThat(urlBuilder.getApplicationByNameAndLanguageUrl(organizationId, "app", "JAVA"))
+        .isEqualTo(expectedUrl);
   }
 
   @Test
   public void testApplicationsUrl() {
     String expectedUrl = "/ng/test-org/applications?base=false";
 
-    assertEquals(expectedUrl, urlBuilder.getApplicationsUrl(organizationId));
+    assertThat(urlBuilder.getApplicationsUrl(organizationId)).isEqualTo(expectedUrl);
   }
 
   @Test
   public void testApplicationsNamesUrl() {
     String expectedUrl = "/ng/test-org/applications/name";
 
-    assertEquals(expectedUrl, urlBuilder.getApplicationsNameUrl(organizationId));
+    assertThat(urlBuilder.getApplicationsNameUrl(organizationId)).isEqualTo(expectedUrl);
   }
 
   @Test
   public void testCoverageUrl() {
     String expectedUrl = "/ng/test-org/applications/test-app/coverage";
 
-    assertEquals(expectedUrl, urlBuilder.getCoverageUrl(organizationId, applicationId));
+    assertThat(urlBuilder.getCoverageUrl(organizationId, applicationId)).isEqualTo(expectedUrl);
   }
 
   @Test
@@ -97,27 +97,23 @@ public class UrlBuilderTest {
 
     String resultUrl = urlBuilder.getLibrariesUrl(organizationId, applicationId, null);
 
-    assertEquals(expectedUrl, resultUrl);
+    assertThat(resultUrl).isEqualTo(expectedUrl);
   }
 
   @Test
-  public void testTracesUrl() {
+  public void testTracesUrl() throws UnsupportedEncodingException {
     String expectedUrl = "/ng/test-org/traces/test-app/filter/?expand=application";
 
     TraceFilterForm form = new TraceFilterForm();
 
     form.setExpand(EnumSet.of(TraceFilterForm.TraceExpandValue.APPLICATION));
 
-    try {
-      assertEquals(
-          expectedUrl, urlBuilder.getTracesByApplicationUrl(organizationId, applicationId, form));
-    } catch (UnsupportedEncodingException e) {
-      fail();
-    }
+    assertThat(urlBuilder.getTracesByApplicationUrl(organizationId, applicationId, form))
+        .isEqualTo(expectedUrl);
   }
 
   @Test
-  public void testGetTracesByApplicationUrl() {
+  public void testGetTracesByApplicationUrl() throws UnsupportedEncodingException {
     String expectedUrl = "/ng/test-org/traces/test-app/filter/?appVersionTags=The+application";
 
     TraceFilterForm form = new TraceFilterForm();
@@ -126,138 +122,130 @@ public class UrlBuilderTest {
 
     form.setAppVersionTags(appVersionTags);
 
-    try {
-      assertEquals(
-          expectedUrl, urlBuilder.getTracesByApplicationUrl(organizationId, applicationId, form));
-    } catch (UnsupportedEncodingException e) {
-      fail();
-    }
+    assertThat(urlBuilder.getTracesByApplicationUrl(organizationId, applicationId, form))
+        .isEqualTo(expectedUrl);
   }
 
   @Test
-  public void testGetTracesWithBodyUrl() {
+  public void testGetTracesWithBodyUrl() throws UnsupportedEncodingException {
     String expectedUrl = "/ng/test-org/traces/test-app/filter";
 
-    try {
-      assertEquals(expectedUrl, urlBuilder.getTracesWithBodyUrl(organizationId, applicationId));
-    } catch (UnsupportedEncodingException e) {
-      fail();
-    }
+    assertThat(urlBuilder.getTracesWithBodyUrl(organizationId, applicationId))
+        .isEqualTo(expectedUrl);
   }
 
   @Test
   public void testSecurityCheckUrl() {
     String expectedSecurityCheckUrl = "/ng/test-org/securityChecks";
-    assertEquals(expectedSecurityCheckUrl, urlBuilder.getSecurityCheckUrl(organizationId));
+    assertThat(urlBuilder.getSecurityCheckUrl(organizationId)).isEqualTo(expectedSecurityCheckUrl);
   }
 
   @Test
   public void testEnabledJobOutcomePolicyListUrl() {
     String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled";
-    assertEquals(
-        expectedJobOutcomePolicyListUrl,
-        urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId));
+    assertThat(urlBuilder.getEnabledJobOutcomePolicyListUrl(organizationId))
+        .isEqualTo(expectedJobOutcomePolicyListUrl);
   }
 
   @Test
   public void testEnabledJobOutcomePolicyListUrlByApplication() {
     String expectedJobOutcomePolicyListUrl = "/ng/test-org/jobOutcomePolicies/enabled/test-app";
-    assertEquals(
-        expectedJobOutcomePolicyListUrl,
-        urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(organizationId, applicationId));
+    assertThat(
+            urlBuilder.getEnabledJobOutcomePolicyListUrlByApplication(
+                organizationId, applicationId))
+        .isEqualTo(expectedJobOutcomePolicyListUrl);
   }
 
   @Test
   public void testGetRecommendationByTraceIdUrl() {
     String expectedRecommendationUrl = "/ng/test-org/traces/test-trace/recommendation";
-    assertEquals(
-        expectedRecommendationUrl,
-        urlBuilder.getRecommendationByTraceId(organizationId, testTrace));
+    assertThat(urlBuilder.getRecommendationByTraceId(organizationId, testTrace))
+        .isEqualTo(expectedRecommendationUrl);
   }
 
   @Test
   public void testGetStoryByTraceIdUrl() {
     String expectedStoryUrl = "/ng/test-org/traces/test-trace/story";
-    assertEquals(expectedStoryUrl, urlBuilder.getStoryByTraceId(organizationId, testTrace));
+    assertThat(urlBuilder.getStoryByTraceId(organizationId, testTrace)).isEqualTo(expectedStoryUrl);
   }
 
   @Test
   public void testGetHttpRequestByTraceIdUrl() {
     String expectedHttpUrl = "/ng/test-org/traces/test-trace/httprequest";
-    assertEquals(expectedHttpUrl, urlBuilder.getHttpRequestByTraceId(organizationId, testTrace));
+    assertThat(urlBuilder.getHttpRequestByTraceId(organizationId, testTrace))
+        .isEqualTo(expectedHttpUrl);
   }
 
   @Test
   public void testGetEventSummaryUrl() {
     String expectedEventSummaryUrl = "/ng/test-org/traces/test-trace/events/summary";
-    assertEquals(expectedEventSummaryUrl, urlBuilder.getEventSummary(organizationId, testTrace));
+    assertThat(urlBuilder.getEventSummary(organizationId, testTrace))
+        .isEqualTo(expectedEventSummaryUrl);
   }
 
   @Test
   public void testGetEventDetailsUrl() {
     String expectedEventDetailsUrl = "/ng/test-org/traces/test-trace/events/event-id/details";
-    assertEquals(
-        expectedEventDetailsUrl, urlBuilder.getEventDetails(organizationId, testTrace, "event-id"));
+    assertThat(urlBuilder.getEventDetails(organizationId, testTrace, "event-id"))
+        .isEqualTo(expectedEventDetailsUrl);
   }
 
   @Test
   public void testGetOrCreateTagsByOrganizationUrl() {
     String expectedGetOrCreateTagsUrl = "/ng/test-org/tags/traces";
-    assertEquals(
-        expectedGetOrCreateTagsUrl, urlBuilder.getOrCreateTagsByOrganization(organizationId));
+    assertThat(urlBuilder.getOrCreateTagsByOrganization(organizationId))
+        .isEqualTo(expectedGetOrCreateTagsUrl);
   }
 
   @Test
   public void testGetTagsByTraceUrl() {
     String expectedTagsUrl = "/ng/test-org/tags/traces/trace/test-trace";
-    assertEquals(expectedTagsUrl, urlBuilder.getTagsByTrace(organizationId, testTrace));
+    assertThat(urlBuilder.getTagsByTrace(organizationId, testTrace)).isEqualTo(expectedTagsUrl);
   }
 
   @Test
   public void testDeleteTagUrl() {
     String expectedTagsUrl = "/ng/test-org/tags/trace/test-trace";
-    assertEquals(expectedTagsUrl, urlBuilder.deleteTag(organizationId, testTrace));
+    assertThat(urlBuilder.deleteTag(organizationId, testTrace)).isEqualTo(expectedTagsUrl);
   }
 
   @Test
   public void testSetStatusUrl() {
     String expectedTagsUrl = "/ng/test-org/orgtraces/mark";
-    assertEquals(expectedTagsUrl, urlBuilder.setTraceStatus(organizationId));
+    assertThat(urlBuilder.setTraceStatus(organizationId)).isEqualTo(expectedTagsUrl);
   }
 
   @Test
   public void testAgentUrls() {
     String expectedJavaUrl = "/ng/test-org/agents/default/java?jvm=1_6";
 
-    assertEquals(
-        expectedJavaUrl, urlBuilder.getAgentUrl(AgentType.JAVA, organizationId, "default"));
+    assertThat(urlBuilder.getAgentUrl(AgentType.JAVA, organizationId, "default"))
+        .isEqualTo(expectedJavaUrl);
 
     String expectedNodeWithCustomProfileUrl = "/ng/test-org/agents/customnodeprofile/node";
 
-    assertEquals(
-        expectedNodeWithCustomProfileUrl,
-        urlBuilder.getAgentUrl(AgentType.NODE, organizationId, "customnodeprofile"));
+    assertThat(urlBuilder.getAgentUrl(AgentType.NODE, organizationId, "customnodeprofile"))
+        .isEqualTo(expectedNodeWithCustomProfileUrl);
 
     String expectedDotNetProfile = "/ng/test-org/agents/default/dotnet";
 
-    assertEquals(
-        expectedDotNetProfile, urlBuilder.getAgentUrl(AgentType.DOTNET, organizationId, "default"));
+    assertThat(urlBuilder.getAgentUrl(AgentType.DOTNET, organizationId, "default"))
+        .isEqualTo(expectedDotNetProfile);
 
     String expectedRubyUrl = "/ng/test-org/agents/default/ruby";
 
-    assertEquals(
-        expectedRubyUrl, urlBuilder.getAgentUrl(AgentType.RUBY, organizationId, "default"));
+    assertThat(urlBuilder.getAgentUrl(AgentType.RUBY, organizationId, "default"))
+        .isEqualTo(expectedRubyUrl);
 
     String expectedPythonUrl = "/ng/test-org/agents/default/python";
 
-    assertEquals(
-        expectedPythonUrl, urlBuilder.getAgentUrl(AgentType.PYTHON, organizationId, "default"));
+    assertThat(urlBuilder.getAgentUrl(AgentType.PYTHON, organizationId, "default"))
+        .isEqualTo(expectedPythonUrl);
 
     String expectedDotNetCoreUrl = "/ng/test-org/agents/default/dotnet_core";
 
-    assertEquals(
-        expectedDotNetCoreUrl,
-        urlBuilder.getAgentUrl(AgentType.DOTNET_CORE, organizationId, "default"));
+    assertThat(urlBuilder.getAgentUrl(AgentType.DOTNET_CORE, organizationId, "default"))
+        .isEqualTo(expectedDotNetCoreUrl);
   }
 
   @Test
@@ -265,8 +253,7 @@ public class UrlBuilderTest {
     String expectedApplicationTrendUrl =
         "/ng/test-org/orgtraces/stats/trend/year/total?applications=test-application";
 
-    assertEquals(
-        expectedApplicationTrendUrl,
-        urlBuilder.getYearlyVulnTrendForApplicationUrl("test-org", "test-application"));
+    assertThat(urlBuilder.getYearlyVulnTrendForApplicationUrl("test-org", "test-application"))
+        .isEqualTo(expectedApplicationTrendUrl);
   }
 }
