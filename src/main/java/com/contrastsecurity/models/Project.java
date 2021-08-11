@@ -1,6 +1,6 @@
 package com.contrastsecurity.models;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +24,7 @@ public final class Project {
   private final int medium;
   private final int low;
   private final int note;
-  private final OffsetDateTime lastScanTime;
+  private final Instant lastScanTime;
   private final int completedScans;
   private final String lastScanId;
   private final Collection<String> includeNamespaceFilters;
@@ -42,7 +42,7 @@ public final class Project {
       final int medium,
       final int low,
       final int note,
-      final OffsetDateTime lastScanTime,
+      final Instant lastScanTime,
       final int completedScans,
       final String lastScanId,
       final Collection<String> includeNamespaceFilters,
@@ -135,7 +135,7 @@ public final class Project {
    * @return the time at which the last successfully completed scan finished, or {@code null} if no
    *     such scan exists
    */
-  public OffsetDateTime getLastScanTime() {
+  public Instant getLastScanTime() {
     return lastScanTime;
   }
 
@@ -261,7 +261,7 @@ public final class Project {
     private int medium;
     private int low;
     private int note;
-    private OffsetDateTime lastScanTime;
+    private Instant lastScanTime;
     private int completedScans;
     private String lastScanId;
     private Collection<String> includeNamespaceFilters;
@@ -317,7 +317,7 @@ public final class Project {
       return this;
     }
 
-    public Builder lastScanTime(final OffsetDateTime lastScanTime) {
+    public Builder lastScanTime(final Instant lastScanTime) {
       this.lastScanTime = lastScanTime;
       return this;
     }
