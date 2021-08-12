@@ -85,7 +85,9 @@ import com.contrastsecurity.models.Users;
 import com.contrastsecurity.models.VulnerabilityTrend;
 import com.contrastsecurity.models.dtm.ApplicationCreateRequest;
 import com.contrastsecurity.models.dtm.AttestationCreateRequest;
-import com.contrastsecurity.scan.ScanManager;
+import com.contrastsecurity.sdk.internal.GsonFactory;
+import com.contrastsecurity.sdk.scan.ScanManager;
+import com.contrastsecurity.sdk.scan.ScanManagerImpl;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
@@ -219,8 +221,8 @@ public class ContrastSDK {
         .collect(Collectors.joining(" "));
   }
 
-  public ScanManager scan() {
-    throw new UnsupportedOperationException("Not yet implemented");
+  public ScanManager scan(final String organizationId) {
+    return new ScanManagerImpl(this, organizationId);
   }
 
   /**
@@ -1499,9 +1501,16 @@ public class ContrastSDK {
         os.write(bodyByte, 0, bodyByte.length);
       }
     }
-    final InputStream is = connection.getInputStream();
     int rc = connection.getResponseCode();
-    if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
+    if (rc >= SERVER_ERROR) {
+      try (BufferedReader reader =
+          new BufferedReader(new InputStreamReader(connection.getErrorStream()))) {
+        final String error = reader.lines().collect(Collectors.joining("\n"));
+        throw new RuntimeException(rc + ": " + error);
+      }
+    }
+    InputStream is = connection.getInputStream();
+    if (rc >= BAD_REQUEST) {
       is.close();
       throw new UnauthorizedException(rc);
     }

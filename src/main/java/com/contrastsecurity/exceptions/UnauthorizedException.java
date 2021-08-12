@@ -28,7 +28,7 @@
  */
 package com.contrastsecurity.exceptions;
 
-public class UnauthorizedException extends Exception {
+public class UnauthorizedException extends RuntimeException {
 
   public UnauthorizedException(int rc) {
     super("Received response code: " + rc);

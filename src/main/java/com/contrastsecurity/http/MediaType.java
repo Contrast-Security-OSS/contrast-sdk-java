@@ -1,9 +1,9 @@
 package com.contrastsecurity.http;
 
 public enum MediaType {
-  JSON("application/json");
+  JSON("application/json; charset=UTF-8");
 
-  private String type;
+  private final String type;
 
   MediaType(String type) {
     this.type = type;

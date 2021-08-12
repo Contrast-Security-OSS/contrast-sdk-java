@@ -1,4 +1,4 @@
-package com.contrastsecurity.scan;
+package com.contrastsecurity.sdk.scan;
 
 /**
  * Describes a resource that may be refreshed by requesting a new representation.

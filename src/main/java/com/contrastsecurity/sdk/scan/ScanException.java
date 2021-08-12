@@ -1,4 +1,4 @@
-package com.contrastsecurity.scan;
+package com.contrastsecurity.sdk.scan;
 
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package com.contrastsecurity.sdk;
+package com.contrastsecurity.sdk.internal;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -11,12 +11,15 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 
 /** Factory for configuring an instance of GSON that is compatible with the Scan API */
-final class GsonFactory {
+public final class GsonFactory {
 
-  static Gson create() {
+  public static GsonBuilder builder() {
     return new GsonBuilder()
-        .registerTypeAdapter(Instant.class, new InstantTypeAdapter().nullSafe())
-        .create();
+        .registerTypeAdapter(Instant.class, new InstantTypeAdapter().nullSafe());
+  }
+
+  public static Gson create() {
+    return builder().create();
   }
 
   /** static members only */

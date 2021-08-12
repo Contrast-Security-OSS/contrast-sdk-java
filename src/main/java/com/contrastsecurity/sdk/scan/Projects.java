@@ -1,6 +1,7 @@
-package com.contrastsecurity.scan;
+package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.sdk.ContrastSDK;
+import java.io.IOException;
 import java.util.Optional;
 
 /** Entrypoint for the Contrast Scan projects management API. */
@@ -19,5 +20,5 @@ public interface Projects {
 
   Project get(final String id);
 
-  Optional<Project> findByName(final String name);
+  Optional<Project> findByName(final String name) throws IOException;
 }

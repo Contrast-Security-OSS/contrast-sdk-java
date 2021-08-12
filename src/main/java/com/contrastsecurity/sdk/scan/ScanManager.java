@@ -1,4 +1,4 @@
-package com.contrastsecurity.scan;
+package com.contrastsecurity.sdk.scan;
 
 public interface ScanManager {
 

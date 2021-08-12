@@ -1,4 +1,4 @@
-package com.contrastsecurity.scan;
+package com.contrastsecurity.sdk.scan;
 
 /**
  * Describes a code artifact uploaded to Contrast Scan
