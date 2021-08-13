@@ -32,11 +32,6 @@ public class ProjectsImpl implements Projects {
   }
 
   @Override
-  public Project get(final String id) {
-    throw new UnsupportedOperationException("Not yet implemented");
-  }
-
-  @Override
   public Optional<Project> findByName(final String name) throws IOException {
     // requests made with ContrastSDK.makeRequest must have their path prepended with "/"
     final String uri;

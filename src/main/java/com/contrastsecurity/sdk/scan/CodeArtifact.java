@@ -9,11 +9,4 @@ public interface CodeArtifact {
 
   /** @return unique ID of this code artifact */
   String id();
-
-  /**
-   * Starts a scan for this code artifact.
-   *
-   * @return new scan
-   */
-  Scan startScan();
 }

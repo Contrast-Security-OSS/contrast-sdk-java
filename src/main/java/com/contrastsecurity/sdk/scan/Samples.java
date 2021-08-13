@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 final class Samples {
 
@@ -31,17 +33,22 @@ final class Samples {
                     throw new UncheckedIOException(e);
                   }
                 });
-
     final Path file = Paths.get("./target/spring-test-application.jar");
-    project
-        .uploadCodeArtifact(file)
-        .startScan()
-        .await()
-        .thenAccept(
-            s -> {
-              s.saveSarif(Paths.get("./contrast-scan-results.sarif.json"));
-              final ScanSummary summary = s.summary();
-              System.out.printf("Found %d total results%n", summary.totalResults());
-            });
+    final CodeArtifact codeArtifact = project.codeArtifacts().upload(file);
+    final Scan scan = project.scans().define().withExistingCodeArtifact(codeArtifact).create();
+    final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    try {
+      scan.await(scheduler)
+          .thenAccept(
+              s -> {
+                s.saveSarif(Paths.get("./contrast-scan-results.sarif.json"));
+                final ScanSummary summary = s.summary();
+                System.out.printf("Found %d total results%n", summary.totalResults());
+              })
+          .toCompletableFuture()
+          .join();
+    } finally {
+      scheduler.shutdown();
+    }
   }
 }

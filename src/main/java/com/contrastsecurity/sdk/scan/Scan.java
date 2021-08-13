@@ -1,13 +1,40 @@
 package com.contrastsecurity.sdk.scan;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ScheduledExecutorService;
 
 /** Describes a scan resource. */
-public interface Scan {
+public interface Scan extends Refreshable<Scan> {
 
-  /** @return unique ID of this scan */
+  /** Builder for defining a new scan. */
+  interface Definition {
+
+    /**
+     * @param id ID of the code artifact to scan
+     * @return this
+     */
+    Definition withExistingCodeArtifact(String id);
+
+    /**
+     * @param codeArtifact the code artifact to scan
+     * @return this
+     */
+    Definition withExistingCodeArtifact(CodeArtifact codeArtifact);
+
+    /**
+     * @param label label that distinguishes this scan from others in the project
+     * @return this
+     */
+    Definition withLabel(String label);
+
+    /** @return new started scan */
+    Scan create() throws IOException;
+  }
+
+  /** @return ID of this scan */
   String id();
 
   /** @return scan status */
@@ -17,18 +44,14 @@ public interface Scan {
   String errorMessage();
 
   /** @return true when the scan has completed, failed, or been canceled */
-  default boolean isFinished() {
-    return status() == Status.FAILED
-        || status() == Status.COMPLETED
-        || status() == Status.CANCELLED;
-  }
+  boolean isFinished();
 
   /**
    * @return {@code CompletionStage} that resolves successfully with a {@code Scan} record when the
    *     scan has completed, or resolves exceptionally with a {@link ScanException} when the scan
    *     has failed or there was a problem communicating with the Contrast Scan API.
    */
-  CompletionStage<Scan> await();
+  CompletionStage<Scan> await(ScheduledExecutorService scheduler);
 
   /**
    * Retrieves and scan's results in <a href="https://sarifweb.azurewebsites.net">SARIF</a>

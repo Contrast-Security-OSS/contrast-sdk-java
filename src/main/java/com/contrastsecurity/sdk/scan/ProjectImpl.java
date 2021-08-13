@@ -7,7 +7,6 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Objects;
@@ -225,12 +224,12 @@ final class ProjectImpl implements Project {
   }
 
   @Override
-  public CodeArtifact uploadCodeArtifact(final Path file) {
+  public CodeArtifacts codeArtifacts() {
     throw new UnsupportedOperationException("Not yet implemented");
   }
 
   @Override
-  public Project refresh() {
+  public Scans scans() {
     throw new UnsupportedOperationException("Not yet implemented");
   }
 

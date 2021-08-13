@@ -6,7 +6,7 @@ import java.time.Instant;
 import java.util.Collection;
 
 /** Describes the Contrast Scan project top-level resource. */
-public interface Project extends Refreshable<Project> {
+public interface Project {
 
   /** Builder for defining a new project resource. */
   interface Definition {
@@ -92,11 +92,9 @@ public interface Project extends Refreshable<Project> {
   /** @return collection of code namespaces to exclude from the scan */
   Collection<String> excludeNamespaceFilters();
 
-  /**
-   * Uploads the given file as a new code artifact for scanning.
-   *
-   * @param file the file to upload
-   * @return new {@link CodeArtifact}
-   */
-  CodeArtifact uploadCodeArtifact(Path file);
+  /** @return entry point to the code artifacts management API */
+  CodeArtifacts codeArtifacts();
+
+  /** @return entry point to the scans management API */
+  Scans scans();
 }

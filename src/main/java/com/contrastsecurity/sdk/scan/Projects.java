@@ -1,15 +1,10 @@
 package com.contrastsecurity.sdk.scan;
 
-import com.contrastsecurity.sdk.ContrastSDK;
 import java.io.IOException;
 import java.util.Optional;
 
-/** Entrypoint for the Contrast Scan projects management API. */
+/** Contrast Scan projects resource collection API. */
 public interface Projects {
-
-  static Projects projects(final ContrastSDK sdk, final String organizationId) {
-    throw new UnsupportedOperationException("not yet implemented");
-  }
 
   /**
    * Starts the definition for a new top-level project resource.
@@ -18,7 +13,10 @@ public interface Projects {
    */
   Project.Definition define();
 
-  Project get(final String id);
-
+  /**
+   * @param name unique project name
+   * @return project, or empty if no such project exists
+   * @throws IOException when IO error occurs while making the request to the Contrast Scan API
+   */
   Optional<Project> findByName(final String name) throws IOException;
 }

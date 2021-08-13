@@ -22,11 +22,6 @@ public class ScanManagerImpl implements ScanManager {
   }
 
   @Override
-  public ScanManager withOrganization(final String id) {
-    return new ScanManagerImpl(contrast, id);
-  }
-
-  @Override
   public Projects projects() {
     return new ProjectsImpl(organizationId, contrast, gson);
   }
