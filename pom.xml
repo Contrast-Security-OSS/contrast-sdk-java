@@ -78,6 +78,7 @@
       <groupId>au.com.dius.pact.consumer</groupId>
       <artifactId>junit5</artifactId>
       <version>4.2.9</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>

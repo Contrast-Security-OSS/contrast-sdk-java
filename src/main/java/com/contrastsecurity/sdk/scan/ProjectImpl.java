@@ -3,6 +3,7 @@ package com.contrastsecurity.sdk.scan;
 import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.http.MediaType;
 import com.contrastsecurity.sdk.ContrastSDK;
+import com.contrastsecurity.sdk.internal.URIBuilder;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -42,7 +43,10 @@ final class ProjectImpl implements Project {
     @Override
     public Project create() throws IOException {
       // requests made with ContrastSDK.makeRequest must have their path prepended with "/"
-      final String path = String.join("/", "", "sast", "organizations", organizationId, "projects");
+      final String path =
+          new URIBuilder()
+              .appendPathSegments("sast", "organizations", organizationId, "projects")
+              .toURIString();
       final String json = gson.toJson(this);
       try (Reader reader =
           new InputStreamReader(

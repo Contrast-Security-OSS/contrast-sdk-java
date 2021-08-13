@@ -5,5 +5,4 @@ public interface Scans {
   Scan.Definition define();
 
   Scan get(String id);
-
 }

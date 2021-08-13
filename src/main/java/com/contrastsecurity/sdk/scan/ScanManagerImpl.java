@@ -5,7 +5,7 @@ import com.contrastsecurity.sdk.internal.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.InstanceCreator;
 
-public class ScanManagerImpl implements ScanManager {
+public final class ScanManagerImpl implements ScanManager {
 
   private final ContrastSDK contrast;
   private final Gson gson;

@@ -1,7 +1,6 @@
 package com.contrastsecurity.sdk.scan;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Collection;
 

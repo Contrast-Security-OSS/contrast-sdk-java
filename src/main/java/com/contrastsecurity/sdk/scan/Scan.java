@@ -1,5 +1,6 @@
 package com.contrastsecurity.sdk.scan;
 
+import com.contrastsecurity.sdk.internal.Refreshable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
