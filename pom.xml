@@ -42,6 +42,8 @@
     <versions.maven-gpg-plugin>1.6</versions.maven-gpg-plugin>
     <versions.nexus-staging-maven-plugin>1.6.8</versions.nexus-staging-maven-plugin>
     <versions.junit-jupiter>5.7.1</versions.junit-jupiter>
+    <versions.auto-value>1.8.2</versions.auto-value>
+    <versions.lombok>1.18.18</versions.lombok>
   </properties>
 
   <dependencies>
@@ -83,13 +85,13 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.18</version>
+      <version>${versions.lombok}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.auto.value</groupId>
-      <artifactId>auto-value</artifactId>
-      <version>1.5.3</version>
+      <artifactId>auto-value-annotations</artifactId>
+      <version>${versions.auto-value}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -148,11 +150,24 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <release>8</release>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${versions.lombok}</version>
+            </path>
+            <path>
+              <groupId>com.google.auto.value</groupId>
+              <artifactId>auto-value</artifactId>
+              <version>${versions.auto-value}</version>
+            </path>
+          </annotationProcessorPaths>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
+          <release>8</release>
           <detectJavaApiLink>false</detectJavaApiLink>
         </configuration>
         <executions>

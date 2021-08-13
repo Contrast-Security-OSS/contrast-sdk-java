@@ -31,6 +31,9 @@ public final class URIBuilder {
    * @throws NullPointerException if any segment is {@code null}
    */
   public URIBuilder appendPathSegments(final String... segments) {
+    for (final String segment : segments) {
+      Objects.requireNonNull(segment);
+    }
     this.segments.addAll(Arrays.asList(segments));
     return this;
   }

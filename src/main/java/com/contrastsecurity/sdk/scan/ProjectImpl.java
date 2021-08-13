@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 
 final class ProjectImpl implements Project {
@@ -172,7 +173,7 @@ final class ProjectImpl implements Project {
     return note;
   }
 
-  public ProjectImpl setNote(final int note) {
+  ProjectImpl setNote(final int note) {
     this.note = note;
     return this;
   }
@@ -209,7 +210,7 @@ final class ProjectImpl implements Project {
 
   @Override
   public Collection<String> includeNamespaceFilters() {
-    return includeNamespaceFilters;
+    return includeNamespaceFilters == null ? Collections.emptyList() : includeNamespaceFilters;
   }
 
   ProjectImpl setIncludeNamespaceFilters(final Collection<String> includeNamespaceFilters) {
@@ -219,7 +220,7 @@ final class ProjectImpl implements Project {
 
   @Override
   public Collection<String> excludeNamespaceFilters() {
-    return excludeNamespaceFilters;
+    return excludeNamespaceFilters == null ? Collections.emptyList() : excludeNamespaceFilters;
   }
 
   ProjectImpl setExcludeNamespaceFilters(final Collection<String> excludeNamespaceFilters) {
@@ -229,7 +230,7 @@ final class ProjectImpl implements Project {
 
   @Override
   public CodeArtifacts codeArtifacts() {
-    throw new UnsupportedOperationException("Not yet implemented");
+    return new CodeArtifactsImpl(contrast, organizationId, id);
   }
 
   @Override

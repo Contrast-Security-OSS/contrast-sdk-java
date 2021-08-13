@@ -10,12 +10,11 @@ import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
+import com.contrastsecurity.PactConstants;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.ContrastSDK.Builder;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -47,10 +46,20 @@ final class ProjectsPactTest {
           .pathFromProviderState(
               "/sast/organizations/${organizationId}/projects",
               "/sast/organizations/organization-id/projects")
-          .body(new JSONObject().put("name", "spring-test-application").put("language", "JAVA"))
+          .body(new JSONObject().put("name", "quarkus-test-application").put("language", "JAVA"))
           .willRespondWith()
           .status(201)
-          .body(newJsonBody(ProjectsPactTest::describeProject).build())
+          .body(
+              newJsonBody(
+                      project -> {
+                        project
+                            .valueFromProviderState("id", "${id}", "fake-project-id")
+                            .valueFromProviderState(
+                                "organizationId", "${organizationId}", "fake-organization-id")
+                            .stringValue("name", "quarkus-test-application")
+                            .stringType("language", "JAVA");
+                      })
+                  .build())
           .toPact();
     }
 
@@ -60,11 +69,12 @@ final class ProjectsPactTest {
           new Builder("test-user", "test-service-key", "test-api-key")
               .withApiUrl(server.getUrl())
               .build();
+
       final Projects projects = contrast.scan("organization-id").projects();
       final Project project =
-          projects.define().withName("spring-test-application").withLanguage("JAVA").create();
-      final Project expected = createExpectedProject(contrast);
-      assertThat(project).isEqualTo(expected);
+          projects.define().withName("quarkus-test-application").withLanguage("JAVA").create();
+      assertThat(project.name()).isEqualTo("quarkus-test-application");
+      assertThat(project.language()).isEqualTo("JAVA");
     }
   }
 
@@ -163,8 +173,8 @@ final class ProjectsPactTest {
         .numberType("note", 5)
         .datetime(
             "lastScanTime",
-            "yyyy-MM-dd'T'HH:mm:ss[.SSS]XXX",
-            ZonedDateTime.ofInstant(LAST_SCAN_TIME_EXAMPLE, ZoneOffset.UTC))
+            PactConstants.DATETIME_FORMAT,
+            ZonedDateTime.ofInstant(PactConstants.TIMESTAMP_EXAMPLE, ZoneOffset.UTC))
         .numberType("completedScans", 6)
         .stringType("lastScanId", "scan-id")
         .array("includeNamespaceFilters", a -> a.stringType("com.example"))
@@ -184,12 +194,9 @@ final class ProjectsPactTest {
         .setLow(4)
         .setNote(5)
         .setCompletedScans(6)
-        .setLastScanTime(LAST_SCAN_TIME_EXAMPLE)
+        .setLastScanTime(PactConstants.TIMESTAMP_EXAMPLE)
         .setLastScanId("scan-id")
         .setIncludeNamespaceFilters(Collections.singletonList("com.example"))
         .setExcludeNamespaceFilters(Collections.singletonList("org.apache"));
   }
-
-  private static final Instant LAST_SCAN_TIME_EXAMPLE =
-      OffsetDateTime.of(1955, 11, 12, 22, 4, 0, 0, ZoneOffset.UTC).toInstant();
 }

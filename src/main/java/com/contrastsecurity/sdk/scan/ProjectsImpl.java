@@ -3,9 +3,11 @@ package com.contrastsecurity.sdk.scan;
 import com.contrastsecurity.exceptions.ContrastException;
 import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.sdk.ContrastSDK;
+import com.contrastsecurity.sdk.internal.GsonFactory;
 import com.contrastsecurity.sdk.internal.URIBuilder;
 import com.contrastsecurity.sdk.scan.Project.Definition;
 import com.google.gson.Gson;
+import com.google.gson.InstanceCreator;
 import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -18,10 +20,14 @@ final class ProjectsImpl implements Projects {
   private final ContrastSDK contrast;
   private final Gson gson;
 
-  ProjectsImpl(final String organizationId, final ContrastSDK contrast, final Gson gson) {
+  ProjectsImpl(final String organizationId, final ContrastSDK contrast) {
     this.organizationId = organizationId;
     this.contrast = contrast;
-    this.gson = gson;
+    this.gson =
+        GsonFactory.builder()
+            .registerTypeAdapter(
+                Project.class, (InstanceCreator<ProjectImpl>) type -> new ProjectImpl(contrast))
+            .create();
   }
 
   @Override
