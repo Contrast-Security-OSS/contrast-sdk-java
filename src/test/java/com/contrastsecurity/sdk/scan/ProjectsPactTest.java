@@ -15,6 +15,9 @@ import com.contrastsecurity.TestDataConstants;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.ContrastSDK.Builder;
+import com.contrastsecurity.sdk.internal.GsonFactory;
+import com.contrastsecurity.sdk.scan.ProjectImpl.Value;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -182,21 +185,25 @@ final class ProjectsPactTest {
   }
 
   private static Project createExpectedProject(final ContrastSDK contrast) {
-    return new ProjectImpl(contrast)
-        .setId("fake-project-id")
-        .setOrganizationId("fake-organization-id")
-        .setName("spring-test-application")
-        .setArchived(false)
-        .setLanguage("JAVA")
-        .setCritical(1)
-        .setHigh(2)
-        .setMedium(3)
-        .setLow(4)
-        .setNote(5)
-        .setCompletedScans(6)
-        .setLastScanTime(TestDataConstants.TIMESTAMP_EXAMPLE)
-        .setLastScanId("scan-id")
-        .setIncludeNamespaceFilters(Collections.singletonList("com.example"))
-        .setExcludeNamespaceFilters(Collections.singletonList("org.apache"));
+    final Value value =
+        Value.builder()
+            .id("fake-project-id")
+            .organizationId("fake-organization-id")
+            .name("spring-test-application")
+            .archived(false)
+            .language("JAVA")
+            .critical(1)
+            .high(2)
+            .medium(3)
+            .low(4)
+            .note(5)
+            .completedScans(6)
+            .lastScanTime(TestDataConstants.TIMESTAMP_EXAMPLE)
+            .lastScanId("scan-id")
+            .includeNamespaceFilters(Collections.singletonList("com.example"))
+            .excludeNamespaceFilters(Collections.singletonList("org.apache"))
+            .build();
+    final Gson gson = GsonFactory.create();
+    return new ProjectImpl(contrast, gson, value);
   }
 }

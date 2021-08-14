@@ -222,7 +222,7 @@ public class ContrastSDK {
   }
 
   public ScanManager scan(final String organizationId) {
-    return new ScanManagerImpl(this, organizationId);
+    return new ScanManagerImpl(this, gson, organizationId);
   }
 
   /**

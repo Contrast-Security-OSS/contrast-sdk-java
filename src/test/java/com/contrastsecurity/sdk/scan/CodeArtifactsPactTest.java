@@ -91,9 +91,9 @@ final class CodeArtifactsPactTest {
           new ContrastSDK.Builder("test-user", "test-service-key", "test-api-key")
               .withApiUrl(server.getUrl())
               .build();
-      final ProjectImpl project =
-          new ProjectImpl(contrast).setOrganizationId("organization-id").setId("project-id");
-      final CodeArtifact codeArtifact = project.codeArtifacts().upload(jar);
+      final CodeArtifacts codeArtifacts =
+          contrast.scan("organization-id").codeArtifacts("project-id");
+      final CodeArtifact codeArtifact = codeArtifacts.upload(jar);
 
       final CodeArtifactImpl expected =
           CodeArtifactImpl.builder()

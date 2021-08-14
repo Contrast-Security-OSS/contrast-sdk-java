@@ -1,11 +1,10 @@
 package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.EqualsContract;
+import com.contrastsecurity.TestDataConstants;
 import com.contrastsecurity.sdk.ContrastSDK;
-import com.contrastsecurity.sdk.ContrastSDK.Builder;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import com.contrastsecurity.sdk.internal.GsonFactory;
+import com.google.gson.Gson;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -13,37 +12,42 @@ import org.junit.jupiter.api.BeforeEach;
 final class ProjectImplTest implements EqualsContract<ProjectImpl> {
 
   private ContrastSDK contrast;
+  private Gson gson;
 
   @BeforeEach
   void before() {
-    contrast = new Builder("user", "service-key", "api-key").build();
+    contrast = new ContrastSDK.Builder("user", "service-key", "api-key").build();
+    gson = GsonFactory.create();
   }
 
   @Override
   public ProjectImpl createValue() {
-    return new ProjectImpl(contrast)
-        .setId("fake-project-id")
-        .setOrganizationId("fake-organization-id")
-        .setName("spring-test-application")
-        .setArchived(false)
-        .setLanguage("JAVA")
-        .setCritical(1)
-        .setHigh(2)
-        .setMedium(3)
-        .setLow(4)
-        .setNote(5)
-        .setCompletedScans(6)
-        .setLastScanTime(LAST_SCAN_TIME_EXAMPLE)
-        .setLastScanId("scan-id")
-        .setIncludeNamespaceFilters(Collections.singletonList("com.example"))
-        .setExcludeNamespaceFilters(Collections.singletonList("org.apache"));
+    final ProjectImpl.Value value = builder().build();
+    return new ProjectImpl(contrast, gson, value);
   }
 
   @Override
   public ProjectImpl createNotEqualValue() {
-    return new ProjectImpl(contrast);
+    final ProjectImpl.Value value = builder().id("other-projet-id").build();
+    return new ProjectImpl(contrast, gson, value);
   }
 
-  private static final Instant LAST_SCAN_TIME_EXAMPLE =
-      OffsetDateTime.of(1955, 11, 12, 22, 4, 0, 0, ZoneOffset.UTC).toInstant();
+  private static ProjectImpl.Value.Builder builder() {
+    return ProjectImpl.Value.builder()
+        .id("fake-project-id")
+        .organizationId("fake-organization-id")
+        .name("spring-test-application")
+        .archived(false)
+        .language("JAVA")
+        .critical(1)
+        .high(2)
+        .medium(3)
+        .low(4)
+        .note(5)
+        .completedScans(6)
+        .lastScanTime(TestDataConstants.TIMESTAMP_EXAMPLE)
+        .lastScanId("scan-id")
+        .includeNamespaceFilters(Collections.singletonList("com.example"))
+        .excludeNamespaceFilters(Collections.singletonList("org.apache"));
+  }
 }

@@ -3,7 +3,9 @@ package com.contrastsecurity.sdk.scan;
 import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.http.MediaType;
 import com.contrastsecurity.sdk.ContrastSDK;
+import com.contrastsecurity.sdk.internal.Nullable;
 import com.contrastsecurity.sdk.internal.URIBuilder;
+import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 /** Implementation of the {@link Scan} resource. */
 final class ScanImpl implements Scan {
 
+  /** Implementation of the {@link Scan.Definition} definition */
   static final class Definition implements Scan.Definition {
 
     private final transient ContrastSDK contrast;
@@ -67,71 +70,104 @@ final class ScanImpl implements Scan {
       try (Reader reader =
           new InputStreamReader(
               contrast.makeRequestWithBody(HttpMethod.POST, uri, json, MediaType.JSON))) {
-        return gson.fromJson(reader, ScanImpl.class);
+        final ScanImpl.Value value = gson.fromJson(reader, AutoValue_ScanImpl_Value.class);
+        return new ScanImpl(contrast, value);
       }
     }
   }
 
-  private final transient ContrastSDK contrast;
-  private String id;
-  private Status status;
-  private String errorMessage;
+  /** Value type that describes the scan structure returned by the API. */
+  @AutoValue
+  abstract static class Value {
 
-  ScanImpl(final ContrastSDK contrast) {
-    this.contrast = Objects.requireNonNull(contrast);
+    static Builder builder() {
+      return new AutoValue_ScanImpl_Value.Builder();
+    }
+
+    abstract String id();
+
+    abstract String projectId();
+
+    abstract String organizationId();
+
+    abstract Status status();
+
+    @Nullable
+    abstract String errorMessage();
+
+    @AutoValue.Builder
+    abstract static class Builder {
+      abstract Builder id(String value);
+
+      abstract Builder projectId(String value);
+
+      abstract Builder organizationId(String value);
+
+      abstract Builder status(Status value);
+
+      abstract Builder errorMessage(String value);
+
+      abstract Value build();
+    }
   }
 
-  /** visible for testing */
-  ScanImpl(
-      final ContrastSDK contrast, final String id, final Status status, final String errorMessage) {
-    this.contrast = contrast;
-    this.id = Objects.requireNonNull(id);
-    this.status = Objects.requireNonNull(status);
-    this.errorMessage = errorMessage;
+  private final ContrastSDK contrast;
+  private final Value value;
+
+  ScanImpl(final ContrastSDK contrast, final Value value) {
+    this.contrast = Objects.requireNonNull(contrast);
+    this.value = value;
   }
 
   @Override
   public String id() {
-    return id;
+    return value.id();
   }
 
   @Override
   public Status status() {
-    return status;
+    return value.status();
   }
 
   @Override
   public String errorMessage() {
-    return errorMessage;
+    return value.errorMessage();
   }
 
   @Override
   public boolean isFinished() {
-    return status == Status.FAILED || status == Status.COMPLETED || status == Status.CANCELLED;
+    return value.status() == Status.FAILED
+        || value.status() == Status.COMPLETED
+        || value.status() == Status.CANCELLED;
   }
 
   @Override
   public CompletionStage<Scan> await(final ScheduledExecutorService scheduler) {
+    // TODO
     throw new UnsupportedOperationException("Not yet implemented");
   }
 
   @Override
   public InputStream sarif() {
+    // TODO
     throw new UnsupportedOperationException("Not yet implemented");
   }
 
   @Override
   public void saveSarif(final Path file) {
+    // TODO
     throw new UnsupportedOperationException("Not yet implemented");
   }
 
   @Override
   public ScanSummary summary() {
+    // TODO
     throw new UnsupportedOperationException("Not yet implemented");
   }
 
   @Override
   public Scan refresh() {
+    // TODO
     throw new UnsupportedOperationException("Not yet implemented");
   }
 
@@ -144,27 +180,16 @@ final class ScanImpl implements Scan {
       return false;
     }
     final ScanImpl scan = (ScanImpl) o;
-    return id.equals(scan.id)
-        && status == scan.status
-        && Objects.equals(errorMessage, scan.errorMessage);
+    return value.equals(scan.value);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, status, errorMessage);
+    return Objects.hash(value);
   }
 
   @Override
   public String toString() {
-    return "ScanImpl{"
-        + "id='"
-        + id
-        + '\''
-        + ", status="
-        + status
-        + ", errorMessage='"
-        + errorMessage
-        + '\''
-        + '}';
+    return value.toString();
   }
 }

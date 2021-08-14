@@ -48,7 +48,7 @@ final class ScansPactTest {
                         scan.stringType("projectId", "project-id");
                         scan.stringType("organizationId", "organization-id");
                         scan.stringType("status", "FAILED");
-                        scan.stringType("errorMessage", "scan-failed");
+                        scan.stringType("errorMessage", "scan failed");
                       })
                   .build())
           .toPact();
@@ -60,14 +60,18 @@ final class ScansPactTest {
           new ContrastSDK.Builder("test-user", "test-service-key", "test-api-key")
               .withApiUrl(server.getUrl())
               .build();
-      final Scans scans =
-          new ProjectImpl(contrast)
-              .setOrganizationId("organization-id")
-              .setId("project-id")
-              .scans();
+      final Scans scans = contrast.scan("organization-id").scans("project-id");
       final Scan scan =
           scans.define().withExistingCodeArtifact("code-artifact-id").withLabel("main").create();
-      final ScanImpl expected = new ScanImpl(contrast, "scan-id", Status.FAILED, "scan-failed");
+      final ScanImpl.Value value =
+          ScanImpl.Value.builder()
+              .id("scan-id")
+              .projectId("project-id")
+              .organizationId("organization-id")
+              .status(Status.FAILED)
+              .errorMessage("scan failed")
+              .build();
+      final ScanImpl expected = new ScanImpl(contrast, value);
       assertThat(scan).isEqualTo(expected);
     }
   }

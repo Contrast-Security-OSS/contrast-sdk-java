@@ -1,10 +1,9 @@
 package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.sdk.ContrastSDK;
-import com.contrastsecurity.sdk.internal.GsonFactory;
 import com.contrastsecurity.sdk.scan.Scan.Definition;
 import com.google.gson.Gson;
-import com.google.gson.InstanceCreator;
+import java.util.Objects;
 
 /** Implementation of the {@link Scans} resource collection. */
 final class ScansImpl implements Scans {
@@ -14,15 +13,15 @@ final class ScansImpl implements Scans {
   private final String organizationId;
   private final String projectId;
 
-  ScansImpl(final ContrastSDK contrast, final String organizationId, final String projectId) {
-    this.contrast = contrast;
-    this.gson =
-        GsonFactory.builder()
-            .registerTypeAdapter(
-                ScanImpl.class, (InstanceCreator<ScanImpl>) type -> new ScanImpl(contrast))
-            .create();
-    this.organizationId = organizationId;
-    this.projectId = projectId;
+  ScansImpl(
+      final ContrastSDK contrast,
+      final Gson gson,
+      final String organizationId,
+      final String projectId) {
+    this.contrast = Objects.requireNonNull(contrast);
+    this.gson = Objects.requireNonNull(gson);
+    this.organizationId = Objects.requireNonNull(organizationId);
+    this.projectId = Objects.requireNonNull(projectId);
   }
 
   @Override

@@ -9,12 +9,22 @@ final class ScanImplTest implements EqualsContract<ScanImpl> {
 
   @Override
   public ScanImpl createValue() {
-    return new ScanImpl(contrast(), "scan-id", Status.COMPLETED, null);
+    final ScanImpl.Value scanValue = builder().build();
+    return new ScanImpl(contrast(), scanValue);
   }
 
   @Override
   public ScanImpl createNotEqualValue() {
-    return new ScanImpl(contrast(), "scan-id", Status.FAILED, "failed");
+    final ScanImpl.Value scanValue = builder().status(Status.FAILED).errorMessage("failed").build();
+    return new ScanImpl(contrast(), scanValue);
+  }
+
+  private static ScanImpl.Value.Builder builder() {
+    return ScanImpl.Value.builder()
+        .id("scan-id")
+        .projectId("project-id")
+        .organizationId("organization-id")
+        .status(Status.COMPLETED);
   }
 
   private static ContrastSDK contrast() {
