@@ -28,6 +28,13 @@ public interface EqualsContract<T> {
     assertEquals(value, value);
   }
 
+  @Test
+  default void valueEqualsDifferentReference() {
+    final T value = createValue();
+    final T otherValue = createValue();
+    assertEquals(value, otherValue);
+  }
+
   /**
    * Suppresses warnings because IntelliJ's static analysis is confused and believes that {@code
    * value.equals(null)} will always be false.

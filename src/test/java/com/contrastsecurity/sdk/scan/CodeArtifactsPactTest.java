@@ -10,8 +10,8 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.contrastsecurity.PactConstants;
+import com.contrastsecurity.TestDataConstants;
 import com.contrastsecurity.sdk.ContrastSDK;
-import com.contrastsecurity.sdk.ContrastSDK.Builder;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -79,7 +79,7 @@ final class CodeArtifactsPactTest {
                         o.datetime(
                             "createdTime",
                             PactConstants.DATETIME_FORMAT,
-                            PactConstants.TIMESTAMP_EXAMPLE);
+                            TestDataConstants.TIMESTAMP_EXAMPLE);
                       })
                   .build())
           .toPact();
@@ -88,7 +88,7 @@ final class CodeArtifactsPactTest {
     @Test
     void upload_code_artifact(final MockServer server) throws IOException {
       final ContrastSDK contrast =
-          new Builder("test-user", "test-service-key", "test-api-key")
+          new ContrastSDK.Builder("test-user", "test-service-key", "test-api-key")
               .withApiUrl(server.getUrl())
               .build();
       final ProjectImpl project =
@@ -101,7 +101,7 @@ final class CodeArtifactsPactTest {
               .projectId("project-id")
               .organizationId("organization-id")
               .filename(jar.getFileName().toString())
-              .createdTime(PactConstants.TIMESTAMP_EXAMPLE)
+              .createdTime(TestDataConstants.TIMESTAMP_EXAMPLE)
               .build();
       assertThat(codeArtifact).isEqualTo(expected);
     }

@@ -11,6 +11,7 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.contrastsecurity.PactConstants;
+import com.contrastsecurity.TestDataConstants;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.ContrastSDK.Builder;
@@ -51,14 +52,13 @@ final class ProjectsPactTest {
           .status(201)
           .body(
               newJsonBody(
-                      project -> {
-                        project
-                            .valueFromProviderState("id", "${id}", "fake-project-id")
-                            .valueFromProviderState(
-                                "organizationId", "${organizationId}", "fake-organization-id")
-                            .stringValue("name", "quarkus-test-application")
-                            .stringType("language", "JAVA");
-                      })
+                      project ->
+                          project
+                              .valueFromProviderState("id", "${id}", "fake-project-id")
+                              .valueFromProviderState(
+                                  "organizationId", "${organizationId}", "fake-organization-id")
+                              .stringValue("name", "quarkus-test-application")
+                              .stringType("language", "JAVA"))
                   .build())
           .toPact();
     }
@@ -174,7 +174,7 @@ final class ProjectsPactTest {
         .datetime(
             "lastScanTime",
             PactConstants.DATETIME_FORMAT,
-            ZonedDateTime.ofInstant(PactConstants.TIMESTAMP_EXAMPLE, ZoneOffset.UTC))
+            ZonedDateTime.ofInstant(TestDataConstants.TIMESTAMP_EXAMPLE, ZoneOffset.UTC))
         .numberType("completedScans", 6)
         .stringType("lastScanId", "scan-id")
         .array("includeNamespaceFilters", a -> a.stringType("com.example"))
@@ -194,7 +194,7 @@ final class ProjectsPactTest {
         .setLow(4)
         .setNote(5)
         .setCompletedScans(6)
-        .setLastScanTime(PactConstants.TIMESTAMP_EXAMPLE)
+        .setLastScanTime(TestDataConstants.TIMESTAMP_EXAMPLE)
         .setLastScanId("scan-id")
         .setIncludeNamespaceFilters(Collections.singletonList("com.example"))
         .setExcludeNamespaceFilters(Collections.singletonList("org.apache"));

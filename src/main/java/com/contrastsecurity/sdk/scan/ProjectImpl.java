@@ -235,7 +235,7 @@ final class ProjectImpl implements Project {
 
   @Override
   public Scans scans() {
-    throw new UnsupportedOperationException("Not yet implemented");
+    return new ScansImpl(contrast, organizationId, id);
   }
 
   @Override

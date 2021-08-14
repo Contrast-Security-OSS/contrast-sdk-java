@@ -1,5 +1,8 @@
 package com.contrastsecurity.sdk.scan;
 
+import com.contrastsecurity.exceptions.HttpResponseException;
+import com.contrastsecurity.exceptions.ResourceNotFoundException;
+import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.sdk.internal.Refreshable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +34,13 @@ public interface Scan extends Refreshable<Scan> {
      */
     Definition withLabel(String label);
 
-    /** @return new started scan */
+    /**
+     * @return new started scan
+     * @throws IOException when an IO error occurs while uploading the file
+     * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
+     * @throws ResourceNotFoundException when the requested resource does not exist
+     * @throws HttpResponseException when Contrast rejects this request with an error code
+     */
     Scan create() throws IOException;
   }
 
