@@ -1,7 +1,6 @@
 package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.exceptions.HttpResponseException;
-import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.internal.GsonFactory;
 import com.contrastsecurity.sdk.internal.URIBuilder;
@@ -78,14 +77,8 @@ final class CodeArtifactsImpl implements CodeArtifacts {
       os.flush();
       writer.append(footer).flush();
     }
-    final int rc = connection.getResponseCode();
-    // for consistency with other SDK methods, throw UnauthorizedException when request's
-    // authentication is rejected. Unlike other SDK requests, do not conflate all 400 errors with an
-    // authentication problem
-    if (rc == HttpURLConnection.HTTP_FORBIDDEN || rc == HttpURLConnection.HTTP_UNAUTHORIZED) {
-      throw new UnauthorizedException(rc);
-    }
-    if (rc != 201) {
+    final int code = connection.getResponseCode();
+    if (code != 200 && code != 201) {
       throw HttpResponseException.fromConnection(
           connection, "Failed to upload code artifact to Contrast Scan");
     }

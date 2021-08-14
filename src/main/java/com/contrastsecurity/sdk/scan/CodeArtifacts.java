@@ -1,5 +1,8 @@
 package com.contrastsecurity.sdk.scan;
 
+import com.contrastsecurity.exceptions.HttpResponseException;
+import com.contrastsecurity.exceptions.ResourceNotFoundException;
+import com.contrastsecurity.exceptions.UnauthorizedException;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -14,19 +17,19 @@ import java.nio.file.Path;
 public interface CodeArtifacts {
 
   /**
-   * Uploads the given file to Contrast Scan to create a new code artifact.
+   * Transfers a file from the file system to Contrast Scan to create a new code artifact for static
+   * analysis.
    *
-   * @param file the file to upload
+   * @param file the code artifact to upload
    * @param name the name of the code artifact
-   * @return new code artifact
+   * @return new {@link CodeArtifact} from Contrast
+   * @throws IOException when an IO error occurs while uploading the file
+   * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
+   * @throws ResourceNotFoundException when the requested resource does not exist
+   * @throws HttpResponseException when Contrast rejects this request with an error code
    */
   CodeArtifact upload(Path file, String name) throws IOException;
 
-  /**
-   * Uploads the given file to Contrast Scan to create a new code artifact.
-   *
-   * @param file the file to upload
-   * @return new code artifact
-   */
+  /** @see #upload(Path,String) */
   CodeArtifact upload(Path file) throws IOException;
 }

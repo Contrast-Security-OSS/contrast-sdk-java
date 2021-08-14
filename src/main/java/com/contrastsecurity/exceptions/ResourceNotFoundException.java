@@ -28,11 +28,44 @@
  */
 package com.contrastsecurity.exceptions;
 
-public class ResourceNotFoundException extends Exception {
+/** An {@link HttpResponseException} throw when Contrast API returns a 404 Not Found response. */
+public class ResourceNotFoundException extends HttpResponseException {
 
-  private static final long serialVersionUID = -4132985938344669390L;
+  /**
+   * Constructor.
+   *
+   * @param status message from the status line e.g. Bad Request
+   * @param message error message provided by the caller
+   */
+  public ResourceNotFoundException(String status, final String message) {
+    this(status, message, null);
+  }
 
-  public ResourceNotFoundException(String type, String id) {
-    super(String.format("Resource '%s' of id '%s' was not found", type, id));
+  /**
+   * Constructor.
+   *
+   * @param status message from the status line e.g. Bad Request
+   * @param message error message provided by the caller
+   * @param body the body of the response, or {@code null} if there is no such body
+   */
+  public ResourceNotFoundException(String status, final String message, final String body) {
+    this(404, status, message, body);
+  }
+
+  /**
+   * Constructor. Package-private because the code should always be 404.
+   *
+   * @param code code from the status line e.g. 400
+   * @param status message from the status line e.g. Bad Request
+   * @param message error message provided by the caller
+   * @param body the body of the response, or {@code null} if there is no such body
+   * @throws IllegalArgumentException when code is not 404
+   */
+  ResourceNotFoundException(
+      final int code, final String status, final String message, final String body) {
+    super(code, status, message, body);
+    if (code != 404) {
+      throw new IllegalArgumentException("Only intended for 404 response codes but was " + code);
+    }
   }
 }
