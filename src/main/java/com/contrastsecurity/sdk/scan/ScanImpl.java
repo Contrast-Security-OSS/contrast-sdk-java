@@ -4,6 +4,7 @@ import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.http.MediaType;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.internal.Nullable;
+import com.contrastsecurity.sdk.internal.RefreshById;
 import com.contrastsecurity.sdk.internal.URIBuilder;
 import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
@@ -26,6 +27,7 @@ final class ScanImpl implements Scan {
 
     private final transient ContrastSDK contrast;
     private final transient Gson gson;
+    private final transient RefreshById<Scan> refresher;
     private final transient String organizationId;
     private final transient String projectId;
     private String codeArtifactId;
@@ -34,10 +36,12 @@ final class ScanImpl implements Scan {
     Definition(
         final ContrastSDK contrast,
         final Gson gson,
+        final RefreshById<Scan> refresher,
         final String organizationId,
         final String projectId) {
       this.contrast = Objects.requireNonNull(contrast);
       this.gson = gson;
+      this.refresher = refresher;
       this.organizationId = Objects.requireNonNull(organizationId);
       this.projectId = Objects.requireNonNull(projectId);
     }
@@ -73,7 +77,7 @@ final class ScanImpl implements Scan {
           new InputStreamReader(
               contrast.makeRequestWithBody(HttpMethod.POST, uri, json, MediaType.JSON))) {
         final ScanImpl.Value value = gson.fromJson(reader, AutoValue_ScanImpl_Value.class);
-        return new ScanImpl(contrast, value);
+        return new ScanImpl(contrast, refresher, value);
       }
     }
   }
@@ -114,10 +118,12 @@ final class ScanImpl implements Scan {
   }
 
   private final ContrastSDK contrast;
+  private final RefreshById<Scan> refresher;
   private final Value value;
 
-  ScanImpl(final ContrastSDK contrast, final Value value) {
+  ScanImpl(final ContrastSDK contrast, final RefreshById<Scan> refresher, final Value value) {
     this.contrast = Objects.requireNonNull(contrast);
+    this.refresher = refresher;
     this.value = value;
   }
 
@@ -180,9 +186,8 @@ final class ScanImpl implements Scan {
   }
 
   @Override
-  public Scan refresh() {
-    // TODO
-    throw new UnsupportedOperationException("Not yet implemented");
+  public Scan refresh() throws IOException {
+    return refresher.refresh(value.id());
   }
 
   @Override

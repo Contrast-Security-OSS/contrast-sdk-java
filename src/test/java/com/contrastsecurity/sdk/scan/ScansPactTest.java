@@ -71,7 +71,7 @@ final class ScansPactTest {
               .status(Status.FAILED)
               .errorMessage("scan failed")
               .build();
-      final ScanImpl expected = new ScanImpl(contrast, value);
+      final ScanImpl expected = new ScanImpl(contrast, scans::get, value);
       assertThat(scan).isEqualTo(expected);
     }
   }

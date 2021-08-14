@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import com.contrastsecurity.EqualsContract;
 import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.sdk.ContrastSDK;
+import com.contrastsecurity.sdk.internal.RefreshById;
 import com.contrastsecurity.sdk.scan.Scan.Status;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -33,7 +34,7 @@ final class ScanImplTest implements EqualsContract<ScanImpl> {
             .organizationId("organization-id")
             .status(Status.COMPLETED)
             .build();
-    final Scan scan = new ScanImpl(contrast, value);
+    final Scan scan = new ScanImpl(contrast, RefreshById.unsupported(), value);
 
     // WHEN save sarif to file
     final Path file = tmp.resolve("contrast-scan-results.sarif.json");
@@ -46,13 +47,13 @@ final class ScanImplTest implements EqualsContract<ScanImpl> {
   @Override
   public ScanImpl createValue() {
     final ScanImpl.Value scanValue = builder().build();
-    return new ScanImpl(contrast(), scanValue);
+    return new ScanImpl(contrast(), RefreshById.unsupported(), scanValue);
   }
 
   @Override
   public ScanImpl createNotEqualValue() {
     final ScanImpl.Value scanValue = builder().status(Status.FAILED).errorMessage("failed").build();
-    return new ScanImpl(contrast(), scanValue);
+    return new ScanImpl(contrast(), RefreshById.unsupported(), scanValue);
   }
 
   private static ScanImpl.Value.Builder builder() {

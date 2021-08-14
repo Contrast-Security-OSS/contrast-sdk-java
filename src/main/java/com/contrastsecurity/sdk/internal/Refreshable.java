@@ -1,5 +1,7 @@
 package com.contrastsecurity.sdk.internal;
 
+import java.io.IOException;
+
 /**
  * Describes a resource that may be refreshed by requesting a new representation.
  *
@@ -12,5 +14,5 @@ public interface Refreshable<T> {
    *
    * @return new, refreshed copy of this resource.
    */
-  T refresh();
+  T refresh() throws IOException;
 }

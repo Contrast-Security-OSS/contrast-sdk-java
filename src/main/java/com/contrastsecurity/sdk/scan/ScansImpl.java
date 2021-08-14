@@ -3,6 +3,7 @@ package com.contrastsecurity.sdk.scan;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.scan.Scan.Definition;
 import com.google.gson.Gson;
+import java.io.IOException;
 import java.util.Objects;
 
 /** Implementation of the {@link Scans} resource collection. */
@@ -26,11 +27,11 @@ final class ScansImpl implements Scans {
 
   @Override
   public Definition define() {
-    return new ScanImpl.Definition(contrast, gson, organizationId, projectId);
+    return new ScanImpl.Definition(contrast, gson, this::get, organizationId, projectId);
   }
 
   @Override
-  public Scan get(final String id) {
+  public Scan get(final String id) throws IOException {
     // TODO
     throw new UnsupportedOperationException("Not yet implemented");
   }
