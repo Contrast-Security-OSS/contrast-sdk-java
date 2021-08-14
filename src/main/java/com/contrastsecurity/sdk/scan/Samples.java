@@ -41,7 +41,11 @@ final class Samples {
       scan.await(scheduler)
           .thenAccept(
               s -> {
-                s.saveSarif(Paths.get("./contrast-scan-results.sarif.json"));
+                try {
+                  s.saveSarif(Paths.get("./contrast-scan-results.sarif.json"));
+                } catch (final IOException e) {
+                  throw new UncheckedIOException(e);
+                }
                 final ScanSummary summary = s.summary();
                 System.out.printf("Found %d total results%n", summary.totalResults());
               })

@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ScheduledExecutorService;
@@ -148,15 +150,27 @@ final class ScanImpl implements Scan {
   }
 
   @Override
-  public InputStream sarif() {
-    // TODO
-    throw new UnsupportedOperationException("Not yet implemented");
+  public InputStream sarif() throws IOException {
+    final String uri =
+        new URIBuilder()
+            .appendPathSegments(
+                "sast",
+                "organizations",
+                value.organizationId(),
+                "projects",
+                value.projectId(),
+                "scans",
+                value.id(),
+                "raw-output")
+            .toURIString();
+    return contrast.makeRequest(HttpMethod.GET, uri);
   }
 
   @Override
-  public void saveSarif(final Path file) {
-    // TODO
-    throw new UnsupportedOperationException("Not yet implemented");
+  public void saveSarif(final Path file) throws IOException {
+    try (InputStream is = sarif()) {
+      Files.copy(is, file, StandardCopyOption.REPLACE_EXISTING);
+    }
   }
 
   @Override

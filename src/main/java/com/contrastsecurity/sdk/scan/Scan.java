@@ -69,7 +69,7 @@ public interface Scan extends Refreshable<Scan> {
    * @return {@link InputStream} for reading the SARIF file. The caller is expected to close the
    *     {@code InputStream}
    */
-  InputStream sarif();
+  InputStream sarif() throws IOException;
 
   /**
    * Retrieves and saves the scan's results (in <a
@@ -77,7 +77,7 @@ public interface Scan extends Refreshable<Scan> {
    *
    * @param file the file to which to save the results
    */
-  void saveSarif(Path file);
+  void saveSarif(Path file) throws IOException;
 
   /**
    * Retrieves a summary of the scan results.
