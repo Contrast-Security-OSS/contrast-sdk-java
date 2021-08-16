@@ -1,22 +1,16 @@
 package com.contrastsecurity.sdk.scan;
 
-import com.contrastsecurity.sdk.ContrastSDK;
-import com.contrastsecurity.sdk.internal.GsonFactory;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Objects;
 
 final class CodeArtifactsImpl implements CodeArtifacts {
 
   private final CodeArtifactClient client;
   private final String projectId;
 
-  CodeArtifactsImpl(
-      final ContrastSDK contrast, final String organizationId, final String projectId) {
-    final Gson gson = GsonFactory.builder().create();
-    this.client = new CodeArtifactClientImpl(contrast, gson, organizationId);
-    this.projectId = Objects.requireNonNull(projectId);
+  public CodeArtifactsImpl(final CodeArtifactClient client, final String projectId) {
+    this.client = client;
+    this.projectId = projectId;
   }
 
   @Override

@@ -13,10 +13,17 @@ final class ProjectImpl implements Project {
   static final class Definition implements Project.Definition {
 
     private final ProjectClient client;
+    private final CodeArtifactsFactory codeArtifactsFactory;
+    private final ScansFactory scansFactory;
     private final ProjectCreate.Builder builder = ProjectCreate.builder();
 
-    Definition(final ProjectClient client) {
+    Definition(
+        final ProjectClient client,
+        final CodeArtifactsFactory codeArtifactsFactory,
+        final ScansFactory scansFactory) {
       this.client = Objects.requireNonNull(client);
+      this.codeArtifactsFactory = codeArtifactsFactory;
+      this.scansFactory = scansFactory;
     }
 
     @Override
@@ -47,13 +54,20 @@ final class ProjectImpl implements Project {
     public Project create() throws IOException {
       final ProjectCreate create = builder.build();
       final ProjectInner inner = client.create(create);
-      return new ProjectImpl(inner);
+      return new ProjectImpl(codeArtifactsFactory, scansFactory, inner);
     }
   }
 
+  private final CodeArtifactsFactory codeArtifactsFactory;
+  private final ScansFactory scansFactory;
   private final ProjectInner inner;
 
-  ProjectImpl(final ProjectInner inner) {
+  ProjectImpl(
+      final CodeArtifactsFactory codeArtifactsFactory,
+      final ScansFactory scansFactory,
+      final ProjectInner inner) {
+    this.codeArtifactsFactory = codeArtifactsFactory;
+    this.scansFactory = scansFactory;
     this.inner = Objects.requireNonNull(inner);
   }
 
@@ -138,14 +152,12 @@ final class ProjectImpl implements Project {
 
   @Override
   public CodeArtifacts codeArtifacts() {
-    // TODO implement
-    throw new UnsupportedOperationException("Not yet implemented");
+    return codeArtifactsFactory.create(id());
   }
 
   @Override
   public Scans scans() {
-    // TODO implement
-    throw new UnsupportedOperationException("Not yet implemented");
+    return scansFactory.create(id());
   }
 
   /** visible for testing */

@@ -2,14 +2,14 @@ package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.google.gson.Gson;
+import java.util.Objects;
 
 /** Implementation of {@link ScanManager}. */
 public final class ScanManagerImpl implements ScanManager {
 
-  private final ContrastSDK contrast;
-  private final Gson gson;
-  private final String organizationId;
-  private final ScanClientImpl client;
+  private final CodeArtifactsFactory codeArtifactsFactory;
+  private final ScansFactory scansFactory;
+  private final Projects projects;
 
   /**
    * Constructor. For internal use only.
@@ -19,24 +19,31 @@ public final class ScanManagerImpl implements ScanManager {
    * @param organizationId the ID of the organization in which to manage Contrast Scan resources
    */
   public ScanManagerImpl(final ContrastSDK contrast, final Gson gson, final String organizationId) {
-    this.contrast = contrast;
-    this.gson = gson;
-    this.organizationId = organizationId;
-    client = new ScanClientImpl(this.contrast, this.gson, this.organizationId);
+    Objects.requireNonNull(contrast);
+    Objects.requireNonNull(gson);
+    Objects.requireNonNull(organizationId);
+
+    final ProjectClient projectClient = new ProjectClientImpl(contrast, gson, organizationId);
+    final CodeArtifactClient codeArtifactClient =
+        new CodeArtifactClientImpl(contrast, gson, organizationId);
+    codeArtifactsFactory = new CodeArtifactsFactoryImpl(codeArtifactClient);
+    final ScanClient scanClient = new ScanClientImpl(contrast, gson, organizationId);
+    scansFactory = new ScansFactoryImpl(scanClient);
+    projects = new ProjectsImpl(codeArtifactsFactory, scansFactory, projectClient);
   }
 
   @Override
   public Projects projects() {
-    return new ProjectsImpl(organizationId, contrast, gson);
+    return projects;
   }
 
   @Override
   public Scans scans(final String projectId) {
-    return new ScansImpl(client, projectId);
+    return scansFactory.create(projectId);
   }
 
   @Override
   public CodeArtifacts codeArtifacts(final String projectId) {
-    return new CodeArtifactsImpl(contrast, organizationId, projectId);
+    return codeArtifactsFactory.create(projectId);
   }
 }
