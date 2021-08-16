@@ -3,10 +3,11 @@ package com.contrastsecurity.sdk.scan;
 import com.contrastsecurity.sdk.internal.Nullable;
 import com.google.auto.value.AutoValue;
 
-/** Value type that describes the scan structure returned by the API. */
+/** Value type that describes the scan structure returned by the Contrast API. */
 @AutoValue
 abstract class ScanInner {
 
+  /** @return new {@link Builder} */
   static Builder builder() {
     return new AutoValue_ScanInner.Builder();
   }
@@ -27,6 +28,7 @@ abstract class ScanInner {
   @Nullable
   abstract String errorMessage();
 
+  /** Builder for {@link ScanInner}. */
   @AutoValue.Builder
   abstract static class Builder {
 

@@ -15,9 +15,6 @@ import com.contrastsecurity.TestDataConstants;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.ContrastSDK.Builder;
-import com.contrastsecurity.sdk.internal.GsonFactory;
-import com.contrastsecurity.sdk.scan.ProjectImpl.Value;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -50,7 +47,12 @@ final class ProjectsPactTest {
           .pathFromProviderState(
               "/sast/organizations/${organizationId}/projects",
               "/sast/organizations/organization-id/projects")
-          .body(new JSONObject().put("name", "quarkus-test-application").put("language", "JAVA"))
+          .body(
+              new JSONObject()
+                  .put("name", "quarkus-test-application")
+                  .put("language", "JAVA")
+                  .put("includeNamespaceFilters", Collections.singletonList("com.acme"))
+                  .put("excludeNamespaceFilters", Collections.singletonList("org.apache")))
           .willRespondWith()
           .status(201)
           .body(
@@ -61,7 +63,12 @@ final class ProjectsPactTest {
                               .valueFromProviderState(
                                   "organizationId", "${organizationId}", "fake-organization-id")
                               .stringValue("name", "quarkus-test-application")
-                              .stringType("language", "JAVA"))
+                              .stringType("language", "JAVA")
+                              .array(
+                                  "includeNamespaceFilters", array -> array.stringType("com.acme"))
+                              .array(
+                                  "excludeNamespaceFilters",
+                                  array -> array.stringType("org.apache")))
                   .build())
           .toPact();
     }
@@ -75,7 +82,13 @@ final class ProjectsPactTest {
 
       final Projects projects = contrast.scan("organization-id").projects();
       final Project project =
-          projects.define().withName("quarkus-test-application").withLanguage("JAVA").create();
+          projects
+              .define()
+              .withName("quarkus-test-application")
+              .withLanguage("JAVA")
+              .withIncludeNamespaceFilters(Collections.singletonList("com.acme"))
+              .withExcludeNamespaceFilters(Collections.singletonList("org.apache"))
+              .create();
       assertThat(project.name()).isEqualTo("quarkus-test-application");
       assertThat(project.language()).isEqualTo("JAVA");
     }
@@ -120,8 +133,25 @@ final class ProjectsPactTest {
               .build();
       final Projects projects = contrast.scan("organization-id").projects();
       final Optional<Project> project = projects.findByName("spring-test-application");
-      final Project expected = createExpectedProject(contrast);
-      assertThat(project).contains(expected);
+      final ProjectInner expected =
+          ProjectInner.builder()
+              .id("fake-project-id")
+              .organizationId("fake-organization-id")
+              .name("spring-test-application")
+              .archived(false)
+              .language("JAVA")
+              .critical(1)
+              .high(2)
+              .medium(3)
+              .low(4)
+              .note(5)
+              .completedScans(6)
+              .lastScanTime(TestDataConstants.TIMESTAMP_EXAMPLE)
+              .lastScanId("scan-id")
+              .includeNamespaceFilters(Collections.singletonList("com.example"))
+              .excludeNamespaceFilters(Collections.singletonList("org.apache"))
+              .build();
+      assertThat(project.map(p -> ((ProjectImpl) p).toInner())).contains(expected);
     }
   }
 
@@ -182,28 +212,5 @@ final class ProjectsPactTest {
         .stringType("lastScanId", "scan-id")
         .array("includeNamespaceFilters", a -> a.stringType("com.example"))
         .array("excludeNamespaceFilters", a -> a.stringType("org.apache"));
-  }
-
-  private static Project createExpectedProject(final ContrastSDK contrast) {
-    final Value value =
-        Value.builder()
-            .id("fake-project-id")
-            .organizationId("fake-organization-id")
-            .name("spring-test-application")
-            .archived(false)
-            .language("JAVA")
-            .critical(1)
-            .high(2)
-            .medium(3)
-            .low(4)
-            .note(5)
-            .completedScans(6)
-            .lastScanTime(TestDataConstants.TIMESTAMP_EXAMPLE)
-            .lastScanId("scan-id")
-            .includeNamespaceFilters(Collections.singletonList("com.example"))
-            .excludeNamespaceFilters(Collections.singletonList("org.apache"))
-            .build();
-    final Gson gson = GsonFactory.create();
-    return new ProjectImpl(contrast, gson, value);
   }
 }

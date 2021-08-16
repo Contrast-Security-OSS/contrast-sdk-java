@@ -1,15 +1,7 @@
 package com.contrastsecurity.sdk.scan;
 
-import com.contrastsecurity.http.HttpMethod;
-import com.contrastsecurity.http.MediaType;
-import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.internal.Nullable;
-import com.contrastsecurity.sdk.internal.URIBuilder;
-import com.google.auto.value.AutoValue;
-import com.google.gson.Gson;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Objects;
@@ -20,231 +12,145 @@ final class ProjectImpl implements Project {
   /** Implementation of the {@link Project.Definition} definition */
   static final class Definition implements Project.Definition {
 
-    private final transient ContrastSDK contrast;
-    private final transient Gson gson;
-    private final transient String organizationId;
-    private String name;
-    private String language;
+    private final ProjectClient client;
+    private final ProjectCreate.Builder builder = ProjectCreate.builder();
 
-    Definition(final ContrastSDK contrast, final Gson gson, final String organizationId) {
-      this.contrast = contrast;
-      this.gson = gson;
-      this.organizationId = organizationId;
+    Definition(final ProjectClient client) {
+      this.client = Objects.requireNonNull(client);
     }
 
     @Override
     public Project.Definition withName(final String name) {
-      this.name = name;
+      builder.name(name);
       return this;
     }
 
     @Override
     public Project.Definition withLanguage(final String language) {
-      this.language = language;
+      builder.language(language);
+      return this;
+    }
+
+    @Override
+    public Project.Definition withIncludeNamespaceFilters(final Collection<String> value) {
+      builder.includeNamespaceFilters(value);
+      return this;
+    }
+
+    @Override
+    public Project.Definition withExcludeNamespaceFilters(final Collection<String> value) {
+      builder.excludeNamespaceFilters(value);
       return this;
     }
 
     @Override
     public Project create() throws IOException {
-      // requests made with ContrastSDK.makeRequest must have their path prepended with "/"
-      final String path =
-          new URIBuilder()
-              .appendPathSegments("sast", "organizations", organizationId, "projects")
-              .toURIString();
-      final String json = gson.toJson(this);
-      try (Reader reader =
-          new InputStreamReader(
-              contrast.makeRequestWithBody(HttpMethod.POST, path, json, MediaType.JSON))) {
-        final ProjectImpl.Value value = gson.fromJson(reader, AutoValue_ProjectImpl_Value.class);
-        return new ProjectImpl(contrast, gson, value);
-      }
+      final ProjectCreate create = builder.build();
+      final ProjectInner inner = client.create(create);
+      return new ProjectImpl(inner);
     }
   }
 
-  /** Value type that represents the project as returned by the Contrast API. */
-  @AutoValue
-  abstract static class Value {
+  private final ProjectInner inner;
 
-    static Builder builder() {
-      return new AutoValue_ProjectImpl_Value.Builder();
-    }
-
-    abstract String id();
-
-    abstract String organizationId();
-
-    abstract String name();
-
-    abstract boolean archived();
-
-    abstract String language();
-
-    abstract int critical();
-
-    abstract int high();
-
-    abstract int medium();
-
-    abstract int low();
-
-    abstract int note();
-
-    @Nullable
-    abstract Instant lastScanTime();
-
-    abstract int completedScans();
-
-    @Nullable
-    abstract String lastScanId();
-
-    @Nullable
-    abstract Collection<String> includeNamespaceFilters();
-
-    @Nullable
-    abstract Collection<String> excludeNamespaceFilters();
-
-    @AutoValue.Builder
-    abstract static class Builder {
-      abstract Builder id(String value);
-
-      abstract Builder organizationId(String value);
-
-      abstract Builder name(String value);
-
-      abstract Builder archived(boolean value);
-
-      abstract Builder language(String value);
-
-      abstract Builder critical(int value);
-
-      abstract Builder high(int value);
-
-      abstract Builder medium(int value);
-
-      abstract Builder low(int value);
-
-      abstract Builder note(int value);
-
-      abstract Builder lastScanTime(Instant value);
-
-      abstract Builder completedScans(int value);
-
-      abstract Builder lastScanId(String value);
-
-      abstract Builder includeNamespaceFilters(Collection<String> value);
-
-      abstract Builder excludeNamespaceFilters(Collection<String> value);
-
-      abstract Value build();
-    }
-  }
-
-  private final ContrastSDK contrast;
-  private final Gson gson;
-  private final ProjectImpl.Value value;
-
-  /**
-   * Constructor.
-   *
-   * @param contrast for making outgoing requests
-   * @param gson for deserializing JSON responses
-   * @param value value object to which to delegate accessors
-   */
-  ProjectImpl(final ContrastSDK contrast, final Gson gson, final Value value) {
-    this.contrast = contrast;
-    this.gson = gson;
-    this.value = value;
+  ProjectImpl(final ProjectInner inner) {
+    this.inner = Objects.requireNonNull(inner);
   }
 
   @Override
   public String id() {
-    return value.id();
+    return inner.id();
   }
 
   @Override
   public String organizationId() {
-    return value.organizationId();
+    return inner.organizationId();
   }
 
   @Override
   public String name() {
-    return value.name();
+    return inner.name();
   }
 
   @Override
   public boolean archived() {
-    return value.archived();
+    return inner.archived();
   }
 
   @Override
   public String language() {
-    return value.language();
+    return inner.language();
   }
 
   @Override
   public int critical() {
-    return value.critical();
+    return inner.critical();
   }
 
   @Override
   public int high() {
-    return value.high();
+    return inner.high();
   }
 
   @Override
   public int medium() {
-    return value.medium();
+    return inner.medium();
   }
 
   @Override
   public int low() {
-    return value.low();
+    return inner.low();
   }
 
   @Override
   public int note() {
-    return value.note();
+    return inner.note();
   }
 
   @Override
   @Nullable
   public Instant lastScanTime() {
-    return value.lastScanTime();
+    return inner.lastScanTime();
   }
 
   @Override
   public int completedScans() {
-    return value.completedScans();
+    return inner.completedScans();
   }
 
   @Override
   @Nullable
   public String lastScanId() {
-    return value.lastScanId();
+    return inner.lastScanId();
   }
 
   @Override
   @Nullable
   public Collection<String> includeNamespaceFilters() {
-    return value.includeNamespaceFilters();
+    return inner.includeNamespaceFilters();
   }
 
   @Override
   @Nullable
   public Collection<String> excludeNamespaceFilters() {
-    return value.excludeNamespaceFilters();
+    return inner.excludeNamespaceFilters();
   }
 
   @Override
   public CodeArtifacts codeArtifacts() {
-    return new CodeArtifactsImpl(contrast, value.organizationId(), value.id());
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented");
   }
 
   @Override
   public Scans scans() {
-    // TODO inject client
-    final ScanClientImpl client = new ScanClientImpl(contrast, gson, organizationId());
-    return new ScansImpl(client, value.id());
+    // TODO implement
+    throw new UnsupportedOperationException("Not yet implemented");
+  }
+
+  /** visible for testing */
+  ProjectInner toInner() {
+    return inner;
   }
 
   @Override
@@ -256,16 +162,16 @@ final class ProjectImpl implements Project {
       return false;
     }
     final ProjectImpl project = (ProjectImpl) o;
-    return value.equals(project.value);
+    return inner.equals(project.inner);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(value);
+    return Objects.hash(inner);
   }
 
   @Override
   public String toString() {
-    return value.toString();
+    return inner.toString();
   }
 }

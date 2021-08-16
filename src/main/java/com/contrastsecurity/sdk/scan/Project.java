@@ -22,6 +22,10 @@ public interface Project {
      */
     Definition withLanguage(String language);
 
+    Definition withIncludeNamespaceFilters(Collection<String> value);
+
+    Definition withExcludeNamespaceFilters(Collection<String> value);
+
     /** @return new project resource */
     Project create() throws IOException;
   }
@@ -72,6 +76,11 @@ public interface Project {
   int note();
 
   /**
+   * @return ID of the last scan to complete successfully, or {@code null} if no such scan exists
+   */
+  String lastScanId();
+
+  /**
    * @return the time at which the last successfully completed scan finished, or {@code null} if no
    *     such scan exists
    */
@@ -80,15 +89,10 @@ public interface Project {
   /** @return count of completed scans in this project */
   int completedScans();
 
-  /**
-   * @return ID of the last scan to complete successfully, or {@code null} if no such scan exists
-   */
-  String lastScanId();
-
-  /** @return collection of code namespaces to include in the scan */
+  /** @return collection of code namespaces to include in scans */
   Collection<String> includeNamespaceFilters();
 
-  /** @return collection of code namespaces to exclude from the scan */
+  /** @return collection of code namespaces to exclude from scans */
   Collection<String> excludeNamespaceFilters();
 
   /** @return entry point to the code artifacts management API */

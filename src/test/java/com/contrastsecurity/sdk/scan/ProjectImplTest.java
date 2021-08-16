@@ -2,38 +2,25 @@ package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.EqualsContract;
 import com.contrastsecurity.TestDataConstants;
-import com.contrastsecurity.sdk.ContrastSDK;
-import com.contrastsecurity.sdk.internal.GsonFactory;
-import com.google.gson.Gson;
 import java.util.Collections;
-import org.junit.jupiter.api.BeforeEach;
 
 /** Unit tests for {@link ProjectImpl} */
 final class ProjectImplTest implements EqualsContract<ProjectImpl> {
 
-  private ContrastSDK contrast;
-  private Gson gson;
-
-  @BeforeEach
-  void before() {
-    contrast = new ContrastSDK.Builder("user", "service-key", "api-key").build();
-    gson = GsonFactory.create();
-  }
-
   @Override
   public ProjectImpl createValue() {
-    final ProjectImpl.Value value = builder().build();
-    return new ProjectImpl(contrast, gson, value);
+    final ProjectInner inner = builder().build();
+    return new ProjectImpl(inner);
   }
 
   @Override
   public ProjectImpl createNotEqualValue() {
-    final ProjectImpl.Value value = builder().id("other-projet-id").build();
-    return new ProjectImpl(contrast, gson, value);
+    final ProjectInner inner = builder().id("other-project-id").build();
+    return new ProjectImpl(inner);
   }
 
-  private static ProjectImpl.Value.Builder builder() {
-    return ProjectImpl.Value.builder()
+  private static ProjectInner.Builder builder() {
+    return ProjectInner.builder()
         .id("fake-project-id")
         .organizationId("fake-organization-id")
         .name("spring-test-application")
