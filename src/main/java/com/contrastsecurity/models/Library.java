@@ -64,6 +64,12 @@ public class Library {
 
   private List<Application> apps;
 
+  public List<Server> getServers() {
+    return servers;
+  }
+
+  private List<Server> servers;
+
   /**
    * Return the number of classes in this library.
    *
