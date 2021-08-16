@@ -95,15 +95,16 @@ final class CodeArtifactsPactTest {
           contrast.scan("organization-id").codeArtifacts("project-id");
       final CodeArtifact codeArtifact = codeArtifacts.upload(jar);
 
-      final CodeArtifactImpl expected =
-          CodeArtifactImpl.builder()
+      final CodeArtifactInner expected =
+          CodeArtifactInner.builder()
               .id("code-artifact-id")
               .projectId("project-id")
               .organizationId("organization-id")
               .filename(jar.getFileName().toString())
               .createdTime(TestDataConstants.TIMESTAMP_EXAMPLE)
               .build();
-      assertThat(codeArtifact).isEqualTo(expected);
+      final CodeArtifactInner inner = ((CodeArtifactImpl) codeArtifact).toInner();
+      assertThat(inner).isEqualTo(expected);
     }
   }
 }

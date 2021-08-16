@@ -8,16 +8,18 @@ final class CodeArtifactImplTest implements EqualsContract<CodeArtifactImpl> {
 
   @Override
   public CodeArtifactImpl createValue() {
-    return builder().id("code-artifact-id").build();
+    final CodeArtifactInner inner = builder().id("code-artifact-id").build();
+    return new CodeArtifactImpl(inner);
   }
 
   @Override
   public CodeArtifactImpl createNotEqualValue() {
-    return builder().id("other-id").build();
+    final CodeArtifactInner inner = builder().id("other-id").build();
+    return new CodeArtifactImpl(inner);
   }
 
-  private static CodeArtifactImpl.Builder builder() {
-    return CodeArtifactImpl.builder()
+  private static CodeArtifactInner.Builder builder() {
+    return CodeArtifactInner.builder()
         .projectId("project-id")
         .organizationId("organization-id")
         .filename("spring-test-application.jar")

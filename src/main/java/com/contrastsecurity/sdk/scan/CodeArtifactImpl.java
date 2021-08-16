@@ -1,31 +1,66 @@
 package com.contrastsecurity.sdk.scan;
 
-import com.google.auto.value.AutoValue;
 import java.time.Instant;
+import java.util.Objects;
 
 /** Value type that describes a code artifact that has been uploaded to Contrast Scan. */
-@AutoValue
-abstract class CodeArtifactImpl implements CodeArtifact {
+final class CodeArtifactImpl implements CodeArtifact {
 
-  /** @return new {@code Builder} */
-  static CodeArtifactImpl.Builder builder() {
-    return new AutoValue_CodeArtifactImpl.Builder();
+  private final CodeArtifactInner inner;
+
+  CodeArtifactImpl(final CodeArtifactInner inner) {
+    this.inner = Objects.requireNonNull(inner);
   }
 
-  /** Builder for {@code CodeArtifactImpl}. */
-  @AutoValue.Builder
-  abstract static class Builder {
+  @Override
+  public String id() {
+    return inner.id();
+  }
 
-    abstract Builder id(final String value);
+  @Override
+  public String projectId() {
+    return inner.projectId();
+  }
 
-    abstract Builder projectId(final String value);
+  @Override
+  public String organizationId() {
+    return inner.organizationId();
+  }
 
-    abstract Builder organizationId(final String value);
+  @Override
+  public String filename() {
+    return inner.filename();
+  }
 
-    abstract Builder filename(final String value);
+  @Override
+  public Instant createdTime() {
+    return inner.createdTime();
+  }
 
-    abstract Builder createdTime(final Instant value);
+  /** visible for testing */
+  CodeArtifactInner toInner() {
+    return inner;
+  }
 
-    abstract CodeArtifactImpl build();
+  @Override
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    final CodeArtifactImpl that = (CodeArtifactImpl) o;
+    return inner.equals(that.inner);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(inner);
+  }
+
+  @Override
+  public String toString() {
+    return inner.toString();
   }
 }
