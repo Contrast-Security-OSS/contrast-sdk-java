@@ -82,10 +82,26 @@ public class UrlBuilder {
         "/ng/%s/applications/%s/route/filter?expand=observations", organizationId, appId);
   }
 
+  public String getLibrariesUrl(String organizationId, FilterForm form) {
+    String formString = form == null ? "" : form.toString();
+    return String.format("/ng/%s/libraries%s", organizationId, formString);
+  }
+
   public String getLibrariesUrl(
       String organizationId, String appId, EnumSet<FilterForm.LibrariesExpandValues> expandValues) {
     return String.format(
         "/ng/%s/applications/%s/libraries%s", organizationId, appId, buildExpand(expandValues));
+  }
+
+  public String getLibrariesFilterUrl(String organizationId, FilterForm form) {
+    String formString = form == null ? "" : form.toString();
+    return String.format("/ng/%s/libraries/filter%s", organizationId, formString);
+  }
+
+  public String getLibrariesFilterUrl(String organizationId, String appId, FilterForm form) {
+    String formString = form == null ? "" : form.toString();
+    return String.format(
+        "/ng/%s/applications/%s/libraries/filter%s", organizationId, appId, formString);
   }
 
   public String getLibraryStatsUrl(String organizationId) {
