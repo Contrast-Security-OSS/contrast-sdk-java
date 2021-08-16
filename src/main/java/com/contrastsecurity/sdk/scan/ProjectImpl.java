@@ -1,6 +1,7 @@
 package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.sdk.internal.Nullable;
+import com.contrastsecurity.sdk.scan.Scans.Factory;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Collection;
@@ -13,14 +14,14 @@ final class ProjectImpl implements Project {
   static final class Definition implements Project.Definition {
 
     private final ProjectClient client;
-    private final CodeArtifactsFactory codeArtifactsFactory;
-    private final ScansFactory scansFactory;
+    private final CodeArtifacts.Factory codeArtifactsFactory;
+    private final Factory scansFactory;
     private final ProjectCreate.Builder builder = ProjectCreate.builder();
 
     Definition(
         final ProjectClient client,
-        final CodeArtifactsFactory codeArtifactsFactory,
-        final ScansFactory scansFactory) {
+        final CodeArtifacts.Factory codeArtifactsFactory,
+        final Factory scansFactory) {
       this.client = Objects.requireNonNull(client);
       this.codeArtifactsFactory = codeArtifactsFactory;
       this.scansFactory = scansFactory;
@@ -58,13 +59,13 @@ final class ProjectImpl implements Project {
     }
   }
 
-  private final CodeArtifactsFactory codeArtifactsFactory;
-  private final ScansFactory scansFactory;
+  private final CodeArtifacts.Factory codeArtifactsFactory;
+  private final Factory scansFactory;
   private final ProjectInner inner;
 
   ProjectImpl(
-      final CodeArtifactsFactory codeArtifactsFactory,
-      final ScansFactory scansFactory,
+      final CodeArtifacts.Factory codeArtifactsFactory,
+      final Factory scansFactory,
       final ProjectInner inner) {
     this.codeArtifactsFactory = codeArtifactsFactory;
     this.scansFactory = scansFactory;

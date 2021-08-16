@@ -5,6 +5,20 @@ import java.nio.file.Path;
 
 final class CodeArtifactsImpl implements CodeArtifacts {
 
+  static final class Factory implements CodeArtifacts.Factory {
+
+    private final CodeArtifactClient client;
+
+    Factory(final CodeArtifactClient client) {
+      this.client = client;
+    }
+
+    @Override
+    public CodeArtifacts create(final String projectId) {
+      return new CodeArtifactsImpl(client, projectId);
+    }
+  }
+
   private final CodeArtifactClient client;
   private final String projectId;
 

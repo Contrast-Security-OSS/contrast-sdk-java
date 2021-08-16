@@ -8,6 +8,16 @@ import java.io.IOException;
 /** Scan resource collection API. */
 public interface Scans {
 
+  /** Factory for {@link Scans} */
+  interface Factory {
+
+    /**
+     * @param projectId ID of the project in which to manage scans
+     * @return new {@link Scans}
+     */
+    Scans create(String projectId);
+  }
+
   /**
    * Starts the definition for a new scan resource.
    *

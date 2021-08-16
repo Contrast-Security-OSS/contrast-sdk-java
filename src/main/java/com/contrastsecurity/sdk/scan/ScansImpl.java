@@ -7,6 +7,20 @@ import java.util.Objects;
 /** Implementation of the {@link Scans} resource collection. */
 final class ScansImpl implements Scans {
 
+  static final class Factory implements Scans.Factory {
+
+    private final ScanClient client;
+
+    Factory(final ScanClient client) {
+      this.client = Objects.requireNonNull(client);
+    }
+
+    @Override
+    public Scans create(final String projectId) {
+      return new ScansImpl(client, projectId);
+    }
+  }
+
   private final ScanClient client;
   private final String projectId;
 

@@ -1,19 +1,20 @@
 package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.sdk.scan.Project.Definition;
+import com.contrastsecurity.sdk.scan.Scans.Factory;
 import java.io.IOException;
 import java.util.Optional;
 
 /** Implementation of the {@link Projects} resource collection. */
 final class ProjectsImpl implements Projects {
 
-  private final CodeArtifactsFactory codeArtifactsFactory;
-  private final ScansFactory scansFactory;
+  private final CodeArtifacts.Factory codeArtifactsFactory;
+  private final Factory scansFactory;
   private final ProjectClient client;
 
   ProjectsImpl(
-      final CodeArtifactsFactory codeArtifactsFactory,
-      final ScansFactory scansFactory,
+      final CodeArtifacts.Factory codeArtifactsFactory,
+      final Factory scansFactory,
       final ProjectClient client) {
     this.codeArtifactsFactory = codeArtifactsFactory;
     this.scansFactory = scansFactory;

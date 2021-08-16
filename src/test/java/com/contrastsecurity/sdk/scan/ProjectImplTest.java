@@ -10,13 +10,13 @@ import org.junit.jupiter.api.BeforeEach;
 /** Unit tests for {@link ProjectImpl} */
 final class ProjectImplTest implements EqualsContract<ProjectImpl> {
 
-  private CodeArtifactsFactory codeArtifactsFactory;
-  private ScansFactory scansFactory;
+  private CodeArtifacts.Factory codeArtifactsFactory;
+  private Scans.Factory scansFactory;
 
   @BeforeEach
   void before() {
-    codeArtifactsFactory = mock(CodeArtifactsFactory.class);
-    scansFactory = mock(ScansFactory.class);
+    codeArtifactsFactory = mock(CodeArtifacts.Factory.class);
+    scansFactory = mock(Scans.Factory.class);
   }
 
   @Override

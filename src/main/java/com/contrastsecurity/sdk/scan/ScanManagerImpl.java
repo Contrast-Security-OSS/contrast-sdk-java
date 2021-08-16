@@ -7,8 +7,8 @@ import java.util.Objects;
 /** Implementation of {@link ScanManager}. */
 public final class ScanManagerImpl implements ScanManager {
 
-  private final CodeArtifactsFactory codeArtifactsFactory;
-  private final ScansFactory scansFactory;
+  private final CodeArtifacts.Factory codeArtifactsFactory;
+  private final Scans.Factory scansFactory;
   private final Projects projects;
 
   /**
@@ -26,9 +26,9 @@ public final class ScanManagerImpl implements ScanManager {
     final ProjectClient projectClient = new ProjectClientImpl(contrast, gson, organizationId);
     final CodeArtifactClient codeArtifactClient =
         new CodeArtifactClientImpl(contrast, gson, organizationId);
-    codeArtifactsFactory = new CodeArtifactsFactoryImpl(codeArtifactClient);
+    codeArtifactsFactory = new CodeArtifactsImpl.Factory(codeArtifactClient);
     final ScanClient scanClient = new ScanClientImpl(contrast, gson, organizationId);
-    scansFactory = new ScansFactoryImpl(scanClient);
+    scansFactory = new ScansImpl.Factory(scanClient);
     projects = new ProjectsImpl(codeArtifactsFactory, scansFactory, projectClient);
   }
 

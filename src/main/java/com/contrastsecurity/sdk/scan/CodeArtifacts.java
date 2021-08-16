@@ -16,6 +16,16 @@ import java.nio.file.Path;
  */
 public interface CodeArtifacts {
 
+  /** Factory for {@link CodeArtifacts} */
+  interface Factory {
+
+    /**
+     * @param projectId ID of the project in which to manage code artifacts
+     * @return new {@link CodeArtifacts}
+     */
+    CodeArtifacts create(String projectId);
+  }
+
   /**
    * Transfers a file from the file system to Contrast Scan to create a new code artifact for static
    * analysis.
