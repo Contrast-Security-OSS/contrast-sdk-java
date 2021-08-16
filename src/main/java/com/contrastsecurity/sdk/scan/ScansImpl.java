@@ -1,38 +1,28 @@
 package com.contrastsecurity.sdk.scan;
 
-import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.scan.Scan.Definition;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.Objects;
 
 /** Implementation of the {@link Scans} resource collection. */
 final class ScansImpl implements Scans {
 
-  private final ContrastSDK contrast;
-  private final Gson gson;
-  private final String organizationId;
+  private final ScanClient client;
   private final String projectId;
 
-  ScansImpl(
-      final ContrastSDK contrast,
-      final Gson gson,
-      final String organizationId,
-      final String projectId) {
-    this.contrast = Objects.requireNonNull(contrast);
-    this.gson = Objects.requireNonNull(gson);
-    this.organizationId = Objects.requireNonNull(organizationId);
+  ScansImpl(final ScanClient client, final String projectId) {
+    this.client = Objects.requireNonNull(client);
     this.projectId = Objects.requireNonNull(projectId);
   }
 
   @Override
   public Definition define() {
-    return new ScanImpl.Definition(contrast, gson, this::get, organizationId, projectId);
+    return new ScanImpl.Definition(client, projectId);
   }
 
   @Override
   public Scan get(final String id) throws IOException {
-    // TODO
-    throw new UnsupportedOperationException("Not yet implemented");
+    final ScanInner inner = client.get(projectId, id);
+    return new ScanImpl(client, inner);
   }
 }

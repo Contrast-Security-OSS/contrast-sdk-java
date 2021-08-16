@@ -36,7 +36,7 @@ public interface Scan extends Refreshable<Scan> {
 
     /**
      * @return new started scan
-     * @throws IOException when an IO error occurs while uploading the file
+     * @throws IOException when an IO error occurs while making the request to the Contrast Scan API
      * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
      * @throws ResourceNotFoundException when the requested resource does not exist
      * @throws HttpResponseException when Contrast rejects this request with an error code
@@ -48,7 +48,7 @@ public interface Scan extends Refreshable<Scan> {
   String id();
 
   /** @return scan status */
-  Status status();
+  ScanStatus status();
 
   /** @return error message for failed scan, or {@code null} if the scan has not failed */
   String errorMessage();
@@ -86,13 +86,4 @@ public interface Scan extends Refreshable<Scan> {
    *     summary has been retrieved
    */
   ScanSummary summary();
-
-  /** Describes the possible states that a scan can have */
-  enum Status {
-    WAITING,
-    RUNNING,
-    CANCELLED,
-    COMPLETED,
-    FAILED
-  }
 }

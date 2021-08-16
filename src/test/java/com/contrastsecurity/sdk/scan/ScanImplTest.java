@@ -5,10 +5,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.contrastsecurity.EqualsContract;
-import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.sdk.ContrastSDK;
-import com.contrastsecurity.sdk.internal.RefreshById;
-import com.contrastsecurity.sdk.scan.Scan.Status;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -21,20 +18,18 @@ final class ScanImplTest implements EqualsContract<ScanImpl> {
 
   @Test
   void save_sarif_to_file(@TempDir final Path tmp) throws IOException {
-    // GIVEN a scan resource and a stubbed ContrastSDK that returns SARIF for the given resource
-    final ContrastSDK contrast = mock(ContrastSDK.class);
-    when(contrast.makeRequest(
-            HttpMethod.GET,
-            "/sast/organizations/organization-id/projects/project-id/scans/scan-id/raw-output"))
+    // GIVEN a scan resource and a stubbed scan client that returns SARIF for the given resource
+    final ScanClient client = mock(ScanClient.class);
+    when(client.getSarif("project-id", "scan-id"))
         .thenReturn(new ByteArrayInputStream("sarif".getBytes(StandardCharsets.UTF_8)));
-    final ScanImpl.Value value =
-        ScanImpl.Value.builder()
+    final ScanInner inner =
+        ScanInner.builder()
             .id("scan-id")
             .projectId("project-id")
             .organizationId("organization-id")
-            .status(Status.COMPLETED)
+            .status(ScanStatus.COMPLETED)
             .build();
-    final Scan scan = new ScanImpl(contrast, RefreshById.unsupported(), value);
+    final Scan scan = new ScanImpl(client, inner);
 
     // WHEN save sarif to file
     final Path file = tmp.resolve("contrast-scan-results.sarif.json");
@@ -46,22 +41,22 @@ final class ScanImplTest implements EqualsContract<ScanImpl> {
 
   @Override
   public ScanImpl createValue() {
-    final ScanImpl.Value scanValue = builder().build();
-    return new ScanImpl(contrast(), RefreshById.unsupported(), scanValue);
+    final ScanInner scanValue = builder().build();
+    return new ScanImpl(mock(ScanClient.class), scanValue);
   }
 
   @Override
   public ScanImpl createNotEqualValue() {
-    final ScanImpl.Value scanValue = builder().status(Status.FAILED).errorMessage("failed").build();
-    return new ScanImpl(contrast(), RefreshById.unsupported(), scanValue);
+    final ScanInner scanValue = builder().status(ScanStatus.FAILED).errorMessage("failed").build();
+    return new ScanImpl(mock(ScanClient.class), scanValue);
   }
 
-  private static ScanImpl.Value.Builder builder() {
-    return ScanImpl.Value.builder()
+  private static ScanInner.Builder builder() {
+    return ScanInner.builder()
         .id("scan-id")
         .projectId("project-id")
         .organizationId("organization-id")
-        .status(Status.COMPLETED);
+        .status(ScanStatus.COMPLETED);
   }
 
   private static ContrastSDK contrast() {

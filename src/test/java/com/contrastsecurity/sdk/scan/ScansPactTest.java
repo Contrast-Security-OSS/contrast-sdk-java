@@ -10,7 +10,6 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.contrastsecurity.sdk.ContrastSDK;
-import com.contrastsecurity.sdk.scan.Scan.Status;
 import java.io.IOException;
 import java.util.HashMap;
 import org.json.JSONObject;
@@ -27,7 +26,7 @@ final class ScansPactTest {
   final class DefineScan {
 
     @Pact(consumer = "contrast-sdk")
-    RequestResponsePact pact(final PactDslWithProvider builder) throws IOException {
+    RequestResponsePact pact(final PactDslWithProvider builder) {
       final HashMap<String, Object> params = new HashMap<>();
       params.put("id", "project-id");
       params.put("organizationId", "organization-id");
@@ -61,18 +60,22 @@ final class ScansPactTest {
               .withApiUrl(server.getUrl())
               .build();
       final Scans scans = contrast.scan("organization-id").scans("project-id");
-      final Scan scan =
-          scans.define().withExistingCodeArtifact("code-artifact-id").withLabel("main").create();
-      final ScanImpl.Value value =
-          ScanImpl.Value.builder()
+      final ScanImpl scan =
+          (ScanImpl)
+              scans
+                  .define()
+                  .withExistingCodeArtifact("code-artifact-id")
+                  .withLabel("main")
+                  .create();
+      final ScanInner expected =
+          ScanInner.builder()
               .id("scan-id")
               .projectId("project-id")
               .organizationId("organization-id")
-              .status(Status.FAILED)
+              .status(ScanStatus.FAILED)
               .errorMessage("scan failed")
               .build();
-      final ScanImpl expected = new ScanImpl(contrast, scans::get, value);
-      assertThat(scan).isEqualTo(expected);
+      assertThat(scan.toInner()).isEqualTo(expected);
     }
   }
 }

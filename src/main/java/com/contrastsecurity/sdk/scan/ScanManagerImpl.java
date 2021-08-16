@@ -9,6 +9,7 @@ public final class ScanManagerImpl implements ScanManager {
   private final ContrastSDK contrast;
   private final Gson gson;
   private final String organizationId;
+  private final ScanClientImpl client;
 
   /**
    * Constructor. For internal use only.
@@ -21,6 +22,7 @@ public final class ScanManagerImpl implements ScanManager {
     this.contrast = contrast;
     this.gson = gson;
     this.organizationId = organizationId;
+    client = new ScanClientImpl(this.contrast, this.gson, this.organizationId);
   }
 
   @Override
@@ -30,7 +32,7 @@ public final class ScanManagerImpl implements ScanManager {
 
   @Override
   public Scans scans(final String projectId) {
-    return new ScansImpl(contrast, gson, organizationId, projectId);
+    return new ScansImpl(client, projectId);
   }
 
   @Override

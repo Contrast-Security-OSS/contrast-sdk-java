@@ -242,7 +242,9 @@ final class ProjectImpl implements Project {
 
   @Override
   public Scans scans() {
-    return new ScansImpl(contrast, gson, value.organizationId(), value.id());
+    // TODO inject client
+    final ScanClientImpl client = new ScanClientImpl(contrast, gson, organizationId());
+    return new ScansImpl(client, value.id());
   }
 
   @Override
