@@ -12,7 +12,10 @@ public final class ScanManagerImpl implements ScanManager {
   private final Projects projects;
 
   /**
-   * Constructor. For internal use only.
+   * Constructor.
+   *
+   * <p>For internal use only. Users should obtain a reference to the {@link ScanManager} via the
+   * {@link ContrastSDK#scan} entrypoint.
    *
    * @param contrast for making outgoing requests
    * @param gson for deserializing JSON responses

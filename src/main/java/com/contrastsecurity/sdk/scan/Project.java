@@ -1,10 +1,13 @@
 package com.contrastsecurity.sdk.scan;
 
+import com.contrastsecurity.exceptions.HttpResponseException;
+import com.contrastsecurity.exceptions.ResourceNotFoundException;
+import com.contrastsecurity.exceptions.UnauthorizedException;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Collection;
 
-/** Describes the Contrast Scan project top-level resource. */
+/** Describes the Contrast Scan project resource. */
 public interface Project {
 
   /** Builder for defining a new project resource. */
@@ -26,7 +29,13 @@ public interface Project {
 
     Definition withExcludeNamespaceFilters(Collection<String> value);
 
-    /** @return new project resource */
+    /**
+     * @return new project resource
+     * @throws IOException when an IO error occurs making the request
+     * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
+     * @throws ResourceNotFoundException when the requested resource does not exist
+     * @throws HttpResponseException when Contrast rejects this request with an error code
+     */
     Project create() throws IOException;
   }
 

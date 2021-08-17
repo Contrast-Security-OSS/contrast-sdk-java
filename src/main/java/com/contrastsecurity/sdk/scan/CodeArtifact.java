@@ -3,20 +3,23 @@ package com.contrastsecurity.sdk.scan;
 import java.time.Instant;
 
 /**
- * Describes a code artifact uploaded to Contrast Scan
- *
- * <p>TODO[JG] JAVA-3298 move this to the Contrast Java SDK and flesh it out
+ * Describes the Contrast Scan code artifact resources. Code artifacts are applications uploaded to
+ * Contrast Scan for analysis.
  */
 public interface CodeArtifact {
 
-  /** @return unique ID of this code artifact */
+  /** @return ID of this code artifact */
   String id();
 
+  /** @return ID of the project to which this code artifact belongs */
   String projectId();
 
+  /** @return ID of the organization to which this code artifact belongs */
   String organizationId();
 
+  /** @return filename */
   String filename();
 
+  /** @return time at which the code artifact was uploaded to Contrast Scan */
   Instant createdTime();
 }

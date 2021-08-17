@@ -1,7 +1,6 @@
 package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.sdk.ContrastSDK;
-import com.contrastsecurity.sdk.ContrastSDK.Builder;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -9,12 +8,14 @@ import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-final class Samples {
+/** Code sample that shows how to use the Contrast SDK to integrate with Contrast Scan. */
+@SuppressWarnings("unused")
+final class Sample {
 
-  public static void main(final String[] args) throws IOException {
+  static void sample() throws IOException {
+    // BEGIN: scan-sample
     final ContrastSDK contrast =
-        new Builder("johnathan.gilday@contrastsecurity.com", "my-service-key", "my-api-key")
-            .build();
+        new ContrastSDK.Builder("username", "my-service-key", "my-api-key").build();
     final ScanManager scanManager = contrast.scan("organization-id");
 
     final Projects projects = scanManager.projects();
@@ -54,5 +55,6 @@ final class Samples {
     } finally {
       scheduler.shutdown();
     }
+    // END: scan-sample
   }
 }

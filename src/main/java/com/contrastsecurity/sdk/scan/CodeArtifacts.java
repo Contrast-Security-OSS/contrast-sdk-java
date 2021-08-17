@@ -33,13 +33,23 @@ public interface CodeArtifacts {
    * @param file the code artifact to upload
    * @param name the name of the code artifact
    * @return new {@link CodeArtifact} from Contrast
-   * @throws IOException when an IO error occurs while uploading the file
+   * @throws IOException when an IO error occurs making the request
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
    */
   CodeArtifact upload(Path file, String name) throws IOException;
 
-  /** @see #upload(Path,String) */
+  /**
+   * Transfers a file from the file system to Contrast Scan to create a new code artifact for static
+   * analysis.
+   *
+   * @param file the code artifact to upload
+   * @return new {@link CodeArtifact} from Contrast
+   * @throws IOException when an IO error occurs making the request
+   * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
+   * @throws ResourceNotFoundException when the requested resource does not exist
+   * @throws HttpResponseException when Contrast rejects this request with an error code
+   */
   CodeArtifact upload(Path file) throws IOException;
 }

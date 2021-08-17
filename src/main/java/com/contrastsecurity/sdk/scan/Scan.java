@@ -57,6 +57,7 @@ public interface Scan extends Refreshable<Scan> {
   boolean isFinished();
 
   /**
+   * @param scheduler for scheduling requests when polling for the latest scan resource
    * @return {@code CompletionStage} that resolves successfully with a {@code Scan} record when the
    *     scan has completed, or resolves exceptionally with a {@link ScanException} when the scan
    *     has failed or there was a problem communicating with the Contrast Scan API.
@@ -68,6 +69,10 @@ public interface Scan extends Refreshable<Scan> {
    *
    * @return {@link InputStream} for reading the SARIF file. The caller is expected to close the
    *     {@code InputStream}
+   * @throws IOException when an IO error occurs making the request
+   * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
+   * @throws ResourceNotFoundException when the requested resource does not exist
+   * @throws HttpResponseException when Contrast rejects this request with an error code
    */
   InputStream sarif() throws IOException;
 
@@ -76,6 +81,10 @@ public interface Scan extends Refreshable<Scan> {
    * href="https://sarifweb.azurewebsites.net">SARIF</a>) to the specified file.
    *
    * @param file the file to which to save the results
+   * @throws IOException when an IO error occurs making the request
+   * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
+   * @throws ResourceNotFoundException when the requested resource does not exist
+   * @throws HttpResponseException when Contrast rejects this request with an error code
    */
   void saveSarif(Path file) throws IOException;
 
@@ -84,6 +93,10 @@ public interface Scan extends Refreshable<Scan> {
    *
    * @return {@link CompletionStage} that completes successfully when the scan has completed and the
    *     summary has been retrieved
+   * @throws IOException when an IO error occurs making the request
+   * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
+   * @throws ResourceNotFoundException when the requested resource does not exist
+   * @throws HttpResponseException when Contrast rejects this request with an error code
    */
   ScanSummary summary() throws IOException;
 }

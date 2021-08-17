@@ -36,11 +36,8 @@
   </scm>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <localTeamServerUrl>http://localhost:19080/Contrast/api</localTeamServerUrl>
-    <versions.maven-source-plugin>3.0.1</versions.maven-source-plugin>
-    <versions.maven-javadoc-plugin>3.0.0</versions.maven-javadoc-plugin>
-    <versions.maven-gpg-plugin>1.6</versions.maven-gpg-plugin>
-    <versions.nexus-staging-maven-plugin>1.6.8</versions.nexus-staging-maven-plugin>
     <versions.junit-jupiter>5.7.1</versions.junit-jupiter>
     <versions.auto-value>1.8.2</versions.auto-value>
     <versions.lombok>1.18.18</versions.lombok>
@@ -175,6 +172,25 @@
         <configuration>
           <release>8</release>
           <detectJavaApiLink>false</detectJavaApiLink>
+          <doclet>org.apidesign.javadoc.codesnippet.Doclet</doclet>
+          <docletArtifact>
+            <groupId>org.apidesign.javadoc</groupId>
+            <artifactId>codesnippet-doclet</artifactId>
+            <version>0.61</version> <!-- or any newer version -->
+          </docletArtifact>
+          <additionalOptions>
+            <additionalOption>
+              -maxLineLength 10000
+            </additionalOption>
+          </additionalOptions>
+          <additionalDependencies>
+            <!-- javadoc cannot find the annotations removed in JDK 11, so add them -->
+            <dependency>
+              <groupId>javax.annotation</groupId>
+              <artifactId>javax.annotation-api</artifactId>
+              <version>1.2</version>
+            </dependency>
+          </additionalDependencies>
         </configuration>
         <executions>
           <execution>
@@ -186,6 +202,16 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!-- exclude Javadoc code sample classes -->
+            <exclude>**/*Sample*.class</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>

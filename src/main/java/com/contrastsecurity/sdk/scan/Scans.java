@@ -42,6 +42,10 @@ public interface Scans {
    *
    * @param id scan ID
    * @return summary of the scan identified by the given ID
+   * @throws IOException when an IO error occurs while making the request to the Contrast Scan API
+   * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
+   * @throws ResourceNotFoundException when the requested resource does not exist
+   * @throws HttpResponseException when Contrast rejects this request with an error code
    */
   ScanSummary summary(String id) throws IOException;
 }
