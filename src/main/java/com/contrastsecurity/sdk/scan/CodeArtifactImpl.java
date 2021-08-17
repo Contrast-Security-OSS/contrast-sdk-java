@@ -3,7 +3,7 @@ package com.contrastsecurity.sdk.scan;
 import java.time.Instant;
 import java.util.Objects;
 
-/** Value type that describes a code artifact that has been uploaded to Contrast Scan. */
+/** Implementation of the {@link CodeArtifact} resource. */
 final class CodeArtifactImpl implements CodeArtifact {
 
   private final CodeArtifactInner inner;

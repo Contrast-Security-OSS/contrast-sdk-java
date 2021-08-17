@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Objects;
 
+/** Implementation of {@link ScanClient}. */
 final class ScanClientImpl implements ScanClient {
 
   private final ContrastSDK contrast;
@@ -17,9 +19,9 @@ final class ScanClientImpl implements ScanClient {
   private final String organizationId;
 
   ScanClientImpl(final ContrastSDK contrast, final Gson gson, final String organizationId) {
-    this.contrast = contrast;
-    this.gson = gson;
-    this.organizationId = organizationId;
+    this.contrast = Objects.requireNonNull(contrast);
+    this.gson = Objects.requireNonNull(gson);
+    this.organizationId = Objects.requireNonNull(organizationId);
   }
 
   @Override

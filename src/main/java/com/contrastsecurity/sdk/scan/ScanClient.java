@@ -22,7 +22,7 @@ interface ScanClient {
    * @param projectId ID of the project to which the scan belongs
    * @param scanId ID of the scan
    * @return new {@link ScanInner} structure as returned by the API
-   * @throws IOException when an IO error occurs making the request
+   * @throws IOException when an IO error occurs while making the request to the Contrast API
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
@@ -35,7 +35,7 @@ interface ScanClient {
    * @param projectId ID of the project in which to create the scan
    * @param create body of the create scan request
    * @return new {@link ScanInner} structure as returned by the API
-   * @throws IOException when an IO error occurs making the request
+   * @throws IOException when an IO error occurs while making the request to the Contrast API
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
@@ -49,7 +49,7 @@ interface ScanClient {
    * @param scanId ID of the scan
    * @return {@link InputStream} for reading the SARIF file. The caller is expected to close the
    *     {@code InputStream}
-   * @throws IOException when an IO error occurs making the request
+   * @throws IOException when an IO error occurs while making the request to the Contrast API
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
@@ -63,7 +63,7 @@ interface ScanClient {
    * @param scanId ID of the scan
    * @return {@link InputStream} for reading the SARIF file. The caller is expected to close the
    *     {@code InputStream}
-   * @throws IOException when an IO error occurs making the request
+   * @throws IOException when an IO error occurs while making the request to the Contrast API
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code

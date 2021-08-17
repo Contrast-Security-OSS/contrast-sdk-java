@@ -10,14 +10,16 @@ import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 
-/** Factory for configuring an instance of GSON that is compatible with the Scan API */
+/** Factory for configuring an instance of GSON that is compatible with the Contrast API */
 public final class GsonFactory {
 
+  /** @return new {@code GsonBuilder} */
   public static GsonBuilder builder() {
     return new GsonBuilder()
         .registerTypeAdapter(Instant.class, new InstantTypeAdapter().nullSafe());
   }
 
+  /** @return new {@code Gson} */
   public static Gson create() {
     return builder().create();
   }
@@ -25,6 +27,7 @@ public final class GsonFactory {
   /** static members only */
   private GsonFactory() {}
 
+  /** {@code TypeAdapter} for (de)serializing {@code Instant} in ISO8601 */
   private static final class InstantTypeAdapter extends TypeAdapter<Instant> {
 
     @Override

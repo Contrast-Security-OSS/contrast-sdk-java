@@ -3,7 +3,7 @@ package com.contrastsecurity.sdk.scan;
 import java.time.Instant;
 
 /**
- * Describes the Contrast Scan code artifact resources. Code artifacts are applications uploaded to
+ * Describes the Contrast Scan code artifact resource. Code artifacts are applications uploaded to
  * Contrast Scan for analysis.
  */
 public interface CodeArtifact {

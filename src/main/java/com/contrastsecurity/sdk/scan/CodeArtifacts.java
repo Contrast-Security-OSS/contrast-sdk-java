@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 /**
- * Entry point to the Contrast Scan code artifacts management API.
+ * Code artifact resource collection.
  *
  * <p>This resource API entry point does not use the {@code define()} pattern for creating new code
  * artifact resources, because in practice users always want to "upload" a file as a new code
@@ -33,7 +33,7 @@ public interface CodeArtifacts {
    * @param file the code artifact to upload
    * @param name the name of the code artifact
    * @return new {@link CodeArtifact} from Contrast
-   * @throws IOException when an IO error occurs making the request
+   * @throws IOException when an IO error occurs while making the request to the Contrast API
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
@@ -46,7 +46,7 @@ public interface CodeArtifacts {
    *
    * @param file the code artifact to upload
    * @return new {@link CodeArtifact} from Contrast
-   * @throws IOException when an IO error occurs making the request
+   * @throws IOException when an IO error occurs while making the request to the Contrast API
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code

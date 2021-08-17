@@ -10,8 +10,10 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Objects;
 import java.util.Optional;
 
+/** Implementation of {@link ProjectClient}. */
 final class ProjectClientImpl implements ProjectClient {
 
   private final ContrastSDK contrast;
@@ -19,9 +21,9 @@ final class ProjectClientImpl implements ProjectClient {
   private final String organizationId;
 
   ProjectClientImpl(final ContrastSDK contrast, final Gson gson, final String organizationId) {
-    this.contrast = contrast;
-    this.gson = gson;
-    this.organizationId = organizationId;
+    this.contrast = Objects.requireNonNull(contrast);
+    this.gson = Objects.requireNonNull(gson);
+    this.organizationId = Objects.requireNonNull(organizationId);
   }
 
   @Override

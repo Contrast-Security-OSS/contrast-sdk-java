@@ -14,12 +14,12 @@ final class Sample {
 
   static void sample() throws IOException {
     // BEGIN: scan-sample
-    final ContrastSDK contrast =
+    ContrastSDK contrast =
         new ContrastSDK.Builder("username", "my-service-key", "my-api-key").build();
-    final ScanManager scanManager = contrast.scan("organization-id");
+    ScanManager scanManager = contrast.scan("organization-id");
 
-    final Projects projects = scanManager.projects();
-    final Project project =
+    Projects projects = scanManager.projects();
+    Project project =
         projects
             .findByName("spring-test-application")
             .orElseGet(
@@ -30,23 +30,23 @@ final class Sample {
                         .withName("spring-test-application")
                         .withLanguage("JAVA")
                         .create();
-                  } catch (final IOException e) {
+                  } catch (IOException e) {
                     throw new UncheckedIOException(e);
                   }
                 });
-    final Path file = Paths.get("./target/spring-test-application.jar");
-    final CodeArtifact codeArtifact = project.codeArtifacts().upload(file);
-    final Scan scan = project.scans().define().withExistingCodeArtifact(codeArtifact).create();
-    final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    Path file = Paths.get("./target/spring-test-application.jar");
+    CodeArtifact codeArtifact = project.codeArtifacts().upload(file);
+    Scan scan = project.scans().define().withExistingCodeArtifact(codeArtifact).create();
+    ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     try {
       scan.await(scheduler)
           .thenAccept(
               s -> {
                 try {
                   s.saveSarif(Paths.get("./contrast-scan-results.sarif.json"));
-                  final ScanSummary summary = s.summary();
+                  ScanSummary summary = s.summary();
                   System.out.printf("Found %d total results%n", summary.totalResults());
-                } catch (final IOException e) {
+                } catch (IOException e) {
                   throw new UncheckedIOException(e);
                 }
               })

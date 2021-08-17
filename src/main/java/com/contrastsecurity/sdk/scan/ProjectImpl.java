@@ -23,8 +23,8 @@ final class ProjectImpl implements Project {
         final CodeArtifacts.Factory codeArtifactsFactory,
         final Factory scansFactory) {
       this.client = Objects.requireNonNull(client);
-      this.codeArtifactsFactory = codeArtifactsFactory;
-      this.scansFactory = scansFactory;
+      this.codeArtifactsFactory = Objects.requireNonNull(codeArtifactsFactory);
+      this.scansFactory = Objects.requireNonNull(scansFactory);
     }
 
     @Override
@@ -40,14 +40,14 @@ final class ProjectImpl implements Project {
     }
 
     @Override
-    public Project.Definition withIncludeNamespaceFilters(final Collection<String> value) {
-      builder.includeNamespaceFilters(value);
+    public Project.Definition withIncludeNamespaceFilters(final Collection<String> filters) {
+      builder.includeNamespaceFilters(filters);
       return this;
     }
 
     @Override
-    public Project.Definition withExcludeNamespaceFilters(final Collection<String> value) {
-      builder.excludeNamespaceFilters(value);
+    public Project.Definition withExcludeNamespaceFilters(final Collection<String> filters) {
+      builder.excludeNamespaceFilters(filters);
       return this;
     }
 

@@ -5,5 +5,7 @@
  * <p>Sample:
  *
  * <p>{@codesnippet scan-sample}
+ *
+ * @since 3.2
  */
 package com.contrastsecurity.sdk.scan;

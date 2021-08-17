@@ -1,28 +1,49 @@
 package com.contrastsecurity.sdk.scan;
 
-import com.contrastsecurity.sdk.scan.Project.Definition;
-import com.contrastsecurity.sdk.scan.Scans.Factory;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
-/** Implementation of the {@link Projects} resource collection. */
+/** Implementation of {@link Projects} */
 final class ProjectsImpl implements Projects {
 
+  /** Implementation of {@link Projects.Factory} */
+  static final class Factory implements Projects.Factory {
+
+    private final CodeArtifacts.Factory codeArtifactsFactory;
+    private final Scans.Factory scansFactory;
+    private final ProjectClient client;
+
+    Factory(
+        final CodeArtifacts.Factory codeArtifactsFactory,
+        final Scans.Factory scansFactory,
+        final ProjectClient client) {
+      this.codeArtifactsFactory = Objects.requireNonNull(codeArtifactsFactory);
+      this.scansFactory = Objects.requireNonNull(scansFactory);
+      this.client = Objects.requireNonNull(client);
+    }
+
+    @Override
+    public Projects create() {
+      return new ProjectsImpl(codeArtifactsFactory, scansFactory, client);
+    }
+  }
+
   private final CodeArtifacts.Factory codeArtifactsFactory;
-  private final Factory scansFactory;
+  private final Scans.Factory scansFactory;
   private final ProjectClient client;
 
   ProjectsImpl(
       final CodeArtifacts.Factory codeArtifactsFactory,
-      final Factory scansFactory,
+      final Scans.Factory scansFactory,
       final ProjectClient client) {
-    this.codeArtifactsFactory = codeArtifactsFactory;
-    this.scansFactory = scansFactory;
-    this.client = client;
+    this.codeArtifactsFactory = Objects.requireNonNull(codeArtifactsFactory);
+    this.scansFactory = Objects.requireNonNull(scansFactory);
+    this.client = Objects.requireNonNull(client);
   }
 
   @Override
-  public Definition define() {
+  public Project.Definition define() {
     return new ProjectImpl.Definition(client, codeArtifactsFactory, scansFactory);
   }
 

@@ -26,7 +26,7 @@ final class ScanImpl implements Scan {
     private String label;
 
     Definition(final ScanClient client, final String projectId) {
-      this.client = client;
+      this.client = Objects.requireNonNull(client);
       this.projectId = Objects.requireNonNull(projectId);
     }
 
@@ -184,5 +184,9 @@ final class ScanImpl implements Scan {
     return inner.toString();
   }
 
-  private static final Duration POLL_INTERVAL = Duration.ofSeconds(30);
+  /**
+   * This is the same value that the Contrast Scan UI uses to poll for scan updates. There is no
+   * foreseeable reason to expose this level of detail to users through configuration.
+   */
+  private static final Duration POLL_INTERVAL = Duration.ofSeconds(10);
 }

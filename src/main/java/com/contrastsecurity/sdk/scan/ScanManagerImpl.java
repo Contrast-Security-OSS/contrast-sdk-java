@@ -26,13 +26,16 @@ public final class ScanManagerImpl implements ScanManager {
     Objects.requireNonNull(gson);
     Objects.requireNonNull(organizationId);
 
-    final ProjectClient projectClient = new ProjectClientImpl(contrast, gson, organizationId);
     final CodeArtifactClient codeArtifactClient =
         new CodeArtifactClientImpl(contrast, gson, organizationId);
-    codeArtifactsFactory = new CodeArtifactsImpl.Factory(codeArtifactClient);
+    this.codeArtifactsFactory = new CodeArtifactsImpl.Factory(codeArtifactClient);
+
     final ScanClient scanClient = new ScanClientImpl(contrast, gson, organizationId);
-    scansFactory = new ScansImpl.Factory(scanClient);
-    projects = new ProjectsImpl(codeArtifactsFactory, scansFactory, projectClient);
+    this.scansFactory = new ScansImpl.Factory(scanClient);
+
+    final ProjectClient projectClient = new ProjectClientImpl(contrast, gson, organizationId);
+    this.projects =
+        new ProjectsImpl.Factory(codeArtifactsFactory, scansFactory, projectClient).create();
   }
 
   @Override

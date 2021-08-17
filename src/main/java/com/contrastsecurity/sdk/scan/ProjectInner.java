@@ -21,16 +21,16 @@ abstract class ProjectInner {
         .completedScans(0);
   }
 
-  /** @return unique project ID */
+  /** @return project ID */
   abstract String id();
 
-  /** @return unique organization ID */
+  /** @return organization ID */
   abstract String organizationId();
 
   /** @return project name */
   abstract String name();
 
-  /** @return if true, the project has been archived */
+  /** @return true, if the project has been archived */
   abstract boolean archived();
 
   /** @return programming language used by this project */

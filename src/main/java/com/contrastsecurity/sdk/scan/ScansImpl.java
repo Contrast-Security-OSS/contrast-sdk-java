@@ -7,6 +7,7 @@ import java.util.Objects;
 /** Implementation of the {@link Scans} resource collection. */
 final class ScansImpl implements Scans {
 
+  /** Implementation of {@link Scans.Factory} */
   static final class Factory implements Scans.Factory {
 
     private final ScanClient client;

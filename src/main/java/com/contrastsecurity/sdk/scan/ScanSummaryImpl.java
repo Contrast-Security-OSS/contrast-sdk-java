@@ -3,6 +3,7 @@ package com.contrastsecurity.sdk.scan;
 import java.time.Instant;
 import java.util.Objects;
 
+/** Implementation of the {@link ScanSummary} resource. */
 final class ScanSummaryImpl implements ScanSummary {
 
   private final ScanSummaryInner inner;

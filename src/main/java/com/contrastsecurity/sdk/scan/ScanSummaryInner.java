@@ -12,16 +12,16 @@ abstract class ScanSummaryInner {
     return new AutoValue_ScanSummaryInner.Builder();
   }
 
-  /** @return unique ID of this summary */
+  /** @return ID of this summary */
   abstract String id();
 
-  /** @return unique ID of the scan */
+  /** @return ID of the scan */
   abstract String scanId();
 
-  /** @return unique ID of the scan project */
+  /** @return ID of the scan project */
   abstract String projectId();
 
-  /** @return unique ID of the Contrast organization */
+  /** @return ID of the Contrast organization */
   abstract String organizationId();
 
   /** @return duration of the scan in milliseconds */

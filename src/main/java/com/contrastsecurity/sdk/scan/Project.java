@@ -25,13 +25,21 @@ public interface Project {
      */
     Definition withLanguage(String language);
 
-    Definition withIncludeNamespaceFilters(Collection<String> value);
+    /**
+     * @param filters collection of namespaces to include in scans
+     * @return this
+     */
+    Definition withIncludeNamespaceFilters(Collection<String> filters);
 
-    Definition withExcludeNamespaceFilters(Collection<String> value);
+    /**
+     * @param filters collection of namespaces to exclude from scans
+     * @return this
+     */
+    Definition withExcludeNamespaceFilters(Collection<String> filters);
 
     /**
      * @return new project resource
-     * @throws IOException when an IO error occurs making the request
+     * @throws IOException when an IO error occurs while making the request to the Contrast API
      * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
      * @throws ResourceNotFoundException when the requested resource does not exist
      * @throws HttpResponseException when Contrast rejects this request with an error code
@@ -39,16 +47,16 @@ public interface Project {
     Project create() throws IOException;
   }
 
-  /** @return unique project ID */
+  /** @return project ID */
   String id();
 
-  /** @return unique organization ID */
+  /** @return organization ID */
   String organizationId();
 
   /** @return project name */
   String name();
 
-  /** @return if true, the project has been archived */
+  /** @return true when the project has been archived */
   boolean archived();
 
   /** @return programming language used by this project */
@@ -104,9 +112,9 @@ public interface Project {
   /** @return collection of code namespaces to exclude from scans */
   Collection<String> excludeNamespaceFilters();
 
-  /** @return entry point to the code artifacts management API */
+  /** @return entrypoint to the code artifact resource collection for this project */
   CodeArtifacts codeArtifacts();
 
-  /** @return entry point to the scans management API */
+  /** @return entrypoint to the scan resource collection for this project */
   Scans scans();
 }

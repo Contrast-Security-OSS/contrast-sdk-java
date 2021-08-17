@@ -5,16 +5,16 @@ import java.time.Instant;
 /** Summary of a Scan and its results. */
 public interface ScanSummary {
 
-  /** @return unique ID of this summary */
+  /** @return ID of this summary */
   String id();
 
-  /** @return unique ID of the scan */
+  /** @return ID of the scan */
   String scanId();
 
-  /** @return unique ID of the scan project */
+  /** @return ID of the scan project */
   String projectId();
 
-  /** @return unique ID of the Contrast organization */
+  /** @return ID of the Contrast organization */
   String organizationId();
 
   /** @return duration of the scan in milliseconds */

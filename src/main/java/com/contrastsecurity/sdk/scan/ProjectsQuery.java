@@ -7,6 +7,7 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 abstract class ProjectsQuery {
 
+  /** @return new {@link Builder} */
   static Builder builder() {
     return new AutoValue_ProjectsQuery.Builder();
   }
@@ -29,6 +30,7 @@ abstract class ProjectsQuery {
   @Nullable
   abstract Boolean unique();
 
+  /** Builder for {@link ProjectsQuery}. */
   @AutoValue.Builder
   abstract static class Builder {
 

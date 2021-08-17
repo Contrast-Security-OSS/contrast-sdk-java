@@ -14,8 +14,10 @@ import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
+/** Implementation of {@link CodeArtifactClient}. */
 final class CodeArtifactClientImpl implements CodeArtifactClient {
 
   private final ContrastSDK contrast;
@@ -23,9 +25,9 @@ final class CodeArtifactClientImpl implements CodeArtifactClient {
   private final String organizationId;
 
   CodeArtifactClientImpl(final ContrastSDK contrast, final Gson gson, final String organizationId) {
-    this.contrast = contrast;
-    this.gson = gson;
-    this.organizationId = organizationId;
+    this.contrast = Objects.requireNonNull(contrast);
+    this.gson = Objects.requireNonNull(gson);
+    this.organizationId = Objects.requireNonNull(organizationId);
   }
 
   @Override

@@ -36,7 +36,7 @@ public interface Scan extends Refreshable<Scan> {
 
     /**
      * @return new started scan
-     * @throws IOException when an IO error occurs while making the request to the Contrast Scan API
+     * @throws IOException when an IO error occurs while making the request to the Contrast API
      * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
      * @throws ResourceNotFoundException when the requested resource does not exist
      * @throws HttpResponseException when Contrast rejects this request with an error code
@@ -76,7 +76,7 @@ public interface Scan extends Refreshable<Scan> {
    * @return {@link InputStream} for reading the SARIF file. The caller is expected to close the
    *     {@code InputStream}
    * @throws IllegalStateException when called on a scan that is not yet finished
-   * @throws IOException when an IO error occurs making the request
+   * @throws IOException when an IO error occurs while making the request to the Contrast API
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
@@ -89,7 +89,7 @@ public interface Scan extends Refreshable<Scan> {
    *
    * @param file the file to which to save the results
    * @throws IllegalStateException when called on a scan that is not yet finished
-   * @throws IOException when an IO error occurs making the request
+   * @throws IOException when an IO error occurs while making the request to the Contrast API
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
@@ -102,7 +102,7 @@ public interface Scan extends Refreshable<Scan> {
    * @return {@link CompletionStage} that completes successfully when the scan has completed and the
    *     summary has been retrieved
    * @throws IllegalStateException when called on a scan that is not yet finished
-   * @throws IOException when an IO error occurs making the request
+   * @throws IOException when an IO error occurs while making the request to the Contrast API
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code

@@ -2,15 +2,18 @@ package com.contrastsecurity.sdk.scan;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 
+/** Implementation of {@link CodeArtifacts} */
 final class CodeArtifactsImpl implements CodeArtifacts {
 
+  /** Implementation of {@link CodeArtifacts.Factory */
   static final class Factory implements CodeArtifacts.Factory {
 
     private final CodeArtifactClient client;
 
     Factory(final CodeArtifactClient client) {
-      this.client = client;
+      this.client = Objects.requireNonNull(client);
     }
 
     @Override
@@ -22,7 +25,7 @@ final class CodeArtifactsImpl implements CodeArtifacts {
   private final CodeArtifactClient client;
   private final String projectId;
 
-  public CodeArtifactsImpl(final CodeArtifactClient client, final String projectId) {
+  CodeArtifactsImpl(final CodeArtifactClient client, final String projectId) {
     this.client = client;
     this.projectId = projectId;
   }

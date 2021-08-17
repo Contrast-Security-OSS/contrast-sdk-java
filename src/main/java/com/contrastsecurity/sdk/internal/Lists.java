@@ -29,5 +29,6 @@ public final class Lists {
     return Collections.unmodifiableList(copy);
   }
 
+  /** static members only */
   private Lists() {}
 }
