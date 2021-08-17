@@ -2,12 +2,17 @@ package com.contrastsecurity.sdk.scan;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.Duration;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /** Implementation of the {@link Scan} resource. */
 final class ScanImpl implements Scan {
@@ -82,8 +87,39 @@ final class ScanImpl implements Scan {
 
   @Override
   public CompletionStage<Scan> await(final ScheduledExecutorService scheduler) {
-    // TODO
-    throw new UnsupportedOperationException("Not yet implemented");
+    return await(scheduler, POLL_INTERVAL);
+  }
+
+  CompletionStage<Scan> await(final ScheduledExecutorService scheduler, final Duration interval) {
+    return await(scheduler, scheduler, interval);
+  }
+
+  private CompletionStage<Scan> await(
+      final ScheduledExecutorService scheduler, final Executor executor, final Duration interval) {
+    return CompletableFuture.supplyAsync(
+            () -> {
+              try {
+                return refresh();
+              } catch (final IOException e) {
+                throw new UncheckedIOException(e);
+              }
+            },
+            executor)
+        .thenCompose(
+            scan -> {
+              switch (scan.status()) {
+                case FAILED:
+                  throw new ScanException(scan, scan.errorMessage());
+                case CANCELLED:
+                  throw new ScanException(scan, "Canceled");
+                case COMPLETED:
+                  return CompletableFuture.completedFuture(scan);
+                default:
+                  final Executor delayedExecutor =
+                      r -> scheduler.schedule(r, interval.toMillis(), TimeUnit.MILLISECONDS);
+                  return await(scheduler, delayedExecutor, interval);
+              }
+            });
   }
 
   @Override
@@ -136,4 +172,6 @@ final class ScanImpl implements Scan {
   public String toString() {
     return inner.toString();
   }
+
+  private static final Duration POLL_INTERVAL = Duration.ofSeconds(30);
 }
