@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import au.com.dius.pact.consumer.MockServer;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
+import au.com.dius.pact.consumer.dsl.PactDslWithState;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
@@ -14,7 +15,11 @@ import com.contrastsecurity.TestDataConstants;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.internal.GsonFactory;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
@@ -33,7 +38,7 @@ final class ScansPactTest {
 
     @Pact(consumer = "contrast-sdk")
     RequestResponsePact pact(final PactDslWithProvider builder) {
-      final HashMap<String, Object> params = new HashMap<>();
+      final HashMap<String, String> params = new HashMap<>();
       params.put("id", "project-id");
       params.put("organizationId", "organization-id");
       return builder
@@ -49,9 +54,10 @@ final class ScansPactTest {
           .body(
               newJsonBody(
                       scan -> {
-                        scan.stringType("id", "scan-id");
-                        scan.stringType("projectId", "project-id");
-                        scan.stringType("organizationId", "organization-id");
+                        scan.valueFromProviderState("id", "${id}", "scan-id");
+                        scan.valueFromProviderState("projectId", "${projectId}", "project-id");
+                        scan.valueFromProviderState(
+                            "organizationId", "${organizationId}", "organization-id");
                         scan.stringType("status", "FAILED");
                         scan.stringType("errorMessage", "scan failed");
                       })
@@ -81,11 +87,7 @@ final class ScansPactTest {
 
     @Pact(consumer = "contrast-sdk")
     RequestResponsePact pact(final PactDslWithProvider builder) {
-      final HashMap<String, Object> params = new HashMap<>();
-      params.put("id", "project-id");
-      params.put("organizationId", "organization-id");
-      return builder
-          .given("Projects Exist", params)
+      return scanExists(builder)
           .uponReceiving("retrieve scan")
           .method("GET")
           .pathFromProviderState(
@@ -95,12 +97,13 @@ final class ScansPactTest {
           .status(200)
           .body(
               newJsonBody(
-                      summary -> {
-                        summary.stringType("id", "scan-id");
-                        summary.stringType("projectId", "project-id");
-                        summary.stringType("organizationId", "organization-id");
-                        summary.stringType("status", "FAILED");
-                        summary.stringType("errorMessage", "DNS blew up");
+                      scan -> {
+                        scan.valueFromProviderState("id", "${id}", "scan-id");
+                        scan.valueFromProviderState("projectId", "${projectId}", "project-id");
+                        scan.valueFromProviderState(
+                            "organizationId", "${organizationId}", "organization-id");
+                        scan.stringType("status", "FAILED");
+                        scan.stringType("errorMessage", "DNS blew up");
                       })
                   .build())
           .toPact();
@@ -128,15 +131,11 @@ final class ScansPactTest {
 
     @Pact(consumer = "contrast-sdk")
     RequestResponsePact pact(final PactDslWithProvider builder) {
-      final HashMap<String, Object> params = new HashMap<>();
-      params.put("id", "project-id");
-      params.put("organizationId", "organization-id");
-      return builder
-          .given("Projects Exist", params)
+      return scanExists(builder)
           .uponReceiving("retrieve scan summary")
           .method("GET")
           .pathFromProviderState(
-              "/sast/organizations/${organizationId}/projects/${projectId}/scans/${scanId}/summary",
+              "/sast/organizations/${organizationId}/projects/${projectId}/scans/${id}/summary",
               "/sast/organizations/organization-id/projects/project-id/scans/scan-id/summary")
           .willRespondWith()
           .status(200)
@@ -144,9 +143,10 @@ final class ScansPactTest {
               newJsonBody(
                       summary -> {
                         summary.stringType("id", "summary-id");
-                        summary.stringType("scanId", "scan-id");
-                        summary.stringType("projectId", "project-id");
-                        summary.stringType("organizationId", "organization-id");
+                        summary.valueFromProviderState("scanId", "${id}", "scan-id");
+                        summary.valueFromProviderState("projectId", "${projectId}", "project-id");
+                        summary.valueFromProviderState(
+                            "organizationId", "${organizationId}", "organization-id");
                         summary.numberType("duration", 100);
                         summary.numberType("totalResults", 10);
                         summary.numberType("totalNewResults", 8);
@@ -189,6 +189,47 @@ final class ScansPactTest {
     }
   }
 
+  @Nested
+  final class GetScanSarif {
+
+    @Pact(consumer = "contrast-sdk")
+    RequestResponsePact pact(final PactDslWithProvider builder) {
+      return scanExists(builder)
+          .uponReceiving("retrieve scan results in SARIF")
+          .method("GET")
+          .pathFromProviderState(
+              "/sast/organizations/${organizationId}/projects/${projectId}/scans/${id}/raw-output",
+              "/sast/organizations/organization-id/projects/project-id/scans/scan-id/raw-output")
+          .willRespondWith()
+          .status(200)
+          .body(
+              newJsonBody(
+                      sarif -> {
+                        // we will not specify the SARIF specification here
+                      })
+                  .build())
+          .toPact();
+    }
+
+    @Test
+    void get_scan_sarif(final MockServer server) throws IOException {
+      final ContrastSDK contrast =
+          new ContrastSDK.Builder("test-user", "test-service-key", "test-api-key")
+              .withApiUrl(server.getUrl())
+              .build();
+      final Gson gson = GsonFactory.create();
+      final ScanClientImpl client = new ScanClientImpl(contrast, gson, "organization-id");
+
+      // instead of validating the entire SARIF specification, verify that some JSON is returned
+      final JsonObject object;
+      try (InputStream is = client.getSarif("project-id", "scan-id");
+          Reader reader = new InputStreamReader(is)) {
+        object = gson.fromJson(reader, JsonObject.class);
+      }
+      assertThat(object).isNotNull();
+    }
+  }
+
   private static ScanClientImpl client(final MockServer server) {
     final ContrastSDK contrast =
         new ContrastSDK.Builder("test-user", "test-service-key", "test-api-key")
@@ -196,6 +237,14 @@ final class ScansPactTest {
             .build();
     final Gson gson = GsonFactory.create();
     return new ScanClientImpl(contrast, gson, "organization-id");
+  }
+
+  private static PactDslWithState scanExists(final PactDslWithProvider builder) {
+    final HashMap<String, Object> params = new HashMap<>();
+    params.put("id", "scan-id");
+    params.put("projectId", "project-id");
+    params.put("organizationId", "organization-id");
+    return builder.given("Scan Exists", params);
   }
 
   private static final Instant LAST_MODIFIED_DATETIME = TestDataConstants.TIMESTAMP_EXAMPLE;

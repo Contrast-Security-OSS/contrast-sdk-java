@@ -47,6 +47,12 @@ public interface Scan extends Refreshable<Scan> {
   /** @return ID of this scan */
   String id();
 
+  /** @return ID of the project to which this scan belongs */
+  String projectId();
+
+  /** @return ID of the organization to which this scan belongs */
+  abstract String organizationId();
+
   /** @return scan status */
   ScanStatus status();
 
@@ -69,6 +75,7 @@ public interface Scan extends Refreshable<Scan> {
    *
    * @return {@link InputStream} for reading the SARIF file. The caller is expected to close the
    *     {@code InputStream}
+   * @throws IllegalStateException when called on a scan that is not yet finished
    * @throws IOException when an IO error occurs making the request
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
@@ -81,6 +88,7 @@ public interface Scan extends Refreshable<Scan> {
    * href="https://sarifweb.azurewebsites.net">SARIF</a>) to the specified file.
    *
    * @param file the file to which to save the results
+   * @throws IllegalStateException when called on a scan that is not yet finished
    * @throws IOException when an IO error occurs making the request
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
@@ -93,6 +101,7 @@ public interface Scan extends Refreshable<Scan> {
    *
    * @return {@link CompletionStage} that completes successfully when the scan has completed and the
    *     summary has been retrieved
+   * @throws IllegalStateException when called on a scan that is not yet finished
    * @throws IOException when an IO error occurs making the request
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist

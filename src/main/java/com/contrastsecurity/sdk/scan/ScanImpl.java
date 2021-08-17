@@ -69,6 +69,16 @@ final class ScanImpl implements Scan {
   }
 
   @Override
+  public String projectId() {
+    return inner.projectId();
+  }
+
+  @Override
+  public String organizationId() {
+    return inner.organizationId();
+  }
+
+  @Override
   public ScanStatus status() {
     return inner.status();
   }
@@ -124,6 +134,9 @@ final class ScanImpl implements Scan {
 
   @Override
   public InputStream sarif() throws IOException {
+    if (!isFinished()) {
+      throw new IllegalStateException("Scan is not yet finished");
+    }
     return client.getSarif(inner.projectId(), inner.id());
   }
 
@@ -136,8 +149,11 @@ final class ScanImpl implements Scan {
 
   @Override
   public ScanSummary summary() throws IOException {
+    if (!isFinished()) {
+      throw new IllegalStateException("Scan is not yet finished");
+    }
     final ScanSummaryInner inner = client.getSummary(this.inner.projectId(), this.inner.id());
-    return new ScanSummaryImpl(client, inner);
+    return new ScanSummaryImpl(inner);
   }
 
   @Override

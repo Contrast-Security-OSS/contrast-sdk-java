@@ -1,16 +1,13 @@
 package com.contrastsecurity.sdk.scan;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.util.Objects;
 
 final class ScanSummaryImpl implements ScanSummary {
 
-  private final ScanClient client;
   private final ScanSummaryInner inner;
 
-  public ScanSummaryImpl(final ScanClient client, final ScanSummaryInner inner) {
-    this.client = Objects.requireNonNull(client);
+  public ScanSummaryImpl(final ScanSummaryInner inner) {
     this.inner = Objects.requireNonNull(inner);
   }
 
@@ -60,8 +57,19 @@ final class ScanSummaryImpl implements ScanSummary {
   }
 
   @Override
-  public ScanSummary refresh() throws IOException {
-    final ScanSummaryInner inner = client.getSummary(projectId(), scanId());
-    return inner.equals(this.inner) ? this : new ScanSummaryImpl(client, inner);
+  public boolean equals(final Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    final ScanSummaryImpl that = (ScanSummaryImpl) o;
+    return inner.equals(that.inner);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(inner);
   }
 }

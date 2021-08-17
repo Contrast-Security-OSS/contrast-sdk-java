@@ -1,10 +1,14 @@
 package com.contrastsecurity.sdk.scan;
 
+import static com.contrastsecurity.sdk.scan.ScanAssert.assertThat;
+import static com.contrastsecurity.sdk.scan.ScanSummaryAssert.assertThat;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.contrastsecurity.EqualsContract;
+import com.contrastsecurity.EqualsAndHashcodeContract;
+import com.contrastsecurity.TestDataConstants;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -12,6 +16,8 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.Collection;
+import java.util.EnumSet;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -21,9 +27,100 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-/** Unit tests for {@link ScanImpl}. */
-final class ScanImplTest implements EqualsContract<ScanImpl> {
+/**
+ * Unit tests for {@link ScansImpl} and {@link ScanImpl}. Tested together because these classes are
+ * tightly coupled.
+ */
+final class ScansImplTest implements EqualsAndHashcodeContract<ScanImpl> {
+
+  /** Unit tests for {@link Scans#define()} */
+  @Test
+  void define_scan() throws IOException {
+    // GIVEN stubbed scan client
+    final ScanClient client = mock(ScanClient.class);
+    final ScanInner inner = builder().status(ScanStatus.WAITING).build();
+    final ScanCreate create = ScanCreate.of("code-artifact-id", "main");
+    when(client.create(inner.projectId(), create)).thenReturn(inner);
+
+    // WHEN define new scan
+    final Scans scans = new ScansImpl(client, inner.projectId());
+    final Scan scan =
+        scans
+            .define()
+            .withExistingCodeArtifact(create.codeArtifactId())
+            .withLabel(create.label())
+            .create();
+
+    // THEN scan has expected values
+    assertThat(scan).hasSameValuesAsInner(inner);
+  }
+
+  /** Unit tests for {@link Scans#get(String)} */
+  @Test
+  void get_scan() throws IOException {
+    // GIVEN stubbed scan client
+    final ScanClient client = mock(ScanClient.class);
+    final ScanInner inner = builder().status(ScanStatus.WAITING).build();
+    when(client.get(inner.projectId(), inner.id())).thenReturn(inner);
+
+    // WHEN retrieve scan
+    final Scans scans = new ScansImpl(client, inner.projectId());
+    final Scan scan = scans.get(inner.id());
+
+    // THEN scan has expected values
+    assertThat(scan).hasSameValuesAsInner(inner);
+  }
+
+  @Nested
+  final class Summary {
+
+    private ScanClient client;
+    private ScanSummaryInner summaryInner;
+
+    @BeforeEach
+    void before() throws IOException {
+      summaryInner =
+          ScanSummaryInner.builder()
+              .id("summary-id")
+              .scanId(SCAN_ID)
+              .projectId(PROJECT_ID)
+              .organizationId(ORGANIZATION_ID)
+              .duration(100)
+              .createdDate(TestDataConstants.TIMESTAMP_EXAMPLE)
+              .lastModifiedDate(TestDataConstants.TIMESTAMP_EXAMPLE)
+              .totalFixedResults(0)
+              .totalNewResults(0)
+              .totalResults(0)
+              .build();
+      client = mock(ScanClient.class);
+      when(client.getSummary(summaryInner.projectId(), summaryInner.scanId()))
+          .thenReturn(summaryInner);
+    }
+
+    @Test
+    void retrieve_summary() throws IOException {
+      // WHEN retrieve summary by scan ID
+      final ScansImpl scans = new ScansImpl(client, PROJECT_ID);
+      final ScanSummary summary = scans.summary(SCAN_ID);
+
+      // THEN returns expected summary
+      assertThat(summary).hasSameValuesAsInner(summaryInner);
+    }
+
+    @Test
+    void traverse_summary() throws IOException {
+      // WHEN traverse summary relationship from a scan
+      final ScanInner inner = builder().status(ScanStatus.COMPLETED).build();
+      final Scan scan = new ScanImpl(client, inner);
+      final ScanSummary summary = scan.summary();
+
+      // THEN returns expected summary
+      assertThat(summary).hasSameValuesAsInner(summaryInner);
+    }
+  }
 
   @Test
   void save_sarif_to_file(@TempDir final Path tmp) throws IOException {
@@ -35,7 +132,7 @@ final class ScanImplTest implements EqualsContract<ScanImpl> {
         ScanInner.builder()
             .id(SCAN_ID)
             .projectId(PROJECT_ID)
-            .organizationId("organization-id")
+            .organizationId(ORGANIZATION_ID)
             .status(ScanStatus.COMPLETED)
             .build();
     final Scan scan = new ScanImpl(client, inner);
@@ -48,8 +145,68 @@ final class ScanImplTest implements EqualsContract<ScanImpl> {
     assertThat(file).exists().hasContent("sarif");
   }
 
+  /** @see #is_finished(ScanStatus) */
+  static Collection<ScanStatus> finished() {
+    return EnumSet.of(ScanStatus.CANCELLED, ScanStatus.COMPLETED, ScanStatus.FAILED);
+  }
+
+  /** Verifies that completed scans and failed scans are finished */
+  @MethodSource("finished")
+  @ParameterizedTest
+  void is_finished(final ScanStatus status) {
+    final ScanInner inner = builder().status(status).build();
+    final ScanClient client = mock(ScanClient.class);
+    final Scan scan = new ScanImpl(client, inner);
+    assertThat(scan.isFinished()).isTrue();
+  }
+
+  /** @see #is_not_yet_finished(ScanStatus) */
+  static Collection<ScanStatus> notFinished() {
+    return EnumSet.of(ScanStatus.WAITING, ScanStatus.RUNNING);
+  }
+
+  /** Verifies that waiting scans and running scans are not yet finished */
+  @MethodSource("notFinished")
+  @ParameterizedTest
+  void is_not_yet_finished(final ScanStatus status) {
+    final ScanInner inner = builder().status(status).build();
+    final ScanClient client = mock(ScanClient.class);
+    final Scan scan = new ScanImpl(client, inner);
+    assertThat(scan.isFinished()).isFalse();
+  }
+
   @Nested
-  final class AwaitTest {
+  final class UnfinishedScanInvariants {
+
+    private Scan unfinished;
+
+    @BeforeEach
+    void before() {
+      final ScanClient client = mock(ScanClient.class);
+      final ScanInner inner = builder().status(ScanStatus.WAITING).build();
+      unfinished = new ScanImpl(client, inner);
+    }
+
+    @Test
+    void get_sarif_throws_when_scan_not_complete(@TempDir final Path tmp) {
+      final Path file = tmp.resolve("contrast-scan-results.sarif.json");
+      assertThatThrownBy(() -> unfinished.saveSarif(file))
+          .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void save_sarif_throws_when_scan_not_complete() {
+      assertThatThrownBy(() -> unfinished.sarif()).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void get_summary_throws_when_scan_not_complete() {
+      assertThatThrownBy(() -> unfinished.summary()).isInstanceOf(IllegalStateException.class);
+    }
+  }
+
+  @Nested
+  final class Await {
 
     private ScheduledExecutorService scheduler;
     private ScanClient client;
@@ -160,10 +317,7 @@ final class ScanImplTest implements EqualsContract<ScanImpl> {
     }
 
     private ScanInner.Builder builder() {
-      return ScanInner.builder()
-          .id(SCAN_ID)
-          .projectId(PROJECT_ID)
-          .organizationId("organization-id");
+      return ScanInner.builder().id(SCAN_ID).projectId(PROJECT_ID).organizationId(ORGANIZATION_ID);
     }
   }
 
@@ -183,10 +337,11 @@ final class ScanImplTest implements EqualsContract<ScanImpl> {
     return ScanInner.builder()
         .id(SCAN_ID)
         .projectId(PROJECT_ID)
-        .organizationId("organization-id")
+        .organizationId(ORGANIZATION_ID)
         .status(ScanStatus.COMPLETED);
   }
 
+  private static final String ORGANIZATION_ID = "organization-id";
   private static final String PROJECT_ID = "project-id";
   private static final String SCAN_ID = "scan-id";
   private static final Duration TEST_INTERVAL = Duration.ofMillis(1);

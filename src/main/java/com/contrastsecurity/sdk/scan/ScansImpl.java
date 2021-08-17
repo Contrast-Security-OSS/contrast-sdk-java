@@ -43,6 +43,6 @@ final class ScansImpl implements Scans {
   @Override
   public ScanSummary summary(final String id) throws IOException {
     final ScanSummaryInner inner = client.getSummary(projectId, id);
-    return new ScanSummaryImpl(client, inner);
+    return new ScanSummaryImpl(inner);
   }
 }

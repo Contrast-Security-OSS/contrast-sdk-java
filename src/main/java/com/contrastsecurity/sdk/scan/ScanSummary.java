@@ -1,10 +1,9 @@
 package com.contrastsecurity.sdk.scan;
 
-import com.contrastsecurity.sdk.internal.Refreshable;
 import java.time.Instant;
 
 /** Summary of a Scan and its results. */
-public interface ScanSummary extends Refreshable<ScanSummary> {
+public interface ScanSummary {
 
   /** @return unique ID of this summary */
   String id();

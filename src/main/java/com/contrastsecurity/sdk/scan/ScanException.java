@@ -17,7 +17,7 @@ public class ScanException extends RuntimeException {
   }
 
   /** @return the scan that cannot be completed */
-  public final Scan getScan() {
+  public final Scan scan() {
     return scan;
   }
 }
