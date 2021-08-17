@@ -1,10 +1,12 @@
 package com.contrastsecurity.sdk.scan;
 
+import com.contrastsecurity.exceptions.ServerResponseException;
 import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.http.MediaType;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.internal.URIBuilder;
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,6 +36,8 @@ final class ScanClientImpl implements ScanClient {
     try (InputStream is = contrast.makeRequest(HttpMethod.GET, uri);
         Reader reader = new InputStreamReader(is)) {
       return gson.fromJson(reader, AutoValue_ScanInner.class);
+    } catch (JsonParseException e) {
+      throw new ServerResponseException("Failed to parse Contrast API response", e);
     }
   }
 
@@ -51,6 +55,8 @@ final class ScanClientImpl implements ScanClient {
         new InputStreamReader(
             contrast.makeRequestWithBody(HttpMethod.POST, uri, json, MediaType.JSON))) {
       return gson.fromJson(reader, AutoValue_ScanInner.class);
+    } catch (JsonParseException e) {
+      throw new ServerResponseException("Failed to parse Contrast API response", e);
     }
   }
 
@@ -88,6 +94,8 @@ final class ScanClientImpl implements ScanClient {
             .toURIString();
     try (Reader reader = new InputStreamReader(contrast.makeRequest(HttpMethod.GET, uri))) {
       return gson.fromJson(reader, AutoValue_ScanSummaryInner.class);
+    } catch (JsonParseException e) {
+      throw new ServerResponseException("Failed to parse Contrast API response", e);
     }
   }
 }

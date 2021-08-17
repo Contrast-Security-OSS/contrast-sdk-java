@@ -1,9 +1,11 @@
 package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.exceptions.HttpResponseException;
+import com.contrastsecurity.exceptions.ServerResponseException;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.internal.URIBuilder;
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -81,6 +83,8 @@ final class CodeArtifactClientImpl implements CodeArtifactClient {
     }
     try (Reader reader = new InputStreamReader(connection.getInputStream())) {
       return gson.fromJson(reader, AutoValue_CodeArtifactInner.class);
+    } catch (JsonParseException e) {
+      throw new ServerResponseException("Failed to parse Contrast API response", e);
     }
   }
 

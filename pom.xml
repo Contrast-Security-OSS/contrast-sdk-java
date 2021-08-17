@@ -180,7 +180,7 @@
           </docletArtifact>
           <additionalOptions>
             <additionalOption>
-              -maxLineLength 10000
+              -maxLineLength 120
             </additionalOption>
           </additionalOptions>
           <additionalDependencies>

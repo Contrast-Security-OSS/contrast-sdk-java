@@ -2,6 +2,7 @@ package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.exceptions.HttpResponseException;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
+import com.contrastsecurity.exceptions.ServerResponseException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +27,7 @@ interface ScanClient {
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
+   * @throws ServerResponseException when Contrast API returns a response that cannot be understood
    */
   ScanInner get(String projectId, String scanId) throws IOException;
 
@@ -39,6 +41,7 @@ interface ScanClient {
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
+   * @throws ServerResponseException when Contrast API returns a response that cannot be understood
    */
   ScanInner create(String projectId, ScanCreate create) throws IOException;
 
@@ -53,6 +56,7 @@ interface ScanClient {
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
+   * @throws ServerResponseException when Contrast API returns a response that cannot be understood
    */
   InputStream getSarif(String projectId, String scanId) throws IOException;
 
@@ -67,6 +71,7 @@ interface ScanClient {
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
+   * @throws ServerResponseException when Contrast API returns a response that cannot be understood
    */
   ScanSummaryInner getSummary(String projectId, String scanId) throws IOException;
 }

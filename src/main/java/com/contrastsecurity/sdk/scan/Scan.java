@@ -2,6 +2,7 @@ package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.exceptions.HttpResponseException;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
+import com.contrastsecurity.exceptions.ServerResponseException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.sdk.internal.Refreshable;
 import java.io.IOException;
@@ -80,6 +81,7 @@ public interface Scan extends Refreshable<Scan> {
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
+   * @throws ServerResponseException when Contrast API returns a response that cannot be understood
    */
   InputStream sarif() throws IOException;
 
@@ -93,6 +95,7 @@ public interface Scan extends Refreshable<Scan> {
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
+   * @throws ServerResponseException when Contrast API returns a response that cannot be understood
    */
   void saveSarif(Path file) throws IOException;
 
@@ -106,6 +109,7 @@ public interface Scan extends Refreshable<Scan> {
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
    * @throws HttpResponseException when Contrast rejects this request with an error code
+   * @throws ServerResponseException when Contrast API returns a response that cannot be understood
    */
   ScanSummary summary() throws IOException;
 }

@@ -1,11 +1,13 @@
 package com.contrastsecurity.sdk.scan;
 
 import com.contrastsecurity.exceptions.ContrastException;
+import com.contrastsecurity.exceptions.ServerResponseException;
 import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.http.MediaType;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.internal.URIBuilder;
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -37,6 +39,8 @@ final class ProjectClientImpl implements ProjectClient {
         new InputStreamReader(
             contrast.makeRequestWithBody(HttpMethod.POST, path, json, MediaType.JSON))) {
       return gson.fromJson(reader, AutoValue_ProjectInner.class);
+    } catch (JsonParseException e) {
+      throw new ServerResponseException("Failed to parse Contrast API response", e);
     }
   }
 
@@ -55,6 +59,8 @@ final class ProjectClientImpl implements ProjectClient {
       page =
           gson.fromJson(
               reader, new TypeToken<ScanPagedResult<AutoValue_ProjectInner>>() {}.getType());
+    } catch (JsonParseException e) {
+      throw new ServerResponseException("Failed to parse Contrast API response", e);
     }
 
     // the Scan API reuses a paged response structure even when we specify the query parameter
