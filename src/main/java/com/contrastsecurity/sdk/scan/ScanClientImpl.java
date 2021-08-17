@@ -68,4 +68,23 @@ final class ScanClientImpl implements ScanClient {
             .toURIString();
     return contrast.makeRequest(HttpMethod.GET, uri);
   }
+
+  @Override
+  public ScanSummaryInner getSummary(final String projectId, final String scanId) throws IOException {
+    final String uri =
+        new URIBuilder()
+            .appendPathSegments(
+                "sast",
+                "organizations",
+                organizationId,
+                "projects",
+                projectId,
+                "scans",
+                scanId,
+                "summary")
+            .toURIString();
+    try (Reader reader = new InputStreamReader(contrast.makeRequest(HttpMethod.GET, uri))) {
+      return gson.fromJson(reader, AutoValue_ScanSummaryInner.class);
+    }
+  }
 }

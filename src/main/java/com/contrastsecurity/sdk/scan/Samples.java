@@ -43,11 +43,11 @@ final class Samples {
               s -> {
                 try {
                   s.saveSarif(Paths.get("./contrast-scan-results.sarif.json"));
+                  final ScanSummary summary = s.summary();
+                  System.out.printf("Found %d total results%n", summary.totalResults());
                 } catch (final IOException e) {
                   throw new UncheckedIOException(e);
                 }
-                final ScanSummary summary = s.summary();
-                System.out.printf("Found %d total results%n", summary.totalResults());
               })
           .toCompletableFuture()
           .join();

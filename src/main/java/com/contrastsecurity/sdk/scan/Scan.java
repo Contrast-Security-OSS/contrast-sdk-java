@@ -64,7 +64,7 @@ public interface Scan extends Refreshable<Scan> {
   CompletionStage<Scan> await(ScheduledExecutorService scheduler);
 
   /**
-   * Retrieves and scan's results in <a href="https://sarifweb.azurewebsites.net">SARIF</a>
+   * Retrieves a scan's results in <a href="https://sarifweb.azurewebsites.net">SARIF</a>.
    *
    * @return {@link InputStream} for reading the SARIF file. The caller is expected to close the
    *     {@code InputStream}
@@ -73,7 +73,7 @@ public interface Scan extends Refreshable<Scan> {
 
   /**
    * Retrieves and saves the scan's results (in <a
-   * href="https://sarifweb.azurewebsites.net">SARIF</a>) to the specified file
+   * href="https://sarifweb.azurewebsites.net">SARIF</a>) to the specified file.
    *
    * @param file the file to which to save the results
    */
@@ -85,5 +85,5 @@ public interface Scan extends Refreshable<Scan> {
    * @return {@link CompletionStage} that completes successfully when the scan has completed and the
    *     summary has been retrieved
    */
-  ScanSummary summary();
+  ScanSummary summary() throws IOException;
 }

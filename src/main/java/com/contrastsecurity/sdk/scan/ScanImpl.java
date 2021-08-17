@@ -135,9 +135,9 @@ final class ScanImpl implements Scan {
   }
 
   @Override
-  public ScanSummary summary() {
-    // TODO
-    throw new UnsupportedOperationException("Not yet implemented");
+  public ScanSummary summary() throws IOException {
+    final ScanSummaryInner inner = client.getSummary(this.inner.projectId(), this.inner.id());
+    return new ScanSummaryImpl(client, inner);
   }
 
   @Override
