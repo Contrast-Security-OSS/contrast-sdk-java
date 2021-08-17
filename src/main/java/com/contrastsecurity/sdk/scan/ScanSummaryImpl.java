@@ -64,8 +64,4 @@ final class ScanSummaryImpl implements ScanSummary {
     final ScanSummaryInner inner = client.getSummary(projectId(), scanId());
     return inner.equals(this.inner) ? this : new ScanSummaryImpl(client, inner);
   }
-
-  ScanSummaryInner toInner() {
-    return inner;
-  }
 }

@@ -161,11 +161,6 @@ final class ProjectImpl implements Project {
     return scansFactory.create(id());
   }
 
-  /** visible for testing */
-  ProjectInner toInner() {
-    return inner;
-  }
-
   @Override
   public boolean equals(final Object o) {
     if (this == o) {

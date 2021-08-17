@@ -26,7 +26,7 @@ public interface Scans {
   Scan.Definition define();
 
   /**
-   * Retrieves a scan by ID
+   * Retrieves a scan by ID.
    *
    * @param id unique scan ID
    * @return scan resource
@@ -36,4 +36,12 @@ public interface Scans {
    * @throws HttpResponseException when Contrast rejects this request with an error code
    */
   Scan get(String id) throws IOException;
+
+  /**
+   * Retrieves a scan's summary by scan ID.
+   *
+   * @param id scan ID
+   * @return summary of the scan identified by the given ID
+   */
+  ScanSummary summary(String id) throws IOException;
 }

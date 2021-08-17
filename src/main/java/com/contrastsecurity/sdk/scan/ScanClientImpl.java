@@ -70,7 +70,8 @@ final class ScanClientImpl implements ScanClient {
   }
 
   @Override
-  public ScanSummaryInner getSummary(final String projectId, final String scanId) throws IOException {
+  public ScanSummaryInner getSummary(final String projectId, final String scanId)
+      throws IOException {
     final String uri =
         new URIBuilder()
             .appendPathSegments(

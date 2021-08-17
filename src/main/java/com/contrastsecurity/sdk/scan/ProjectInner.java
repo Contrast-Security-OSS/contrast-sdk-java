@@ -1,6 +1,6 @@
 package com.contrastsecurity.sdk.scan;
 
-import com.contrastsecurity.sdk.scan.AutoValue_ProjectInner.Builder;
+import com.contrastsecurity.sdk.internal.Nullable;
 import com.google.auto.value.AutoValue;
 import java.time.Instant;
 import java.util.Collection;
@@ -11,7 +11,14 @@ abstract class ProjectInner {
 
   /** @return new builder */
   static Builder builder() {
-    return new AutoValue_ProjectInner.Builder();
+    return new AutoValue_ProjectInner.Builder()
+        .critical(0)
+        .high(0)
+        .medium(0)
+        .low(0)
+        .note(0)
+        .archived(false)
+        .completedScans(0);
   }
 
   /** @return unique project ID */
@@ -62,12 +69,14 @@ abstract class ProjectInner {
   /**
    * @return ID of the last scan to complete successfully, or {@code null} if no such scan exists
    */
+  @Nullable
   abstract String lastScanId();
 
   /**
    * @return the time at which the last successfully completed scan finished, or {@code null} if no
    *     such scan exists
    */
+  @Nullable
   abstract Instant lastScanTime();
 
   /** @return count of completed scans in this project */

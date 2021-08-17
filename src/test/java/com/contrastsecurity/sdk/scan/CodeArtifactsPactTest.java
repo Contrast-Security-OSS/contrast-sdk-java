@@ -12,6 +12,8 @@ import au.com.dius.pact.core.model.annotations.Pact;
 import com.contrastsecurity.PactConstants;
 import com.contrastsecurity.TestDataConstants;
 import com.contrastsecurity.sdk.ContrastSDK;
+import com.contrastsecurity.sdk.internal.GsonFactory;
+import com.google.gson.Gson;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -91,9 +93,9 @@ final class CodeArtifactsPactTest {
           new ContrastSDK.Builder("test-user", "test-service-key", "test-api-key")
               .withApiUrl(server.getUrl())
               .build();
-      final CodeArtifacts codeArtifacts =
-          contrast.scan("organization-id").codeArtifacts("project-id");
-      final CodeArtifact codeArtifact = codeArtifacts.upload(jar);
+      final Gson gson = GsonFactory.create();
+      CodeArtifactClient client = new CodeArtifactClientImpl(contrast, gson, "organization-id");
+      final CodeArtifactInner codeArtifact = client.upload("project-id", jar);
 
       final CodeArtifactInner expected =
           CodeArtifactInner.builder()
@@ -103,8 +105,7 @@ final class CodeArtifactsPactTest {
               .filename(jar.getFileName().toString())
               .createdTime(TestDataConstants.TIMESTAMP_EXAMPLE)
               .build();
-      final CodeArtifactInner inner = ((CodeArtifactImpl) codeArtifact).toInner();
-      assertThat(inner).isEqualTo(expected);
+      assertThat(codeArtifact).isEqualTo(expected);
     }
   }
 }

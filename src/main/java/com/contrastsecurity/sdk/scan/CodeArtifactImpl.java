@@ -37,11 +37,6 @@ final class CodeArtifactImpl implements CodeArtifact {
     return inner.createdTime();
   }
 
-  /** visible for testing */
-  CodeArtifactInner toInner() {
-    return inner;
-  }
-
   @Override
   public boolean equals(final Object o) {
     if (this == o) {

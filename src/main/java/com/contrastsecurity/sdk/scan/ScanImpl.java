@@ -146,11 +146,6 @@ final class ScanImpl implements Scan {
     return inner.equals(this.inner) ? this : new ScanImpl(client, inner);
   }
 
-  /** visible for testing */
-  ScanInner toInner() {
-    return inner;
-  }
-
   @Override
   public boolean equals(final Object o) {
     if (this == o) {

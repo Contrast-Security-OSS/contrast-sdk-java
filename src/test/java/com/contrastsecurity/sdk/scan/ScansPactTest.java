@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 final class ScansPactTest {
 
   @Nested
-  final class DefineScan {
+  final class CreateScan {
 
     @Pact(consumer = "contrast-sdk")
     RequestResponsePact pact(final PactDslWithProvider builder) {
@@ -60,19 +60,10 @@ final class ScansPactTest {
     }
 
     @Test
-    void define_scan(final MockServer server) throws IOException {
-      final ContrastSDK contrast =
-          new ContrastSDK.Builder("test-user", "test-service-key", "test-api-key")
-              .withApiUrl(server.getUrl())
-              .build();
-      final Scans scans = contrast.scan("organization-id").scans("project-id");
-      final ScanImpl scan =
-          (ScanImpl)
-              scans
-                  .define()
-                  .withExistingCodeArtifact("code-artifact-id")
-                  .withLabel("main")
-                  .create();
+    void create_scan(final MockServer server) throws IOException {
+      final ScanClientImpl client = client(server);
+      final ScanCreate create = ScanCreate.of("code-artifact-id", "main");
+      final ScanInner scan = client.create("project-id", create);
       final ScanInner expected =
           ScanInner.builder()
               .id("scan-id")
@@ -81,7 +72,7 @@ final class ScansPactTest {
               .status(ScanStatus.FAILED)
               .errorMessage("scan failed")
               .build();
-      assertThat(scan.toInner()).isEqualTo(expected);
+      assertThat(scan).isEqualTo(expected);
     }
   }
 
@@ -117,12 +108,7 @@ final class ScansPactTest {
 
     @Test
     void get_scan(final MockServer server) throws IOException {
-      final ContrastSDK contrast =
-          new ContrastSDK.Builder("test-user", "test-service-key", "test-api-key")
-              .withApiUrl(server.getUrl())
-              .build();
-      final Gson gson = GsonFactory.create();
-      final ScanClientImpl client = new ScanClientImpl(contrast, gson, "organization-id");
+      final ScanClientImpl client = client(server);
       final ScanInner scan = client.get("project-id", "scan-id");
 
       final ScanInner expected =
@@ -201,6 +187,15 @@ final class ScansPactTest {
               .build();
       assertThat(summary).isEqualTo(expected);
     }
+  }
+
+  private static ScanClientImpl client(final MockServer server) {
+    final ContrastSDK contrast =
+        new ContrastSDK.Builder("test-user", "test-service-key", "test-api-key")
+            .withApiUrl(server.getUrl())
+            .build();
+    final Gson gson = GsonFactory.create();
+    return new ScanClientImpl(contrast, gson, "organization-id");
   }
 
   private static final Instant LAST_MODIFIED_DATETIME = TestDataConstants.TIMESTAMP_EXAMPLE;

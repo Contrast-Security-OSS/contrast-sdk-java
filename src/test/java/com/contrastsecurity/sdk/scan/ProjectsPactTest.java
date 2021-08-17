@@ -15,6 +15,8 @@ import com.contrastsecurity.TestDataConstants;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.ContrastSDK.Builder;
+import com.contrastsecurity.sdk.internal.GsonFactory;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -33,7 +35,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 final class ProjectsPactTest {
 
   @Nested
-  final class DefineProject {
+  final class CreateProject {
 
     @Pact(consumer = "contrast-sdk")
     RequestResponsePact pact(final PactDslWithProvider builder) {
@@ -64,6 +66,18 @@ final class ProjectsPactTest {
                                   "organizationId", "${organizationId}", "fake-organization-id")
                               .stringValue("name", "quarkus-test-application")
                               .stringType("language", "JAVA")
+                              .booleanType("archived", false)
+                              .datetime(
+                                  "lastScanTime",
+                                  PactConstants.DATETIME_FORMAT,
+                                  TestDataConstants.TIMESTAMP_EXAMPLE)
+                              .numberType("completedScans", 1)
+                              .stringType("lastScanId", "scan-id")
+                              .numberType("critical", 2)
+                              .numberType("high", 3)
+                              .numberType("medium", 4)
+                              .numberType("low", 5)
+                              .numberType("note", 6)
                               .array(
                                   "includeNamespaceFilters", array -> array.stringType("com.acme"))
                               .array(
@@ -74,23 +88,35 @@ final class ProjectsPactTest {
     }
 
     @Test
-    void define_project(final MockServer server) throws IOException {
-      final ContrastSDK contrast =
-          new Builder("test-user", "test-service-key", "test-api-key")
-              .withApiUrl(server.getUrl())
+    void create_project(final MockServer server) throws IOException {
+      final ProjectClient client = client(server);
+      final ProjectCreate create =
+          ProjectCreate.builder()
+              .name("quarkus-test-application")
+              .language("JAVA")
+              .includeNamespaceFilters(Collections.singletonList("com.acme"))
+              .excludeNamespaceFilters(Collections.singletonList("org.apache"))
               .build();
+      final ProjectInner project = client.create(create);
 
-      final Projects projects = contrast.scan("organization-id").projects();
-      final Project project =
-          projects
-              .define()
-              .withName("quarkus-test-application")
-              .withLanguage("JAVA")
-              .withIncludeNamespaceFilters(Collections.singletonList("com.acme"))
-              .withExcludeNamespaceFilters(Collections.singletonList("org.apache"))
-              .create();
-      assertThat(project.name()).isEqualTo("quarkus-test-application");
-      assertThat(project.language()).isEqualTo("JAVA");
+      final ProjectInner expected =
+          ProjectInner.builder()
+              .id("fake-project-id")
+              .organizationId("fake-organization-id")
+              .name("quarkus-test-application")
+              .language("JAVA")
+              .lastScanId("scan-id")
+              .lastScanTime(TestDataConstants.TIMESTAMP_EXAMPLE)
+              .completedScans(1)
+              .critical(2)
+              .high(3)
+              .medium(4)
+              .low(5)
+              .note(6)
+              .includeNamespaceFilters(Collections.singletonList("com.acme"))
+              .excludeNamespaceFilters(Collections.singletonList("org.apache"))
+              .build();
+      assertThat(project).isEqualTo(expected);
     }
   }
 
@@ -127,12 +153,8 @@ final class ProjectsPactTest {
     @Test
     void retrieve_project_by_name(final MockServer server)
         throws UnauthorizedException, IOException {
-      final ContrastSDK contrast =
-          new Builder("test-user", "test-service-key", "test-api-key")
-              .withApiUrl(server.getUrl())
-              .build();
-      final Projects projects = contrast.scan("organization-id").projects();
-      final Optional<Project> project = projects.findByName("spring-test-application");
+      final ProjectClient client = client(server);
+      final Optional<ProjectInner> project = client.findByName("spring-test-application");
       final ProjectInner expected =
           ProjectInner.builder()
               .id("fake-project-id")
@@ -151,7 +173,7 @@ final class ProjectsPactTest {
               .includeNamespaceFilters(Collections.singletonList("com.example"))
               .excludeNamespaceFilters(Collections.singletonList("org.apache"))
               .build();
-      assertThat(project.map(p -> ((ProjectImpl) p).toInner())).contains(expected);
+      assertThat(project).contains(expected);
     }
   }
 
@@ -182,12 +204,8 @@ final class ProjectsPactTest {
     @Test
     void retrieve_project_does_not_exist_by_name(final MockServer server)
         throws UnauthorizedException, IOException {
-      final ContrastSDK contrast =
-          new Builder("test-user", "test-service-key", "test-api-key")
-              .withApiUrl(server.getUrl())
-              .build();
-      final Projects projects = contrast.scan("organization-id").projects();
-      final Optional<Project> project = projects.findByName("does-not-exist");
+      final ProjectClient client = client(server);
+      final Optional<ProjectInner> project = client.findByName("does-not-exist");
       assertThat(project).isEmpty();
     }
   }
@@ -212,5 +230,14 @@ final class ProjectsPactTest {
         .stringType("lastScanId", "scan-id")
         .array("includeNamespaceFilters", a -> a.stringType("com.example"))
         .array("excludeNamespaceFilters", a -> a.stringType("org.apache"));
+  }
+
+  private static ProjectClient client(final MockServer server) {
+    final ContrastSDK contrast =
+        new Builder("test-user", "test-service-key", "test-api-key")
+            .withApiUrl(server.getUrl())
+            .build();
+    final Gson gson = GsonFactory.create();
+    return new ProjectClientImpl(contrast, gson, "organization-id");
   }
 }
