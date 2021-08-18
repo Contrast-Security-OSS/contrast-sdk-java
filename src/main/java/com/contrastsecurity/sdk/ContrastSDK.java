@@ -33,7 +33,6 @@ import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.FilterForm;
 import com.contrastsecurity.http.HttpMethod;
-import com.contrastsecurity.http.IntegrationName;
 import com.contrastsecurity.http.JobOutcomePolicyListResponse;
 import com.contrastsecurity.http.LibraryFilterForm;
 import com.contrastsecurity.http.MediaType;
@@ -113,7 +112,10 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.Getter;
 
 /**
@@ -122,28 +124,26 @@ import lombok.Getter;
  */
 public class ContrastSDK {
 
-  private String apiKey;
-  private String serviceKey;
-  private String user;
+  private final String apiKey;
+  private final String serviceKey;
+  private final String user;
   @Getter private String restApiURL;
-  private UrlBuilder urlBuilder;
-  private Gson gson;
+  private final UrlBuilder urlBuilder;
+  private final Gson gson;
   Proxy proxy;
-  private IntegrationName integrationName;
-  private String version;
+  private final String userAgent;
 
   private int connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
   private int readTimeout = DEFAULT_READ_TIMEOUT;
   private static final int BUFFER_SIZE = 4096;
 
   public static class Builder {
-    private String user;
-    private String serviceKey;
-    private String apiKey;
+    private final String user;
+    private final String serviceKey;
+    private final String apiKey;
     private Proxy proxy;
     private String restApiURL;
-    private IntegrationName integrationName;
-    private String version;
+    private UserAgentProduct product;
 
     public Builder(String user, String serviceKey, String apiKey) {
       this.user = user;
@@ -165,27 +165,25 @@ public class ContrastSDK {
       return this;
     }
 
-    public Builder withIntegrationName(IntegrationName integrationName) {
-      this.integrationName = integrationName;
-      return this;
-    }
-
-    public Builder withVersion(String version) {
-      this.version = version;
+    /**
+     * Prepends a custom product to the user-agent header included in each request to the Contrast
+     * API.
+     *
+     * @param product custom product
+     * @return this
+     */
+    public Builder withUserAgentProduct(UserAgentProduct product) {
+      this.product = product;
       return this;
     }
 
     public ContrastSDK build() {
-      ContrastSDK sdk = new ContrastSDK(this.user, this.serviceKey, this.apiKey);
+      ContrastSDK sdk = new ContrastSDK(this.user, this.serviceKey, this.apiKey, this.product);
       sdk.restApiURL = this.restApiURL;
       sdk.proxy = this.proxy;
-      sdk.integrationName = this.integrationName;
-      sdk.version = this.version;
       return sdk;
     }
   }
-
-  protected ContrastSDK() {}
 
   /**
    * Create a ContrastSDK object to use the Contrast V3 API
@@ -196,15 +194,28 @@ public class ContrastSDK {
    * @param serviceKey User service key
    * @param apiKey API Key
    */
-  private ContrastSDK(String user, String serviceKey, String apiKey) {
+  private ContrastSDK(
+      String user, String serviceKey, String apiKey, final UserAgentProduct component) {
     this.user = user;
     this.serviceKey = serviceKey;
     this.apiKey = apiKey;
+    this.userAgent = buildUserAgent(component);
     this.restApiURL = DEFAULT_API_URL;
     ContrastSDKUtils.validateUrl(this.restApiURL);
     this.urlBuilder = UrlBuilder.getInstance();
     this.gson = new Gson();
     this.proxy = Proxy.NO_PROXY;
+  }
+
+  /** visible for testing */
+  static String buildUserAgent(final UserAgentProduct product) {
+    final UserAgentProduct platform =
+        UserAgentProduct.of("Java", System.getProperty("java.runtime.version"));
+    final UserAgentProduct sdk = UserAgentProduct.of("contrast-sdk-java", Version.VERSION);
+    return Stream.of(product, sdk, platform)
+        .filter(Objects::nonNull)
+        .map(UserAgentProduct::toEncodedString)
+        .collect(Collectors.joining(" "));
   }
 
   /**
@@ -1582,14 +1593,7 @@ public class ContrastSDK {
     connection.setRequestProperty(
         RequestConstants.AUTHORIZATION, ContrastSDKUtils.makeAuthorizationToken(user, serviceKey));
     connection.setRequestProperty(RequestConstants.API_KEY, apiKey);
-
-    if (integrationName != null) {
-      connection.setRequestProperty(
-          RequestConstants.TELEMETRY_INTEGRATION_NAME, String.valueOf(integrationName));
-    }
-    if (version != null) {
-      connection.setRequestProperty(RequestConstants.TELEMETRY_INTEGRATION_VERSION, version);
-    }
+    connection.setRequestProperty("User-Agent", userAgent);
 
     connection.setUseCaches(false);
     if (connectionTimeout > DEFAULT_CONNECTION_TIMEOUT)
