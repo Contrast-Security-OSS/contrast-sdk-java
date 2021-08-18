@@ -36,27 +36,27 @@ public class UnauthorizedException extends HttpResponseException {
   /**
    * Constructor. Package-private because the code should always be 404.
    *
+   * @param message error message provided by the caller
    * @param code code from the status line e.g. 401
    * @param status message from the status line e.g. Unauthorized
-   * @param message error message provided by the caller
    * @throws IllegalArgumentException when code is not 401 or 403
    */
-  public UnauthorizedException(final int code, final String status, final String message) {
-    this(code, status, message, null);
+  public UnauthorizedException(final String message, final int code, final String status) {
+    this(message, code, status, null);
   }
 
   /**
    * Constructor. Package-private because the code should always be 404.
    *
+   * @param message error message provided by the caller
    * @param code code from the status line e.g. 401
    * @param status message from the status line e.g. Unauthorized
-   * @param message error message provided by the caller
    * @param body the body of the response, or {@code null} if there is no such body
    * @throws IllegalArgumentException when code is not 401 or 403
    */
   public UnauthorizedException(
-      final int code, final String status, final String message, final String body) {
-    super(code, status, message, body);
+      final String message, final int code, final String status, final String body) {
+    super(message, code, status, body);
     if (code != HttpURLConnection.HTTP_UNAUTHORIZED && code != HttpURLConnection.HTTP_FORBIDDEN) {
       throw new IllegalArgumentException("This exception is only used for statuses 401 and 403");
     }
@@ -67,10 +67,10 @@ public class UnauthorizedException extends HttpResponseException {
    *
    * @param code code from the status line e.g. 401
    * @deprecated Used by legacy code for any HTTP 4XX response. Use {@link
-   *     #UnauthorizedException(int, String, String)} instead.
+   *     #UnauthorizedException(String, int, String)} instead.
    */
   @Deprecated
   public UnauthorizedException(final int code) {
-    super(code, "", "");
+    super("", code, "");
   }
 }

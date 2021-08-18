@@ -31,7 +31,7 @@ public class HttpResponseException extends ContrastException {
     final ExceptionFactory factory = factoryFromResponseCode(code);
     final String body = readBody(connection, code);
     final String status = connection.getResponseMessage();
-    return factory.create(code, status, message, body);
+    return factory.create(message, code, status, body);
   }
 
   /**
@@ -84,7 +84,7 @@ public class HttpResponseException extends ContrastException {
 
   /** Functional interface that describes the constructor shared by this class and its subclasses */
   private interface ExceptionFactory {
-    HttpResponseException create(int code, String status, String message, String body);
+    HttpResponseException create(String message, int code, String status, String body);
   }
 
   private final int code;
@@ -94,24 +94,24 @@ public class HttpResponseException extends ContrastException {
   /**
    * Constructor.
    *
+   * @param message error message provided by the caller
    * @param code code from the status line e.g. 400
    * @param status message from the status line e.g. Bad Request
-   * @param message error message provided by the caller
    */
-  public HttpResponseException(final int code, final String status, final String message) {
-    this(code, status, message, null);
+  public HttpResponseException(final String message, final int code, final String status) {
+    this(message, code, status, null);
   }
 
   /**
    * Constructor.
    *
+   * @param message error message provided by the caller
    * @param code code from the status line e.g. 400
    * @param status message from the status line e.g. Bad Request
-   * @param message error message provided by the caller
    * @param body the body of the response, or {@code null} if there is no such body
    */
   public HttpResponseException(
-      final int code, final String status, final String message, final String body) {
+      final String message, final int code, final String status, final String body) {
     super(message);
     this.code = code;
     this.status = status;

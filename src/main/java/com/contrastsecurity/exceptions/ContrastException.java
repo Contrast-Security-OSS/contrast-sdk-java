@@ -1,9 +1,6 @@
 package com.contrastsecurity.exceptions;
 
-/**
- * Generic {@link RuntimeException} thrown by Contrast code to indicate an unexpected error has
- * occurred.
- */
+/** Generic {@link RuntimeException} thrown by Contrast code. */
 public class ContrastException extends RuntimeException {
 
   /** @see RuntimeException#RuntimeException(String) */

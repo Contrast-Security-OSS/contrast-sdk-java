@@ -29,6 +29,7 @@
 package com.contrastsecurity.sdk;
 
 import com.contrastsecurity.exceptions.ApplicationCreateException;
+import com.contrastsecurity.exceptions.HttpResponseException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.FilterForm;
@@ -1502,32 +1503,16 @@ public class ContrastSDK {
       }
     }
     int rc = connection.getResponseCode();
-    if (rc >= SERVER_ERROR) {
-      try (BufferedReader reader =
-          new BufferedReader(new InputStreamReader(connection.getErrorStream()))) {
-        final String error = reader.lines().collect(Collectors.joining("\n"));
-        throw new RuntimeException(rc + ": " + error);
-      }
+    if (rc >= HttpURLConnection.HTTP_BAD_REQUEST) {
+      throw HttpResponseException.fromConnection(
+          connection, "Received unexpected status code from Contrast");
     }
-    InputStream is = connection.getInputStream();
-    if (rc >= BAD_REQUEST) {
-      is.close();
-      throw new UnauthorizedException(rc);
-    }
-    return is;
+    return connection.getInputStream();
   }
 
   public InputStream makeRequest(HttpMethod method, String path)
       throws IOException, UnauthorizedException {
-    String url = restApiURL + path;
-    HttpURLConnection connection = makeConnection(url, method.toString());
-    final InputStream is = connection.getInputStream();
-    int rc = connection.getResponseCode();
-    if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
-      is.close();
-      throw new UnauthorizedException(rc);
-    }
-    return is;
+    return makeRequestWithResponse(method, path).is;
   }
 
   public MakeRequestResponse makeRequestWithResponse(HttpMethod method, String path)
@@ -1535,14 +1520,13 @@ public class ContrastSDK {
     String url = restApiURL + path;
 
     HttpURLConnection connection = makeConnection(url, method.toString());
-    InputStream is = connection.getInputStream();
     int rc = connection.getResponseCode();
-    if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
-      is.close();
-      throw new UnauthorizedException(rc);
+    if (rc >= HttpURLConnection.HTTP_BAD_REQUEST) {
+      throw HttpResponseException.fromConnection(
+          connection, "Received unexpected status code from Contrast");
     }
     MakeRequestResponse mrr = new MakeRequestResponse();
-    mrr.is = is;
+    mrr.is = connection.getInputStream();
     mrr.rc = rc;
     return mrr;
   }
