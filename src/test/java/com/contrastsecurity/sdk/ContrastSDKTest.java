@@ -1,4 +1,4 @@
-package com.contrastsecurity;
+package com.contrastsecurity.sdk;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,7 +6,6 @@ import com.contrastsecurity.exceptions.InvalidConversionException;
 import com.contrastsecurity.exceptions.ResourceNotFoundException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.HttpMethod;
-import com.contrastsecurity.http.IntegrationName;
 import com.contrastsecurity.http.JobOutcomePolicyListResponse;
 import com.contrastsecurity.http.RuleSeverity;
 import com.contrastsecurity.http.SecurityCheckResponse;
@@ -27,18 +26,19 @@ import com.contrastsecurity.models.Tags;
 import com.contrastsecurity.models.TagsResponse;
 import com.contrastsecurity.models.Traces;
 import com.contrastsecurity.models.VulnerabilityTrend;
-import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-final class ContrastSDKTest extends ContrastSDK {
+/** Unit tests for {@link ContrastSDK} */
+final class ContrastSDKTest {
 
   private static ContrastSDK contrastSDK;
   private static Gson gson;
@@ -48,13 +48,58 @@ final class ContrastSDKTest extends ContrastSDK {
     contrastSDK =
         new ContrastSDK.Builder("test_user", "testApiKey", "testServiceKey")
             .withApiUrl("http://localhost:19080/Contrast/api")
-            .withVersion("1.0.0")
-            .withIntegrationName(IntegrationName.INTELLIJ_INTEGRATION)
+            .withUserAgentProduct(UserAgentProduct.of("INTELLIJ_INTEGRATION", "1.0.0"))
             .build();
     gson =
         new GsonBuilder()
             .registerTypeAdapter(MetadataEntity.class, new MetadataDeserializer())
             .create();
+  }
+
+  @Test
+  void builds_default_user_agent() {
+    // WHEN build user-agent string with null major product
+    final String ua = ContrastSDK.buildUserAgent(null);
+
+    // THEN user-agent string contains only the contrast-sdk-java and Java products
+    // does not verify version, because that would lead to a brittle test
+    assertThat(ua).matches("contrast-sdk-java/\\d\\.\\d(\\d)?(-SNAPSHOT)? Java/\\d+.*");
+  }
+
+  @Test
+  void builds_user_agent_with_custom_product() {
+    // WHEN build a user-agent string with a custom product provided by the user
+    final UserAgentProduct product =
+        UserAgentProduct.of("contrast-maven-plugin", "3.2.0", "Apache Maven 3.8.1");
+    final String ua = ContrastSDK.buildUserAgent(product);
+
+    // THEN user-agent string contains 3 products contrast-sdk-java
+    assertThat(ua)
+        .matches(
+            "contrast-maven-plugin/3.2.0 \\(Apache Maven 3.8.1\\) contrast-sdk-java/\\d\\.\\d(\\d)?(-SNAPSHOT)? Java/\\d+.*");
+  }
+
+  @Test
+  void builds_user_agent_with_custom_product_no_version() {
+    // WHEN build a user-agent string with a custom product provided by the user
+    final UserAgentProduct product = UserAgentProduct.of("contrast-maven-plugin");
+    final String ua = ContrastSDK.buildUserAgent(product);
+
+    // THEN user-agent string contains 3 products contrast-sdk-java
+    assertThat(ua)
+        .matches("contrast-maven-plugin contrast-sdk-java/\\d\\.\\d(\\d)?(-SNAPSHOT)? Java/\\d+.*");
+  }
+
+  /** Builds a new {@code HttpURLConnection}, but does not send an outgoing request */
+  @Test
+  void sets_user_agent_header() throws IOException {
+    final HttpURLConnection connection =
+        contrastSDK.makeConnection("https://does-not-exist.contrastsecurity.com", "GET");
+
+    final String ua = connection.getRequestProperty("User-Agent");
+    assertThat(ua)
+        .matches(
+            "INTELLIJ_INTEGRATION/1.0.0 contrast-sdk-java/\\d\\.\\d(\\d)?(-SNAPSHOT)? Java/\\d+.*");
   }
 
   @Test
