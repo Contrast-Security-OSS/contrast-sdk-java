@@ -1,5 +1,6 @@
 package com.contrastsecurity.sdk.scan;
 
+import java.time.Duration;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
 
@@ -30,7 +31,7 @@ final class ScanSummaryAssert extends AbstractAssert<ScanSummaryAssert, ScanSumm
     Assertions.assertThat(actual.projectId()).isEqualTo(inner.projectId());
     Assertions.assertThat(actual.organizationId()).isEqualTo(inner.organizationId());
     Assertions.assertThat(actual.createdDate()).isEqualTo(inner.createdDate());
-    Assertions.assertThat(actual.duration()).isEqualTo(inner.duration());
+    Assertions.assertThat(actual.duration()).isEqualTo(Duration.ofMillis(inner.duration()));
     Assertions.assertThat(actual.totalNewResults()).isEqualTo(inner.totalNewResults());
     Assertions.assertThat(actual.totalFixedResults()).isEqualTo(inner.totalFixedResults());
     Assertions.assertThat(actual.totalResults()).isEqualTo(inner.totalResults());

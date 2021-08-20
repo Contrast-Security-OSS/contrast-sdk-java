@@ -1,5 +1,6 @@
 package com.contrastsecurity.sdk.scan;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -33,8 +34,8 @@ final class ScanSummaryImpl implements ScanSummary {
   }
 
   @Override
-  public long duration() {
-    return inner.duration();
+  public Duration duration() {
+    return Duration.ofMillis(inner.duration());
   }
 
   @Override
