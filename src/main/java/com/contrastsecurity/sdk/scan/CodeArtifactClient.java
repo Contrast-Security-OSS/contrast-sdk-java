@@ -23,7 +23,7 @@ interface CodeArtifactClient {
    *
    * @param projectId ID of the project to which the code artifact belongs
    * @param file the file to upload
-   * @return new {@link CodeArtifact} from Contrast API
+   * @return new {@link CodeArtifactInner} from Contrast API
    * @throws IOException when an IO error occurs while making the request to the Contrast API
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
    * @throws ResourceNotFoundException when the requested resource does not exist
