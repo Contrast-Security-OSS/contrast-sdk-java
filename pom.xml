@@ -36,6 +36,7 @@
   </scm>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <localTeamServerUrl>http://localhost:19080/Contrast/api</localTeamServerUrl>
     <versions.maven-source-plugin>3.0.1</versions.maven-source-plugin>
     <versions.maven-javadoc-plugin>3.0.0</versions.maven-javadoc-plugin>
