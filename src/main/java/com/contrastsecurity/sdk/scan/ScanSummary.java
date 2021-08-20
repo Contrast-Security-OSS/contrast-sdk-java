@@ -1,5 +1,6 @@
 package com.contrastsecurity.sdk.scan;
 
+import java.time.Duration;
 import java.time.Instant;
 
 /** Summary of a Scan and its results. */
@@ -17,8 +18,8 @@ public interface ScanSummary {
   /** @return ID of the Contrast organization */
   String organizationId();
 
-  /** @return duration of the scan in milliseconds */
-  long duration();
+  /** @return duration of the scan */
+  Duration duration();
 
   /** @return number of vulnerabilities detected in this scan */
   int totalResults();
