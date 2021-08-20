@@ -37,8 +37,9 @@ public class ResourceNotFoundException extends HttpResponseException {
    * @param message error message provided by the caller
    * @param status message from the status line e.g. Bad Request
    */
-  public ResourceNotFoundException(final String message, String status) {
-    this(message, status, null);
+  public ResourceNotFoundException(
+      final String message, final String method, final String path, final String status) {
+    this(message, method, path, status, null);
   }
 
   /**
@@ -48,8 +49,13 @@ public class ResourceNotFoundException extends HttpResponseException {
    * @param status message from the status line e.g. Bad Request
    * @param body the body of the response, or {@code null} if there is no such body
    */
-  public ResourceNotFoundException(final String message, String status, final String body) {
-    this(message, 404, status, body);
+  public ResourceNotFoundException(
+      final String message,
+      final String method,
+      final String path,
+      final String status,
+      final String body) {
+    this(message, method, path, 404, status, body);
   }
 
   /**
@@ -62,8 +68,13 @@ public class ResourceNotFoundException extends HttpResponseException {
    * @throws IllegalArgumentException when code is not 404
    */
   ResourceNotFoundException(
-      final String message, final int code, final String status, final String body) {
-    super(message, code, status, body);
+      final String message,
+      final String method,
+      final String path,
+      final int code,
+      final String status,
+      final String body) {
+    super(message, method, path, code, status, body);
     if (code != 404) {
       throw new IllegalArgumentException("Only intended for 404 response codes but was " + code);
     }

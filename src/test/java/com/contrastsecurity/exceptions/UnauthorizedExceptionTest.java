@@ -14,16 +14,18 @@ final class UnauthorizedExceptionTest {
   @ParameterizedTest
   void captures_authorization_response_codes(final int code, final String status) {
     final String message = "Ah ah ah";
-    final UnauthorizedException exception = new UnauthorizedException(message, code, status);
+    final UnauthorizedException exception =
+        new UnauthorizedException(message, "GET", "/fails", code, status);
     assertThat(exception.getCode()).isEqualTo(code);
     assertThat(exception.getStatus()).isEqualTo(status);
-    assertThat(exception.getMessage()).isEqualTo(message);
+    assertThat(exception.getMessage())
+        .isEqualTo(message + "\nGET /fails\n\n" + code + " " + status);
   }
 
   @SuppressWarnings("ThrowableNotThrown")
   @Test
   void throws_on_non_authorizations_response_code() {
-    assertThatThrownBy(() -> new UnauthorizedException("all good", 200, "OK"))
+    assertThatThrownBy(() -> new UnauthorizedException("all good", "GET", "/successful", 200, "OK"))
         .isInstanceOf(IllegalArgumentException.class);
   }
 

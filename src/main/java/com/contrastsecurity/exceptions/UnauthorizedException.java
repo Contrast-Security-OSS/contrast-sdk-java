@@ -41,8 +41,13 @@ public class UnauthorizedException extends HttpResponseException {
    * @param status message from the status line e.g. Unauthorized
    * @throws IllegalArgumentException when code is not 401 or 403
    */
-  public UnauthorizedException(final String message, final int code, final String status) {
-    this(message, code, status, null);
+  public UnauthorizedException(
+      final String message,
+      final String method,
+      final String path,
+      final int code,
+      final String status) {
+    this(message, method, path, code, status, null);
   }
 
   /**
@@ -55,8 +60,13 @@ public class UnauthorizedException extends HttpResponseException {
    * @throws IllegalArgumentException when code is not 401 or 403
    */
   public UnauthorizedException(
-      final String message, final int code, final String status, final String body) {
-    super(message, code, status, body);
+      final String message,
+      final String method,
+      final String path,
+      final int code,
+      final String status,
+      final String body) {
+    super(message, method, path, code, status, body);
     if (code != HttpURLConnection.HTTP_UNAUTHORIZED && code != HttpURLConnection.HTTP_FORBIDDEN) {
       throw new IllegalArgumentException("This exception is only used for statuses 401 and 403");
     }
@@ -67,10 +77,10 @@ public class UnauthorizedException extends HttpResponseException {
    *
    * @param code code from the status line e.g. 401
    * @deprecated Used by legacy code for any HTTP 4XX response. Use {@link
-   *     #UnauthorizedException(String, int, String)} instead.
+   *     #UnauthorizedException(String, String, String, int, String)} instead.
    */
   @Deprecated
   public UnauthorizedException(final int code) {
-    super("", code, "");
+    super("", "<unknown>", "<unknown>", code, "");
   }
 }

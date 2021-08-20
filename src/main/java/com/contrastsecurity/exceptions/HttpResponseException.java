@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * Thrown when the Contrast API returns a response that indicates an error has occurred. Captures
@@ -27,11 +28,13 @@ public class HttpResponseException extends ContrastException {
    */
   public static HttpResponseException fromConnection(
       final HttpURLConnection connection, final String message) throws IOException {
+    final String method = connection.getRequestMethod();
+    final String path = connection.getURL().getPath();
     final int code = connection.getResponseCode();
     final ExceptionFactory factory = factoryFromResponseCode(code);
     final String body = readBody(connection, code);
     final String status = connection.getResponseMessage();
-    return factory.create(message, code, status, body);
+    return factory.create(message, method, path, code, status, body);
   }
 
   /**
@@ -84,9 +87,12 @@ public class HttpResponseException extends ContrastException {
 
   /** Functional interface that describes the constructor shared by this class and its subclasses */
   private interface ExceptionFactory {
-    HttpResponseException create(String message, int code, String status, String body);
+    HttpResponseException create(
+        String message, String method, String path, int code, String status, String body);
   }
 
+  private final String method;
+  private final String path;
   private final int code;
   private final String status;
   private final String body;
@@ -95,24 +101,41 @@ public class HttpResponseException extends ContrastException {
    * Constructor.
    *
    * @param message error message provided by the caller
+   * @param method HTTP method used in the request
+   * @param path HTTP path from the request
    * @param code code from the status line e.g. 400
    * @param status message from the status line e.g. Bad Request
    */
-  public HttpResponseException(final String message, final int code, final String status) {
-    this(message, code, status, null);
+  public HttpResponseException(
+      final String message,
+      final String method,
+      final String path,
+      final int code,
+      final String status) {
+    this(message, method, path, code, status, null);
   }
 
   /**
    * Constructor.
    *
    * @param message error message provided by the caller
+   * @param method HTTP method used in the request
+   * @param path HTTP path from the request
    * @param code code from the status line e.g. 400
    * @param status message from the status line e.g. Bad Request
    * @param body the body of the response, or {@code null} if there is no such body
+   * @throws NullPointerException when message, method, or path are {@code null}
    */
   public HttpResponseException(
-      final String message, final int code, final String status, final String body) {
+      final String message,
+      final String method,
+      final String path,
+      final int code,
+      final String status,
+      final String body) {
     super(message);
+    this.method = Objects.requireNonNull(method);
+    this.path = Objects.requireNonNull(path);
     this.code = code;
     this.status = status;
     this.body = body;
@@ -123,7 +146,10 @@ public class HttpResponseException extends ContrastException {
     return code;
   }
 
-  /** @return message from the status line e.g. Bad Request */
+  /**
+   * @return message from the status line e.g. Bad Request, or {@code null} if no such status line
+   *     exists
+   */
   public String getStatus() {
     return status;
   }
@@ -134,14 +160,19 @@ public class HttpResponseException extends ContrastException {
   }
 
   @Override
-  public String toString() {
+  public String getMessage() {
     final StringBuilder sb =
         new StringBuilder()
-            .append(code)
-            .append(" ")
-            .append(status)
+            .append(super.getMessage())
             .append("\n")
-            .append(getMessage());
+            .append(method)
+            .append(" ")
+            .append(path)
+            .append("\n\n")
+            .append(code);
+    if (status != null) {
+      sb.append(" ").append(status);
+    }
     if (body != null) {
       sb.append("\n\n").append(body);
     }

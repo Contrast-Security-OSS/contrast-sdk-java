@@ -69,7 +69,8 @@ final class HttpResponseExceptionTest {
     // THEN there is no body in the exception details
     assertThat(exception.getCode()).isEqualTo(code);
     assertThat(exception.getStatus()).isEqualTo("Bad Request");
-    assertThat(exception.getMessage()).isEqualTo(message);
+    final String expectedMessage = message + "\nGET /fails\n\n400 Bad Request";
+    assertThat(exception.getMessage()).isEqualTo(expectedMessage);
     assertThat(exception.getBody()).isNull();
   }
 
@@ -97,7 +98,9 @@ final class HttpResponseExceptionTest {
     // THEN includes the body in the exception details
     assertThat(exception.getCode()).isEqualTo(code);
     assertThat(exception.getStatus()).isEqualTo(status);
-    assertThat(exception.getMessage()).isEqualTo("Failure Message");
+    final String expectedMessage =
+        "Failure Message\nGET /fails\n\n" + code + " " + status + "\n\n" + body;
+    assertThat(exception.getMessage()).isEqualTo(expectedMessage);
     assertThat(exception.getBody()).isEqualTo(body);
   }
 
@@ -122,7 +125,8 @@ final class HttpResponseExceptionTest {
     assertThat(exception).isInstanceOf(UnauthorizedException.class);
     assertThat(exception.getCode()).isEqualTo(code);
     assertThat(exception.getStatus()).isEqualTo(status);
-    assertThat(exception.getMessage()).isEqualTo(message);
+    final String expectedMessage = "Failure Message\nGET /fails\n\n" + code + " " + status;
+    assertThat(exception.getMessage()).isEqualTo(expectedMessage);
     assertThat(exception.getBody()).isNull();
   }
 
@@ -146,7 +150,7 @@ final class HttpResponseExceptionTest {
     assertThat(exception).isInstanceOf(ResourceNotFoundException.class);
     assertThat(exception.getCode()).isEqualTo(404);
     assertThat(exception.getStatus()).isEqualTo("Not Found");
-    assertThat(exception.getMessage()).isEqualTo(message);
+    assertThat(exception.getMessage()).isEqualTo("Failure Message\nGET /fails\n\n404 Not Found");
     assertThat(exception.getBody()).isNull();
   }
 
