@@ -1,9 +1,10 @@
 package com.contrastsecurity.sdk.scan;
 
+import com.contrastsecurity.exceptions.ContrastException;
 import java.util.Objects;
 
 /** Indicates a condition that prevents Contrast Scan from completing an analysis */
-public class ScanException extends RuntimeException {
+public class ScanException extends ContrastException {
 
   private final Scan scan;
 
