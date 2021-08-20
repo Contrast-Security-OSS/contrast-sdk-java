@@ -1,10 +1,7 @@
-package com.contrastsecurity;
+package com.contrastsecurity.http;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.contrastsecurity.http.ApplicationFilterForm;
-import com.contrastsecurity.http.TraceFilterForm;
-import com.contrastsecurity.http.UrlBuilder;
 import com.contrastsecurity.models.AgentType;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;

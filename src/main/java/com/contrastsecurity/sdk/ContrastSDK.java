@@ -29,6 +29,7 @@
 package com.contrastsecurity.sdk;
 
 import com.contrastsecurity.exceptions.ApplicationCreateException;
+import com.contrastsecurity.exceptions.HttpResponseException;
 import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.http.ApplicationFilterForm;
 import com.contrastsecurity.http.FilterForm;
@@ -85,6 +86,9 @@ import com.contrastsecurity.models.Users;
 import com.contrastsecurity.models.VulnerabilityTrend;
 import com.contrastsecurity.models.dtm.ApplicationCreateRequest;
 import com.contrastsecurity.models.dtm.AttestationCreateRequest;
+import com.contrastsecurity.sdk.internal.GsonFactory;
+import com.contrastsecurity.sdk.scan.ScanManager;
+import com.contrastsecurity.sdk.scan.ScanManagerImpl;
 import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.contrastsecurity.utils.MetadataDeserializer;
 import com.google.gson.Gson;
@@ -203,7 +207,7 @@ public class ContrastSDK {
     this.restApiURL = DEFAULT_API_URL;
     ContrastSDKUtils.validateUrl(this.restApiURL);
     this.urlBuilder = UrlBuilder.getInstance();
-    this.gson = new Gson();
+    this.gson = GsonFactory.create();
     this.proxy = Proxy.NO_PROXY;
   }
 
@@ -216,6 +220,10 @@ public class ContrastSDK {
         .filter(Objects::nonNull)
         .map(UserAgentProduct::toEncodedString)
         .collect(Collectors.joining(" "));
+  }
+
+  public ScanManager scan(final String organizationId) {
+    return new ScanManagerImpl(this, gson, organizationId);
   }
 
   /**
@@ -1494,26 +1502,17 @@ public class ContrastSDK {
         os.write(bodyByte, 0, bodyByte.length);
       }
     }
-    final InputStream is = connection.getInputStream();
     int rc = connection.getResponseCode();
-    if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
-      is.close();
-      throw new UnauthorizedException(rc);
+    if (rc >= HttpURLConnection.HTTP_BAD_REQUEST) {
+      throw HttpResponseException.fromConnection(
+          connection, "Received unexpected status code from Contrast");
     }
-    return is;
+    return connection.getInputStream();
   }
 
   public InputStream makeRequest(HttpMethod method, String path)
       throws IOException, UnauthorizedException {
-    String url = restApiURL + path;
-    HttpURLConnection connection = makeConnection(url, method.toString());
-    final InputStream is = connection.getInputStream();
-    int rc = connection.getResponseCode();
-    if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
-      is.close();
-      throw new UnauthorizedException(rc);
-    }
-    return is;
+    return makeRequestWithResponse(method, path).is;
   }
 
   public MakeRequestResponse makeRequestWithResponse(HttpMethod method, String path)
@@ -1521,14 +1520,13 @@ public class ContrastSDK {
     String url = restApiURL + path;
 
     HttpURLConnection connection = makeConnection(url, method.toString());
-    InputStream is = connection.getInputStream();
     int rc = connection.getResponseCode();
-    if (rc >= BAD_REQUEST && rc < SERVER_ERROR) {
-      is.close();
-      throw new UnauthorizedException(rc);
+    if (rc >= HttpURLConnection.HTTP_BAD_REQUEST) {
+      throw HttpResponseException.fromConnection(
+          connection, "Received unexpected status code from Contrast");
     }
     MakeRequestResponse mrr = new MakeRequestResponse();
-    mrr.is = is;
+    mrr.is = connection.getInputStream();
     mrr.rc = rc;
     return mrr;
   }

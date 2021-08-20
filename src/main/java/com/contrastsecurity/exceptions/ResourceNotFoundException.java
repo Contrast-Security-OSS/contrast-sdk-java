@@ -28,11 +28,55 @@
  */
 package com.contrastsecurity.exceptions;
 
-public class ResourceNotFoundException extends Exception {
+/** An {@link HttpResponseException} throw when Contrast API returns a 404 Not Found response. */
+public class ResourceNotFoundException extends HttpResponseException {
 
-  private static final long serialVersionUID = -4132985938344669390L;
+  /**
+   * Constructor.
+   *
+   * @param message error message provided by the caller
+   * @param status message from the status line e.g. Bad Request
+   */
+  public ResourceNotFoundException(
+      final String message, final String method, final String path, final String status) {
+    this(message, method, path, status, null);
+  }
 
-  public ResourceNotFoundException(String type, String id) {
-    super(String.format("Resource '%s' of id '%s' was not found", type, id));
+  /**
+   * Constructor.
+   *
+   * @param message error message provided by the caller
+   * @param status message from the status line e.g. Bad Request
+   * @param body the body of the response, or {@code null} if there is no such body
+   */
+  public ResourceNotFoundException(
+      final String message,
+      final String method,
+      final String path,
+      final String status,
+      final String body) {
+    this(message, method, path, 404, status, body);
+  }
+
+  /**
+   * Constructor. Package-private because the code should always be 404.
+   *
+   * @param message error message provided by the caller
+   * @param code code from the status line e.g. 400
+   * @param status message from the status line e.g. Bad Request
+   * @param body the body of the response, or {@code null} if there is no such body
+   * @throws IllegalArgumentException when code is not 404
+   */
+  ResourceNotFoundException(
+      final String message,
+      final String method,
+      final String path,
+      final int code,
+      final String status,
+      final String body) {
+    super(message, method, path, code, status, body);
+    if (code != 404) {
+      throw new IllegalArgumentException("Only intended for 404 response codes but was " + code);
+    }
   }
 }

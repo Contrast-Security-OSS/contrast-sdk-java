@@ -36,12 +36,11 @@
   </scm>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <localTeamServerUrl>http://localhost:19080/Contrast/api</localTeamServerUrl>
-    <versions.maven-source-plugin>3.0.1</versions.maven-source-plugin>
-    <versions.maven-javadoc-plugin>3.0.0</versions.maven-javadoc-plugin>
-    <versions.maven-gpg-plugin>1.6</versions.maven-gpg-plugin>
-    <versions.nexus-staging-maven-plugin>1.6.8</versions.nexus-staging-maven-plugin>
     <versions.junit-jupiter>5.7.1</versions.junit-jupiter>
+    <versions.auto-value>1.8.2</versions.auto-value>
+    <versions.lombok>1.18.18</versions.lombok>
   </properties>
 
   <dependencies>
@@ -58,6 +57,12 @@
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${versions.junit-jupiter}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${versions.junit-jupiter}</version>
       <scope>test</scope>
@@ -69,20 +74,32 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>3.11.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>au.com.dius.pact.consumer</groupId>
+      <artifactId>junit5</artifactId>
+      <version>4.2.9</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.18</version>
+      <version>${versions.lombok}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.auto.value</groupId>
+      <artifactId>auto-value-annotations</artifactId>
+      <version>${versions.auto-value}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
 
   <build>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <filtering>true</filtering>
-      </testResource>
-    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -94,7 +111,6 @@
             </goals>
             <configuration>
               <rules>
-                <dependencyConvergence/>
                 <requirePluginVersions/>
                 <requireSameVersions>
                   <plugins>
@@ -137,12 +153,44 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <release>8</release>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${versions.lombok}</version>
+            </path>
+            <path>
+              <groupId>com.google.auto.value</groupId>
+              <artifactId>auto-value</artifactId>
+              <version>${versions.auto-value}</version>
+            </path>
+          </annotationProcessorPaths>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
+          <release>8</release>
           <detectJavaApiLink>false</detectJavaApiLink>
+          <doclet>org.apidesign.javadoc.codesnippet.Doclet</doclet>
+          <docletArtifact>
+            <groupId>org.apidesign.javadoc</groupId>
+            <artifactId>codesnippet-doclet</artifactId>
+            <version>0.61</version> <!-- or any newer version -->
+          </docletArtifact>
+          <additionalOptions>
+            <additionalOption>
+              -maxLineLength 120
+            </additionalOption>
+          </additionalOptions>
+          <additionalDependencies>
+            <!-- javadoc cannot find the annotations removed in JDK 11, so add them -->
+            <dependency>
+              <groupId>javax.annotation</groupId>
+              <artifactId>javax.annotation-api</artifactId>
+              <version>1.2</version>
+            </dependency>
+          </additionalDependencies>
         </configuration>
         <executions>
           <execution>
@@ -155,12 +203,16 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
+        <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <excludes>
-            <exclude>**/ScreenerTest.java</exclude>
+            <!-- exclude Javadoc code sample classes -->
+            <exclude>**/*Sample*.class</exclude>
           </excludes>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
       <plugin>
         <artifactId>maven-deploy-plugin</artifactId>
