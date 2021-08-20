@@ -70,6 +70,12 @@ public class Library {
 
   private List<Server> servers;
 
+  public List<Vulnerability> getVulnerabilities() {
+    return vulns;
+  }
+
+  private List<Vulnerability> vulns;
+
   /**
    * Return the number of classes in this library.
    *
