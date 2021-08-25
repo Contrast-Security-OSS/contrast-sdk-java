@@ -1,4 +1,7 @@
-# Contrast TeamServer Java SDK
+# Contrast Java SDK
+
+[![javadoc](https://javadoc.io/badge2/com.contrastsecurity/contrast-sdk-java/javadoc.svg)](https://javadoc.io/doc/com.contrastsecurity/contrast-sdk-java)
+
 
 This SDK gives you a quick start for programmatically accessing the [Contrast REST API](https://api.contrastsecurity.com/) using Java.
 
@@ -21,14 +24,14 @@ This SDK gives you a quick start for programmatically accessing the [Contrast RE
         <verison>3.0.0</version>
     </dependency>
     ```
-1. Look up the following information from Contrast under "Your Account"
-    * Username
-    * Service Key
-    * API Key
-    * Contrast REST API URL
-        * e.g., https://app.contrastsecurity.com/Contrast/api
+1. At a minimum, you will need to supply four basic connection parameters ([find them here](https://docs.contrastsecurity.com/en/personal-keys.html)):
+   * Username
+   * API Key
+   * Service Key
+   * Contrast REST API URL (e.g. https://app.contrastsecurity.com/Contrast/api)
 
-Code example:
+
+## Example
 
 ```java
 ContrastSDK contrastSDK = new ContrastSDK.Builder("contrast_admin", "demo", "demo")
