@@ -5,41 +5,63 @@ on:
 
 jobs:
   publish:
+    permissions:
+      contents: write
+    environment: Maven Central
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - name: Set up JDK 11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: 11
+          distribution: temurin
           server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
+          server-username: OSSRH_USERNAME
+          server-password: OSSRH_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
-      - name: validate
-        run: mvn clean test
-      - name: import gpg
-        run: |
-          echo ${{secrets.GPG_SECRET_KEYS}} | base64 --decode | gpg --import --no-tty --batch --yes
-      - name: build
+
+      - name: Cache Maven Wrapper
+        uses: actions/cache@v2
+        with:
+          path: ./.mvn/wrapper/maven-wrapper.jar
+          key: ${{ runner.os }}-maven-wrapper-${{ hashFiles('./.mvn/wrapper/maven-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-maven-wrapper
+
+      - name: Cache Maven Packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Build
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: mvn clean install -DskipTests -Prelease
-      - name: Maven release (dry-run)
+        run: ./mvnw --batch-mode verify -Prelease
+
+      - name: Maven Release (dry-run)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          mvn -Darguments="-DskipTests=true" -DdryRun=true --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN -Prelease
-      - name: Maven release
+          ./mvnw -Darguments="-DskipTests=true" -DdryRun=true --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN -Prelease
+
+      # See https://github.com/actions/checkout/issues/13
+      - name: Configure Git User
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: Maven Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          git config --global user.name 'Github'
-          git config --global user.email 'github@users.noreply.github.com'
-          mvn -Darguments="-DskipTests=true" --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN -Prelease
+          ./mvnw -Darguments="-DskipTests=true" --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN -Prelease
