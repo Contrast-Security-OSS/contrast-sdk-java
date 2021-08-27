@@ -49,7 +49,7 @@
     <localTeamServerUrl>http://localhost:19080/Contrast/api</localTeamServerUrl>
     <versions.junit-jupiter>5.7.1</versions.junit-jupiter>
     <versions.auto-value>1.8.2</versions.auto-value>
-    <versions.lombok>1.18.18</versions.lombok>
+    <versions.lombok>1.18.20</versions.lombok>
   </properties>
 
   <dependencies>
