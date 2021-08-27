@@ -35,4 +35,6 @@ jobs:
           restore-keys: ${{ runner.os }}-m2-repository
 
       - name: Maven Verify
+        env:
+          PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
         run: ./mvnw --batch-mode verify

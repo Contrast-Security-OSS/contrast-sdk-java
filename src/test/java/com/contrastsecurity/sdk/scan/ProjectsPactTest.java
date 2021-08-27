@@ -57,7 +57,7 @@ final class ProjectsPactTest {
   @Nested
   final class CreateProject {
 
-    @Pact(consumer = "contrast-sdk")
+    @Pact(consumer = "contrast-sdk-java")
     RequestResponsePact pact(final PactDslWithProvider builder) {
       final HashMap<String, Object> params = new HashMap<>();
       params.put("id", "fake-project-id");
@@ -87,12 +87,6 @@ final class ProjectsPactTest {
                               .stringValue("name", "quarkus-test-application")
                               .stringType("language", "JAVA")
                               .booleanType("archived", false)
-                              .datetime(
-                                  "lastScanTime",
-                                  PactConstants.DATETIME_FORMAT,
-                                  TestDataConstants.TIMESTAMP_EXAMPLE)
-                              .numberType("completedScans", 1)
-                              .stringType("lastScanId", "scan-id")
                               .numberType("critical", 2)
                               .numberType("high", 3)
                               .numberType("medium", 4)
@@ -125,9 +119,6 @@ final class ProjectsPactTest {
               .organizationId("fake-organization-id")
               .name("quarkus-test-application")
               .language("JAVA")
-              .lastScanId("scan-id")
-              .lastScanTime(TestDataConstants.TIMESTAMP_EXAMPLE)
-              .completedScans(1)
               .critical(2)
               .high(3)
               .medium(4)
@@ -144,7 +135,7 @@ final class ProjectsPactTest {
   @Nested
   final class FindProjectByName {
 
-    @Pact(consumer = "contrast-sdk")
+    @Pact(consumer = "contrast-sdk-java")
     RequestResponsePact pact(final PactDslWithProvider builder) {
       final Map<String, Object> params = new HashMap<>();
       params.put("id", "fake-project-id");
@@ -201,7 +192,7 @@ final class ProjectsPactTest {
   @Nested
   final class FindProjectByNameDoesNotExist {
 
-    @Pact(consumer = "contrast-sdk")
+    @Pact(consumer = "contrast-sdk-java")
     RequestResponsePact pact(final PactDslWithProvider builder) {
       final HashMap<String, Object> params = new HashMap<>();
       params.put("id", "fake-project-id");

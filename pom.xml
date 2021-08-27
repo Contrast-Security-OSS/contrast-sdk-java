@@ -367,6 +367,11 @@
           <artifactId>nexus-staging-maven-plugin</artifactId>
           <version>1.6.8</version>
         </plugin>
+        <plugin>
+          <groupId>au.com.dius.pact.provider</groupId>
+          <artifactId>maven</artifactId>
+          <version>4.2.10</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -440,6 +445,26 @@
                   <goal>check</goal>
                 </goals>
                 <phase>process-test-sources</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>au.com.dius.pact.provider</groupId>
+            <artifactId>maven</artifactId>
+            <executions>
+              <execution>
+                <id>publish</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>publish</goal>
+                </goals>
+                <configuration>
+                  <pactBrokerUrl>https://contsectesting.pact.dius.com.au</pactBrokerUrl>
+                  <pactBrokerToken>${env.PACT_BROKER_TOKEN}</pactBrokerToken>
+                  <tags>
+                    <tag>${env.GITHUB_HEAD_REF}</tag>
+                  </tags>
+                </configuration>
               </execution>
             </executions>
           </plugin>

@@ -56,7 +56,7 @@ final class ScansPactTest {
   @Nested
   final class CreateScan {
 
-    @Pact(consumer = "contrast-sdk")
+    @Pact(consumer = "contrast-sdk-java")
     RequestResponsePact pact(final PactDslWithProvider builder) {
       final HashMap<String, String> params = new HashMap<>();
       params.put("id", "project-id");
@@ -105,7 +105,7 @@ final class ScansPactTest {
   @Nested
   final class GetScan {
 
-    @Pact(consumer = "contrast-sdk")
+    @Pact(consumer = "contrast-sdk-java")
     RequestResponsePact pact(final PactDslWithProvider builder) {
       return scanExists(builder)
           .uponReceiving("retrieve scan")
@@ -149,7 +149,7 @@ final class ScansPactTest {
   @Nested
   final class GetScanSummary {
 
-    @Pact(consumer = "contrast-sdk")
+    @Pact(consumer = "contrast-sdk-java")
     RequestResponsePact pact(final PactDslWithProvider builder) {
       return scanExists(builder)
           .uponReceiving("retrieve scan summary")
@@ -212,7 +212,7 @@ final class ScansPactTest {
   @Nested
   final class GetScanSarif {
 
-    @Pact(consumer = "contrast-sdk")
+    @Pact(consumer = "contrast-sdk-java")
     RequestResponsePact pact(final PactDslWithProvider builder) {
       return scanExists(builder)
           .uponReceiving("retrieve scan results in SARIF")

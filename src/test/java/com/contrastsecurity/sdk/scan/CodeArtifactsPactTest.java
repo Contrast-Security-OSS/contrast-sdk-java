@@ -71,7 +71,7 @@ final class CodeArtifactsPactTest {
   @Nested
   final class UploadCodeArtifact {
 
-    @Pact(consumer = "contrast-sdk")
+    @Pact(consumer = "contrast-sdk-java")
     RequestResponsePact pact(final PactDslWithProvider builder) throws IOException {
       final HashMap<String, Object> params = new HashMap<>();
       params.put("id", "project-id");
