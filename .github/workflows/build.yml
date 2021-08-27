@@ -16,7 +16,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
-          java-version: 15
+          java-version: 16
           distribution: temurin
       - name: Cache Maven Wrapper
         uses: actions/cache@v2
