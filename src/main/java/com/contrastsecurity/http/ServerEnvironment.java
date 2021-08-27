@@ -20,21 +20,27 @@ package com.contrastsecurity.http;
  * #L%
  */
 
-import lombok.Getter;
-
 public enum ServerEnvironment {
   DEVELOPMENT("Development"),
   QA("QA"),
   PRODUCTION("Production");
 
-  @Getter private String label;
+  private final String label;
+
+  public String getLabel() {
+    return label;
+  }
 
   ServerEnvironment(String label) {
     this.label = label;
   }
 
+  public String toURIString() {
+    return this.label.toUpperCase();
+  }
+
   @Override
   public String toString() {
-    return this.label.toLowerCase();
+    return toURIString();
   }
 }
