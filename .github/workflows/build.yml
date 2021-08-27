@@ -8,18 +8,15 @@ on:
 
 jobs:
   build:
-    name: Verify Java ${{ matrix.java}}
+    name: Verify
     runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        java: ['11', '16']
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
-          java-version: ${{ matrix.java }}
+          java-version: 11
           distribution: temurin
       - name: Cache Maven Wrapper
         uses: actions/cache@v2
@@ -34,4 +31,4 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Maven Verify
-        run: ./mvnw --batch-mode -Dspotless.check.skip=${{matrix.java == '16'}} verify
+        run: ./mvnw --batch-mode verify
