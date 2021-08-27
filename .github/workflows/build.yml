@@ -9,26 +9,30 @@ on:
 jobs:
   build:
     name: Verify
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
-          java-version: 15
-          distribution: 'adopt-hotspot'
+          java-version: 11
+          distribution: temurin
+
       - name: Cache Maven Wrapper
         uses: actions/cache@v2
         with:
           path: ./.mvn/wrapper/maven-wrapper.jar
           key: ${{ runner.os }}-maven-wrapper-${{ hashFiles('./.mvn/wrapper/maven-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-maven-wrapper
+
       - name: Cache Maven Packages
         uses: actions/cache@v2
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-repository-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2-repository
+
       - name: Maven Verify
         run: ./mvnw --batch-mode verify
