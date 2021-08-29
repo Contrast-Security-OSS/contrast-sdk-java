@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.contrastsecurity</groupId>
   <artifactId>contrast-sdk-java</artifactId>
-  <version>3.2-SNAPSHOT</version>
+  <version>3.2</version>
 
   <name>Contrast Java SDK</name>
   <description>Java SDK for using Contrast Security APIs</description>
@@ -41,7 +39,7 @@
     <url>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git</url>
     <developerConnection>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git
     </developerConnection>
-    <tag>HEAD</tag>
+    <tag>contrast-sdk-java-3.2</tag>
   </scm>
 
   <properties>
@@ -120,7 +118,7 @@
             </goals>
             <configuration>
               <rules>
-                <requirePluginVersions/>
+                <requirePluginVersions />
                 <requireSameVersions>
                   <plugins>
                     <plugin>org.apache.maven.plugins:maven-surefire-plugin</plugin>
@@ -128,7 +126,7 @@
                     <plugin>org.apache.maven.plugins:maven-surefire-report-plugin</plugin>
                   </plugins>
                 </requireSameVersions>
-                <requireReleaseDeps/>
+                <requireReleaseDeps />
               </rules>
             </configuration>
           </execution>
@@ -330,15 +328,15 @@
                   <include>src/**/*.xml</include>
                   <include>src/**/*.properties</include>
                 </includes>
-                <trimTrailingWhitespace/>
-                <endWithNewline/>
+                <trimTrailingWhitespace />
+                <endWithNewline />
               </format>
             </formats>
             <java>
               <googleJavaFormat>
                 <version>1.9</version>
               </googleJavaFormat>
-              <removeUnusedImports/>
+              <removeUnusedImports />
             </java>
           </configuration>
         </plugin>
