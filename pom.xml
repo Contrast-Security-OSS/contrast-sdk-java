@@ -4,7 +4,7 @@
 
   <groupId>com.contrastsecurity</groupId>
   <artifactId>contrast-sdk-java</artifactId>
-  <version>3.3</version>
+  <version>3.4-SNAPSHOT</version>
 
   <name>Contrast Java SDK</name>
   <description>Java SDK for using Contrast Security APIs</description>
@@ -47,7 +47,7 @@
     <url>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git</url>
     <developerConnection>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git
     </developerConnection>
-    <tag>contrast-sdk-java-3.3</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
