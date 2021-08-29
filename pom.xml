@@ -8,11 +8,19 @@
 
   <name>Contrast Java SDK</name>
   <description>Java SDK for using Contrast Security APIs</description>
+  <url>https://github.com/Contrast-Security-OSS/contrast-sdk-java</url>
 
   <organization>
     <name>Contrast Security, Inc.</name>
     <url>https://contrastsecurity.com</url>
   </organization>
+
+  <developers>
+    <developer>
+      <name>Contrast Security</name>
+      <email>support@contrastsecurity.com</email>
+    </developer>
+  </developers>
 
   <licenses>
     <license>
