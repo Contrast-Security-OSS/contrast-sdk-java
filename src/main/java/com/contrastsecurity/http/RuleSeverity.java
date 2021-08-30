@@ -38,7 +38,7 @@ public enum RuleSeverity {
   }
 
   public String toURIString() {
-    return this.label.toUpperCase();
+    return name();
   }
 
   @Override

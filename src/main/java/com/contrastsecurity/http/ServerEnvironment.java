@@ -36,7 +36,7 @@ public enum ServerEnvironment {
   }
 
   public String toURIString() {
-    return this.label.toUpperCase();
+    return name();
   }
 
   @Override
