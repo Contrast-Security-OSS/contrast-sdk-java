@@ -20,8 +20,6 @@ package com.contrastsecurity.http;
  * #L%
  */
 
-import lombok.Getter;
-
 public enum RuleSeverity {
   NOTE("Note"),
   LOW("Low"),
@@ -29,14 +27,22 @@ public enum RuleSeverity {
   HIGH("High"),
   CRITICAL("Critical");
 
-  @Getter private String label;
+  private final String label;
+
+  public String getLabel() {
+    return label;
+  }
 
   RuleSeverity(String label) {
     this.label = label;
   }
 
+  public String toURIString() {
+    return this.label.toUpperCase();
+  }
+
   @Override
   public String toString() {
-    return this.label.toUpperCase();
+    return toURIString();
   }
 }

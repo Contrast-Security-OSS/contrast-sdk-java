@@ -66,9 +66,13 @@ public class TraceFilterForm {
     APPLICATION,
     SERVERS;
 
+    public String toURIString() {
+      return name().toLowerCase();
+    }
+
     @Override
     public String toString() {
-      return name().toLowerCase();
+      return toURIString();
     }
   }
 
@@ -123,7 +127,10 @@ public class TraceFilterForm {
 
     if (expand != null && !expand.isEmpty()) {
       filters.add(
-          "expand=" + expand.stream().map(Object::toString).collect(Collectors.joining(",")));
+          "expand="
+              + expand.stream()
+                  .map(TraceExpandValue::toURIString)
+                  .collect(Collectors.joining(",")));
     }
 
     if (startDate != null) {
@@ -141,7 +148,9 @@ public class TraceFilterForm {
     if (severities != null && !severities.isEmpty()) {
       filters.add(
           "severities="
-              + severities.stream().map(Object::toString).collect(Collectors.joining(",")));
+              + severities.stream()
+                  .map(RuleSeverity::toURIString)
+                  .collect(Collectors.joining(",")));
     }
 
     if (status != null) {
@@ -159,7 +168,9 @@ public class TraceFilterForm {
     if (environments != null && !environments.isEmpty()) {
       filters.add(
           "environments="
-              + environments.stream().map(ServerEnvironment::toURIString).collect(Collectors.joining(",")));
+              + environments.stream()
+                  .map(ServerEnvironment::toURIString)
+                  .collect(Collectors.joining(",")));
     }
 
     if (serverIds != null && !serverIds.isEmpty()) {

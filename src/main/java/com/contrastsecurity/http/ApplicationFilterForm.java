@@ -246,7 +246,7 @@ public class ApplicationFilterForm extends FilterForm {
 
     if (filterVulnSeverities != null && !filterVulnSeverities.isEmpty()) {
       final Set<String> severities =
-          filterVulnSeverities.stream().map(Object::toString).collect(Collectors.toSet());
+          filterVulnSeverities.stream().map(RuleSeverity::toURIString).collect(Collectors.toSet());
       filters.add("filterVulnSeverities=" + String.join(",", severities));
     }
 
