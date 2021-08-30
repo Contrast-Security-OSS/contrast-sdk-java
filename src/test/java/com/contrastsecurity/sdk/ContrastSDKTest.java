@@ -77,7 +77,7 @@ final class ContrastSDKTest {
 
     // THEN user-agent string contains only the contrast-sdk-java and Java products
     // does not verify version, because that would lead to a brittle test
-    assertThat(ua).matches("contrast-sdk-java/\\d\\.\\d(\\d)?(-SNAPSHOT)? Java/\\d+.*");
+    assertThat(ua).matches("contrast-sdk-java/\\d\\.\\d(\\.\\d)?(-SNAPSHOT)? Java/\\d+.*");
   }
 
   @Test
@@ -90,7 +90,7 @@ final class ContrastSDKTest {
     // THEN user-agent string contains 3 products contrast-sdk-java
     assertThat(ua)
         .matches(
-            "contrast-maven-plugin/3.2.0 \\(Apache Maven 3.8.1\\) contrast-sdk-java/\\d\\.\\d(\\d)?(-SNAPSHOT)? Java/\\d+.*");
+            "contrast-maven-plugin/3.2.0 \\(Apache Maven 3.8.1\\) contrast-sdk-java/\\d\\.\\d(\\.\\d)?(-SNAPSHOT)? Java/\\d+.*");
   }
 
   @Test
@@ -101,7 +101,8 @@ final class ContrastSDKTest {
 
     // THEN user-agent string contains 3 products contrast-sdk-java
     assertThat(ua)
-        .matches("contrast-maven-plugin contrast-sdk-java/\\d\\.\\d(\\d)?(-SNAPSHOT)? Java/\\d+.*");
+        .matches(
+            "contrast-maven-plugin contrast-sdk-java/\\d\\.\\d(\\.\\d)?(-SNAPSHOT)? Java/\\d+.*");
   }
 
   /** Builds a new {@code HttpURLConnection}, but does not send an outgoing request */
@@ -113,6 +114,6 @@ final class ContrastSDKTest {
     final String ua = connection.getRequestProperty("User-Agent");
     assertThat(ua)
         .matches(
-            "INTELLIJ_INTEGRATION/1.0.0 contrast-sdk-java/\\d\\.\\d(\\d)?(-SNAPSHOT)? Java/\\d+.*");
+            "INTELLIJ_INTEGRATION/1.0.0 contrast-sdk-java/\\d\\.\\d(\\.\\d)?(-SNAPSHOT)? Java/\\d+.*");
   }
 }
