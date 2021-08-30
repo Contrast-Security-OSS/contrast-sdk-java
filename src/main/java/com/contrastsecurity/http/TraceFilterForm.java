@@ -159,7 +159,7 @@ public class TraceFilterForm {
     if (environments != null && !environments.isEmpty()) {
       filters.add(
           "environments="
-              + environments.stream().map(Object::toString).collect(Collectors.joining(",")));
+              + environments.stream().map(ServerEnvironment::toURIString).collect(Collectors.joining(",")));
     }
 
     if (serverIds != null && !serverIds.isEmpty()) {
