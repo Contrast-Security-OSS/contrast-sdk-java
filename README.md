@@ -1,6 +1,7 @@
 # Contrast Java SDK
 
 [![javadoc](https://javadoc.io/badge2/com.contrastsecurity/contrast-sdk-java/javadoc.svg)](https://javadoc.io/doc/com.contrastsecurity/contrast-sdk-java)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.contrastsecurity/contrast-sdk-java/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.contrastsecurity/contrast-sdk-java)
 
 
 This SDK gives you a quick start for programmatically accessing the [Contrast REST API](https://api.contrastsecurity.com/) using Java.
@@ -16,14 +17,7 @@ This SDK gives you a quick start for programmatically accessing the [Contrast RE
 
 1. Add the
    [contrast-sdk-java](https://search.maven.org/artifact/com.contrastsecurity/contrast-sdk-java)
-   dependency from Maven Central to your project. For example:
-    ```xml
-    <dependency>
-        <groupId>com.contrastsecurity</groupId>
-        <artifactId>contrast-sdk-java</artifactId>
-        <verison>3.0.0</version>
-    </dependency>
-    ```
+   dependency from Maven Central to your project.
 1. At a minimum, you will need to supply four basic connection parameters ([find them here](https://docs.contrastsecurity.com/en/personal-keys.html)):
    * Username
    * API Key

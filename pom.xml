@@ -196,7 +196,7 @@
           <docletArtifact>
             <groupId>org.apidesign.javadoc</groupId>
             <artifactId>codesnippet-doclet</artifactId>
-            <version>0.61</version> <!-- or any newer version -->
+            <version>0.61</version>
           </docletArtifact>
           <additionalOptions>
             <additionalOption>
