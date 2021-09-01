@@ -240,13 +240,13 @@ public class ApplicationFilterForm extends FilterForm {
 
     if (environment != null && !environment.isEmpty()) {
       final Set<String> environments =
-          environment.stream().map(Object::toString).collect(Collectors.toSet());
+          environment.stream().map(ServerEnvironment::toURIString).collect(Collectors.toSet());
       filters.add("environments=" + String.join(",", environments));
     }
 
     if (filterVulnSeverities != null && !filterVulnSeverities.isEmpty()) {
       final Set<String> severities =
-          filterVulnSeverities.stream().map(Object::toString).collect(Collectors.toSet());
+          filterVulnSeverities.stream().map(RuleSeverity::toURIString).collect(Collectors.toSet());
       filters.add("filterVulnSeverities=" + String.join(",", severities));
     }
 
