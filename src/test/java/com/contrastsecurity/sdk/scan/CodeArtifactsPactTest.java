@@ -74,7 +74,8 @@ final class CodeArtifactsPactTest {
     @Pact(consumer = "contrast-sdk-java")
     RequestResponsePact pact(final PactDslWithProvider builder) throws IOException {
       final HashMap<String, Object> params = new HashMap<>();
-      params.put("id", "project-id");
+      params.put("id", "code-artifact-id");
+      params.put("projectId", "project-id");
       params.put("organizationId", "organization-id");
       return builder
           .given("Projects Exist", params)
@@ -93,7 +94,7 @@ final class CodeArtifactsPactTest {
           .body(
               newJsonBody(
                       o -> {
-                        o.stringType("id", "code-artifact-id");
+                        o.valueFromProviderState("id", "${id}", "code-artifact-id");
                         o.valueFromProviderState("projectId", "${projectId}", "project-id");
                         o.valueFromProviderState(
                             "organizationId", "${organizationId}", "organization-id");
