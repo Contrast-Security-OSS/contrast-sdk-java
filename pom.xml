@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.contrastsecurity</groupId>
@@ -126,7 +128,7 @@
             </goals>
             <configuration>
               <rules>
-                <requirePluginVersions />
+                <requirePluginVersions/>
                 <requireSameVersions>
                   <plugins>
                     <plugin>org.apache.maven.plugins:maven-surefire-plugin</plugin>
@@ -134,7 +136,7 @@
                     <plugin>org.apache.maven.plugins:maven-surefire-report-plugin</plugin>
                   </plugins>
                 </requireSameVersions>
-                <requireReleaseDeps />
+                <requireReleaseDeps/>
               </rules>
             </configuration>
           </execution>
@@ -336,15 +338,15 @@
                   <include>src/**/*.xml</include>
                   <include>src/**/*.properties</include>
                 </includes>
-                <trimTrailingWhitespace />
-                <endWithNewline />
+                <trimTrailingWhitespace/>
+                <endWithNewline/>
               </format>
             </formats>
             <java>
               <googleJavaFormat>
                 <version>1.9</version>
               </googleJavaFormat>
-              <removeUnusedImports />
+              <removeUnusedImports/>
             </java>
           </configuration>
         </plugin>
@@ -371,6 +373,10 @@
           <groupId>au.com.dius.pact.provider</groupId>
           <artifactId>maven</artifactId>
           <version>4.2.10</version>
+          <configuration>
+            <pactBrokerUrl>https://contsectesting.pact.dius.com.au</pactBrokerUrl>
+            <pactBrokerToken>${env.PACT_BROKER_TOKEN}</pactBrokerToken>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -418,6 +424,9 @@
           <name>env.CI</name>
         </property>
       </activation>
+      <properties>
+        <pacticipant.version>${project.version}+${env.GITHUB_SHA}</pacticipant.version>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -459,11 +468,25 @@
                   <goal>publish</goal>
                 </goals>
                 <configuration>
-                  <pactBrokerUrl>https://contsectesting.pact.dius.com.au</pactBrokerUrl>
-                  <pactBrokerToken>${env.PACT_BROKER_TOKEN}</pactBrokerToken>
                   <tags>
+                    <projectVersion>${pacticipant.version}</projectVersion>
                     <tag>${env.GITHUB_HEAD_REF}</tag>
                   </tags>
+                </configuration>
+              </execution>
+              <execution>
+                <id>wait-for-verification</id>
+                <!-- TODO JAVA-3624 set phase to none to effectively skip this until we've set up the provider verification -->
+                <phase>none</phase>
+                <goals>
+                  <goal>can-i-deploy</goal>
+                </goals>
+                <configuration>
+                  <pacticipant>${project.artifactId}</pacticipant>
+                  <pacticipantVersion>${pacticipant.version}</pacticipantVersion>
+                  <to>production</to>
+                  <retriesWhenUnknown>15</retriesWhenUnknown>
+                  <retryInterval>20</retryInterval>
                 </configuration>
               </execution>
             </executions>
@@ -516,6 +539,24 @@
                 <goals>
                   <goal>sign</goal>
                 </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>au.com.dius.pact.provider</groupId>
+            <artifactId>maven</artifactId>
+            <executions>
+              <execution>
+                <id>create-version-tag</id>
+                <goals>
+                  <goal>create-version-tag</goal>
+                </goals>
+                <phase>deploy</phase>
+                <configuration>
+                  <pacticipant>${project.artifactId}</pacticipant>
+                  <pacticipantVersion>${project.version}</pacticipantVersion>
+                  <tag>production</tag>
+                </configuration>
               </execution>
             </executions>
           </plugin>

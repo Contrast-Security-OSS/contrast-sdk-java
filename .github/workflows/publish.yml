@@ -30,26 +30,12 @@ jobs:
           key: ${{ runner.os }}-maven-wrapper-${{ hashFiles('./.mvn/wrapper/maven-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-maven-wrapper
 
-      - name: Cache Maven Packages
+      - name: Cache Maven Repository
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-m2-repository-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2-repository
-
-      - name: Build
-        env:
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: ./mvnw --batch-mode verify -Prelease
-
-      - name: Maven Release (dry-run)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: |
-          ./mvnw -Darguments="-DskipTests=true" -DdryRun=true --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN -Prelease
 
       # See https://github.com/actions/checkout/issues/13
       - name: Configure Git User
@@ -64,4 +50,4 @@ jobs:
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          ./mvnw -Darguments="-DskipTests=true" --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN -Prelease
+          ./mvnw --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN
