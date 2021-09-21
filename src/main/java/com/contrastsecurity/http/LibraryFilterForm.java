@@ -29,6 +29,7 @@ public class LibraryFilterForm extends FilterForm {
   public enum LibraryExpandValues {
     VULNS,
     APPS,
+    SERVERS,
     MANIFEST,
     STATUS,
     SKIP_LINKS;
