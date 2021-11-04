@@ -53,7 +53,8 @@ final class CodeArtifactClientImpl implements CodeArtifactClient {
   }
 
   @Override
-  public CodeArtifactInner upload(final String projectId, final Path file) throws IOException {
+  public CodeArtifactInner upload(final String projectId, final Path file, final Path metadata)
+      throws IOException {
     final String uri =
         contrast.getRestApiURL()
             + new URIBuilder()
@@ -66,9 +67,9 @@ final class CodeArtifactClientImpl implements CodeArtifactClient {
                     "code-artifacts")
                 .toURIString();
     final String boundary = "ContrastFormBoundary" + ThreadLocalRandom.current().nextLong();
-    final String header =
-        "--"
-            + boundary
+    final String boundaryMarker = CRLF + "--" + boundary;
+    final String filenameSection =
+        boundaryMarker
             + CRLF
             + "Content-Disposition: form-data; name=\"filename\"; filename=\""
             + file.getFileName().toString()
@@ -80,8 +81,31 @@ final class CodeArtifactClientImpl implements CodeArtifactClient {
             + "Content-Transfer-Encoding: binary"
             + CRLF
             + CRLF;
-    final String footer = CRLF + "--" + boundary + "--" + CRLF;
-    final long contentLength = header.length() + Files.size(file) + footer.length();
+    final String metadataSection;
+    if (metadata != null) {
+      metadataSection =
+          boundaryMarker
+              + CRLF
+              + "Content-Disposition: form-data; name=\"metadata\"; filename=\""
+              + metadata.getFileName().toString()
+              + '"'
+              + CRLF
+              + "Content-Type: "
+              + determineMime(metadata)
+              + CRLF
+              + "Content-Transfer-Encoding: binary"
+              + CRLF
+              + CRLF;
+    } else {
+      metadataSection = "";
+    }
+
+    final String footer = boundaryMarker + "--" + CRLF;
+    long contentLength = filenameSection.length() + Files.size(file);
+    if (metadata != null) {
+      contentLength += metadataSection.length() + Files.size(metadata);
+    }
+    contentLength += footer.length();
 
     final HttpURLConnection connection = contrast.makeConnection(uri, "POST");
     connection.setDoOutput(true);
@@ -91,9 +115,14 @@ final class CodeArtifactClientImpl implements CodeArtifactClient {
     try (OutputStream os = connection.getOutputStream();
         PrintWriter writer =
             new PrintWriter(new OutputStreamWriter(os, StandardCharsets.US_ASCII), true)) {
-      writer.append(header).flush();
+      writer.append(filenameSection).flush();
       Files.copy(file, os);
       os.flush();
+      if (metadata != null) {
+        writer.append(metadataSection).flush();
+        Files.copy(metadata, os);
+        os.flush();
+      }
       writer.append(footer).flush();
     }
     final int code = connection.getResponseCode();

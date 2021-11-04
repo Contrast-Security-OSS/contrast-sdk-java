@@ -36,12 +36,14 @@ import com.contrastsecurity.sdk.internal.GsonFactory;
 import com.google.gson.Gson;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,6 +55,7 @@ import org.junit.jupiter.api.io.TempDir;
 final class CodeArtifactsPactTest {
 
   private Path jar;
+  private Path metadataJson;
 
   /**
    * Creates a test jar for the test to upload as a code artifact
@@ -64,6 +67,10 @@ final class CodeArtifactsPactTest {
     jar = tmp.resolve("spring-test-application.jar");
     try (JarOutputStream jos = new JarOutputStream(new FileOutputStream(jar.toFile()))) {
       jos.putNextEntry(new ZipEntry("HelloWorld.class"));
+    }
+    metadataJson = tmp.resolve("prescan.json");
+    try (FileOutputStream fos = new FileOutputStream(metadataJson.toFile())) {
+      fos.write("{\"test\": \"data\" }".getBytes(StandardCharsets.UTF_8));
     }
   }
 
@@ -78,7 +85,7 @@ final class CodeArtifactsPactTest {
       params.put("organizationId", "organization-id");
       return builder
           .given("Projects Exist", params)
-          .uponReceiving("upload new code artifact")
+          .uponReceiving("upload new code artifact with metadata")
           .method("POST")
           .pathFromProviderState(
               "/sast/organizations/${organizationId}/projects/${projectId}/code-artifacts",
@@ -115,7 +122,7 @@ final class CodeArtifactsPactTest {
               .build();
       final Gson gson = GsonFactory.create();
       CodeArtifactClient client = new CodeArtifactClientImpl(contrast, gson, "organization-id");
-      final CodeArtifactInner codeArtifact = client.upload("project-id", jar);
+      final CodeArtifactInner codeArtifact = client.upload("project-id", jar, null);
 
       final CodeArtifactInner expected =
           CodeArtifactInner.builder()
@@ -123,6 +130,83 @@ final class CodeArtifactsPactTest {
               .projectId("project-id")
               .organizationId("organization-id")
               .filename(jar.getFileName().toString())
+              .createdTime(TestDataConstants.TIMESTAMP_EXAMPLE)
+              .build();
+      assertThat(codeArtifact).isEqualTo(expected);
+    }
+  }
+  /** Verifies the code artifact upload with metadata behavior. */
+  @Nested
+  final class UploadCodeArtifactWithMetadata {
+
+    @Disabled("https://github.com/pact-foundation/pact-jvm/issues/668")
+    @Pact(consumer = "contrast-sdk")
+    RequestResponsePact pact(final PactDslWithProvider builder) throws IOException {
+
+      final HashMap<String, Object> params = new HashMap<>();
+      params.put("id", "project-id");
+      params.put("organizationId", "organization-id");
+      return builder
+          .given("Projects Exist", params)
+          .uponReceiving("upload new code artifact")
+          .method("POST")
+          .pathFromProviderState(
+              "/sast/organizations/${organizationId}/projects/${projectId}/code-artifacts",
+              "/sast/organizations/organization-id/projects/project-id/code-artifacts")
+          .withFileUpload(
+              "filename",
+              jar.getFileName().toString(),
+              "application/java-archive",
+              Files.readAllBytes(jar))
+          // BUG: https://github.com/pact-foundation/pact-jvm/issues/668. Unable to define a PACT
+          // request matcher that
+          // has multiple multipart sections.
+          // Consumer interface definition is:
+          // https://github.com/Contrast-Security-Inc/sast-api-documentation/blob/master/sast-code-artifacts.yaml#L83
+          .withFileUpload(
+              "metadata",
+              metadataJson.getFileName().toString(),
+              "application/json",
+              Files.readAllBytes(metadataJson))
+          .willRespondWith()
+          .status(201)
+          .body(
+              newJsonBody(
+                      o -> {
+                        o.stringType("id", "code-artifact-id");
+                        o.valueFromProviderState("projectId", "${projectId}", "project-id");
+                        o.valueFromProviderState(
+                            "organizationId", "${organizationId}", "organization-id");
+                        o.stringType("filename", jar.getFileName().toString());
+                        o.stringType("metadata", metadataJson.getFileName().toString());
+                        o.datetime(
+                            "createdTime",
+                            PactConstants.DATETIME_FORMAT,
+                            TestDataConstants.TIMESTAMP_EXAMPLE);
+                      })
+                  .build())
+          .toPact();
+    }
+
+    @Disabled("https://github.com/pact-foundation/pact-jvm/issues/668")
+    @Test
+    void upload_code_artifact_with_metadata(final MockServer server) throws IOException {
+      System.out.println("running metadata test");
+      final ContrastSDK contrast =
+          new ContrastSDK.Builder("test-user", "test-service-key", "test-api-key")
+              .withApiUrl(server.getUrl())
+              .build();
+      final Gson gson = GsonFactory.create();
+      CodeArtifactClient client = new CodeArtifactClientImpl(contrast, gson, "organization-id");
+      final CodeArtifactInner codeArtifact = client.upload("project-id", jar, metadataJson);
+
+      final CodeArtifactInner expected =
+          CodeArtifactInner.builder()
+              .id("code-artifact-id")
+              .projectId("project-id")
+              .organizationId("organization-id")
+              .filename(jar.getFileName().toString())
+              .metadata(metadataJson.getFileName().toString())
               .createdTime(TestDataConstants.TIMESTAMP_EXAMPLE)
               .build();
       assertThat(codeArtifact).isEqualTo(expected);

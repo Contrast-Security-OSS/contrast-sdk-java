@@ -51,13 +51,26 @@ final class CodeArtifactsImpl implements CodeArtifacts {
   }
 
   @Override
+  public CodeArtifact upload(
+      final Path file, final String name, final Path metadata, final String metaname)
+      throws IOException {
+    final CodeArtifactInner inner = client.upload(projectId, file, metadata);
+    return new CodeArtifactImpl(inner);
+  }
+
+  @Override
   public CodeArtifact upload(final Path file, final String name) throws IOException {
-    final CodeArtifactInner inner = client.upload(projectId, file);
+    final CodeArtifactInner inner = client.upload(projectId, file, null);
     return new CodeArtifactImpl(inner);
   }
 
   @Override
   public CodeArtifact upload(final Path file) throws IOException {
     return upload(file, file.getFileName().toString());
+  }
+
+  @Override
+  public CodeArtifact upload(final Path file, final Path metadata) throws IOException {
+    return upload(file, file.getFileName().toString(), metadata, metadata.getFileName().toString());
   }
 }

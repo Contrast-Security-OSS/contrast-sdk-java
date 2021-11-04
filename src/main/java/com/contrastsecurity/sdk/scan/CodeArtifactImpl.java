@@ -20,6 +20,7 @@ package com.contrastsecurity.sdk.scan;
  * #L%
  */
 
+import com.contrastsecurity.sdk.internal.Nullable;
 import java.time.Instant;
 import java.util.Objects;
 
@@ -50,6 +51,12 @@ final class CodeArtifactImpl implements CodeArtifact {
   @Override
   public String filename() {
     return inner.filename();
+  }
+
+  @Override
+  @Nullable
+  public String metadata() {
+    return inner.metadata();
   }
 
   @Override

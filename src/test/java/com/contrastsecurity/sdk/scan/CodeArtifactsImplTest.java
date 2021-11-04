@@ -43,7 +43,7 @@ final class CodeArtifactsImplTest implements EqualsAndHashcodeContract<CodeArtif
     final CodeArtifactClient client = mock(CodeArtifactClient.class);
     final CodeArtifactInner inner = builder().build();
     final Path file = tmp.resolve(inner.filename());
-    when(client.upload(inner.projectId(), file)).thenReturn(inner);
+    when(client.upload(inner.projectId(), file, null)).thenReturn(inner);
 
     // WHEN upload file
     final CodeArtifacts codeArtifacts = new CodeArtifactsImpl(client, inner.projectId());
@@ -59,7 +59,7 @@ final class CodeArtifactsImplTest implements EqualsAndHashcodeContract<CodeArtif
     final CodeArtifactClient client = mock(CodeArtifactClient.class);
     final CodeArtifactInner inner = builder().build();
     final Path file = tmp.resolve("other-file.jar");
-    when(client.upload(inner.projectId(), file)).thenReturn(inner);
+    when(client.upload(inner.projectId(), file, null)).thenReturn(inner);
 
     // WHEN upload file
     final CodeArtifacts codeArtifacts = new CodeArtifactsImpl(client, inner.projectId());

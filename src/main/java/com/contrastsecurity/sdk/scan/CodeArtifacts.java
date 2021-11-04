@@ -62,6 +62,7 @@ public interface CodeArtifacts {
    */
   CodeArtifact upload(Path file, String name) throws IOException;
 
+  CodeArtifact upload(Path file, String name, Path metadata, String metaname) throws IOException;
   /**
    * Transfers a file from the file system to Contrast Scan to create a new code artifact for static
    * analysis.
@@ -75,4 +76,6 @@ public interface CodeArtifacts {
    * @throws ServerResponseException when Contrast API returns a response that cannot be understood
    */
   CodeArtifact upload(Path file) throws IOException;
+
+  CodeArtifact upload(Path file, Path metadata) throws IOException;
 }

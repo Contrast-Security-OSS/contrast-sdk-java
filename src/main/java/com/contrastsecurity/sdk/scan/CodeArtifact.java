@@ -20,6 +20,7 @@ package com.contrastsecurity.sdk.scan;
  * #L%
  */
 
+import com.contrastsecurity.sdk.internal.Nullable;
 import java.time.Instant;
 
 /**
@@ -39,6 +40,10 @@ public interface CodeArtifact {
 
   /** @return filename */
   String filename();
+
+  @Nullable
+  /** @return metadata filename */
+  String metadata();
 
   /** @return time at which the code artifact was uploaded to Contrast Scan */
   Instant createdTime();

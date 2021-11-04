@@ -43,6 +43,8 @@ interface CodeArtifactClient {
    *
    * @param projectId ID of the project to which the code artifact belongs
    * @param file the file to upload
+   * @param metadata the prescan metadata to upload with the file artifact. Null may be given if
+   *     prescan data is not present.
    * @return new {@link CodeArtifactInner} from Contrast API
    * @throws IOException when an IO error occurs while making the request to the Contrast API
    * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
@@ -50,5 +52,5 @@ interface CodeArtifactClient {
    * @throws HttpResponseException when Contrast rejects this request with an error code
    * @throws ServerResponseException when Contrast API returns a response that cannot be understood
    */
-  CodeArtifactInner upload(String projectId, Path file) throws IOException;
+  CodeArtifactInner upload(String projectId, Path file, Path metadata) throws IOException;
 }
