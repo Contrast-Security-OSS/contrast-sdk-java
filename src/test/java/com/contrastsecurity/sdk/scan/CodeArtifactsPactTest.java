@@ -36,6 +36,7 @@ import com.contrastsecurity.sdk.internal.GsonFactory;
 import com.google.gson.Gson;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -69,8 +70,10 @@ final class CodeArtifactsPactTest {
       jos.putNextEntry(new ZipEntry("HelloWorld.class"));
     }
     metadataJson = tmp.resolve("prescan.json");
-    try (FileOutputStream fos = new FileOutputStream(metadataJson.toFile())) {
-      fos.write("{\"test\": \"data\" }".getBytes(StandardCharsets.UTF_8));
+    try (OutputStreamWriter os =
+        new OutputStreamWriter(
+            new FileOutputStream(metadataJson.toFile()), StandardCharsets.UTF_8)) {
+      os.write("{\"test\": \"data\" }");
     }
   }
 
