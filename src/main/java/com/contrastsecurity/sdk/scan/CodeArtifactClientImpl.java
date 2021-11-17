@@ -91,24 +91,21 @@ final class CodeArtifactClientImpl implements CodeArtifactClient {
             + "Content-Transfer-Encoding: binary"
             + CRLF
             + CRLF;
-    final String metadataSection;
-    if (metadata != null) {
-      metadataSection =
-          boundaryMarker
-              + CRLF
-              + "Content-Disposition: form-data; name=\"metadata\"; filename=\""
-              + metadata.getFileName().toString()
-              + '"'
-              + CRLF
-              + "Content-Type: "
-              + determineMime(metadata)
-              + CRLF
-              + "Content-Transfer-Encoding: binary"
-              + CRLF
-              + CRLF;
-    } else {
-      metadataSection = "";
-    }
+    final String metadataSection =
+        metadata != null
+            ? boundaryMarker
+                + CRLF
+                + "Content-Disposition: form-data; name=\"metadata\"; filename=\""
+                + metadata.getFileName().toString()
+                + '"'
+                + CRLF
+                + "Content-Type: "
+                + determineMime(metadata)
+                + CRLF
+                + "Content-Transfer-Encoding: binary"
+                + CRLF
+                + CRLF
+            : "";
 
     final String footer = boundaryMarker + "--" + CRLF;
     long contentLength = filenameSection.length() + Files.size(file);
