@@ -45,8 +45,8 @@ abstract class CodeArtifactInner {
   /** @return filename */
   abstract String filename();
 
-  @Nullable
   /** @return metadata filename */
+  @Nullable
   abstract String metadata();
 
   /** @return time at which the code artifact was uploaded to Contrast Scan */

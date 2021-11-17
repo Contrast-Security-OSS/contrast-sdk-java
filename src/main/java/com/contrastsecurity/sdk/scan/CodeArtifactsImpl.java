@@ -60,7 +60,7 @@ final class CodeArtifactsImpl implements CodeArtifacts {
 
   @Override
   public CodeArtifact upload(final Path file, final String name) throws IOException {
-    final CodeArtifactInner inner = client.upload(projectId, file, null);
+    final CodeArtifactInner inner = client.upload(projectId, file);
     return new CodeArtifactImpl(inner);
   }
 

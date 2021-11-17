@@ -43,11 +43,28 @@ final class CodeArtifactsImplTest implements EqualsAndHashcodeContract<CodeArtif
     final CodeArtifactClient client = mock(CodeArtifactClient.class);
     final CodeArtifactInner inner = builder().build();
     final Path file = tmp.resolve(inner.filename());
-    when(client.upload(inner.projectId(), file, null)).thenReturn(inner);
+    when(client.upload(inner.projectId(), file)).thenReturn(inner);
 
     // WHEN upload file
     final CodeArtifacts codeArtifacts = new CodeArtifactsImpl(client, inner.projectId());
     final CodeArtifact codeArtifact = codeArtifacts.upload(file);
+
+    // THEN returns expected code artifact
+    assertThat(codeArtifact).hasSameValuesAsInner(inner);
+  }
+
+  @Test
+  void upload_with_metadata(@TempDir final Path tmp) throws IOException {
+    // GIVEN stubbed code artifacts client
+    final CodeArtifactClient client = mock(CodeArtifactClient.class);
+    final CodeArtifactInner inner = builder().metadata("prescan.json").build();
+    final Path file = tmp.resolve(inner.filename());
+    final Path meta = tmp.resolve(inner.metadata());
+    when(client.upload(inner.projectId(), file, meta)).thenReturn(inner);
+
+    // WHEN upload file,meta
+    final CodeArtifacts codeArtifacts = new CodeArtifactsImpl(client, inner.projectId());
+    final CodeArtifact codeArtifact = codeArtifacts.upload(file, meta);
 
     // THEN returns expected code artifact
     assertThat(codeArtifact).hasSameValuesAsInner(inner);
@@ -59,11 +76,29 @@ final class CodeArtifactsImplTest implements EqualsAndHashcodeContract<CodeArtif
     final CodeArtifactClient client = mock(CodeArtifactClient.class);
     final CodeArtifactInner inner = builder().build();
     final Path file = tmp.resolve("other-file.jar");
-    when(client.upload(inner.projectId(), file, null)).thenReturn(inner);
+    when(client.upload(inner.projectId(), file)).thenReturn(inner);
 
     // WHEN upload file
     final CodeArtifacts codeArtifacts = new CodeArtifactsImpl(client, inner.projectId());
     final CodeArtifact codeArtifact = codeArtifacts.upload(file, inner.filename());
+
+    // THEN returns expected code artifact
+    assertThat(codeArtifact).hasSameValuesAsInner(inner);
+  }
+
+  @Test
+  void upload_custom_metaname(@TempDir final Path tmp) throws IOException {
+    // GIVEN stubbed code artifacts client
+    final CodeArtifactClient client = mock(CodeArtifactClient.class);
+    final CodeArtifactInner inner = builder().metadata("prescan.json").build();
+    final Path file = tmp.resolve(inner.filename());
+    final Path meta = tmp.resolve("other-prescan.json");
+    when(client.upload(inner.projectId(), file, meta)).thenReturn(inner);
+
+    // WHEN upload file,meta
+    final CodeArtifacts codeArtifacts = new CodeArtifactsImpl(client, inner.projectId());
+    final CodeArtifact codeArtifact =
+        codeArtifacts.upload(file, inner.filename(), meta, inner.metadata());
 
     // THEN returns expected code artifact
     assertThat(codeArtifact).hasSameValuesAsInner(inner);

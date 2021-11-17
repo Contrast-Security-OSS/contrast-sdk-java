@@ -41,8 +41,8 @@ public interface CodeArtifact {
   /** @return filename */
   String filename();
 
-  @Nullable
   /** @return metadata filename */
+  @Nullable
   String metadata();
 
   /** @return time at which the code artifact was uploaded to Contrast Scan */

@@ -85,7 +85,7 @@ final class CodeArtifactsPactTest {
       params.put("organizationId", "organization-id");
       return builder
           .given("Projects Exist", params)
-          .uponReceiving("upload new code artifact with metadata")
+          .uponReceiving("upload new code artifact")
           .method("POST")
           .pathFromProviderState(
               "/sast/organizations/${organizationId}/projects/${projectId}/code-artifacts",
@@ -122,7 +122,7 @@ final class CodeArtifactsPactTest {
               .build();
       final Gson gson = GsonFactory.create();
       CodeArtifactClient client = new CodeArtifactClientImpl(contrast, gson, "organization-id");
-      final CodeArtifactInner codeArtifact = client.upload("project-id", jar, null);
+      final CodeArtifactInner codeArtifact = client.upload("project-id", jar);
 
       final CodeArtifactInner expected =
           CodeArtifactInner.builder()
@@ -191,7 +191,6 @@ final class CodeArtifactsPactTest {
     @Disabled("https://github.com/pact-foundation/pact-jvm/issues/668")
     @Test
     void upload_code_artifact_with_metadata(final MockServer server) throws IOException {
-      System.out.println("running metadata test");
       final ContrastSDK contrast =
           new ContrastSDK.Builder("test-user", "test-service-key", "test-api-key")
               .withApiUrl(server.getUrl())

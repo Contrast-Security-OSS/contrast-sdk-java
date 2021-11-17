@@ -62,7 +62,23 @@ public interface CodeArtifacts {
    */
   CodeArtifact upload(Path file, String name) throws IOException;
 
+  /**
+   * Transfers a file from the file system to Contrast Scan to create a new code artifact for static
+   * analysis.
+   *
+   * @param file the code artifact to upload
+   * @param name the name of the code artifact
+   * @param metadata the path of the prescan data file to upload
+   * @param metaname the name of the prescan data file
+   * @return new {@link CodeArtifact} from Contrast
+   * @throws IOException when an IO error occurs while making the request to the Contrast API
+   * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
+   * @throws ResourceNotFoundException when the requested resource does not exist
+   * @throws HttpResponseException when Contrast rejects this request with an error code
+   * @throws ServerResponseException when Contrast API returns a response that cannot be understood
+   */
   CodeArtifact upload(Path file, String name, Path metadata, String metaname) throws IOException;
+
   /**
    * Transfers a file from the file system to Contrast Scan to create a new code artifact for static
    * analysis.
@@ -77,5 +93,18 @@ public interface CodeArtifacts {
    */
   CodeArtifact upload(Path file) throws IOException;
 
+  /**
+   * Transfers a file from the file system to Contrast Scan to create a new code artifact for static
+   * analysis.
+   *
+   * @param file the code artifact to upload
+   * @param metadata the path of the prescan data file to upload
+   * @return new {@link CodeArtifact} from Contrast
+   * @throws IOException when an IO error occurs while making the request to the Contrast API
+   * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
+   * @throws ResourceNotFoundException when the requested resource does not exist
+   * @throws HttpResponseException when Contrast rejects this request with an error code
+   * @throws ServerResponseException when Contrast API returns a response that cannot be understood
+   */
   CodeArtifact upload(Path file, Path metadata) throws IOException;
 }

@@ -53,8 +53,18 @@ final class CodeArtifactClientImpl implements CodeArtifactClient {
   }
 
   @Override
+  public CodeArtifactInner upload(final String projectId, final Path file) throws IOException {
+    return sendRequest(projectId, file, null);
+  }
+
+  @Override
   public CodeArtifactInner upload(final String projectId, final Path file, final Path metadata)
       throws IOException {
+    return sendRequest(projectId, file, Objects.requireNonNull(metadata));
+  }
+
+  private CodeArtifactInner sendRequest(
+      final String projectId, final Path file, final Path metadata) throws IOException {
     final String uri =
         contrast.getRestApiURL()
             + new URIBuilder()
