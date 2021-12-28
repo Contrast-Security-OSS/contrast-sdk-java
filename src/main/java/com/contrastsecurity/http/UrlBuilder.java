@@ -40,6 +40,10 @@ public class UrlBuilder {
     return "/ng/profile/organizations";
   }
 
+  public String getGlobalPropertiesUrl() {
+    return "/ng/global/properties";
+  }
+
   public String getOrganizationUsersUrl(String organizationId) {
     // ddooley buildExpand not needed.  Always want login and signup details to determine
     // inactivity.
