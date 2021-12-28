@@ -36,12 +36,12 @@ public class UrlBuilder {
     return instance;
   }
 
-  public String getProfileOrganizationsUrl() {
-    return "/ng/profile/organizations";
-  }
-
   public String getGlobalPropertiesUrl() {
     return "/ng/global/properties";
+  }
+
+  public String getProfileOrganizationsUrl() {
+    return "/ng/profile/organizations";
   }
 
   public String getOrganizationUsersUrl(String organizationId) {
