@@ -26,29 +26,42 @@ public class AssessLicenseOverview {
 
   // Inner Class with the actual details returned for a Group
   public class Details {
+    private int total;
+    private int used;
+    private int unused;
+    @SerializedName("max_expiration_date")
+    private long maxExpirationDate;
+
     /**
-     * The total number of Assess licenses for an Organization.
+     * The total number of Assess licenses for an organization.
      *
-     * @return the total number of Assess licenses for an Organization
+     * @return the total number of Assess licenses for an organization
      */
     public int getTotal() {
-      return this.total;
+      return total;
     }
-
-    @SerializedName("total")
-    private int total = 0;
 
     /**
-     * The total number of USED Assess licenses for an Organization.
+     * The total number of used Assess licenses for an organization.
      *
-     * @return the total number of USED Assess licenses for an Organization
+     * @return the total number of used Assess licenses for an organization
      */
     public int getUsed() {
-      return this.used;
+      return used;
     }
 
-    @SerializedName("used")
-    private int used = 0;
+    /**
+     * The total number of unused Assess licenses for an organization.
+     *
+     * @return the total number of unused Assess licenses for an organization.
+     */
+    public int getUnused() {
+      return unused;
+    }
+
+    public long getMaxExpirationDate() {
+      return maxExpirationDate;
+    }
   }
 
   /**
