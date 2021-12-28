@@ -29,6 +29,7 @@ public class AssessLicenseOverview {
     private int total;
     private int used;
     private int unused;
+
     @SerializedName("max_expiration_date")
     private long maxExpirationDate;
 
