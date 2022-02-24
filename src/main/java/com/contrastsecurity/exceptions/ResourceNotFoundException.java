@@ -32,7 +32,7 @@ package com.contrastsecurity.exceptions;
  * #%L
  * Contrast Java SDK
  * %%
- * Copyright (C) 2021 Contrast Security, Inc.
+ * Copyright (C) 2014 - 2022 Contrast Security, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
