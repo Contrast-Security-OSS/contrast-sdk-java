@@ -354,7 +354,8 @@
           <version>2.0.0</version>
           <configuration>
             <licenseName>apache_v2</licenseName>
-            <inceptionYear>2021</inceptionYear>
+            <inceptionYear>2014</inceptionYear>
+            <canUpdateCopyright>true</canUpdateCopyright>
           </configuration>
         </plugin>
         <plugin>
