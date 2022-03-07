@@ -56,6 +56,7 @@
     <versions.junit-jupiter>5.7.1</versions.junit-jupiter>
     <versions.auto-value>1.8.2</versions.auto-value>
     <versions.lombok>1.18.18</versions.lombok>
+    <copyrightYear>2022</copyrightYear>
   </properties>
 
   <dependencies>
@@ -354,7 +355,7 @@
           <version>2.0.0</version>
           <configuration>
             <licenseName>apache_v2</licenseName>
-            <inceptionYear>2014</inceptionYear>
+            <inceptionYear>${copyrightYear}</inceptionYear>
             <canUpdateCopyright>true</canUpdateCopyright>
           </configuration>
         </plugin>
