@@ -36,6 +36,10 @@ public class UrlBuilder {
     return instance;
   }
 
+  public String getGlobalPropertiesUrl() {
+    return "/ng/global/properties";
+  }
+
   public String getProfileOrganizationsUrl() {
     return "/ng/profile/organizations";
   }
