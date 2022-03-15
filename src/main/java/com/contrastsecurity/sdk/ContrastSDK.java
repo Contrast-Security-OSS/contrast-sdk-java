@@ -226,10 +226,8 @@ public class ContrastSDK {
    * @throws UnauthorizedException if the Contrast account failed to authorize
    * @throws IOException if there was a communication problem
    */
-  public GlobalProperties getGlobalProperties()
-    throws IOException, UnauthorizedException {
-    try (InputStream is =
-            makeRequest(HttpMethod.GET, this.urlBuilder.getGlobalPropertiesUrl());
+  public GlobalProperties getGlobalProperties() throws IOException, UnauthorizedException {
+    try (InputStream is = makeRequest(HttpMethod.GET, this.urlBuilder.getGlobalPropertiesUrl());
         Reader reader = new InputStreamReader(is)) {
       return this.gson.fromJson(reader, GlobalProperties.class);
     }
