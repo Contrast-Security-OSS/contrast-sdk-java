@@ -47,6 +47,7 @@ import com.contrastsecurity.models.EventDetails;
 import com.contrastsecurity.models.EventResource;
 import com.contrastsecurity.models.EventSummaryResponse;
 import com.contrastsecurity.models.GenericResponse;
+import com.contrastsecurity.models.GlobalProperties;
 import com.contrastsecurity.models.HttpRequestResponse;
 import com.contrastsecurity.models.JobOutcomePolicy;
 import com.contrastsecurity.models.Libraries;
@@ -216,6 +217,20 @@ public class ContrastSDK {
 
   public ScanManager scan(final String organizationId) {
     return new ScanManagerImpl(this, gson, organizationId);
+  }
+
+  /**
+   * Gets the global properties from TeamServer.
+   *
+   * @return GlobalProperties with the properties from TeamServer.
+   * @throws UnauthorizedException if the Contrast account failed to authorize
+   * @throws IOException if there was a communication problem
+   */
+  public GlobalProperties getGlobalProperties() throws IOException, UnauthorizedException {
+    try (InputStream is = makeRequest(HttpMethod.GET, this.urlBuilder.getGlobalPropertiesUrl());
+        Reader reader = new InputStreamReader(is)) {
+      return this.gson.fromJson(reader, GlobalProperties.class);
+    }
   }
 
   /**
