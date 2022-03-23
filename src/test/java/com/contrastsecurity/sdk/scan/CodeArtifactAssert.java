@@ -49,6 +49,7 @@ final class CodeArtifactAssert extends AbstractAssert<CodeArtifactAssert, CodeAr
     Assertions.assertThat(actual.projectId()).isEqualTo(inner.projectId());
     Assertions.assertThat(actual.organizationId()).isEqualTo(inner.organizationId());
     Assertions.assertThat(actual.filename()).isEqualTo(inner.filename());
+    Assertions.assertThat(actual.metadata()).isEqualTo(inner.metadata());
     Assertions.assertThat(actual.createdTime()).isEqualTo(inner.createdTime());
     return this;
   }

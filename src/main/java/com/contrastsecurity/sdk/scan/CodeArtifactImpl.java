@@ -53,6 +53,11 @@ final class CodeArtifactImpl implements CodeArtifact {
   }
 
   @Override
+  public String metadata() {
+    return inner.metadata();
+  }
+
+  @Override
   public Instant createdTime() {
     return inner.createdTime();
   }

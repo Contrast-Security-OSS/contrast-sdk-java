@@ -38,7 +38,7 @@ import java.nio.file.Path;
 interface CodeArtifactClient {
 
   /**
-   * Transfers a file from the file system to Contrast Scan to create a new code artifact for
+   * Transfers an artifact from the file system to Contrast Scan to create a new code artifact for
    * analysis.
    *
    * @param projectId ID of the project to which the code artifact belongs
@@ -51,4 +51,22 @@ interface CodeArtifactClient {
    * @throws ServerResponseException when Contrast API returns a response that cannot be understood
    */
   CodeArtifactInner upload(String projectId, Path file) throws IOException;
+
+  /**
+   * Transfers artifact and prescan metadata from the file system to Contrast Scan to create a new
+   * code artifact for analysis.
+   *
+   * <p>Prescan metadata will allow the scanner to produce more detailed finding reports.
+   *
+   * @param projectId ID of the project to which the code artifact belongs
+   * @param file the file to upload
+   * @param metadata the prescan metadata to upload with the file artifact.
+   * @return new {@link CodeArtifactInner} from Contrast API
+   * @throws IOException when an IO error occurs while making the request to the Contrast API
+   * @throws UnauthorizedException when Contrast rejects the credentials used to send the request
+   * @throws ResourceNotFoundException when the requested resource does not exist
+   * @throws HttpResponseException when Contrast rejects this request with an error code
+   * @throws ServerResponseException when Contrast API returns a response that cannot be understood
+   */
+  CodeArtifactInner upload(String projectId, Path file, Path metadata) throws IOException;
 }

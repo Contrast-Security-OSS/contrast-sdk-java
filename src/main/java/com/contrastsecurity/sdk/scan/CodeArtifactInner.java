@@ -20,6 +20,7 @@ package com.contrastsecurity.sdk.scan;
  * #L%
  */
 
+import com.contrastsecurity.sdk.internal.Nullable;
 import com.google.auto.value.AutoValue;
 import java.time.Instant;
 
@@ -44,6 +45,10 @@ abstract class CodeArtifactInner {
   /** @return filename */
   abstract String filename();
 
+  /** @return metadata filename */
+  @Nullable
+  abstract String metadata();
+
   /** @return time at which the code artifact was uploaded to Contrast Scan */
   abstract Instant createdTime();
 
@@ -62,6 +67,9 @@ abstract class CodeArtifactInner {
 
     /** @see CodeArtifactInner#filename() */
     abstract Builder filename(String value);
+
+    /** @see CodeArtifactInner#metadata() */
+    abstract Builder metadata(String value);
 
     /** @see CodeArtifactInner#createdTime() */
     abstract Builder createdTime(Instant value);
