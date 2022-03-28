@@ -27,24 +27,36 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 abstract class ScanInner {
 
-  /** @return new {@link Builder} */
+  /**
+   * @return new {@link Builder}
+   */
   static Builder builder() {
     return new AutoValue_ScanInner.Builder();
   }
 
-  /** @return ID of this scan */
+  /**
+   * @return ID of this scan
+   */
   abstract String id();
 
-  /** @return ID of the project to which this scan belongs */
+  /**
+   * @return ID of the project to which this scan belongs
+   */
   abstract String projectId();
 
-  /** @return ID of the organization to which this scan belongs */
+  /**
+   * @return ID of the organization to which this scan belongs
+   */
   abstract String organizationId();
 
-  /** @return scan status */
+  /**
+   * @return scan status
+   */
   abstract ScanStatus status();
 
-  /** @return error message for failed scan, or {@code null} if the scan has not failed */
+  /**
+   * @return error message for failed scan, or {@code null} if the scan has not failed
+   */
   @Nullable
   abstract String errorMessage();
 
@@ -52,22 +64,34 @@ abstract class ScanInner {
   @AutoValue.Builder
   abstract static class Builder {
 
-    /** @see ScanInner#id() */
+    /**
+     * @see ScanInner#id()
+     */
     abstract Builder id(String value);
 
-    /** @see ScanInner#projectId() */
+    /**
+     * @see ScanInner#projectId()
+     */
     abstract Builder projectId(String value);
 
-    /** @see ScanInner#organizationId() */
+    /**
+     * @see ScanInner#organizationId()
+     */
     abstract Builder organizationId(String value);
 
-    /** @see ScanInner#status() */
+    /**
+     * @see ScanInner#status()
+     */
     abstract Builder status(ScanStatus value);
 
-    /** @see ScanInner#errorMessage() */
+    /**
+     * @see ScanInner#errorMessage()
+     */
     abstract Builder errorMessage(String value);
 
-    /** @return new {@link ScanInner} */
+    /**
+     * @return new {@link ScanInner}
+     */
     abstract ScanInner build();
   }
 }

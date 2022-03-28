@@ -26,22 +26,34 @@ import java.time.Instant;
 /** Summary of a Scan and its results. */
 public interface ScanSummary {
 
-  /** @return ID of this summary */
+  /**
+   * @return ID of this summary
+   */
   String id();
 
-  /** @return ID of the scan */
+  /**
+   * @return ID of the scan
+   */
   String scanId();
 
-  /** @return ID of the scan project */
+  /**
+   * @return ID of the scan project
+   */
   String projectId();
 
-  /** @return ID of the Contrast organization */
+  /**
+   * @return ID of the Contrast organization
+   */
   String organizationId();
 
-  /** @return duration of the scan */
+  /**
+   * @return duration of the scan
+   */
   Duration duration();
 
-  /** @return number of vulnerabilities detected in this scan */
+  /**
+   * @return number of vulnerabilities detected in this scan
+   */
   int totalResults();
 
   /**
@@ -56,6 +68,8 @@ public interface ScanSummary {
    */
   int totalFixedResults();
 
-  /** @return time at which this scan summary was created */
+  /**
+   * @return time at which this scan summary was created
+   */
   Instant createdDate();
 }

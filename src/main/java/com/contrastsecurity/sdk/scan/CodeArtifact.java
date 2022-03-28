@@ -28,18 +28,28 @@ import java.time.Instant;
  */
 public interface CodeArtifact {
 
-  /** @return ID of this code artifact */
+  /**
+   * @return ID of this code artifact
+   */
   String id();
 
-  /** @return ID of the project to which this code artifact belongs */
+  /**
+   * @return ID of the project to which this code artifact belongs
+   */
   String projectId();
 
-  /** @return ID of the organization to which this code artifact belongs */
+  /**
+   * @return ID of the organization to which this code artifact belongs
+   */
   String organizationId();
 
-  /** @return filename */
+  /**
+   * @return filename
+   */
   String filename();
 
-  /** @return time at which the code artifact was uploaded to Contrast Scan */
+  /**
+   * @return time at which the code artifact was uploaded to Contrast Scan
+   */
   Instant createdTime();
 }

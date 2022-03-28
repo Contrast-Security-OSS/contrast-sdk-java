@@ -29,7 +29,9 @@ import java.util.Collection;
 @AutoValue
 abstract class ProjectInner {
 
-  /** @return new builder */
+  /**
+   * @return new builder
+   */
   static Builder builder() {
     return new AutoValue_ProjectInner.Builder()
         .critical(0)
@@ -41,19 +43,29 @@ abstract class ProjectInner {
         .completedScans(0);
   }
 
-  /** @return project ID */
+  /**
+   * @return project ID
+   */
   abstract String id();
 
-  /** @return organization ID */
+  /**
+   * @return organization ID
+   */
   abstract String organizationId();
 
-  /** @return project name */
+  /**
+   * @return project name
+   */
   abstract String name();
 
-  /** @return true, if the project has been archived */
+  /**
+   * @return true, if the project has been archived
+   */
   abstract boolean archived();
 
-  /** @return programming language used by this project */
+  /**
+   * @return programming language used by this project
+   */
   abstract String language();
 
   /**
@@ -99,62 +111,98 @@ abstract class ProjectInner {
   @Nullable
   abstract Instant lastScanTime();
 
-  /** @return count of completed scans in this project */
+  /**
+   * @return count of completed scans in this project
+   */
   abstract int completedScans();
 
-  /** @return collection of code namespaces to include in the scan */
+  /**
+   * @return collection of code namespaces to include in the scan
+   */
   abstract Collection<String> includeNamespaceFilters();
 
-  /** @return collection of code namespaces to exclude from the scan */
+  /**
+   * @return collection of code namespaces to exclude from the scan
+   */
   abstract Collection<String> excludeNamespaceFilters();
 
   /** Builder for {@link ProjectInner} */
   @AutoValue.Builder
   abstract static class Builder {
 
-    /** @see ProjectInner#id() */
+    /**
+     * @see ProjectInner#id()
+     */
     abstract Builder id(String value);
 
-    /** @see ProjectInner#organizationId() */
+    /**
+     * @see ProjectInner#organizationId()
+     */
     abstract Builder organizationId(String value);
 
-    /** @see ProjectInner#name() */
+    /**
+     * @see ProjectInner#name()
+     */
     abstract Builder name(String value);
 
-    /** @see ProjectInner#archived() ) */
+    /**
+     * @see ProjectInner#archived() )
+     */
     abstract Builder archived(boolean value);
 
-    /** @see ProjectInner#language() */
+    /**
+     * @see ProjectInner#language()
+     */
     abstract Builder language(String value);
 
-    /** @see ProjectInner#critical() ) */
+    /**
+     * @see ProjectInner#critical() )
+     */
     abstract Builder critical(int value);
 
-    /** @see ProjectInner#high() */
+    /**
+     * @see ProjectInner#high()
+     */
     abstract Builder high(int value);
 
-    /** @see ProjectInner#medium() */
+    /**
+     * @see ProjectInner#medium()
+     */
     abstract Builder medium(int value);
 
-    /** @see ProjectInner#low() */
+    /**
+     * @see ProjectInner#low()
+     */
     abstract Builder low(int value);
 
-    /** @see ProjectInner#note() */
+    /**
+     * @see ProjectInner#note()
+     */
     abstract Builder note(int value);
 
-    /** @see ProjectInner#lastScanId() */
+    /**
+     * @see ProjectInner#lastScanId()
+     */
     abstract Builder lastScanId(String value);
 
-    /** @see ProjectInner#lastScanTime() () () */
+    /**
+     * @see ProjectInner#lastScanTime() () ()
+     */
     abstract Builder lastScanTime(Instant value);
 
-    /** @see ProjectInner#completedScans() */
+    /**
+     * @see ProjectInner#completedScans()
+     */
     abstract Builder completedScans(int value);
 
-    /** @see ProjectInner#includeNamespaceFilters() */
+    /**
+     * @see ProjectInner#includeNamespaceFilters()
+     */
     abstract Builder includeNamespaceFilters(Collection<String> value);
 
-    /** @see ProjectInner#excludeNamespaceFilters() */
+    /**
+     * @see ProjectInner#excludeNamespaceFilters()
+     */
     abstract Builder excludeNamespaceFilters(Collection<String> value);
 
     /** new {@link ProjectInner} */

@@ -65,22 +65,34 @@ public interface Scan extends Refreshable<Scan> {
     Scan create() throws IOException;
   }
 
-  /** @return ID of this scan */
+  /**
+   * @return ID of this scan
+   */
   String id();
 
-  /** @return ID of the project to which this scan belongs */
+  /**
+   * @return ID of the project to which this scan belongs
+   */
   String projectId();
 
-  /** @return ID of the organization to which this scan belongs */
+  /**
+   * @return ID of the organization to which this scan belongs
+   */
   abstract String organizationId();
 
-  /** @return scan status */
+  /**
+   * @return scan status
+   */
   ScanStatus status();
 
-  /** @return error message for failed scan, or {@code null} if the scan has not failed */
+  /**
+   * @return error message for failed scan, or {@code null} if the scan has not failed
+   */
   String errorMessage();
 
-  /** @return true when the scan has completed, failed, or been canceled */
+  /**
+   * @return true when the scan has completed, failed, or been canceled
+   */
   boolean isFinished();
 
   /**

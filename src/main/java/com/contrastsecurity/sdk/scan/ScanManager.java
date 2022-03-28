@@ -23,7 +23,9 @@ package com.contrastsecurity.sdk.scan;
 /** Manager for Contrast Scan resource collections. */
 public interface ScanManager {
 
-  /** @return {@link Projects} resource collection */
+  /**
+   * @return {@link Projects} resource collection
+   */
   Projects projects();
 
   /**
