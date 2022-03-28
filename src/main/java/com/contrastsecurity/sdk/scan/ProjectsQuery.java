@@ -27,12 +27,16 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 abstract class ProjectsQuery {
 
-  /** @return new {@link Builder} */
+  /**
+   * @return new {@link Builder}
+   */
   static Builder builder() {
     return new AutoValue_ProjectsQuery.Builder();
   }
 
-  /** @return project name, or {@code null} to accept API default behavior. */
+  /**
+   * @return project name, or {@code null} to accept API default behavior.
+   */
   @Nullable
   abstract String name();
 
@@ -60,7 +64,9 @@ abstract class ProjectsQuery {
 
     abstract Builder unique(Boolean value);
 
-    /** @return new {@code ProjectsQuery} */
+    /**
+     * @return new {@code ProjectsQuery}
+     */
     abstract ProjectsQuery build();
   }
 }

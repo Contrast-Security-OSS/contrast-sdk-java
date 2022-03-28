@@ -68,22 +68,30 @@ public final class UserAgentProduct {
     this.comment = comment;
   }
 
-  /** @return user-agent product name */
+  /**
+   * @return user-agent product name
+   */
   public String name() {
     return name;
   }
 
-  /** @return user-agent product version, or {@code null} if not set */
+  /**
+   * @return user-agent product version, or {@code null} if not set
+   */
   public String version() {
     return version;
   }
 
-  /** @return user-agent product comment, or {@code null} if not set */
+  /**
+   * @return user-agent product comment, or {@code null} if not set
+   */
   public String comment() {
     return comment;
   }
 
-  /** @return user-agent encoded string i.e. "name/version (comment)" */
+  /**
+   * @return user-agent encoded string i.e. "name/version (comment)"
+   */
   public String toEncodedString() {
     final StringBuilder sb = new StringBuilder(name);
     if (version != null) {

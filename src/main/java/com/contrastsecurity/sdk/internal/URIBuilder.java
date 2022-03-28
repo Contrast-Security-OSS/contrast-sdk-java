@@ -88,7 +88,9 @@ public final class URIBuilder {
     return appendQueryParam(name, String.valueOf(value));
   }
 
-  /** @return the URI as a {@code String} */
+  /**
+   * @return the URI as a {@code String}
+   */
   public String toURIString() {
     final String path =
         "/" + segments.stream().map(URIBuilder::encode).collect(Collectors.joining("/"));

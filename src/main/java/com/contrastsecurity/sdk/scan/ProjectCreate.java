@@ -32,36 +32,52 @@ import java.util.Collections;
 @AutoValue
 abstract class ProjectCreate {
 
-  /** @return new {@link ScanInner.Builder} */
+  /**
+   * @return new {@link ScanInner.Builder}
+   */
   static ProjectCreate.Builder builder() {
     return new AutoValue_ProjectCreate.Builder()
         .includeNamespaceFilters(Collections.emptyList())
         .excludeNamespaceFilters(Collections.emptyList());
   }
 
-  /** @return project name */
+  /**
+   * @return project name
+   */
   abstract String name();
 
-  /** @return programming language used by this project */
+  /**
+   * @return programming language used by this project
+   */
   abstract String language();
 
-  /** @return collection of code namespaces to include in scans */
+  /**
+   * @return collection of code namespaces to include in scans
+   */
   abstract Collection<String> includeNamespaceFilters();
 
-  /** @return collection of code namespaces to exclude from scans */
+  /**
+   * @return collection of code namespaces to exclude from scans
+   */
   abstract Collection<String> excludeNamespaceFilters();
 
   /** Builder for {@link ProjectInner}. */
   @AutoValue.Builder
   abstract static class Builder {
 
-    /** @see ProjectInner#name() */
+    /**
+     * @see ProjectInner#name()
+     */
     abstract Builder name(String value);
 
-    /** @see ProjectInner#language() */
+    /**
+     * @see ProjectInner#language()
+     */
     abstract Builder language(String value);
 
-    /** @see ProjectInner#language() */
+    /**
+     * @see ProjectInner#language()
+     */
     abstract Builder includeNamespaceFilters(Collection<String> value);
 
     /**
@@ -71,7 +87,9 @@ abstract class ProjectCreate {
      */
     abstract Collection<String> includeNamespaceFilters();
 
-    /** @see ProjectInner#language() */
+    /**
+     * @see ProjectInner#language()
+     */
     abstract Builder excludeNamespaceFilters(Collection<String> value);
 
     /**
@@ -84,7 +102,9 @@ abstract class ProjectCreate {
     /** AutoValue implemented build method. Use {@code build()} instead. */
     abstract ProjectCreate autoBuild();
 
-    /** @return new {@link ProjectInner} */
+    /**
+     * @return new {@link ProjectInner}
+     */
     final ProjectCreate build() {
       // make defensive copies
       includeNamespaceFilters(Lists.copy(includeNamespaceFilters()));

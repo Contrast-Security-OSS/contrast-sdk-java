@@ -165,7 +165,9 @@ final class ScansImplTest implements EqualsAndHashcodeContract<ScanImpl> {
     assertThat(file).exists().hasContent("sarif");
   }
 
-  /** @see #is_finished(ScanStatus) */
+  /**
+   * @see #is_finished(ScanStatus)
+   */
   static Collection<ScanStatus> finished() {
     return EnumSet.of(ScanStatus.CANCELLED, ScanStatus.COMPLETED, ScanStatus.FAILED);
   }
@@ -180,7 +182,9 @@ final class ScansImplTest implements EqualsAndHashcodeContract<ScanImpl> {
     assertThat(scan.isFinished()).isTrue();
   }
 
-  /** @see #is_not_yet_finished(ScanStatus) */
+  /**
+   * @see #is_not_yet_finished(ScanStatus)
+   */
   static Collection<ScanStatus> notFinished() {
     return EnumSet.of(ScanStatus.WAITING, ScanStatus.RUNNING);
   }

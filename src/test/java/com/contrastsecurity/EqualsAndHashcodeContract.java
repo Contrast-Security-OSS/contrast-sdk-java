@@ -31,7 +31,9 @@ import org.junit.jupiter.api.Test;
  */
 public interface EqualsAndHashcodeContract<T> {
 
-  /** @return a new instance of {@link T} */
+  /**
+   * @return a new instance of {@link T}
+   */
   T createValue();
 
   /**

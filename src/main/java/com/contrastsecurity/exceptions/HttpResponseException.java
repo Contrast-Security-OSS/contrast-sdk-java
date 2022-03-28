@@ -161,7 +161,9 @@ public class HttpResponseException extends ContrastException {
     this.body = body;
   }
 
-  /** @return code from the status line e.g. 400 */
+  /**
+   * @return code from the status line e.g. 400
+   */
   public int getCode() {
     return code;
   }
@@ -174,7 +176,9 @@ public class HttpResponseException extends ContrastException {
     return status;
   }
 
-  /** @return the body of the response, or {@code null} if there is no such body */
+  /**
+   * @return the body of the response, or {@code null} if there is no such body
+   */
   public String getBody() {
     return body;
   }

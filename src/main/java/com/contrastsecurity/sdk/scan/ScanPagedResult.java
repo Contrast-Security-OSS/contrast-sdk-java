@@ -52,7 +52,9 @@ final class ScanPagedResult<T> {
     this.totalElements = totalElements;
   }
 
-  /** @return page contents */
+  /**
+   * @return page contents
+   */
   List<T> getContent() {
     return content;
   }

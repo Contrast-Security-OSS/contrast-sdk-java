@@ -35,9 +35,13 @@ abstract class ScanCreate {
     return new AutoValue_ScanCreate(codeArtifactId, label);
   }
 
-  /** @return ID of the code artifact to scan */
+  /**
+   * @return ID of the code artifact to scan
+   */
   abstract String codeArtifactId();
 
-  /** @return label that distinguishes this scan from others in the project */
+  /**
+   * @return label that distinguishes this scan from others in the project
+   */
   abstract String label();
 }

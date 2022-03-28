@@ -37,7 +37,9 @@ public class ScanException extends ContrastException {
     this.scan = Objects.requireNonNull(scan);
   }
 
-  /** @return the scan that cannot be completed */
+  /**
+   * @return the scan that cannot be completed
+   */
   public final Scan scan() {
     return scan;
   }

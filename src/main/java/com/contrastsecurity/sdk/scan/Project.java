@@ -70,19 +70,29 @@ public interface Project {
     Project create() throws IOException;
   }
 
-  /** @return project ID */
+  /**
+   * @return project ID
+   */
   String id();
 
-  /** @return organization ID */
+  /**
+   * @return organization ID
+   */
   String organizationId();
 
-  /** @return project name */
+  /**
+   * @return project name
+   */
   String name();
 
-  /** @return true when the project has been archived */
+  /**
+   * @return true when the project has been archived
+   */
   boolean archived();
 
-  /** @return programming language used by this project */
+  /**
+   * @return programming language used by this project
+   */
   String language();
 
   /**
@@ -126,18 +136,28 @@ public interface Project {
    */
   Instant lastScanTime();
 
-  /** @return count of completed scans in this project */
+  /**
+   * @return count of completed scans in this project
+   */
   int completedScans();
 
-  /** @return collection of code namespaces to include in scans */
+  /**
+   * @return collection of code namespaces to include in scans
+   */
   Collection<String> includeNamespaceFilters();
 
-  /** @return collection of code namespaces to exclude from scans */
+  /**
+   * @return collection of code namespaces to exclude from scans
+   */
   Collection<String> excludeNamespaceFilters();
 
-  /** @return entrypoint to the code artifact resource collection for this project */
+  /**
+   * @return entrypoint to the code artifact resource collection for this project
+   */
   CodeArtifacts codeArtifacts();
 
-  /** @return entrypoint to the scan resource collection for this project */
+  /**
+   * @return entrypoint to the scan resource collection for this project
+   */
   Scans scans();
 }
