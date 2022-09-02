@@ -158,8 +158,9 @@ public class TraceFilterForm {
     }
 
     if (status != null) {
-
-      filters.add("status=" + String.join(",", status));
+      List<String> filteredStatus = status.stream().filter(x -> x != "tracked" && x != "tracked")
+              .collect(Collectors.toList());
+      filters.add("status=" + String.join(",", filteredStatus));
     }
 
     if (vulnTypes != null && !vulnTypes.isEmpty()) {
