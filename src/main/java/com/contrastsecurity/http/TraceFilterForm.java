@@ -92,6 +92,8 @@ public class TraceFilterForm {
   private int limit;
   private int offset;
   private String sort;
+  private Boolean tracked;
+  private Boolean untracked;
 
   public TraceFilterForm() {
     this.filterText = "";
@@ -110,6 +112,8 @@ public class TraceFilterForm {
     this.limit = -1;
     this.offset = -1;
     this.sort = "";
+    this.tracked = true;
+    this.untracked = false;
   }
 
   /**
@@ -154,7 +158,7 @@ public class TraceFilterForm {
     }
 
     if (status != null) {
-      filters.add("status=" + String.join(",", status));
+      filters.add("status=" + String.join(",", status.stream().filter(x -> x != "tracked" && x != "tracked").collect(Collectors.toList())));
     }
 
     if (vulnTypes != null && !vulnTypes.isEmpty()) {
@@ -197,6 +201,9 @@ public class TraceFilterForm {
     if (offset > -1) {
       filters.add("offset=" + offset);
     }
+
+    filters.add("tracked=" + tracked);
+    filters.add("untracked=" +  untracked);
 
     if (!filters.isEmpty()) {
       return "?" + String.join("&", filters);
