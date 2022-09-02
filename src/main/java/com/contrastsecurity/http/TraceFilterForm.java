@@ -158,7 +158,8 @@ public class TraceFilterForm {
     }
 
     if (status != null) {
-      List<String> filteredStatus = status.stream().filter(x -> x != "tracked" && x != "tracked")
+      List<String> filteredStatus = status.stream()
+              .filter(x -> x != "tracked" && x != "tracked")
               .collect(Collectors.toList());
       filters.add("status=" + String.join(",", filteredStatus));
     }
