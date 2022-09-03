@@ -119,7 +119,8 @@ final class UrlBuilderTest {
 
   @Test
   public void testTracesUrl() throws UnsupportedEncodingException {
-    String expectedUrl = "/ng/test-org/traces/test-app/filter/?expand=application";
+    String expectedUrl =
+        "/ng/test-org/traces/test-app/filter/?expand=application&tracked=true&untracked=false";
 
     TraceFilterForm form = new TraceFilterForm();
 
@@ -131,7 +132,8 @@ final class UrlBuilderTest {
 
   @Test
   public void testGetTracesByApplicationUrl() throws UnsupportedEncodingException {
-    String expectedUrl = "/ng/test-org/traces/test-app/filter/?appVersionTags=The+application";
+    String expectedUrl =
+        "/ng/test-org/traces/test-app/filter/?appVersionTags=The+application&tracked=true&untracked=false";
 
     TraceFilterForm form = new TraceFilterForm();
     List<String> appVersionTags = new ArrayList<String>();
