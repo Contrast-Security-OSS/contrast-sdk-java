@@ -38,7 +38,8 @@ public class TraceFilterFormTest {
   public void
       toQuery_should_have_severities_and_environments_when_severities_and_environments_are_filled()
           throws UnsupportedEncodingException {
-    final String expected = "?severities=HIGH,CRITICAL&environments=DEVELOPMENT,PRODUCTION";
+    final String expected =
+        "?severities=HIGH,CRITICAL&environments=DEVELOPMENT,PRODUCTION&tracked=true&untracked=false";
     form.setSeverities(EnumSet.of(RuleSeverity.HIGH, RuleSeverity.CRITICAL));
     form.setEnvironments(EnumSet.of(ServerEnvironment.DEVELOPMENT, ServerEnvironment.PRODUCTION));
     final String actual = form.toQuery();
@@ -49,7 +50,7 @@ public class TraceFilterFormTest {
   @Test
   public void toQuery_should_not_have_environments_when_environments_is_not_filled()
       throws UnsupportedEncodingException {
-    final String expected = "?severities=HIGH,CRITICAL";
+    final String expected = "?severities=HIGH,CRITICAL&tracked=true&untracked=false";
     form.setSeverities(EnumSet.of(RuleSeverity.HIGH, RuleSeverity.CRITICAL));
     final String actual = form.toQuery();
 
