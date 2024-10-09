@@ -262,3 +262,7 @@ local.properties
 # Typically, this file would be tracked if it contains build/dependency configurations:
 .project
 
+# Gradle build directories
+gradle-plugin/.gradle
+gradle-plugin/build
+
