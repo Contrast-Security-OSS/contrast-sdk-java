@@ -1,0 +1,57 @@
+plugins {
+    id 'java'
+    id 'java-gradle-plugin'
+    id 'com.diffplug.spotless' version("6.10.0")
+}
+
+version = '0.1'
+group = 'com.contrastsecurity.gradle.plugin'
+
+repositories {
+    mavenCentral()
+}
+
+gradlePlugin {
+    plugins {
+        java {
+            id = 'com.contrastsecurity.java'
+            implementationClass = 'com.contrastsecurity.gradle.plugin.ContrastGradlePlugin'
+        }
+    }
+}
+
+compileJava {
+    options.release.set(8)
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+//matched spotless conventions from the Java-agent
+spotless{
+    groovyGradle {
+        greclipse().configFile("$rootDir/greclipse.properties")
+    }
+
+    format("misc") {
+        // we have a lot of different text files - find them with git ls-files | awk -F'.' '{print $NF}' | sort | uniq
+        target("*.conf", "*.config", "*.csv", "*.dtd", ".gitignore", "*.ent", "*.gradle", "*.groovy", "*.html", "*.ini", "*.js", "*.json", "*.jsp", "*.kts", "*.md", "*.properties", "*.sh", "*.template", "*.txt", "*.xlsx", "*.xml", "*.xsd", "*.yaml", "*.yml")
+        endWithNewline()
+    }
+
+    java{
+        googleJavaFormat("1.23.0")
+    }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}

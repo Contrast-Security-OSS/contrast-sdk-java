@@ -26,8 +26,8 @@ jobs:
       - name: Cache Maven Wrapper
         uses: actions/cache@v2
         with:
-          path: ./.mvn/wrapper/maven-wrapper.jar
-          key: ${{ runner.os }}-maven-wrapper-${{ hashFiles('./.mvn/wrapper/maven-wrapper.properties') }}
+          path: sdk/.mvn/wrapper/maven-wrapper.jar
+          key: ${{ runner.os }}-maven-wrapper-${{ hashFiles('sdk/.mvn/wrapper/maven-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-maven-wrapper
 
       - name: Cache Maven Packages
@@ -40,7 +40,7 @@ jobs:
       - name: Build
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        run: ./mvnw --batch-mode verify -Prelease
+        run: cd sdk/ && ./sdk/mvnw --batch-mode verify -Prelease
 
       - name: Maven Release (dry-run)
         env:
@@ -49,7 +49,7 @@ jobs:
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          ./mvnw -Darguments="-DskipTests=true" -DdryRun=true --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN -Prelease
+          cd sdk/ && ./mvnw -Darguments="-DskipTests=true" -DdryRun=true --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN -Prelease
 
       # See https://github.com/actions/checkout/issues/13
       - name: Configure Git User
@@ -64,4 +64,4 @@ jobs:
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          ./mvnw -Darguments="-DskipTests=true" --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN -Prelease
+          cd sdk/ && ./mvnw -Darguments="-DskipTests=true" --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN -Prelease
