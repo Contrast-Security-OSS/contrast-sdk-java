@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'java-gradle-plugin'
     id 'com.diffplug.spotless' version("6.10.0")
+    id 'maven-publish'
 }
 
 version = '0.1'
@@ -48,10 +49,23 @@ spotless{
 }
 
 dependencies {
+    implementation("com.contrastsecurity:contrast-sdk-java:3.4.2")
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
+var e2eTests = "com/contrastsecurity/gradle/plugin/e2e/EndToEndTests.*"
+
+
 test {
+    if(!project.hasProperty("e2e")){
+        exclude(e2eTests)
+    }
+
     useJUnitPlatform()
+    environment = ["CONTRAST__API__USER_NAME"      : System.getenv("CONTRAST__API__USER_NAME"),
+        "CONTRAST__API__URL"            : System.getenv("CONTRAST__API__URL"),
+        "CONTRAST__API__SERVICE_KEY"    : System.getenv("CONTRAST__API__SERVICE_KEY"),
+        "CONTRAST__API__API_KEY"        : System.getenv("CONTRAST__API__API_KEY"),
+        "CONTRAST__API__ORGANIZATION_ID": System.getenv("CONTRAST__API__ORGANIZATION_ID")]
 }
