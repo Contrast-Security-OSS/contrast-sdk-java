@@ -48,6 +48,7 @@ spotless{
 }
 
 dependencies {
+    implementation("com.contrastsecurity:contrast-sdk-java:3.4.2")
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
