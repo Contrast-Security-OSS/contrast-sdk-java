@@ -128,8 +128,7 @@ fabric.properties
 .LSOverride
 
 # Icon must end with two \r
-Icon
-
+Icon
 
 # Thumbnails
 ._*
@@ -209,10 +208,6 @@ local.properties
 .settings/
 .loadpath
 .recommenders
-.classpath
-
-# VSCode
-.vscode/
 
 # External tool builders
 .externalToolBuilders/
@@ -262,10 +257,4 @@ local.properties
 # Uncomment this line if you wish to ignore the project description file.
 # Typically, this file would be tracked if it contains build/dependency configurations:
 .project
-
-# need gradle wrapper, and jar files are usually ignored
-!gradle-plugin/gradle/wrapper/gradle-wrapper.jar
-# Gradle build directories
-gradle-plugin/.gradle
-gradle-plugin/build
 
