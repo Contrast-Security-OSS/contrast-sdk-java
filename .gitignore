@@ -1,6 +1,6 @@
 # Project
 *.private.env.json
-/.idea
+*.idea
 *.iml
 
 # Maven
