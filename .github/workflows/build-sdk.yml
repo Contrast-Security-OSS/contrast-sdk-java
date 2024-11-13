@@ -25,7 +25,7 @@ jobs:
       - name: Cache Maven Wrapper
         uses: actions/cache@v2
         with:
-          path: ./.mvn/wrapper/maven-wrapper.jar
+          path: cd sdk/ ./.mvn/wrapper/maven-wrapper.jar
           key: ${{ runner.os }}-maven-wrapper-${{ hashFiles('./.mvn/wrapper/maven-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-maven-wrapper
 

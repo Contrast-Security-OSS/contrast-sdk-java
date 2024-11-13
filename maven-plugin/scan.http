@@ -1,0 +1,127 @@
+# scan.http
+# HTTP file for experimenting with the scan API
+# To use this file with IntelliJ, create a file http-client.private.env.json with configuration for
+# connecting to your Contrast instance e.g.
+# {
+#   "production": {
+#     "url": "https://app.contrastsecurity.com/Contrast/api",
+#     "apiKey": "<your-api-key>",
+#     "authorization": "<your-authorization-header>",
+#     "organizationId": "<your-organization-id>"
+#   }
+# }
+
+
+### Create Scan Project
+POST {{ url }}/sast/organizations/{{ organizationId }}/projects
+API-Key: {{ apiKey }}
+Authorization: {{ authorization }}
+Content-Type: application/json
+
+{
+  "name": "spring-test-application",
+  "language": "JAVA",
+  "includeNamespaceFilters": [],
+  "excludeNamespaceFilters": []
+}
+
+> {% client.global.set("projectId", response.body.id); %}
+
+
+### DELETE Scan Project
+DELETE {{ url }}/sast/organizations/{{ organizationId }}/projects/{{ projectId }}
+API-Key: {{ apiKey }}
+Authorization: {{ authorization }}
+
+
+### Find Scan Project
+GET {{ url }}/sast/organizations/{{ organizationId }}/projects?name=spring-test-application&archived=false&unique=true
+API-Key: {{ apiKey }}
+Authorization: {{ authorization }}
+Accept: application/json
+
+> {% client.global.set("projectId", response.body.content[0].id); %}
+
+
+### Upload Code Artifact
+
+POST {{ url }}/sast/organizations/{{ organizationId }}/projects/{{ projectId }}/code-artifacts
+API-Key: {{ apiKey }}
+Authorization: {{ authorization }}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filename"; filename="spring-test-application-0.0.1-SNAPSHOT.jar"
+Content-Type: application/java-archive
+
+< ./target/test-classes/it/spring-boot/target/spring-test-application-0.0.1-SNAPSHOT.jar
+--WebAppBoundary--
+
+> {% client.global.set("artifactId", response.body.id); %}
+
+
+### Start Scan
+
+POST {{ url }}/sast/organizations/{{ organizationId }}/projects/{{ projectId }}/scans
+API-Key: {{ apiKey }}
+Authorization: {{ authorization }}
+Content-Type: application/json
+
+{
+  "codeArtifactId": "{{ artifactId }}",
+  "label": "scan.http"
+}
+
+> {% client.global.set("scanId", response.body.id); %}
+
+
+### Cancel Scan
+
+PUT {{ url }}/sast/organizations/{{ organizationId }}/projects/{{ projectId }}/scans/{{ scanId }}
+API-Key: {{ apiKey }}
+Authorization: {{ authorization }}
+Content-Type: application/json
+
+{
+  "label": "scan.http",
+  "status": "CANCELLED"
+}
+
+
+### Get Scan
+
+GET {{ url }}/sast/organizations/{{ organizationId }}/projects/{{ projectId }}/scans/{{ scanId }}
+API-Key: {{ apiKey }}
+Authorization: {{ authorization }}
+
+
+### Get Scan Results
+
+GET {{ url }}/sast/organizations/{{ organizationId }}/projects/{{ projectId }}/scans/{{ scanId }}/result-instances
+API-Key: {{ apiKey }}
+Authorization: {{ authorization }}
+
+
+### Get Scan Results (abreviated)
+
+GET {{ url }}/sast/organizations/{{ organizationId }}/projects/{{ projectId }}/scans/{{ scanId }}/result-instances/info
+API-Key: {{ apiKey }}
+Authorization: {{ authorization }}
+
+
+### Get Scan Results Summary
+GET {{ url }}/sast/organizations/{{ organizationId}}/projects/{{ projectId }}/scans/{{ scanId }}/summary
+API-Key: {{ apiKey }}
+Authorization: {{ authorization }}
+
+
+### Get Project Results Summary
+GET {{ url }}/sast/organizations/{{ organizationId }}/projects/{{ projectId }}/summary
+API-Key: {{ apiKey }}
+Authorization: {{ authorization }}
+
+
+### Get Scan Results in SARIF
+GET {{ url }}/sast/organizations/{{ organizationId }}/projects/{{ projectId }}/scans/{{ scanId }}/raw-output
+API-Key: {{ apiKey }}
+Authorization: {{ authorization }}
