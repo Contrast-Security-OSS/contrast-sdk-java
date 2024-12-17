@@ -8,11 +8,14 @@ import org.gradle.api.Project;
  * href=https://contrast.atlassian.net/browse/JAVA-8252>JAVA-8252</a>
  */
 public class ContrastGradlePlugin implements Plugin<Project> {
-  public void apply(final Project target) {
-    target
-        .getTasks()
-        .register("hello", task -> task.doLast(s -> System.out.println("HelloWorld!")));
 
-    target.getTasks().register("empty", EmptyTask.class);
+  public void apply(final Project target) {
+
+    ContrastConfigurationExtension extension =
+        target.getExtensions().create(EXTENSION_NAME, ContrastConfigurationExtension.class);
+
+    target.getTasks().register("installAgent", InstallAgentTask.class);
   }
+
+  public static final String EXTENSION_NAME = "contrastConfiguration";
 }
