@@ -32,4 +32,40 @@ public class GradleRunnerTest {
 
     return testConfig;
   }
+
+  private String writeContrastBuildFile() {
+    return "plugins {  id('com.contrastsecurity.java') }\n"
+        + "contrastConfiguration {\n"
+        + "  username = "
+        + "'"
+        + EnvironmentUtils.getUsername()
+        + "'"
+        + "\n"
+        + "  apiKey = "
+        + "'"
+        + EnvironmentUtils.getApiKey()
+        + "'"
+        + "\n"
+        + "  serviceKey = "
+        + "'"
+        + EnvironmentUtils.getServiceKey()
+        + "'"
+        + "\n"
+        + "  apiUrl = "
+        + "'"
+        + EnvironmentUtils.getApiUrl()
+        + "'"
+        + "\n"
+        + "  orgUuid = "
+        + "'"
+        + EnvironmentUtils.getOrgUuid()
+        + "'"
+        + "\n"
+        + "  appName = 'gradle-end-to-end-test'\n"
+        + "  serverName = 'server1'\n"
+        + "  appVersion = '0.0.1'\n"
+        + "  attachToTests = true\n"
+        + "}\n"
+        + "tasks.register('fakeTask', org.gradle.api.tasks.testing.Test) { \nSystem.out.println('test') \n}";
+  }
 }

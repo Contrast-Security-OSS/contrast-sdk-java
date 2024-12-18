@@ -6,6 +6,10 @@ import com.contrastsecurity.models.AgentType;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.UserAgentProduct;
 import java.io.IOException;
+import java.net.Authenticator;
+import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
+import java.net.Proxy;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Map;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
@@ -197,14 +202,58 @@ public class InstallAgentTask extends DefaultTask {
     return downloadedAgent;
   }
 
+  /** Generates a proxy from SystemProperties defined in the gradle.properties file */
+  @VisibleForTesting
+  public static Proxy getProxy(
+      final Logger logger,
+      final String host,
+      final Integer port,
+      final String username,
+      final String password) {
+    if (host == null || port == null || port == 0) {
+      logger.debug("Proxy settings not set or incorrectly configured, continue without proxy");
+      return Proxy.NO_PROXY;
+    }
+
+    final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
+
+    if (username != null && password != null) {
+      Authenticator.setDefault(
+          new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+              if (getRequestorType() == RequestorType.PROXY
+                  && getRequestingHost().equalsIgnoreCase(host)
+                  && port == getRequestingPort()) {
+                logger.debug("Proxy authentication set");
+                return new PasswordAuthentication(username, password.toCharArray());
+              } else {
+                return null;
+              }
+            }
+          });
+    }
+    logger.debug("Using proxy for host {} and port {}", host, port);
+    return proxy;
+  }
+
   /** Create ContrastSDK for connecting to TeamServer */
   private ContrastSDK connectToContrast() {
     // TODO get plugin version for this as well
     final UserAgentProduct gradle = UserAgentProduct.of("contrast-gradle-plugin");
+    final Map<String, ?> properties = getProject().getProperties();
+    /*
+    We must pass in these values because ProjectBuilder does not allow us to set properties for testing
+    see https://github.com/gradle/gradle/pull/30002 for details
+     */
+    //    final Proxy proxy = getProxy(logger,
+    //            (String)properties.get("systemProp.https.proxyHost"),
+    //            (Integer)properties.get("systemProp.https.proxyPort"),
+    //            (String)properties.get("systemProp.https.proxyUser"),
+    //            (String)properties.get("systemProp.https.proxyPassword"));
     return new ContrastSDK.Builder(config.getUsername(), config.getServiceKey(), config.getApiKey())
         .withApiUrl(config.getApiUrl() + "/api")
-        // TODO JAVA-8883 figure out how to define this proxy
-        // .withProxy(proxy) //with proxy?
+        //        .withProxy(proxy)
         .withUserAgentProduct(gradle)
         .build();
   }

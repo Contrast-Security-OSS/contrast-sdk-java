@@ -5,10 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.contrastsecurity.sdk.ContrastSDK;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Set;
+import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -36,5 +39,21 @@ public class InstallAgentTests {
         InstallAgentTask.retrieveAgent(
             connection, tempAgent.toString(), "uuid", ProjectBuilder.builder().build());
     assertEquals(tempAgent.toString(), agentPath.toString());
+  }
+
+  @Test
+  void verify_no_proxy_set() {
+    final Project project = ProjectBuilder.builder().build();
+    final Proxy noProxy = InstallAgentTask.getProxy(project.getLogger(), null, null, null, null);
+    assertEquals(noProxy, Proxy.NO_PROXY);
+  }
+
+  @Test
+  void verify_proxy_correctly_configured_no_auth() {
+    final Project project = ProjectBuilder.builder().build();
+
+    final Proxy proxy =
+        InstallAgentTask.getProxy(project.getLogger(), "localhost", 1234, null, null);
+    assertEquals(proxy.address(), new InetSocketAddress("localhost", 1234));
   }
 }

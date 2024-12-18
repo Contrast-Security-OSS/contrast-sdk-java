@@ -15,6 +15,15 @@ public class ContrastGradlePlugin implements Plugin<Project> {
         target.getExtensions().create(EXTENSION_NAME, ContrastConfigurationExtension.class);
 
     target.getTasks().register("installAgent", InstallAgentTask.class);
+
+    target
+        .getTasks()
+        .register(
+            "prox",
+            (task) -> {
+              final String host = (String) target.getProperties().get("systemProp.https.proxyHost");
+              System.out.printf("PROXY HOST %s \n", host);
+            });
   }
 
   public static final String EXTENSION_NAME = "contrastConfiguration";

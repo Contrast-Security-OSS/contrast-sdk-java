@@ -43,7 +43,9 @@ public class EndToEndTests extends GradleRunnerTest {
   @Test
   void verify_attaches_agent_to_tests() throws IOException {
     writeString(getSettingsFile(), "");
-    String config = writeContrastBuildFile();
+    String config =
+        writeContrastBuildFile()
+            + "tasks.register('fakeTask', org.gradle.api.tasks.testing.Test) { \nSystem.out.println('test') \n}";
     writeString(getBuildFile(), config);
 
     final GradleRunner testRunner = GradleRunner.create();
@@ -67,7 +69,39 @@ public class EndToEndTests extends GradleRunnerTest {
     }
   }
 
-  private static String writeContrastBuildFile() {
+  @Test
+  void verify_proxy_settings_retrieved() throws IOException {
+    writeString(getSettingsFile(), "");
+    String config = writeContrastBuildFile();
+    writeString(getBuildFile(), config);
+
+    final GradleRunner testRunner = GradleRunner.create();
+    testRunner.forwardOutput();
+    testRunner.withPluginClasspath();
+    // outputs debug logs to stdout for testing
+    testRunner.withArguments(
+        "installAgent",
+        "--debug",
+        "-Dhttps.proxyHost=localHost",
+        "-Dhttp.proxyPort=1234",
+        "-Dhttps.proxyUser=user",
+        "-Dhttps.proxyPassword=password");
+    testRunner.withDebug(true);
+    testRunner.withProjectDir(projectDir);
+    final BuildResult result = testRunner.build();
+
+    result
+        .getTasks()
+        .forEach(
+            buildTask -> {
+              assertEquals(buildTask.getOutcome(), TaskOutcome.SUCCESS);
+            });
+
+    assertTrue(result.getOutput().contains("Using proxy for host localhost and port 1234"));
+    assertTrue(result.getOutput().contains("Proxy authentication set"));
+  }
+
+  private String writeContrastBuildFile() {
     return "plugins {  id('com.contrastsecurity.java') }\n"
         + "contrastConfiguration {\n"
         + "  username = "
@@ -99,8 +133,7 @@ public class EndToEndTests extends GradleRunnerTest {
         + "  serverName = 'server1'\n"
         + "  appVersion = '0.0.1'\n"
         + "  attachToTests = true\n"
-        + "}\n"
-        + "tasks.register('fakeTask', org.gradle.api.tasks.testing.Test) { \nSystem.out.println('test') \n}";
+        + "}\n";
   }
 
   private static final Collection<String> AGENT_ARGS = new HashSet<>();
