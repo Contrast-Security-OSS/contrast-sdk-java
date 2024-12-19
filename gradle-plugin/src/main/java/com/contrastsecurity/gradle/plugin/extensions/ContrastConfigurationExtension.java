@@ -1,4 +1,4 @@
-package com.contrastsecurity.gradle.plugin;
+package com.contrastsecurity.gradle.plugin.extensions;
 
 /** Extension for configuring TeamServer API Credentials for downloading agent */
 public class ContrastConfigurationExtension {

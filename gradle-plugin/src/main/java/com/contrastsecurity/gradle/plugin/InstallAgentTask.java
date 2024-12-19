@@ -2,9 +2,9 @@ package com.contrastsecurity.gradle.plugin;
 
 import static com.contrastsecurity.gradle.plugin.ContrastGradlePlugin.EXTENSION_NAME;
 
+import com.contrastsecurity.gradle.plugin.extensions.ContrastConfigurationExtension;
 import com.contrastsecurity.models.AgentType;
 import com.contrastsecurity.sdk.ContrastSDK;
-import com.contrastsecurity.sdk.UserAgentProduct;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -37,7 +37,7 @@ public class InstallAgentTask extends DefaultTask {
 
     logger.debug("Running installAgentTask");
     // create sdk object for connecting to Contrast
-    final ContrastSDK sdk = connectToContrast();
+    final ContrastSDK sdk = ContrastSDKService.getSdk();
 
     logger.debug("Connected to Contrast at: " + sdk.getRestApiURL());
 
@@ -195,18 +195,6 @@ public class InstallAgentTask extends DefaultTask {
 
     logger.debug("Agent retrieved from TeamServer");
     return downloadedAgent;
-  }
-
-  /** Create ContrastSDK for connecting to TeamServer */
-  private ContrastSDK connectToContrast() {
-    // TODO get plugin version for this as well
-    final UserAgentProduct gradle = UserAgentProduct.of("contrast-gradle-plugin");
-    return new ContrastSDK.Builder(config.getUsername(), config.getServiceKey(), config.getApiKey())
-        .withApiUrl(config.getApiUrl() + "/api")
-        // TODO JAVA-8883 figure out how to define this proxy
-        // .withProxy(proxy) //with proxy?
-        .withUserAgentProduct(gradle)
-        .build();
   }
 
   private static final String AGENT_NAME = "contrast.jar";

@@ -50,7 +50,7 @@ public class EndToEndTests extends GradleRunnerTest {
     testRunner.forwardOutput();
     testRunner.withPluginClasspath();
     // outputs debug logs to stdout for testing
-    testRunner.withArguments("installAgent", "--debug");
+    testRunner.withArguments("installAgent");
     testRunner.withDebug(true);
     testRunner.withProjectDir(projectDir);
     final BuildResult result = testRunner.build();

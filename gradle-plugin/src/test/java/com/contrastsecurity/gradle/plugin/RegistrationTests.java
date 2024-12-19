@@ -16,5 +16,6 @@ class RegistrationTests {
 
     // Verify the result
     assertNotNull(project.getTasks().findByName("installAgent"));
+    assertNotNull(project.getTasks().findByName("resolveAgent"));
   }
 }
