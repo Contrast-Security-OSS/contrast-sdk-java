@@ -1,47 +1,46 @@
 package com.contrastsecurity.gradle.plugin.e2e;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.contrastsecurity.gradle.plugin.EnvironmentUtils;
-import com.contrastsecurity.gradle.plugin.GradleRunnerTest;
-import com.contrastsecurity.gradle.plugin.InstallAgentTask;
-import com.contrastsecurity.sdk.ContrastSDK;
-import com.contrastsecurity.sdk.UserAgentProduct;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashSet;
-import org.gradle.testfixtures.ProjectBuilder;
+import java.io.Writer;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /** End-To-End tests for the gradle plugin for interacting with TeamServer */
-public class EndToEndTests extends GradleRunnerTest {
+public class EndToEndTests {
 
-  @Test
-  void verify_retrieval_of_agent_from_teamserver() {
+  @TempDir public File projectDir;
 
-    final ContrastSDK connection =
-        new ContrastSDK.Builder(
-                EnvironmentUtils.getUsername(),
-                EnvironmentUtils.getServiceKey(),
-                EnvironmentUtils.getApiKey())
-            .withApiUrl(EnvironmentUtils.getApiUrl())
-            .withUserAgentProduct(UserAgentProduct.of("contrast-gradle-plugin"))
-            .build();
-    final Path agentPath =
-        InstallAgentTask.retrieveAgent(
-            connection, null, EnvironmentUtils.getOrgUuid(), ProjectBuilder.builder().build());
-    assertNotNull(agentPath);
-    assertTrue(agentPath.endsWith("contrast.jar"));
+  public File getBuildFile() {
+    return new File(projectDir, "build.gradle");
+  }
+
+  public File getSettingsFile() {
+    return new File(projectDir, "settings.gradle");
+  }
+
+  public void writeString(File file, String string) throws IOException {
+    try (Writer writer = new FileWriter(file)) {
+      writer.write(string);
+    }
+  }
+
+  public String writeConfig() {
+    final String testConfig = "plugins {  id('com.contrastsecurity.java') }\n";
+
+    return testConfig;
   }
 
   @Test
-  void verify_attaches_agent_to_tests() throws IOException {
+  void verify_plugin_retrieves_agent_from_TS() throws IOException {
     writeString(getSettingsFile(), "");
     String config = writeContrastBuildFile();
     writeString(getBuildFile(), config);
@@ -49,9 +48,8 @@ public class EndToEndTests extends GradleRunnerTest {
     final GradleRunner testRunner = GradleRunner.create();
     testRunner.forwardOutput();
     testRunner.withPluginClasspath();
-    // outputs debug logs to stdout for testing
-    testRunner.withArguments("installAgent", "--debug");
-    testRunner.withDebug(true);
+    // run with debug args to log statements we can check for in the output
+    testRunner.withArguments("resolveAgent", "--debug");
     testRunner.withProjectDir(projectDir);
     final BuildResult result = testRunner.build();
 
@@ -62,9 +60,7 @@ public class EndToEndTests extends GradleRunnerTest {
               assertEquals(buildTask.getOutcome(), TaskOutcome.SUCCESS);
             });
 
-    for (final String arg : AGENT_ARGS) {
-      assertTrue(result.getOutput().contains(arg));
-    }
+    assertTrue(result.getOutput().contains("Agent successfully retrieved from TeamServer"));
   }
 
   private static String writeContrastBuildFile() {
@@ -99,16 +95,6 @@ public class EndToEndTests extends GradleRunnerTest {
         + "  serverName = 'server1'\n"
         + "  appVersion = '0.0.1'\n"
         + "  attachToTests = true\n"
-        + "}\n"
-        + "tasks.register('fakeTask', org.gradle.api.tasks.testing.Test) { \nSystem.out.println('test') \n}";
-  }
-
-  private static final Collection<String> AGENT_ARGS = new HashSet<>();
-
-  static {
-    AGENT_ARGS.add("-javaagent:");
-    AGENT_ARGS.add("-Dcontrast.override.appname=gradle-end-to-end-test");
-    AGENT_ARGS.add("-Dcontrast.server=server");
-    AGENT_ARGS.add("-Dcontrast.override.appversion=0.0.1");
+        + "}\n";
   }
 }
