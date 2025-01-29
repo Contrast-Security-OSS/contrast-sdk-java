@@ -15,7 +15,9 @@ import java.util.Locale;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.file.Directory;
 import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.testing.Test;
 
@@ -28,8 +30,10 @@ public class ContrastGradlePlugin implements Plugin<Project> {
   public void apply(final Project target) {
 
     // Target path for the agent jar once it is resolved
-    final String agentPath =
-        target.getLayout().getBuildDirectory().file("contrast.jar").get().getAsFile().getPath();
+    final Provider<Directory> buildDirectory =
+        target.getLayout().getBuildDirectory().dir("contrast");
+
+    final String agentPath = buildDirectory.get().file("contrast.jar").getAsFile().getPath();
 
     final ContrastConfigurationExtension extension =
         target.getExtensions().create(EXTENSION_NAME, ContrastConfigurationExtension.class);
@@ -89,10 +93,21 @@ public class ContrastGradlePlugin implements Plugin<Project> {
                             .register(
                                 "contrastVerifyTest" + testTask.getName(),
                                 ContrastVerifyTestTask.class,
-                                v -> {
-                                  v.dependsOn(testTask);
-                                  // set file input for
-                                });
+                                sdk);
+                    verifyTask.configure(
+                        v -> {
+                          v.dependsOn(testTask);
+
+                          // set output file for found vulnerabilities
+                          v.getTraceResults()
+                              .set(
+                                  new File(
+                                      buildDirectory
+                                          .get()
+                                          .file("traceResults_" + testTask.getName() + ".txt")
+                                          .getAsFile()
+                                          .getPath()));
+                        });
 
                     // configure lifecycle task to depend on this test's corresponding verifyTask
                     contrastCheck.configure(task -> task.dependsOn(verifyTask));

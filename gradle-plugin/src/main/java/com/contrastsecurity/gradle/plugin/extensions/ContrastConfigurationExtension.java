@@ -15,6 +15,7 @@ public class ContrastConfigurationExtension {
   private final Property<String> serverName;
   private final Property<String> jarPath;
   private final Property<String> appVersion;
+  private final Property<String> minSeverity;
   private final Property<Boolean> attachToTests;
 
   public ContrastConfigurationExtension(final Project project) {
@@ -32,6 +33,7 @@ public class ContrastConfigurationExtension {
             .getObjects()
             .property(String.class)
             .convention(ContrastGradlePlugin.computeAppVersion(appName.get()));
+    minSeverity = project.getObjects().property(String.class).convention("Medium");
     attachToTests = project.getObjects().property(Boolean.class);
   }
 
@@ -69,6 +71,10 @@ public class ContrastConfigurationExtension {
 
   public Property<String> getAppVersion() {
     return appVersion;
+  }
+
+  public Property<String> getMinSeverity() {
+    return minSeverity;
   }
 
   public Property<Boolean> getAttachToTests() {
