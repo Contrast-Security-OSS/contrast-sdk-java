@@ -1,4 +1,4 @@
-name: build
+name: build-sdk
 
 on:
   workflow_call:

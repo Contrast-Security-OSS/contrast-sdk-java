@@ -1,4 +1,4 @@
-name: publish-maven-plugin
+name: publish-gradle-plugin
 
 on:
   workflow_dispatch:
