@@ -11,10 +11,10 @@ import com.contrastsecurity.models.Trace;
 import com.contrastsecurity.models.TraceFilterBody;
 import com.contrastsecurity.models.Traces;
 import com.contrastsecurity.sdk.ContrastSDK;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -66,30 +66,28 @@ public abstract class ContrastVerifyTestTask extends DefaultTask {
     final String appId = getApplicationId(config, orgUuid);
     final String serverName = config.getServerName().get();
 
-    final List<String> serverIds = getServerId(sdk, appId, orgUuid, serverName);
+    final List<String> serverIds = getServerId(appId, orgUuid, serverName);
 
     final TraceFilterBody traceFilter =
         getTraceFilterBody(serverIds, config.getMinSeverity().get(), config.getAppVersion().get());
 
-    Traces traces;
-    try {
-      traces = sdk.getTraces(orgUuid, appId, traceFilter);
-    } catch (IOException e) {
-      throw new GradleException("Failed to retrieve traces from TeamServer", e);
-    }
+    final Traces traces = getTraces(orgUuid, appId, traceFilter);
 
     if (traces != null && traces.getCount() > 0) {
       logger.info(traces.getCount() + " new vulnerability(s) were found.");
 
       // Write TeamServer results to a file in the build directory
-      try (BufferedWriter writer =
-          new BufferedWriter(new FileWriter(getTraceResults().get().getAsFile(), true))) {
-        for (Trace trace : traces.getTraces()) {
-          final String traceReport = generateTraceReport(trace);
-          writer.write(traceReport);
-          writer.newLine();
+      try {
+        for (final Trace trace : traces.getTraces()) {
+          final String traceReport = generateTraceReport(trace) + "\n";
+          Files.write(
+              (getTraceResults().get().getAsFile().toPath()),
+              traceReport.getBytes(),
+              StandardOpenOption.CREATE,
+              StandardOpenOption.APPEND);
           logger.lifecycle(traceReport);
         }
+
       } catch (final IOException e) {
         logger.error("Could not write Contrast Findings to build directory", e);
       }
@@ -103,18 +101,25 @@ public abstract class ContrastVerifyTestTask extends DefaultTask {
     logger.lifecycle("Finished verifying your application.");
   }
 
+  public Traces getTraces(
+      final String orgUuid, final String appId, final TraceFilterBody traceFilter) {
+    Traces traces;
+    try {
+      traces = sdk.getTraces(orgUuid, appId, traceFilter);
+    } catch (final IOException e) {
+      throw new GradleException("Failed to retrieve traces from TeamServer", e);
+    }
+    return traces;
+  }
+
   /**
    * Retrieves the server id by server name
    *
-   * @param sdk Contrast SDK object
    * @param applicationId application id to filter on
    * @return List<Long> id of the servers
    */
-  private List<String> getServerId(
-      final ContrastSDK sdk,
-      final String applicationId,
-      final String orgUuid,
-      final String serverName) {
+  public List<String> getServerId(
+      final String applicationId, final String orgUuid, final String serverName) {
     ServerFilterForm serverFilterForm = new ServerFilterForm();
     serverFilterForm.setApplicationIds(Collections.singletonList(applicationId));
 
@@ -153,14 +158,14 @@ public abstract class ContrastVerifyTestTask extends DefaultTask {
     }
     try {
       applications = sdk.getApplications(orgUuid);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new GradleException("Unable to retrieve the applications.", e);
-    } catch (UnauthorizedException e) {
+    } catch (final UnauthorizedException e) {
       throw new GradleException("Unable to connect to TeamServer", e);
     }
 
     final String appName = config.getAppName().get();
-    for (Application application : applications.getApplications()) {
+    for (final Application application : applications.getApplications()) {
       if (Objects.equals(appName, application.getName())) {
         return application.getId();
       }
@@ -169,9 +174,9 @@ public abstract class ContrastVerifyTestTask extends DefaultTask {
     throw new GradleException("Application with name '" + appName + "' not found.");
   }
 
-  private TraceFilterBody getTraceFilterBody(
+  public static TraceFilterBody getTraceFilterBody(
       final List<String> serverIds, final String minSeverity, final String computedAppVersion) {
-    TraceFilterBody body = new TraceFilterBody();
+    final TraceFilterBody body = new TraceFilterBody();
     body.setSeverities(getSeverityList(minSeverity));
     body.setAppVersionTags(Collections.singletonList(computedAppVersion));
     if (serverIds != null) {

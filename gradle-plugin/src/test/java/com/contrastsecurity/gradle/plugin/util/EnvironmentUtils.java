@@ -1,4 +1,4 @@
-package com.contrastsecurity.gradle.plugin;
+package com.contrastsecurity.gradle.plugin.util;
 
 /** Utility class for retrieving Contrast API credentials for testing from Environment vars */
 public class EnvironmentUtils {

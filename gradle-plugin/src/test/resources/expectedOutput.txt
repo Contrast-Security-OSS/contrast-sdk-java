@@ -1,0 +1,25 @@
+Trace: 'SHA' hash algorithm used at ExceptionPlaceholder.java
+Trace Uuid: LSXQ-V0NC-VFB3-FY9D
+Trace Severity: Medium
+Trace Likelihood: Medium
+
+Trace: Unchecked Spring Autobinding in org.springframework.samples.petclinic.owner.Pet class
+Trace Uuid: BWU6-DL8W-VKGR-C84B
+Trace Severity: Medium
+Trace Likelihood: Low
+
+Trace: Insecure Authentication Protocol
+Trace Uuid: 2GQM-8U67-V7IZ-DUXK
+Trace Severity: Medium
+Trace Likelihood: Medium
+
+Trace: 'SHA' hash algorithm used at SessionIdGeneratorBase.java
+Trace Uuid: RSEZ-LQX1-MH4A-SX6Q
+Trace Severity: Medium
+Trace Likelihood: Medium
+
+Trace: Application Disables 'secure' Flag on Cookies observed at Response.java (JSESSIONID)
+Trace Uuid: 6GDQ-DJFZ-4P4W-NL69
+Trace Severity: Medium
+Trace Likelihood: High
+

@@ -16,6 +16,7 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.file.Directory;
+import org.gradle.api.logging.Logger;
 import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.TaskProvider;
@@ -28,6 +29,8 @@ import org.gradle.api.tasks.testing.Test;
 public class ContrastGradlePlugin implements Plugin<Project> {
 
   public void apply(final Project target) {
+
+    final Logger logger = target.getLogger();
 
     // Target path for the agent jar once it is resolved
     final Provider<Directory> buildDirectory =
@@ -86,8 +89,15 @@ public class ContrastGradlePlugin implements Plugin<Project> {
                     // attach agent args
                     testTask.jvmArgs(contrastArgs);
 
+                    // Debug log for jvm arg testing
+                    logger.debug(
+                        "JVM args applied for task "
+                            + testTask.getName()
+                            + ": "
+                            + testTask.getJvmArgs());
+
                     // generate ContrastVerifyTestTask for each test
-                    TaskProvider<ContrastVerifyTestTask> verifyTask =
+                    final TaskProvider<ContrastVerifyTestTask> verifyTask =
                         target
                             .getTasks()
                             .register(

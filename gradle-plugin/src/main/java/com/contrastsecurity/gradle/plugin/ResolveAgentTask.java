@@ -79,7 +79,7 @@ public abstract class ResolveAgentTask extends DefaultTask {
 
       logger.debug("Agent successfully retrieved from TeamServer");
 
-    } catch (RuntimeException | IOException e) {
+    } catch (final RuntimeException | IOException e) {
       throw new GradleException("Failed to download java agent from the Contrast api: " + e);
     }
   }
