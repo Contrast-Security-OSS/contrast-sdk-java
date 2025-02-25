@@ -3,47 +3,23 @@ package com.contrastsecurity.gradle.plugin.e2e;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.contrastsecurity.gradle.plugin.EnvironmentUtils;
-import java.io.File;
-import java.io.FileWriter;
+import com.contrastsecurity.gradle.plugin.GradleRunnerTest;
+import com.contrastsecurity.gradle.plugin.util.ConfigurationExtensionValues;
+import com.contrastsecurity.gradle.plugin.util.EnvironmentUtils;
 import java.io.IOException;
-import java.io.Writer;
+import java.nio.file.Files;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.testkit.runner.TaskOutcome;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
 /** End-To-End tests for the gradle plugin for interacting with TeamServer */
-public class EndToEndTests {
-
-  @TempDir public File projectDir;
-
-  public File getBuildFile() {
-    return new File(projectDir, "build.gradle");
-  }
-
-  public File getSettingsFile() {
-    return new File(projectDir, "settings.gradle");
-  }
-
-  public void writeString(File file, String string) throws IOException {
-    try (Writer writer = new FileWriter(file)) {
-      writer.write(string);
-    }
-  }
-
-  public String writeConfig() {
-    final String testConfig = "plugins {  id('com.contrastsecurity.java') }\n";
-
-    return testConfig;
-  }
+public class EndToEndTests extends GradleRunnerTest {
 
   @Test
   void verify_plugin_retrieves_agent_from_TS() throws IOException {
-    writeString(getSettingsFile(), "");
-    String config = writeContrastBuildFile();
-    writeString(getBuildFile(), config);
+    Files.writeString(getSettingsFile().toPath(), "");
+    Files.writeString(getBuildFile().toPath(), config.buildContrastBuildFile());
 
     final GradleRunner testRunner = GradleRunner.create();
     testRunner.forwardOutput();
@@ -63,38 +39,16 @@ public class EndToEndTests {
     assertTrue(result.getOutput().contains("Agent successfully retrieved from TeamServer"));
   }
 
-  private static String writeContrastBuildFile() {
-    return "plugins {  id('com.contrastsecurity.java') }\n"
-        + "contrastConfiguration {\n"
-        + "  username = "
-        + "'"
-        + EnvironmentUtils.getUsername()
-        + "'"
-        + "\n"
-        + "  apiKey = "
-        + "'"
-        + EnvironmentUtils.getApiKey()
-        + "'"
-        + "\n"
-        + "  serviceKey = "
-        + "'"
-        + EnvironmentUtils.getServiceKey()
-        + "'"
-        + "\n"
-        + "  apiUrl = "
-        + "'"
-        + EnvironmentUtils.getApiUrl()
-        + "'"
-        + "\n"
-        + "  orgUuid = "
-        + "'"
-        + EnvironmentUtils.getOrgUuid()
-        + "'"
-        + "\n"
-        + "  appName = 'gradle-end-to-end-test'\n"
-        + "  serverName = 'server1'\n"
-        + "  appVersion = '0.0.1'\n"
-        + "  attachToTests = true\n"
-        + "}\n";
-  }
+  private static final ConfigurationExtensionValues config =
+      new ConfigurationExtensionValues.Builder()
+          .setUsername(EnvironmentUtils.getUsername())
+          .setApiUrl(EnvironmentUtils.getApiUrl())
+          .setApiKey(EnvironmentUtils.getApiKey())
+          .setServiceKey(EnvironmentUtils.getServiceKey())
+          .setOrgUuid(EnvironmentUtils.getOrgUuid())
+          .setAppVersion("0.0.1")
+          .setAppName("gradle-end-to-end-test")
+          .setServerName("server1")
+          .setMinSeverity("Medium")
+          .build();
 }

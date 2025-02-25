@@ -1,0 +1,414 @@
+{
+  "success": true,
+  "messages": [
+    "Applications loaded successfully"
+  ],
+  "applications": [
+    {
+      "name": " testAppName",
+      "path": "/",
+      "language": "Java",
+      "created": 1739980080000,
+      "status": "offline",
+      "importance": 2,
+      "archived": false,
+      "assess": true,
+      "assessPending": false,
+      "primary": false,
+      "master": false,
+      "notes": "",
+      "defend": false,
+      "roles": [
+        "ROLE_EDIT",
+        "ROLE_RULES_ADMIN",
+        "ROLE_ADMIN",
+        "ROLE_ORG_AUDITOR",
+        "ROLE_VIEW"
+      ],
+      "tags": [],
+      "techs": [],
+      "policies": [],
+      "missingRequiredFields": null,
+      "protect": null,
+      "links": [
+        {
+          "rel": "self",
+          "href": "/ng/orgId/applications/appId",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "scores",
+          "href": "/ng/orgId/applications/appId/scores",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "platform-score",
+          "href": "/ng/orgId/applications/appId/scores/platform",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "security-score",
+          "href": "/ng/orgId/applications/appId/scores/security",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "trace-breakdown",
+          "href": "/ng/orgId/applications/appId/breakdown/trace",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "rule-type-breakdown",
+          "href": "/ng/orgId/applications/appId/breakdown/rule",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "rule-category-breakdown",
+          "href": "/ng/orgId/applications/appId/breakdown/category",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "rule-severity-breakdown",
+          "href": "/ng/orgId/applications/appId/breakdown/severity",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "trace-status-breakdown",
+          "href": "/ng/orgId/applications/appId/breakdown/status",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "servers",
+          "href": "/ng/orgId/applications/appId/servers",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "restore",
+          "href": "/ng/orgId/applications/appId/restore",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "POST"
+        },
+        {
+          "rel": "archive",
+          "href": "/ng/orgId/applications/appId/archive",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "POST"
+        },
+        {
+          "rel": "reset",
+          "href": "/ng/orgId/applications/appId/reset",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "POST"
+        },
+        {
+          "rel": "delete",
+          "href": "/ng/orgId/applications/appId",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "DELETE"
+        },
+        {
+          "rel": "license",
+          "href": "/ng/orgId/applications/appId/license",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "techs",
+          "href": "/ng/orgId/applications/appId/techs",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        }
+      ],
+      "app_id": "appId",
+      "last_seen": 1739980200000,
+      "last_reset": null,
+      "size_shorthand": "0k",
+      "size": 0,
+      "code_shorthand": "0k",
+      "code": 0,
+      "override_url": null,
+      "short_name": null,
+      "importance_description": "MEDIUM",
+      "total_modules": 1,
+      "servers_without_defend": true,
+      "first_seen": 1739899339043,
+      "onboarded_time": 1739899339043
+    },
+    {
+      "name": "app2",
+      "path": "/",
+      "language": "Java",
+      "created": 1739980080000,
+      "status": "offline",
+      "importance": 2,
+      "archived": false,
+      "assess": true,
+      "assessPending": false,
+      "primary": false,
+      "master": false,
+      "notes": "",
+      "defend": false,
+      "roles": [
+        "ROLE_EDIT",
+        "ROLE_RULES_ADMIN",
+        "ROLE_ADMIN",
+        "ROLE_ORG_AUDITOR",
+        "ROLE_VIEW"
+      ],
+      "tags": [],
+      "techs": [],
+      "policies": [],
+      "missingRequiredFields": null,
+      "protect": null,
+      "links": [
+        {
+          "rel": "self",
+          "href": "/ng/orgId/applications/app2Id",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "scores",
+          "href": "/ng/orgId/applications/appId/scores",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "platform-score",
+          "href": "/ng/orgId/applications/app2Id/scores/platform",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "security-score",
+          "href": "/ng/orgId/applications/app2Id/scores/security",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "trace-breakdown",
+          "href": "/ng/orgId/applications/app2Id/breakdown/trace",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "rule-type-breakdown",
+          "href": "/ng/orgId/applications/app2Id/breakdown/rule",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "rule-category-breakdown",
+          "href": "/ng/orgId/applications/app2Id/breakdown/category",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "rule-severity-breakdown",
+          "href": "/ng/orgId/applications/app2Id/breakdown/severity",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "trace-status-breakdown",
+          "href": "/ng/orgId/applications/app2Id/breakdown/status",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "servers",
+          "href": "/ng/orgId/applications/app2Id/servers",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "restore",
+          "href": "/ng/orgId/applications/app2Id/restore",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "POST"
+        },
+        {
+          "rel": "archive",
+          "href": "/ng/orgId/applications/app2Id/archive",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "POST"
+        },
+        {
+          "rel": "reset",
+          "href": "/ng/orgId/applications/app2Id/reset",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "POST"
+        },
+        {
+          "rel": "delete",
+          "href": "/ng/orgId/applications/app2Id",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "DELETE"
+        },
+        {
+          "rel": "license",
+          "href": "/ng/orgId/applications/app2Id/license",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        },
+        {
+          "rel": "techs",
+          "href": "/ng/orgId/applications/app2Id/techs",
+          "hreflang": null,
+          "media": null,
+          "title": null,
+          "type": null,
+          "deprecation": null,
+          "method": "GET"
+        }
+      ],
+      "app_id": "app2Id",
+      "last_seen": 1739980200000,
+      "last_reset": null,
+      "size_shorthand": "0k",
+      "size": 0,
+      "code_shorthand": "0k",
+      "code": 0,
+      "override_url": null,
+      "short_name": null,
+      "importance_description": "MEDIUM",
+      "total_modules": 1,
+      "servers_without_defend": true,
+      "first_seen": 1739899339043,
+      "onboarded_time": 1739899339043
+    }
+  ]
+}
