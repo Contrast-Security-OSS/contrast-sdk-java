@@ -15,8 +15,9 @@ Use `./gradlew build` to build the plugin
 
 
 ## Tasks
-The `installAgent` task takes in your configuration as defined by the `contrastConfiguration` block and attaches the java agent to all Test tasks for your project.
-If no Agent is provided, the plugin will attempt to download the current Java Agent available on TeamServer, at the endpoint provided in the configuration.
+The plugin has configures two publicly available tasks.
+1. `resolveAgent` -> Uses credentials defined in the `contrastConfiguration` block and downloads an agent via the ContrastSDK. If an agent jar was provided in the `jarPath` field, the task will verify the agent has been located at the given path.
+2. `contrastCheck` -> Runs all configured `Test` tasks with the agent installed, and fails the build if any vulnerabilities are found for the application on TeamServer.
 
 
 ## Configuration 
@@ -43,20 +44,15 @@ TODO: If no version is provided, the plugin will generate one based on the curre
 
 Attaching the Java agent with this plugin relies on your API credentials being set in the following env variables:
 
-### Running with your tests
-The plugin will add jvm arguments for your run tests, but only if `installAgent` is run as a dependency for the test task.
-To have your tests run with the agent add the following configuration to your project's `build.gradle` file
-```shell
-tasks.named("test").configure {
-  dependsOn("installAgent")
-}
-```
-TODO auto attach to tests
 
 ## Developement
 ### Publishing to MavenLocal
-To publish this plugin to your mavenLocal apply the `maven-publish` plugin to this project's `build.gradle` file and run:
-In order to run the plugin's end-to-end tests, you must configure these variables in your environment
+Run `./gradlew publishToMavenLocal` to install the plugin in your Maven Local repository for testing. You can then apply the plugin to your test application as you would any other plugin 
+```code 
+plugins {
+    id 'com.contrastsecurity.java' version '<version>'`
+}
+```
 
 
 ### End to End testing
@@ -69,5 +65,5 @@ export CONTRAST__API__ORGANIZATION_ID=<your-organization-id>
 ```
 To enable end-to-end testing, these variables must be present and you must use the property `e2e`
 ```shell
-./gradkew test -Pe2e
+./gradlew test -Pe2e
 ```
