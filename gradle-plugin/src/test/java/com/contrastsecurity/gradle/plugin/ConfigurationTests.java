@@ -51,7 +51,7 @@ class ConfigurationTests {
   void contrastConfigurationExtensionDefaultTests(
       final ConfigurationExtensionValues extensionValues) {
     final Project project = ProjectBuilder.builder().build();
-    project.getPlugins().apply("com.contrastsecurity.java");
+    project.getPlugins().apply("com.contrastsecurity.contrastplugin");
 
     project
         .getExtensions()

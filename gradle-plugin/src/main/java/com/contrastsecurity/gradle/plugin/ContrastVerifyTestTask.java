@@ -116,7 +116,7 @@ public abstract class ContrastVerifyTestTask extends DefaultTask {
    * Retrieves the server id by server name
    *
    * @param applicationId application id to filter on
-   * @return List<Long> id of the servers
+   * @return List {@literal <String>} id of the servers
    */
   public List<String> getServerId(
       final String applicationId, final String orgUuid, final String serverName) {
