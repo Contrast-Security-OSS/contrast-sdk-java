@@ -1,0 +1,30 @@
+name: publish-gradle-plugin
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish to Gradle Plugin Portal
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab  # v3.5.2
+
+      - name: Setup Java
+        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629 # v2.4.2
+        with:
+          java-version: 11
+          distribution: temurin
+
+      - name: 🐘 Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      
+
+      - name: Gradle Release
+        env:
+            ORG_GRADLE_PROJECT_signingPassword: ${{ GPG_PASSPHRASE }}
+            ORG_GRADLE_PROJECT_signingKey: ${{ GPG_PRIVATE_KEY }}
+
+        run: |
+          cd gradle-plugin/ && ./gradlew sign publishPlugins -Pgradle.publish.key=$GRADLE_PUBLISH_KEY -Pgradle.publish.secret=$GRADLE_PUBLISH_SECRET
+

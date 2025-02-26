@@ -1,4 +1,4 @@
-name: publish
+name: publish-maven-plugin
 
 on:
   workflow_dispatch:
