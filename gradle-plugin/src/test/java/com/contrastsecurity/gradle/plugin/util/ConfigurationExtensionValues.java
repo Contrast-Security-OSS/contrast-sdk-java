@@ -149,7 +149,7 @@ public class ConfigurationExtensionValues {
   }
 
   public String buildContrastBuildFile() {
-    return "plugins {  id('com.contrastsecurity.java') \n id 'java' }\n"
+    return "plugins {  id('com.contrastsecurity.contrastplugin') \n id 'java' }\n"
         + "contrastConfiguration {\n"
         + "  username = "
         + "'"
