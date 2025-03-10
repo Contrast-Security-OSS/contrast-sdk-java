@@ -24,7 +24,10 @@ import com.contrastsecurity.exceptions.UnauthorizedException;
 import com.contrastsecurity.models.AgentType;
 import com.contrastsecurity.models.Applications;
 import com.contrastsecurity.sdk.ContrastSDK;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -42,6 +46,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Includes the Contrast Java agent in integration testing to provide Contrast Assess runtime
@@ -202,9 +209,31 @@ public final class ContrastInstallAgentMojo extends AbstractAssessMojo {
           project.getProperties().setProperty("run.jvmArguments", jvmArguments);
         }
 
-        break;
+//        break;
+      }
+
+      if(plugin.getArtifactId().contains("jacoco")){
+          final Xpp3Dom jacocoConfig = generateConfiguration();
+          final Xpp3Dom existingConfiguration = (Xpp3Dom) plugin.getConfiguration();
+          if(existingConfiguration == null){
+              plugin.setConfiguration(jacocoConfig);
+          }else {
+              if(!existingConfiguration.toString().contains("contrast")) {
+                  Xpp3Dom.mergeXpp3Dom(existingConfiguration, jacocoConfig, false);
+              }
+          }
+          plugin.getGoals();
       }
     }
+  }
+
+
+  private Xpp3Dom generateConfiguration() throws MojoFailureException {
+      try (final InputStream xml = new ByteArrayInputStream(EXCLUSION_CONFIG.getBytes())) {
+          return Xpp3DomBuilder.build(xml, null);
+      } catch (IOException | XmlPullParserException e) {
+          throw new MojoFailureException("Failed to exclude Contrast classes from Jacoco instrumentation: " + e);
+      }
   }
 
   private String getAppName(ContrastSDK contrastSDK, String applicationId)
@@ -405,4 +434,12 @@ public final class ContrastInstallAgentMojo extends AbstractAssessMojo {
   }
 
   private static final String AGENT_NAME = "contrast.jar";
+
+  private static final String EXCLUSION_CONFIG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+          "<configuration>\n" +
+          "  <excludes>\n" +
+         "     <exclude>com/contrastsecurity/**</exclude>\n" +
+          "  </excludes>\n" +
+          "</configuration>";
+
 }
