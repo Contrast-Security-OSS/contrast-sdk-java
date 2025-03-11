@@ -187,45 +187,67 @@ public final class ContrastInstallAgentMojo extends AbstractAssessMojo {
     } else {
       applicationName = getAppName();
     }
-    project
-        .getProperties()
-        .setProperty(
-            "argLine",
-            buildArgLine(project.getProperties().getProperty("argLine"), applicationName));
 
-    for (Plugin plugin : (List<Plugin>) project.getBuildPlugins()) {
-      if ("org.springframework.boot".equals(plugin.getGroupId())
+      for (Plugin plugin : (List<Plugin>) project.getBuildPlugins()) {
+          if(plugin.getArtifactId().contains("jacoco")){
+              writeJacocoExclusion(plugin);
+              continue;
+          }
+
+          if ("org.springframework.boot".equals(plugin.getGroupId())
           && "spring-boot-maven-plugin".equals(plugin.getArtifactId())) {
-        getLog().debug("Found the spring-boot-maven-plugin, with configuration:");
-        String configuration = plugin.getConfiguration().toString();
-        getLog().debug(configuration);
-        if (configuration.contains("${argLine}")) {
-          getLog().info("Skipping set of -Drun.jvmArguments as it references ${argLine}");
-        } else {
-          String jvmArguments =
+              getLog().debug("Found the spring-boot-maven-plugin, with configuration:");
+              String configuration = plugin.getConfiguration().toString();
+              getLog().debug(configuration);
+              if (configuration.contains("${argLine}")) {
+                  getLog().info("Skipping set of -Drun.jvmArguments as it references ${argLine}");
+              } else {
+                  String jvmArguments =
               buildArgLine(
                   project.getProperties().getProperty("run.jvmArguments"), applicationName);
-          getLog().info(String.format("Setting -Drun.jvmArguments=%s", jvmArguments));
-          project.getProperties().setProperty("run.jvmArguments", jvmArguments);
-        }
-
-//        break;
-      }
-
-      if(plugin.getArtifactId().contains("jacoco")){
-          final Xpp3Dom jacocoConfig = generateConfiguration();
-          final Xpp3Dom existingConfiguration = (Xpp3Dom) plugin.getConfiguration();
-          if(existingConfiguration == null){
-              plugin.setConfiguration(jacocoConfig);
-          }else {
-              if(!existingConfiguration.toString().contains("contrast")) {
-                  Xpp3Dom.mergeXpp3Dom(existingConfiguration, jacocoConfig, false);
+                  getLog().info(String.format("Setting -Drun.jvmArguments=%s", jvmArguments));
+                  project.getProperties().setProperty("run.jvmArguments", jvmArguments);
               }
           }
-          plugin.getGoals();
-      }
+
     }
+      project
+              .getProperties()
+              .setProperty(
+                      "argLine",
+                      buildArgLine(project.getProperties().getProperty("argLine"), applicationName));
   }
+
+    private void writeJacocoExclusion(final Plugin plugin) throws MojoFailureException {
+//        final Xpp3Dom jacocoConfig = generateConfiguration();
+//        final Xpp3Dom existingConfiguration = (Xpp3Dom) plugin.getConfiguration();
+//        Xpp3Dom mergedConfig;
+//        //if config is null, generate get contrast exclusion config
+//        if(existingConfiguration == null){
+//            mergedConfig = jacocoConfig;
+//            plugin.setConfiguration(jacocoConfig);
+//        }else {
+//            // if contrast is already excluded, skip all this
+//            if(existingConfiguration.toString().contains("contrast")) {
+//                return;
+//            }
+//            // if config is not excluded but config exists, merge in our config
+//            mergedConfig = Xpp3Dom.mergeXpp3Dom(existingConfiguration, jacocoConfig, false);
+//        }
+
+
+        final String argLine = project.getProperties().getProperty("argLine");
+        String newArgLine;
+        if(argLine.contains("excludes=")){
+            newArgLine = new StringBuilder(argLine).insert(argLine.indexOf("excludes=") + "excludes=".length(), "=com/contrastsecurity/**").toString();
+
+        }else {
+            newArgLine = new StringBuilder(argLine).insert(argLine.indexOf(".exec") + ".exec".length(), ",excludes=com/contrastsecurity/**").toString();
+        }
+
+        project.getProperties().setProperty("argLine", newArgLine);
+        System.out.println("NEW ARGLINE FOR JACOCO = " + project.getProperties().getProperty("argLine"));
+    }
 
 
   private Xpp3Dom generateConfiguration() throws MojoFailureException {
