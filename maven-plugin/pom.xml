@@ -6,7 +6,7 @@
 
   <groupId>com.contrastsecurity</groupId>
   <artifactId>contrast-maven-plugin</artifactId>
-  <version>2.13.3-SNAPSHOT</version>
+  <version>2.13.3</version>
   <packaging>maven-plugin</packaging>
 
   <name>Contrast Maven Plugin</name>
