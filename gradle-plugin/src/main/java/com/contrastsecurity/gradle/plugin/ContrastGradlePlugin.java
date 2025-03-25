@@ -106,6 +106,9 @@ public class ContrastGradlePlugin implements Plugin<Project> {
                                 sdk);
                     verifyTask.configure(
                         v -> {
+
+                          // ensure task outputs are never up to date so the task always runs
+                          v.getOutputs().upToDateWhen(task -> false);
                           v.dependsOn(testTask);
 
                           // set output file for found vulnerabilities
