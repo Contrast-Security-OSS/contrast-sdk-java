@@ -6,7 +6,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '1.3.1'
 }
 
-version = '3.0.0'
+version = '3.0.1'
 group = 'com.contrastsecurity.gradle.plugin'
 
 repositories {
