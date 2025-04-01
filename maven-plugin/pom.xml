@@ -47,16 +47,16 @@
     </repository>
     <site>
       <id>github</id>
-      <url>scm:git:https://github.com/Contrast-Security-OSS/contrast-maven-plugin.git</url>
+      <url>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git</url>
     </site>
   </distributionManagement>
 
   <scm>
-    <connection>scm:git:https://github.com/Contrast-Security-OSS/contrast-maven-plugin.git
+    <connection>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git
     </connection>
-    <url>scm:git:https://github.com/Contrast-Security-OSS/contrast-maven-plugin.git</url>
+    <url>scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git</url>
     <developerConnection>
-      scm:git:https://github.com/Contrast-Security-OSS/contrast-maven-plugin.git
+      scm:git:https://github.com/Contrast-Security-OSS/contrast-sdk-java.git
     </developerConnection>
     <tag>HEAD</tag>
   </scm>
