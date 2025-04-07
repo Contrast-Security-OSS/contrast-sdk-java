@@ -54,4 +54,4 @@ jobs:
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          cd maven-plugin/ && ./mvnw --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN
+          cd maven-plugin/ && ./mvnw --batch-mode release:prepare -DpushChanges=false release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN 
