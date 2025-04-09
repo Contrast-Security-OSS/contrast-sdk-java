@@ -4,6 +4,15 @@ on:
   workflow_dispatch:
 
 jobs:
+  check-branch:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Fail if on main branch
+        run: |
+          echo "Error: This workflow must be run on a release branch"
+          exit 1
+
   publish:
     permissions:
       contents: write
@@ -38,22 +47,39 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
+
+      # Manually import gpg key so we don't have to deal with environment variable ambiguity.
+      - name: Import GPG Key 
+        run: |
+          rm -rf $HOME/.gnupg/
+          echo "$CONTRAST_GPG_PRIVATE_KEY" | base64 --decode > private-key.asc
+          echo "$MAVEN_GPG_PASSPHRASE" | gpg2 --batch --passphrase-fd 0 --pinentry-mode loopback --import private-key.asc
+          rm -f private-key.asc
+        env:
+          CONTRAST_GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          
+
       - name: Maven Release (dry-run)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
           cd maven-plugin/ && ./mvnw -DdryRun=true --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN
+
 
       - name: Maven Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          cd maven-plugin/ && ./mvnw --batch-mode release:prepare -DpushChanges=false release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN 
+          cd maven-plugin/ && ./mvnw --settings release-settings.xml --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN
+
+      # Remove gpg keys so they're never reused between runs without being reimported
+      - name: Cleanup GPG Key
+        if: always()
+        run: |
+           rm -rf $HOME/.gnupg/
