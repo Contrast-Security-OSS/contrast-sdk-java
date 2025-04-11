@@ -2,7 +2,7 @@
 
 Maven plugin for including Contrast security analysis in Java web applications
 
-See [usage](https://contrastsecurity.dev/contrast-maven-plugin/usage.html) to get started
+See [usage](https://contrastsecurity.dev/contrast-sdk-java/maven-plugin/usage.html) to get started
 
 Available on [Maven Central](https://search.maven.org/search?q=a:contrast-maven-plugin)
 
