@@ -303,6 +303,7 @@
           <scmBranch>gh-pages</scmBranch>
           <username>${env.GITHUB_ACTOR}</username>
           <password>${env.GITHUB_TOKEN}</password>
+          <subDirectory>maven-plugin</subDirectory>
         </configuration>
         <executions>
           <execution>
