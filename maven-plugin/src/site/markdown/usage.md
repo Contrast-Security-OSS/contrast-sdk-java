@@ -12,10 +12,22 @@ environment variables:
       <groupId>com.contrastsecurity</groupId>
       <artifactId>contrast-maven-plugin</artifactId>
       <configuration>
+        <!-- Credentials for Contrast -->
         <username>${env.CONTRAST__API__USER_NAME}</username>
         <apiKey>${env.CONTRAST__API__API_KEY}</apiKey>
         <serviceKey>${env.CONTRAST__API__SERVICE_KEY}</serviceKey>
         <orgUuid>${env.CONTRAST__API__ORGANIZATION_ID}</orgUuid>
+        <apiUrl>https://app.contrastsecurity.com/Contrast/api</apiUrl>
+
+        <!-- One of the two properties (appName or appId) is required: 
+             either a defined application name - or the application ID found the UI -->
+        <appName>myApp</appName>
+        
+        <!-- Contrast/.../orgID/applications/appId -->
+        <!-- <appId>12345678-ab12-1234-a567-a12bcd3ef456</appId> -->
+
+        <!-- Optional but helpful for locating on the UI -->
+        <serverName>myServer</serverName>
       </configuration>
     </plugin>
   </plugins>
@@ -81,6 +93,12 @@ phase with this profile activated
 mvn verify -Passess
 ```
 
+To override properties for specific subprojects you may pass them to the verify task as `-D` arguments.
+
+Setting the required credential properties in the parent .pom and overriding appName and other properties in subprojects can be especially useful when you have a multi-module Maven project.
+```shell
+mvn verify -Passess -pl subproject -DappName=myApp -DserverName=myServer
+```
 
 ### Contrast Scan
 
@@ -117,4 +135,11 @@ To run the scan, execute Maven with the scan profile activated
 
 ```shell
 mvn verify -Pscan
+```
+
+To override properties for specific subprojects you may pass them to the verify task as `-D` arguments.
+
+Setting the required credential properties in the parent .pom and overriding appName and other properties in subprojects can be especially useful when you have a multi-module Maven project.
+```shell
+mvn verify -Pscan -pl subproject -DappName=myApp -DserverName=myServer
 ```
