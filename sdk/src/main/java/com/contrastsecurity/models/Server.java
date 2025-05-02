@@ -280,6 +280,17 @@ public class Server {
   private String logLevel;
 
   /**
+   * Return the server tags
+   *
+   * @return tags
+   */
+  public List<String> getTags() {
+    return tags;
+  }
+
+  private List<String> tags;
+
+  /**
    * Return the path to the servers log
    *
    * @return path to the log
