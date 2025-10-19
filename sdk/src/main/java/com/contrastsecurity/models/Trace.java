@@ -314,6 +314,29 @@ public class Trace {
 
   private Card card;
 
+  /**
+   * Return the server environments for this trace
+   *
+   * @return list of server environment names
+   */
+  public List<String> getServerEnvironments() {
+    return serverEnvironments;
+  }
+
+  @SerializedName("server_environments")
+  private List<String> serverEnvironments;
+
+  /**
+   * Return the tags for this trace
+   *
+   * @return list of tags
+   */
+  public List<String> getTags() {
+    return tags;
+  }
+
+  private List<String> tags;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

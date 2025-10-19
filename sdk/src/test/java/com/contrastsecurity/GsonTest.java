@@ -311,4 +311,27 @@ final class GsonTest {
 
     assertThat(traces.getCount() > 0).isTrue();
   }
+
+  @Test
+  public void testGetTracesWithServerEnvironmentsAndTags() {
+
+    String tracesString =
+        "{\"count\":1,\"traces\":[{\"title\":\"Test Vulnerability\",\"language\":\"Java\",\"status\":\"Reported\",\"uuid\":\"TEST-1234-5678-ABCD\",\"rule_name\":\"test-rule\",\"severity\":\"High\",\"likelihood\":\"Medium\",\"impact\":\"High\",\"confidence\":\"High\",\"first_time_seen\":1461600923859,\"last_time_seen\":1461601039100,\"category\":\"Injection\",\"platform\":\"Oracle Corporation\",\"total_traces_received\":3,\"visible\":true,\"server_environments\":[\"DEVELOPMENT\",\"QA\"],\"tags\":[\"SmartFix Remediated\",\"Custom Tag\",\"test-tag\"]}]}";
+
+    Traces traces = gson.fromJson(tracesString, Traces.class);
+
+    assertThat(traces).isNotNull();
+    assertThat(traces.getTraces()).isNotNull();
+    assertThat(traces.getCount()).isEqualTo(1);
+
+    assertThat(traces.getTraces().get(0).getServerEnvironments()).isNotNull();
+    assertThat(traces.getTraces().get(0).getServerEnvironments()).hasSize(2);
+    assertThat(traces.getTraces().get(0).getServerEnvironments())
+        .containsExactly("DEVELOPMENT", "QA");
+
+    assertThat(traces.getTraces().get(0).getTags()).isNotNull();
+    assertThat(traces.getTraces().get(0).getTags()).hasSize(3);
+    assertThat(traces.getTraces().get(0).getTags())
+        .containsExactly("SmartFix Remediated", "Custom Tag", "test-tag");
+  }
 }
