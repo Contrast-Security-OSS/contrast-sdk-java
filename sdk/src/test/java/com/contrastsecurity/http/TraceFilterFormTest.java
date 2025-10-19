@@ -56,4 +56,27 @@ public class TraceFilterFormTest {
 
     assertThat(actual).isEqualTo(expected);
   }
+
+  @Test
+  public void toQuery_should_include_server_environments_expand_parameter()
+      throws UnsupportedEncodingException {
+    final String expected = "?expand=server_environments&tracked=true&untracked=false";
+    form.setExpand(EnumSet.of(TraceFilterForm.TraceExpandValue.SERVER_ENVIRONMENTS));
+    final String actual = form.toQuery();
+
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  public void toQuery_should_include_multiple_expand_parameters()
+      throws UnsupportedEncodingException {
+    final String expected = "?expand=servers,server_environments&tracked=true&untracked=false";
+    form.setExpand(
+        EnumSet.of(
+            TraceFilterForm.TraceExpandValue.SERVERS,
+            TraceFilterForm.TraceExpandValue.SERVER_ENVIRONMENTS));
+    final String actual = form.toQuery();
+
+    assertThat(actual).isEqualTo(expected);
+  }
 }
