@@ -2,6 +2,8 @@
 *.private.env.json
 *.idea
 *.iml
+CLAUDE.md
+.beads/
 
 # Maven
 
