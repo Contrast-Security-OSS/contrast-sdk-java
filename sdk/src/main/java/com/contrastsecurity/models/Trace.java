@@ -325,13 +325,12 @@ public class Trace {
    * @return list of server environment names (e.g., "DEVELOPMENT", "QA", "PRODUCTION"), or null if
    *     not expanded
    */
-  public List<String> getServerEnvironments() {
-    return serverEnvironments;
-  }
-
   @SerializedName("server_environments")
   private List<String> serverEnvironments;
 
+  public List<String> getServerEnvironments() {
+    return serverEnvironments;
+  }
   /**
    * Return the tags for this trace
    *
