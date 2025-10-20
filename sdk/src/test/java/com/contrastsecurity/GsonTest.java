@@ -40,6 +40,7 @@ import com.contrastsecurity.models.Story;
 import com.contrastsecurity.models.StoryResponse;
 import com.contrastsecurity.models.Tags;
 import com.contrastsecurity.models.TagsResponse;
+import com.contrastsecurity.models.Trace;
 import com.contrastsecurity.models.Traces;
 import com.contrastsecurity.models.VulnerabilityTrend;
 import com.contrastsecurity.utils.MetadataDeserializer;
@@ -324,7 +325,7 @@ final class GsonTest {
     assertThat(traces.getTraces()).isNotNull();
     assertThat(traces.getCount()).isEqualTo(1);
 
-    var trace = traces.getTraces().get(0);
+    Trace trace = traces.getTraces().get(0);
     assertThat(trace.getServerEnvironments()).isNotNull();
     assertThat(trace.getServerEnvironments()).hasSize(2);
     assertThat(trace.getServerEnvironments()).containsExactly("DEVELOPMENT", "QA");

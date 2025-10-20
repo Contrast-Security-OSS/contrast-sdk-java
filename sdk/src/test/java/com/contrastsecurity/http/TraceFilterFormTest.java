@@ -22,6 +22,7 @@ package com.contrastsecurity.http;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.EnumSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,6 +76,18 @@ public class TraceFilterFormTest {
         EnumSet.of(
             TraceFilterForm.TraceExpandValue.SERVERS,
             TraceFilterForm.TraceExpandValue.SERVER_ENVIRONMENTS));
+    final String actual = form.toQuery();
+
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  public void toQuery_should_url_encode_filterTags_with_special_characters()
+      throws UnsupportedEncodingException {
+    // Test case from AIML-193: tags with spaces like "SmartFix Remediated" should be encoded
+    final String expected =
+        "?filterTags=SmartFix+Remediated%2Ctest+tag&tracked=true&untracked=false";
+    form.setFilterTags(Arrays.asList("SmartFix Remediated", "test tag"));
     final String actual = form.toQuery();
 
     assertThat(actual).isEqualTo(expected);
