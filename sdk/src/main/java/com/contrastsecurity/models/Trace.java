@@ -314,6 +314,35 @@ public class Trace {
 
   private Card card;
 
+  /**
+   * Return the server environments for this trace. This provides lightweight access to server
+   * environment data without requiring the full servers expand.
+   *
+   * <p>Note: This field requires the expand parameter to be set. Use {@link
+   * com.contrastsecurity.http.TraceFilterForm.TraceExpandValue#SERVER_ENVIRONMENTS} when querying
+   * traces to populate this field.
+   *
+   * @return list of server environment names (e.g., "DEVELOPMENT", "QA", "PRODUCTION"), or null if
+   *     not expanded
+   */
+  @SerializedName("server_environments")
+  private List<String> serverEnvironments;
+
+  public List<String> getServerEnvironments() {
+    return serverEnvironments;
+  }
+  /**
+   * Return the tags for this trace
+   *
+   * @return list of tags
+   */
+  public List<String> getTags() {
+    return tags;
+  }
+
+  @SerializedName("tags")
+  private List<String> tags;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

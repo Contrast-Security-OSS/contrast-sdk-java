@@ -40,6 +40,7 @@ import com.contrastsecurity.models.Story;
 import com.contrastsecurity.models.StoryResponse;
 import com.contrastsecurity.models.Tags;
 import com.contrastsecurity.models.TagsResponse;
+import com.contrastsecurity.models.Trace;
 import com.contrastsecurity.models.Traces;
 import com.contrastsecurity.models.VulnerabilityTrend;
 import com.contrastsecurity.utils.MetadataDeserializer;
@@ -310,5 +311,27 @@ final class GsonTest {
     assertThat(traces.getTraces()).isNotNull();
 
     assertThat(traces.getCount() > 0).isTrue();
+  }
+
+  @Test
+  public void testGetTracesWithServerEnvironmentsAndTags() {
+
+    String tracesString =
+        "{\"count\":1,\"traces\":[{\"title\":\"Test Vulnerability\",\"language\":\"Java\",\"status\":\"Reported\",\"uuid\":\"TEST-1234-5678-ABCD\",\"rule_name\":\"test-rule\",\"severity\":\"High\",\"likelihood\":\"Medium\",\"impact\":\"High\",\"confidence\":\"High\",\"first_time_seen\":1461600923859,\"last_time_seen\":1461601039100,\"category\":\"Injection\",\"platform\":\"Oracle Corporation\",\"total_traces_received\":3,\"visible\":true,\"server_environments\":[\"DEVELOPMENT\",\"QA\"],\"tags\":[\"SmartFix Remediated\",\"Custom Tag\",\"test-tag\"]}]}";
+
+    Traces traces = gson.fromJson(tracesString, Traces.class);
+
+    assertThat(traces).isNotNull();
+    assertThat(traces.getTraces()).isNotNull();
+    assertThat(traces.getCount()).isEqualTo(1);
+
+    Trace trace = traces.getTraces().get(0);
+    assertThat(trace.getServerEnvironments()).isNotNull();
+    assertThat(trace.getServerEnvironments()).hasSize(2);
+    assertThat(trace.getServerEnvironments()).containsExactly("DEVELOPMENT", "QA");
+
+    assertThat(trace.getTags()).isNotNull();
+    assertThat(trace.getTags()).hasSize(3);
+    assertThat(trace.getTags()).containsExactly("SmartFix Remediated", "Custom Tag", "test-tag");
   }
 }
