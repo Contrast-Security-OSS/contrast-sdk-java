@@ -146,7 +146,7 @@ public class TraceFilterForm {
     }
 
     if (filterTags != null && !filterTags.isEmpty()) {
-      filters.add("filterTags=" + String.join(",", filterTags));
+      filters.add("filterTags=" + URLEncoder.encode(String.join(",", filterTags), "UTF-8"));
     }
 
     if (severities != null && !severities.isEmpty()) {
