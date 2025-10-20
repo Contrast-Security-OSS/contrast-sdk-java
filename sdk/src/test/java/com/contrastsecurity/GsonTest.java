@@ -324,14 +324,13 @@ final class GsonTest {
     assertThat(traces.getTraces()).isNotNull();
     assertThat(traces.getCount()).isEqualTo(1);
 
-    assertThat(traces.getTraces().get(0).getServerEnvironments()).isNotNull();
-    assertThat(traces.getTraces().get(0).getServerEnvironments()).hasSize(2);
-    assertThat(traces.getTraces().get(0).getServerEnvironments())
-        .containsExactly("DEVELOPMENT", "QA");
+    var trace = traces.getTraces().get(0);
+    assertThat(trace.getServerEnvironments()).isNotNull();
+    assertThat(trace.getServerEnvironments()).hasSize(2);
+    assertThat(trace.getServerEnvironments()).containsExactly("DEVELOPMENT", "QA");
 
-    assertThat(traces.getTraces().get(0).getTags()).isNotNull();
-    assertThat(traces.getTraces().get(0).getTags()).hasSize(3);
-    assertThat(traces.getTraces().get(0).getTags())
-        .containsExactly("SmartFix Remediated", "Custom Tag", "test-tag");
+    assertThat(trace.getTags()).isNotNull();
+    assertThat(trace.getTags()).hasSize(3);
+    assertThat(trace.getTags()).containsExactly("SmartFix Remediated", "Custom Tag", "test-tag");
   }
 }
