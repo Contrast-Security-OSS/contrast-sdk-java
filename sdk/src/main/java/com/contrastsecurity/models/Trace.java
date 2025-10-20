@@ -340,6 +340,7 @@ public class Trace {
     return tags;
   }
 
+  @SerializedName("tags")
   private List<String> tags;
 
   @Override
