@@ -4,7 +4,7 @@
 
   <groupId>com.contrastsecurity</groupId>
   <artifactId>contrast-sdk-java</artifactId>
-  <version>3.4.4-SNAPSHOT</version>
+  <version>3.4.4</version>
 
   <name>Contrast Java SDK</name>
   <description>Java SDK for using Contrast Security APIs</description>
