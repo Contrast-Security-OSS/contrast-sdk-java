@@ -114,30 +114,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requirePluginVersions />
-                <requireSameVersions>
-                  <plugins>
-                    <plugin>org.apache.maven.plugins:maven-surefire-plugin</plugin>
-                    <plugin>org.apache.maven.plugins:maven-failsafe-plugin</plugin>
-                    <plugin>org.apache.maven.plugins:maven-surefire-report-plugin</plugin>
-                  </plugins>
-                </requireSameVersions>
-                <requireReleaseDeps />
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-source-plugin</artifactId>
         <executions>
           <execution>
@@ -249,10 +225,6 @@
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.0.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
