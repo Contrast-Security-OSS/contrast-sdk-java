@@ -58,16 +58,6 @@ jobs:
         env:
           CONTRAST_GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          
-
-      - name: Maven Release (dry-run)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-        run: |
-          cd maven-plugin/ && ./mvnw -DdryRun=true --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN
-
 
       - name: Maven Release
         env:
@@ -76,7 +66,7 @@ jobs:
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          cd maven-plugin/ && ./mvnw --settings release-settings.xml --batch-mode release:prepare release:perform -Dusername=$GITHUB_ACTOR -Dpassword=$GITHUB_TOKEN
+          cd maven-plugin/ && ./mvnw --settings release-settings.xml deploy -Prelease
 
       # Remove gpg keys so they're never reused between runs without being reimported
       - name: Cleanup GPG Key

@@ -78,3 +78,10 @@ apply the formatting before committing changes using the Maven plugin:
 ```shell
 ./mvnw spotless:apply
 ```
+
+### Releasing
+Releases are done via Sonatype's Central Release Plugin to Maven Central.
+* Update the version in `pom.xml` to the desired release version.
+* Run the release action in github off of the main branch (or other branch in dropdown)
+* Log in to Sonatype to approve release.
+* Tag the release in git: eg `git tag -a contrast-sdk-java-1.2.3` and `git push --tags`

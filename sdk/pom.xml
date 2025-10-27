@@ -4,7 +4,7 @@
 
   <groupId>com.contrastsecurity</groupId>
   <artifactId>contrast-sdk-java</artifactId>
-  <version>3.4.4-SNAPSHOT</version>
+  <version>3.4.4</version>
 
   <name>Contrast Java SDK</name>
   <description>Java SDK for using Contrast Security APIs</description>
@@ -32,12 +32,8 @@
   </licenses>
 
   <distributionManagement>
-    <snapshotRepository>
-      <id>ossrh</id>
-      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-    </snapshotRepository>
     <repository>
-      <id>ossrh</id>
+      <id>central</id>
       <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
     </repository>
   </distributionManagement>
@@ -117,30 +113,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requirePluginVersions />
-                <requireSameVersions>
-                  <plugins>
-                    <plugin>org.apache.maven.plugins:maven-surefire-plugin</plugin>
-                    <plugin>org.apache.maven.plugins:maven-failsafe-plugin</plugin>
-                    <plugin>org.apache.maven.plugins:maven-surefire-report-plugin</plugin>
-                  </plugins>
-                </requireSameVersions>
-                <requireReleaseDeps />
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
         <executions>
@@ -236,24 +208,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
       <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <releaseProfiles>release</releaseProfiles>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>deploy</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>deploy</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>templating-maven-plugin</artifactId>
         <executions>
@@ -271,10 +225,6 @@
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.1.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.0.0</version>
         </plugin>
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
@@ -313,16 +263,8 @@
           <version>3.2.7</version>
         </plugin>
         <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
-        </plugin>
-        <plugin>
           <artifactId>maven-scm-plugin</artifactId>
           <version>1.11.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>3.1.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
@@ -369,11 +311,6 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>templating-maven-plugin</artifactId>
           <version>1.0.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.8</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -459,13 +396,12 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.sonatype.plugins</groupId>
-            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <groupId>org.sonatype.central</groupId>
+            <artifactId>central-publishing-maven-plugin</artifactId>
+            <version>0.9.0</version>
             <extensions>true</extensions>
             <configuration>
-              <serverId>ossrh</serverId>
-              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+              <publishingServerId>central</publishingServerId>
             </configuration>
           </plugin>
           <plugin>
