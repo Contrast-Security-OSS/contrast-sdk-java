@@ -67,7 +67,7 @@ jobs:
           OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         run: |
-          cd sdk/ && ./mvnw --settings release-settings.xml deploy
+          cd sdk/ && ./mvnw --settings release-settings.xml deploy -Prelease
 
       # Remove gpg keys so they're never reused between runs without being reimported
       - name: Cleanup GPG Key
