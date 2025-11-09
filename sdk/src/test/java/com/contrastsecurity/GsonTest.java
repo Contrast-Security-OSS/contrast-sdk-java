@@ -334,4 +334,38 @@ final class GsonTest {
     assertThat(trace.getTags()).hasSize(3);
     assertThat(trace.getTags()).containsExactly("SmartFix Remediated", "Custom Tag", "test-tag");
   }
+
+  @Test
+  public void testGetTracesWithSessionMetadata() {
+
+    String tracesString =
+        "{\"count\":1,\"traces\":[{\"title\":\"Test Vulnerability\",\"language\":\"Java\",\"status\":\"Reported\",\"uuid\":\"TEST-1234-5678-ABCD\",\"rule_name\":\"test-rule\",\"severity\":\"High\",\"likelihood\":\"Medium\",\"impact\":\"High\",\"confidence\":\"High\",\"first_time_seen\":1461600923859,\"last_time_seen\":1461601039100,\"category\":\"Injection\",\"platform\":\"Oracle Corporation\",\"total_traces_received\":3,\"visible\":true,\"session_metadata\":[{\"session_id\":\"session-123\",\"metadata\":[{\"value\":\"prod\",\"display_label\":\"Environment\",\"agent_label\":\"env\"},{\"value\":\"user123\",\"display_label\":\"User ID\",\"agent_label\":\"user_id\"}]}]}]}";
+
+    Traces traces = gson.fromJson(tracesString, Traces.class);
+
+    assertThat(traces).isNotNull();
+    assertThat(traces.getTraces()).isNotNull();
+    assertThat(traces.getCount()).isEqualTo(1);
+
+    Trace trace = traces.getTraces().get(0);
+    assertThat(trace.getSessionMetadata()).isNotNull();
+    assertThat(trace.getSessionMetadata()).hasSize(1);
+
+    assertThat(trace.getSessionMetadata().get(0).getSessionId()).isEqualTo("session-123");
+    assertThat(trace.getSessionMetadata().get(0).getMetadata()).isNotNull();
+    assertThat(trace.getSessionMetadata().get(0).getMetadata()).hasSize(2);
+
+    assertThat(trace.getSessionMetadata().get(0).getMetadata().get(0).getValue()).isEqualTo("prod");
+    assertThat(trace.getSessionMetadata().get(0).getMetadata().get(0).getDisplayLabel())
+        .isEqualTo("Environment");
+    assertThat(trace.getSessionMetadata().get(0).getMetadata().get(0).getAgentLabel())
+        .isEqualTo("env");
+
+    assertThat(trace.getSessionMetadata().get(0).getMetadata().get(1).getValue())
+        .isEqualTo("user123");
+    assertThat(trace.getSessionMetadata().get(0).getMetadata().get(1).getDisplayLabel())
+        .isEqualTo("User ID");
+    assertThat(trace.getSessionMetadata().get(0).getMetadata().get(1).getAgentLabel())
+        .isEqualTo("user_id");
+  }
 }

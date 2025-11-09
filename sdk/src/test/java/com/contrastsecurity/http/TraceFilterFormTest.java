@@ -82,6 +82,29 @@ public class TraceFilterFormTest {
   }
 
   @Test
+  public void toQuery_should_include_session_metadata_expand_parameter()
+      throws UnsupportedEncodingException {
+    final String expected = "?expand=session_metadata&tracked=true&untracked=false";
+    form.setExpand(EnumSet.of(TraceFilterForm.TraceExpandValue.SESSION_METADATA));
+    final String actual = form.toQuery();
+
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  public void toQuery_should_include_multiple_expand_parameters_with_session_metadata()
+      throws UnsupportedEncodingException {
+    final String expected = "?expand=servers,session_metadata&tracked=true&untracked=false";
+    form.setExpand(
+        EnumSet.of(
+            TraceFilterForm.TraceExpandValue.SERVERS,
+            TraceFilterForm.TraceExpandValue.SESSION_METADATA));
+    final String actual = form.toQuery();
+
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
   public void toQuery_should_url_encode_filterTags_with_special_characters()
       throws UnsupportedEncodingException {
     // Test case from AIML-193: tags with spaces like "SmartFix Remediated" should be encoded

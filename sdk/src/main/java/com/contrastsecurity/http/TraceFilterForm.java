@@ -65,7 +65,8 @@ public class TraceFilterForm {
     REQUEST,
     APPLICATION,
     SERVERS,
-    SERVER_ENVIRONMENTS;
+    SERVER_ENVIRONMENTS,
+    SESSION_METADATA;
 
     public String toURIString() {
       return name().toLowerCase();
