@@ -47,4 +47,5 @@ public class TraceFilterBody {
   private boolean untracked;
   private List<String> urls;
   private List<String> vulnTypes;
+  private String agentSessionId;
 }
