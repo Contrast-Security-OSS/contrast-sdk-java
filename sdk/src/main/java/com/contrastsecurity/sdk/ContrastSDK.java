@@ -800,10 +800,31 @@ public class ContrastSDK {
    */
   public Traces getTraces(String organizationId, String appId, TraceFilterBody filters)
       throws IOException, UnauthorizedException {
+    return getTraces(organizationId, appId, filters, null);
+  }
+
+  /**
+   * Get the vulnerabilities in the application that match specific metadata filters with expanded
+   * fields.
+   *
+   * @param organizationId the ID of the organization
+   * @param appId the ID of the application
+   * @param filters TraceMetadataFilters filters to query on
+   * @param expand the fields to expand (e.g., SESSION_METADATA, SERVER_ENVIRONMENTS)
+   * @return Traces object that contains the list of Trace's
+   * @throws UnauthorizedException if the Contrast account failed to authorize
+   * @throws IOException if there was a communication problem
+   */
+  public Traces getTraces(
+      String organizationId,
+      String appId,
+      TraceFilterBody filters,
+      EnumSet<TraceFilterForm.TraceExpandValue> expand)
+      throws IOException, UnauthorizedException {
     try (InputStream is =
             makeRequestWithBody(
                 HttpMethod.POST,
-                urlBuilder.getTracesWithBodyUrl(organizationId, appId),
+                urlBuilder.getTracesWithBodyUrl(organizationId, appId, expand),
                 this.gson.toJson(filters),
                 MediaType.JSON);
         Reader reader = new InputStreamReader(is)) {
