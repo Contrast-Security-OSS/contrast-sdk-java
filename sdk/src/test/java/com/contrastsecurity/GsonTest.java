@@ -36,6 +36,7 @@ import com.contrastsecurity.models.RecommendationResponse;
 import com.contrastsecurity.models.Rules;
 import com.contrastsecurity.models.SecurityCheck;
 import com.contrastsecurity.models.Servers;
+import com.contrastsecurity.models.SessionMetadata;
 import com.contrastsecurity.models.Story;
 import com.contrastsecurity.models.StoryResponse;
 import com.contrastsecurity.models.Tags;
@@ -333,5 +334,35 @@ final class GsonTest {
     assertThat(trace.getTags()).isNotNull();
     assertThat(trace.getTags()).hasSize(3);
     assertThat(trace.getTags()).containsExactly("SmartFix Remediated", "Custom Tag", "test-tag");
+  }
+
+  @Test
+  public void testGetTracesWithSessionMetadata() {
+
+    String tracesString =
+        "{\"count\":1,\"traces\":[{\"title\":\"Test Vulnerability\",\"language\":\"Java\",\"status\":\"Reported\",\"uuid\":\"TEST-1234-5678-ABCD\",\"rule_name\":\"test-rule\",\"severity\":\"High\",\"likelihood\":\"Medium\",\"impact\":\"High\",\"confidence\":\"High\",\"first_time_seen\":1461600923859,\"last_time_seen\":1461601039100,\"category\":\"Injection\",\"platform\":\"Oracle Corporation\",\"total_traces_received\":3,\"visible\":true,\"session_metadata\":[{\"session_id\":\"session-123\",\"metadata\":[{\"value\":\"prod\",\"display_label\":\"Environment\",\"agent_label\":\"env\"},{\"value\":\"user123\",\"display_label\":\"User ID\",\"agent_label\":\"user_id\"}]}]}]}";
+
+    Traces traces = gson.fromJson(tracesString, Traces.class);
+
+    assertThat(traces).isNotNull();
+    assertThat(traces.getTraces()).isNotNull();
+    assertThat(traces.getCount()).isEqualTo(1);
+
+    Trace trace = traces.getTraces().get(0);
+    assertThat(trace.getSessionMetadata()).isNotNull();
+    assertThat(trace.getSessionMetadata()).hasSize(1);
+
+    SessionMetadata sessionMetadata = trace.getSessionMetadata().get(0);
+    assertThat(sessionMetadata.getSessionId()).isEqualTo("session-123");
+    assertThat(sessionMetadata.getMetadata()).isNotNull();
+    assertThat(sessionMetadata.getMetadata()).hasSize(2);
+
+    assertThat(sessionMetadata.getMetadata().get(0).getValue()).isEqualTo("prod");
+    assertThat(sessionMetadata.getMetadata().get(0).getDisplayLabel()).isEqualTo("Environment");
+    assertThat(sessionMetadata.getMetadata().get(0).getAgentLabel()).isEqualTo("env");
+
+    assertThat(sessionMetadata.getMetadata().get(1).getValue()).isEqualTo("user123");
+    assertThat(sessionMetadata.getMetadata().get(1).getDisplayLabel()).isEqualTo("User ID");
+    assertThat(sessionMetadata.getMetadata().get(1).getAgentLabel()).isEqualTo("user_id");
   }
 }

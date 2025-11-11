@@ -343,6 +343,24 @@ public class Trace {
   @SerializedName("tags")
   private List<String> tags;
 
+  /**
+   * Return the session metadata for this trace. Session metadata contains custom key-value pairs
+   * collected by the Contrast agent during the session when this vulnerability was detected.
+   *
+   * <p>Note: This field requires the expand parameter to be set. Use {@link
+   * com.contrastsecurity.http.TraceFilterForm.TraceExpandValue#SESSION_METADATA} when querying
+   * traces to populate this field.
+   *
+   * @return list of session metadata objects containing session IDs and metadata items, or null if
+   *     not expanded
+   */
+  public List<SessionMetadata> getSessionMetadata() {
+    return sessionMetadata;
+  }
+
+  @SerializedName("session_metadata")
+  private List<SessionMetadata> sessionMetadata;
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

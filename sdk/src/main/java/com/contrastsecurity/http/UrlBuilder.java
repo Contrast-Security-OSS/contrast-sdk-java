@@ -207,6 +207,12 @@ public class UrlBuilder {
     return String.format("/ng/%s/traces/%s/filter", organizationId, appId);
   }
 
+  public String getTracesWithBodyUrl(
+      String organizationId, String appId, EnumSet<TraceFilterForm.TraceExpandValue> expandValues) {
+    return String.format(
+        "/ng/%s/traces/%s/filter%s", organizationId, appId, buildExpand(expandValues));
+  }
+
   public String getSessionMetadataForApplicationUrl(
       String organizationId, String appId, TraceFilterForm form)
       throws UnsupportedEncodingException {
