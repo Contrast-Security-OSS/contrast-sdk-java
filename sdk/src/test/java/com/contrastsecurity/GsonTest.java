@@ -36,6 +36,7 @@ import com.contrastsecurity.models.RecommendationResponse;
 import com.contrastsecurity.models.Rules;
 import com.contrastsecurity.models.SecurityCheck;
 import com.contrastsecurity.models.Servers;
+import com.contrastsecurity.models.SessionMetadata;
 import com.contrastsecurity.models.Story;
 import com.contrastsecurity.models.StoryResponse;
 import com.contrastsecurity.models.Tags;
@@ -351,21 +352,17 @@ final class GsonTest {
     assertThat(trace.getSessionMetadata()).isNotNull();
     assertThat(trace.getSessionMetadata()).hasSize(1);
 
-    assertThat(trace.getSessionMetadata().get(0).getSessionId()).isEqualTo("session-123");
-    assertThat(trace.getSessionMetadata().get(0).getMetadata()).isNotNull();
-    assertThat(trace.getSessionMetadata().get(0).getMetadata()).hasSize(2);
+    SessionMetadata sessionMetadata = trace.getSessionMetadata().get(0);
+    assertThat(sessionMetadata.getSessionId()).isEqualTo("session-123");
+    assertThat(sessionMetadata.getMetadata()).isNotNull();
+    assertThat(sessionMetadata.getMetadata()).hasSize(2);
 
-    assertThat(trace.getSessionMetadata().get(0).getMetadata().get(0).getValue()).isEqualTo("prod");
-    assertThat(trace.getSessionMetadata().get(0).getMetadata().get(0).getDisplayLabel())
-        .isEqualTo("Environment");
-    assertThat(trace.getSessionMetadata().get(0).getMetadata().get(0).getAgentLabel())
-        .isEqualTo("env");
+    assertThat(sessionMetadata.getMetadata().get(0).getValue()).isEqualTo("prod");
+    assertThat(sessionMetadata.getMetadata().get(0).getDisplayLabel()).isEqualTo("Environment");
+    assertThat(sessionMetadata.getMetadata().get(0).getAgentLabel()).isEqualTo("env");
 
-    assertThat(trace.getSessionMetadata().get(0).getMetadata().get(1).getValue())
-        .isEqualTo("user123");
-    assertThat(trace.getSessionMetadata().get(0).getMetadata().get(1).getDisplayLabel())
-        .isEqualTo("User ID");
-    assertThat(trace.getSessionMetadata().get(0).getMetadata().get(1).getAgentLabel())
-        .isEqualTo("user_id");
+    assertThat(sessionMetadata.getMetadata().get(1).getValue()).isEqualTo("user123");
+    assertThat(sessionMetadata.getMetadata().get(1).getDisplayLabel()).isEqualTo("User ID");
+    assertThat(sessionMetadata.getMetadata().get(1).getAgentLabel()).isEqualTo("user_id");
   }
 }
