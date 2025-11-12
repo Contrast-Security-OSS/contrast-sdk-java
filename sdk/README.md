@@ -81,7 +81,8 @@ apply the formatting before committing changes using the Maven plugin:
 
 ### Releasing
 Releases are done via Sonatype's Central Release Plugin to Maven Central.
-* Update the version in `pom.xml` to the desired release version.
-* Run the release action in github off of the main branch (or other branch in dropdown)
-* Log in to Sonatype to approve release.
-* Tag the release in git: eg `git tag -a contrast-sdk-java-1.2.3` and `git push --tags`
+* Create branch off of main named `release-candidate-contrast-sdk-java-x.y.z`
+* Update the version in `pom.xml` to the desired release version in the branch
+* Run the release action in github off of the created `release-candidate-contrast-sdk-java-x.y.z` branch
+* Merge the release branch `release-candidate-contrast-sdk-java-x.y.z` into main
+* Tag the release in git: eg `git tag -am "Contrast SDK Release x.y.z" contrast-sdk-java-x.y.z` and `git push --tags`
