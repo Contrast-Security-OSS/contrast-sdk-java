@@ -70,9 +70,11 @@ import com.contrastsecurity.models.StoryResponse;
 import com.contrastsecurity.models.Tag;
 import com.contrastsecurity.models.Tags;
 import com.contrastsecurity.models.TagsResponse;
+import com.contrastsecurity.models.Trace;
 import com.contrastsecurity.models.TraceFilterBody;
 import com.contrastsecurity.models.TraceListing;
 import com.contrastsecurity.models.TraceNotesResponse;
+import com.contrastsecurity.models.TraceResponse;
 import com.contrastsecurity.models.Traces;
 import com.contrastsecurity.models.TracesWithResponse;
 import com.contrastsecurity.models.Users;
@@ -853,6 +855,48 @@ public class ContrastSDK {
       twr.t = this.gson.fromJson(reader, Traces.class);
       twr.rc = mrr.rc;
       return twr;
+    }
+  }
+
+  /**
+   * Get a single vulnerability by its ID.
+   *
+   * @param organizationId the ID of the organization
+   * @param appId the ID of the application
+   * @param traceId the ID of the vulnerability (trace UUID)
+   * @return the Trace object for the specified vulnerability
+   * @throws UnauthorizedException if the Contrast account failed to authorize
+   * @throws IOException if there was a communication problem
+   */
+  public Trace getTrace(String organizationId, String appId, String traceId)
+      throws IOException, UnauthorizedException {
+    return getTrace(organizationId, appId, traceId, null);
+  }
+
+  /**
+   * Get a single vulnerability by its ID with expanded fields.
+   *
+   * @param organizationId the ID of the organization
+   * @param appId the ID of the application
+   * @param traceId the ID of the vulnerability (trace UUID)
+   * @param expand the fields to expand (e.g., APPLICATION, EVENTS, NOTES, REQUEST, SERVERS,
+   *     SERVER_ENVIRONMENTS, SESSION_METADATA)
+   * @return the Trace object for the specified vulnerability
+   * @throws UnauthorizedException if the Contrast account failed to authorize
+   * @throws IOException if there was a communication problem
+   */
+  public Trace getTrace(
+      String organizationId,
+      String appId,
+      String traceId,
+      EnumSet<TraceFilterForm.TraceExpandValue> expand)
+      throws IOException, UnauthorizedException {
+    try (InputStream is =
+            makeRequest(
+                HttpMethod.GET, urlBuilder.getTraceUrl(organizationId, appId, traceId, expand));
+        Reader reader = new InputStreamReader(is)) {
+      TraceResponse response = this.gson.fromJson(reader, TraceResponse.class);
+      return response.getTrace();
     }
   }
 

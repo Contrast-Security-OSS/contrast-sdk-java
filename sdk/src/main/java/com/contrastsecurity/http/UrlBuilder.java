@@ -158,6 +158,19 @@ public class UrlBuilder {
     return String.format("/ng/%s/traces/%s/filter/%s", organizationId, appId, formString);
   }
 
+  public String getTraceUrl(String organizationId, String appId, String traceId) {
+    return String.format("/ng/%s/traces/%s/filter/%s", organizationId, appId, traceId);
+  }
+
+  public String getTraceUrl(
+      String organizationId,
+      String appId,
+      String traceId,
+      EnumSet<TraceFilterForm.TraceExpandValue> expandValues) {
+    return String.format(
+        "/ng/%s/traces/%s/filter/%s%s", organizationId, appId, traceId, buildExpand(expandValues));
+  }
+
   public String getRecommendationByTraceId(String organizationId, String traceId) {
     return String.format("/ng/%s/traces/%s/recommendation", organizationId, traceId);
   }

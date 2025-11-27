@@ -186,6 +186,47 @@ final class UrlBuilderTest {
   }
 
   @Test
+  public void testGetTraceUrl() {
+    String expectedUrl = "/ng/test-org/traces/test-app/filter/test-trace";
+
+    assertThat(urlBuilder.getTraceUrl(organizationId, applicationId, testTrace))
+        .isEqualTo(expectedUrl);
+  }
+
+  @Test
+  public void testGetTraceUrlWithExpand() {
+    String expectedUrl = "/ng/test-org/traces/test-app/filter/test-trace?expand=application";
+
+    EnumSet<TraceFilterForm.TraceExpandValue> expand =
+        EnumSet.of(TraceFilterForm.TraceExpandValue.APPLICATION);
+
+    assertThat(urlBuilder.getTraceUrl(organizationId, applicationId, testTrace, expand))
+        .isEqualTo(expectedUrl);
+  }
+
+  @Test
+  public void testGetTraceUrlWithMultipleExpand() {
+    String expectedUrl =
+        "/ng/test-org/traces/test-app/filter/test-trace?expand=servers,session_metadata";
+
+    EnumSet<TraceFilterForm.TraceExpandValue> expand =
+        EnumSet.of(
+            TraceFilterForm.TraceExpandValue.SESSION_METADATA,
+            TraceFilterForm.TraceExpandValue.SERVERS);
+
+    assertThat(urlBuilder.getTraceUrl(organizationId, applicationId, testTrace, expand))
+        .isEqualTo(expectedUrl);
+  }
+
+  @Test
+  public void testGetTraceUrlWithNullExpand() {
+    String expectedUrl = "/ng/test-org/traces/test-app/filter/test-trace";
+
+    assertThat(urlBuilder.getTraceUrl(organizationId, applicationId, testTrace, null))
+        .isEqualTo(expectedUrl);
+  }
+
+  @Test
   public void testSecurityCheckUrl() {
     String expectedSecurityCheckUrl = "/ng/test-org/securityChecks";
     assertThat(urlBuilder.getSecurityCheckUrl(organizationId)).isEqualTo(expectedSecurityCheckUrl);
