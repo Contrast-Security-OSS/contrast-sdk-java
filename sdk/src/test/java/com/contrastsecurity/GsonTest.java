@@ -42,6 +42,7 @@ import com.contrastsecurity.models.StoryResponse;
 import com.contrastsecurity.models.Tags;
 import com.contrastsecurity.models.TagsResponse;
 import com.contrastsecurity.models.Trace;
+import com.contrastsecurity.models.TraceResponse;
 import com.contrastsecurity.models.Traces;
 import com.contrastsecurity.models.VulnerabilityTrend;
 import com.contrastsecurity.utils.MetadataDeserializer;
@@ -364,5 +365,26 @@ final class GsonTest {
     assertThat(sessionMetadata.getMetadata().get(1).getValue()).isEqualTo("user123");
     assertThat(sessionMetadata.getMetadata().get(1).getDisplayLabel()).isEqualTo("User ID");
     assertThat(sessionMetadata.getMetadata().get(1).getAgentLabel()).isEqualTo("user_id");
+  }
+
+  @Test
+  public void testGetSingleTraceResponse() {
+    String traceResponseString =
+        "{\"success\":true,\"messages\":[\"Trace found\"],\"trace\":{\"title\":\"SQL Injection on /api/users\",\"language\":\"Java\",\"status\":\"Reported\",\"uuid\":\"TRACE-1234-5678-ABCD\",\"rule_name\":\"sql-injection\",\"severity\":\"Critical\",\"likelihood\":\"High\",\"impact\":\"High\",\"confidence\":\"High\",\"first_time_seen\":1461600923859,\"last_time_seen\":1461601039100,\"category\":\"Injection\",\"platform\":\"Oracle Corporation\",\"total_traces_received\":1,\"visible\":true}}";
+
+    TraceResponse response = gson.fromJson(traceResponseString, TraceResponse.class);
+
+    assertThat(response).isNotNull();
+    assertThat(response.isSuccess()).isTrue();
+    assertThat(response.getMessages()).containsExactly("Trace found");
+    assertThat(response.getTrace()).isNotNull();
+
+    Trace trace = response.getTrace();
+    assertThat(trace.getTitle()).isEqualTo("SQL Injection on /api/users");
+    assertThat(trace.getLanguage()).isEqualTo("Java");
+    assertThat(trace.getStatus()).isEqualTo("Reported");
+    assertThat(trace.getUuid()).isEqualTo("TRACE-1234-5678-ABCD");
+    assertThat(trace.getRule()).isEqualTo("sql-injection");
+    assertThat(trace.getSeverity()).isEqualTo("Critical");
   }
 }
