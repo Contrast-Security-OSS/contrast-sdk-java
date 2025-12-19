@@ -22,7 +22,9 @@ package com.contrastsecurity.http;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -72,5 +74,43 @@ final class LibraryFilterFormTest {
   @Test
   public void environments_should_be_empty_by_default() {
     assertThat(form.getEnvironments()).isEmpty();
+  }
+
+  @Test
+  public void toString_should_include_statuses_when_set() {
+    form.setStatuses(Arrays.asList("CURRENT", "FLAGGED"));
+    String qs = form.toString();
+
+    assertThat(qs).contains("statuses=");
+    assertThat(qs).contains("CURRENT");
+    assertThat(qs).contains("FLAGGED");
+  }
+
+  @Test
+  public void toString_should_not_include_statuses_when_empty() {
+    String qs = form.toString();
+
+    assertThat(qs).doesNotContain("statuses=");
+  }
+
+  @Test
+  public void toString_should_include_single_status() {
+    form.setStatuses(Arrays.asList("STALE"));
+    String qs = form.toString();
+
+    assertThat(qs).contains("statuses=STALE");
+  }
+
+  @Test
+  public void getStatuses_should_return_set_statuses() {
+    List<String> expected = Arrays.asList("CURRENT", "UNKNOWN");
+    form.setStatuses(expected);
+
+    assertThat(form.getStatuses()).isEqualTo(expected);
+  }
+
+  @Test
+  public void statuses_should_be_empty_by_default() {
+    assertThat(form.getStatuses()).isEmpty();
   }
 }

@@ -66,6 +66,7 @@ public class LibraryFilterForm extends FilterForm {
   private boolean includeUsed;
   private boolean includeUnused;
   private EnumSet<ServerEnvironment> environments;
+  private List<String> statuses;
 
   public LibraryFilterForm() {
     super();
@@ -81,6 +82,7 @@ public class LibraryFilterForm extends FilterForm {
     this.includeUsed = false;
     this.includeUnused = false;
     this.environments = EnumSet.noneOf(ServerEnvironment.class);
+    this.statuses = new ArrayList<>();
   }
 
   public List<String> getApps() {
@@ -171,6 +173,14 @@ public class LibraryFilterForm extends FilterForm {
     this.environments = environments;
   }
 
+  public List<String> getStatuses() {
+    return statuses;
+  }
+
+  public void setStatuses(List<String> statuses) {
+    this.statuses = statuses;
+  }
+
   @Override
   public String toString() {
     String formString = super.toString();
@@ -216,6 +226,10 @@ public class LibraryFilterForm extends FilterForm {
               + environments.stream()
                   .map(ServerEnvironment::toURIString)
                   .collect(Collectors.joining(",")));
+    }
+
+    if (!statuses.isEmpty()) {
+      filters.add("statuses=" + String.join(",", statuses));
     }
 
     filters.add("includeUsed=" + includeUsed);
