@@ -21,6 +21,7 @@ package com.contrastsecurity.http;
  */
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,6 +65,7 @@ public class LibraryFilterForm extends FilterForm {
   private LibraryQuickFilterType quickFilter;
   private boolean includeUsed;
   private boolean includeUnused;
+  private EnumSet<ServerEnvironment> environments;
 
   public LibraryFilterForm() {
     super();
@@ -78,6 +80,7 @@ public class LibraryFilterForm extends FilterForm {
     this.quickFilter = null;
     this.includeUsed = false;
     this.includeUnused = false;
+    this.environments = EnumSet.noneOf(ServerEnvironment.class);
   }
 
   public List<String> getApps() {
@@ -160,6 +163,14 @@ public class LibraryFilterForm extends FilterForm {
     this.includeUnused = includeUnused;
   }
 
+  public EnumSet<ServerEnvironment> getEnvironments() {
+    return environments;
+  }
+
+  public void setEnvironments(EnumSet<ServerEnvironment> environments) {
+    this.environments = environments;
+  }
+
   @Override
   public String toString() {
     String formString = super.toString();
@@ -197,6 +208,14 @@ public class LibraryFilterForm extends FilterForm {
 
     if (quickFilter != null) {
       filters.add("quickFilter=" + quickFilter.toString());
+    }
+
+    if (environments != null && !environments.isEmpty()) {
+      filters.add(
+          "environments="
+              + environments.stream()
+                  .map(ServerEnvironment::toURIString)
+                  .collect(Collectors.joining(",")));
     }
 
     filters.add("includeUsed=" + includeUsed);

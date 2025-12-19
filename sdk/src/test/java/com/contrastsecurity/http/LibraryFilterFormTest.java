@@ -1,0 +1,76 @@
+package com.contrastsecurity.http;
+
+/*-
+ * #%L
+ * Contrast Java SDK
+ * %%
+ * Copyright (C) 2022 - 2025 Contrast Security, Inc.
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.EnumSet;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+final class LibraryFilterFormTest {
+
+  LibraryFilterForm form;
+
+  @BeforeEach
+  public void setUp() {
+    form = new LibraryFilterForm();
+  }
+
+  @Test
+  public void toString_should_include_environments_when_set() {
+    form.setEnvironments(EnumSet.of(ServerEnvironment.DEVELOPMENT, ServerEnvironment.PRODUCTION));
+    String qs = form.toString();
+
+    assertThat(qs).contains("environments=");
+    assertThat(qs).contains("DEVELOPMENT");
+    assertThat(qs).contains("PRODUCTION");
+  }
+
+  @Test
+  public void toString_should_not_include_environments_when_empty() {
+    String qs = form.toString();
+
+    assertThat(qs).doesNotContain("environments=");
+  }
+
+  @Test
+  public void toString_should_include_single_environment() {
+    form.setEnvironments(EnumSet.of(ServerEnvironment.QA));
+    String qs = form.toString();
+
+    assertThat(qs).contains("environments=QA");
+  }
+
+  @Test
+  public void getEnvironments_should_return_set_environments() {
+    EnumSet<ServerEnvironment> expected =
+        EnumSet.of(ServerEnvironment.DEVELOPMENT, ServerEnvironment.QA);
+    form.setEnvironments(expected);
+
+    assertThat(form.getEnvironments()).isEqualTo(expected);
+  }
+
+  @Test
+  public void environments_should_be_empty_by_default() {
+    assertThat(form.getEnvironments()).isEmpty();
+  }
+}
