@@ -113,4 +113,42 @@ final class LibraryFilterFormTest {
   public void statuses_should_be_empty_by_default() {
     assertThat(form.getStatuses()).isEmpty();
   }
+
+  @Test
+  public void toString_should_include_severities_when_set() {
+    form.setSeverities(Arrays.asList("CRITICAL", "HIGH"));
+    String qs = form.toString();
+
+    assertThat(qs).contains("severities=");
+    assertThat(qs).contains("CRITICAL");
+    assertThat(qs).contains("HIGH");
+  }
+
+  @Test
+  public void toString_should_not_include_severities_when_empty() {
+    String qs = form.toString();
+
+    assertThat(qs).doesNotContain("severities=");
+  }
+
+  @Test
+  public void toString_should_include_single_severity() {
+    form.setSeverities(Arrays.asList("MEDIUM"));
+    String qs = form.toString();
+
+    assertThat(qs).contains("severities=MEDIUM");
+  }
+
+  @Test
+  public void getSeverities_should_return_set_severities() {
+    List<String> expected = Arrays.asList("LOW", "NOTE");
+    form.setSeverities(expected);
+
+    assertThat(form.getSeverities()).isEqualTo(expected);
+  }
+
+  @Test
+  public void severities_should_be_empty_by_default() {
+    assertThat(form.getSeverities()).isEmpty();
+  }
 }
