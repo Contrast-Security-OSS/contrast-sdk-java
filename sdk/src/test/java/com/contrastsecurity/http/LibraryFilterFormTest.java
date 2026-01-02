@@ -4,7 +4,7 @@ package com.contrastsecurity.http;
  * #%L
  * Contrast Java SDK
  * %%
- * Copyright (C) 2022 - 2025 Contrast Security, Inc.
+ * Copyright (C) 2022 - 2026 Contrast Security, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,9 +42,8 @@ final class LibraryFilterFormTest {
     form.setEnvironments(EnumSet.of(ServerEnvironment.DEVELOPMENT, ServerEnvironment.PRODUCTION));
     String qs = form.toString();
 
-    assertThat(qs).contains("environments=");
-    assertThat(qs).contains("DEVELOPMENT");
-    assertThat(qs).contains("PRODUCTION");
+    // EnumSet order may vary, so check for either ordering
+    assertThat(qs).containsPattern("environments=(DEVELOPMENT,PRODUCTION|PRODUCTION,DEVELOPMENT)");
   }
 
   @Test
@@ -81,9 +80,7 @@ final class LibraryFilterFormTest {
     form.setStatuses(Arrays.asList("CURRENT", "FLAGGED"));
     String qs = form.toString();
 
-    assertThat(qs).contains("statuses=");
-    assertThat(qs).contains("CURRENT");
-    assertThat(qs).contains("FLAGGED");
+    assertThat(qs).contains("statuses=CURRENT,FLAGGED");
   }
 
   @Test
@@ -119,9 +116,7 @@ final class LibraryFilterFormTest {
     form.setSeverities(Arrays.asList("CRITICAL", "HIGH"));
     String qs = form.toString();
 
-    assertThat(qs).contains("severities=");
-    assertThat(qs).contains("CRITICAL");
-    assertThat(qs).contains("HIGH");
+    assertThat(qs).contains("severities=CRITICAL,HIGH");
   }
 
   @Test
