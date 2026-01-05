@@ -4,7 +4,7 @@ package com.contrastsecurity.http;
  * #%L
  * Contrast Java SDK
  * %%
- * Copyright (C) 2022 - 2025 Contrast Security, Inc.
+ * Copyright (C) 2022 - 2026 Contrast Security, Inc.
  * %%
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package com.contrastsecurity.http;
  */
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,6 +65,9 @@ public class LibraryFilterForm extends FilterForm {
   private LibraryQuickFilterType quickFilter;
   private boolean includeUsed;
   private boolean includeUnused;
+  private EnumSet<ServerEnvironment> environments;
+  private List<String> statuses;
+  private List<String> severities;
 
   public LibraryFilterForm() {
     super();
@@ -78,6 +82,9 @@ public class LibraryFilterForm extends FilterForm {
     this.quickFilter = null;
     this.includeUsed = false;
     this.includeUnused = false;
+    this.environments = EnumSet.noneOf(ServerEnvironment.class);
+    this.statuses = new ArrayList<>();
+    this.severities = new ArrayList<>();
   }
 
   public List<String> getApps() {
@@ -160,6 +167,30 @@ public class LibraryFilterForm extends FilterForm {
     this.includeUnused = includeUnused;
   }
 
+  public EnumSet<ServerEnvironment> getEnvironments() {
+    return environments;
+  }
+
+  public void setEnvironments(EnumSet<ServerEnvironment> environments) {
+    this.environments = environments;
+  }
+
+  public List<String> getStatuses() {
+    return statuses;
+  }
+
+  public void setStatuses(List<String> statuses) {
+    this.statuses = statuses;
+  }
+
+  public List<String> getSeverities() {
+    return severities;
+  }
+
+  public void setSeverities(List<String> severities) {
+    this.severities = severities;
+  }
+
   @Override
   public String toString() {
     String formString = super.toString();
@@ -197,6 +228,22 @@ public class LibraryFilterForm extends FilterForm {
 
     if (quickFilter != null) {
       filters.add("quickFilter=" + quickFilter.toString());
+    }
+
+    if (environments != null && !environments.isEmpty()) {
+      filters.add(
+          "environments="
+              + environments.stream()
+                  .map(ServerEnvironment::toURIString)
+                  .collect(Collectors.joining(",")));
+    }
+
+    if (!statuses.isEmpty()) {
+      filters.add("statuses=" + String.join(",", statuses));
+    }
+
+    if (!severities.isEmpty()) {
+      filters.add("severities=" + String.join(",", severities));
     }
 
     filters.add("includeUsed=" + includeUsed);
