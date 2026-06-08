@@ -81,6 +81,8 @@ import com.contrastsecurity.models.Users;
 import com.contrastsecurity.models.VulnerabilityTrend;
 import com.contrastsecurity.models.dtm.ApplicationCreateRequest;
 import com.contrastsecurity.models.dtm.AttestationCreateRequest;
+import com.contrastsecurity.sdk.graph.ContrastGraphApi;
+import com.contrastsecurity.sdk.graph.ContrastGraphApiImpl;
 import com.contrastsecurity.sdk.internal.GsonFactory;
 import com.contrastsecurity.sdk.scan.ScanManager;
 import com.contrastsecurity.sdk.scan.ScanManagerImpl;
@@ -219,6 +221,10 @@ public class ContrastSDK {
 
   public ScanManager scan(final String organizationId) {
     return new ScanManagerImpl(this, gson, organizationId);
+  }
+
+  public ContrastGraphApi graphApi() {
+    return new ContrastGraphApiImpl(this, this.gson);
   }
 
   /**
