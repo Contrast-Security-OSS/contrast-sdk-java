@@ -1,0 +1,480 @@
+openapi: "3.0.3"
+info:
+  title: Contrast Graph API
+  description: >
+    SDK-focused spec for v2 Contrast Graph endpoints served by adr-explorer-aggregator.
+    TypedNode oneOf discriminator is intentionally flattened to GraphNode.
+    All enum fields use type:string — validation happens at the MCP tool layer.
+  version: "2.0.0"
+paths:
+  /v2/organizations/{organizationId}/contrast-graph:
+    post:
+      operationId: searchGraph
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContrastGraphRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContrastGraphResponse"
+  /v2/organizations/{organizationId}/contrast-graph/incidents/{incidentId}:
+    get:
+      operationId: getIncidentGraph
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: incidentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContrastGraphResponse"
+  /v2/organizations/{organizationId}/contrast-graph/facets/{filterName}:
+    post:
+      operationId: getFacets
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: filterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestFilters"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FacetsResponse"
+  /v2/organizations/{organizationId}/contrast-graph/applications/{applicationId}/libraries:
+    post:
+      operationId: getApplicationLibraries
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: agentReportingInstanceId
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationLibrariesRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationLibrariesResponse"
+  /v2/organizations/{organizationId}/contrast-graph/applications/{applicationId}/libraries/{libraryHash}:
+    get:
+      operationId: getApplicationLibraryDetails
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: libraryHash
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LibraryDetailsResponse"
+components:
+  schemas:
+    ContrastGraphRequest:
+      type: object
+      properties:
+        filters:
+          $ref: "#/components/schemas/RequestFilters"
+    RequestFilters:
+      type: object
+      properties:
+        nodeTypes:
+          type: array
+          items:
+            type: string
+        environments:
+          type: array
+          items:
+            type: string
+        languages:
+          type: array
+          items:
+            type: string
+        openIssueSeverities:
+          type: array
+          items:
+            type: string
+        openIncidentSeverities:
+          type: array
+          items:
+            type: string
+        applications:
+          type: array
+          items:
+            type: string
+        repositories:
+          type: array
+          items:
+            type: string
+        naturalSearch:
+          type: string
+        includeStaticOnly:
+          type: boolean
+        hasAiUsage:
+          type: boolean
+    ContrastGraphResponse:
+      type: object
+      properties:
+        nodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/GraphNode"
+        edges:
+          type: array
+          items:
+            $ref: "#/components/schemas/GraphEdge"
+        graphAssets:
+          type: array
+          items:
+            $ref: "#/components/schemas/GraphAsset"
+    GraphNode:
+      type: object
+      required:
+        - id
+        - nodeType
+      properties:
+        id:
+          type: string
+        nodeType:
+          type: string
+        name:
+          type: string
+        attributes:
+          type: object
+          additionalProperties:
+            type: string
+        url:
+          type: string
+        hash:
+          type: string
+        language:
+          type: string
+        applicationId:
+          type: string
+        lastSeenTime:
+          type: string
+          format: date-time
+        issuesSeverityCount:
+          $ref: "#/components/schemas/SeverityCount"
+        incidentsSeverityCount:
+          $ref: "#/components/schemas/SeverityCount"
+        postureScore:
+          $ref: "#/components/schemas/PostureScore"
+        criticality:
+          type: string
+        assetId:
+          type: string
+        attackValue:
+          type: string
+        environment:
+          type: string
+        isSource:
+          type: boolean
+        actionType:
+          type: string
+        actionSinkResult:
+          type: string
+        serverName:
+          type: string
+        agentVersion:
+          type: string
+    GraphEdge:
+      type: object
+      properties:
+        sourceId:
+          type: string
+        targetId:
+          type: string
+        edgeType:
+          type: string
+    GraphAsset:
+      type: object
+      required:
+        - assetType
+        - nodeId
+        - assetName
+        - assetId
+      properties:
+        assetType:
+          type: string
+        nodeId:
+          type: string
+        assetName:
+          type: string
+        assetId:
+          type: string
+        criticality:
+          type: string
+    SeverityCount:
+      type: object
+      properties:
+        critical:
+          type: integer
+          format: int32
+        high:
+          type: integer
+          format: int32
+        medium:
+          type: integer
+          format: int32
+        low:
+          type: integer
+          format: int32
+        note:
+          type: integer
+          format: int32
+    PostureScore:
+      type: object
+      properties:
+        score:
+          type: number
+          format: double
+        severity:
+          type: string
+    FacetsResponse:
+      type: object
+      properties:
+        nodeTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Facet"
+        environments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Facet"
+        languages:
+          type: array
+          items:
+            $ref: "#/components/schemas/Facet"
+        openIssueSeverities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Facet"
+        openIncidentSeverities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Facet"
+        applications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Facet"
+    Facet:
+      type: object
+      required:
+        - value
+      properties:
+        label:
+          type: string
+        value:
+          type: string
+        count:
+          type: integer
+          format: int32
+    ApplicationLibrariesRequest:
+      type: object
+      properties:
+        libraryHashes:
+          type: array
+          items:
+            type: string
+    ApplicationLibrariesResponse:
+      type: object
+      properties:
+        dependencies:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExtendedDependency"
+        cves:
+          type: array
+          items:
+            $ref: "#/components/schemas/LibraryCve"
+    Dependency:
+      type: object
+      required:
+        - name
+        - version
+        - hash
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        hash:
+          type: string
+    ExtendedDependency:
+      type: object
+      required:
+        - name
+        - version
+        - hash
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        hash:
+          type: string
+        dependencies:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExtendedDependency"
+        matchedInSearch:
+          type: boolean
+    LibraryCve:
+      type: object
+      required:
+        - cveId
+        - cisa
+        - description
+      properties:
+        cveId:
+          type: string
+        dependencyPath:
+          type: array
+          items:
+            $ref: "#/components/schemas/Dependency"
+        cvssScore:
+          type: number
+          format: double
+          nullable: true
+        cvssVector:
+          type: string
+          nullable: true
+        epssScore:
+          type: number
+          format: double
+          nullable: true
+        epssPercentile:
+          type: number
+          format: double
+          nullable: true
+        nvdModified:
+          type: string
+          format: date-time
+          nullable: true
+        nvdPublished:
+          type: string
+          format: date-time
+          nullable: true
+        cisa:
+          type: boolean
+        description:
+          type: string
+        matchedInSearch:
+          type: boolean
+    LibraryDetailsResponse:
+      type: object
+      required:
+        - name
+        - language
+        - version
+        - fileName
+        - hash
+      properties:
+        name:
+          type: string
+        group:
+          type: string
+        language:
+          type: string
+        version:
+          type: string
+        fileName:
+          type: string
+        hash:
+          type: string
+        releaseDate:
+          type: string
+          format: date-time
+          nullable: true
+        licenses:
+          type: array
+          items:
+            type: string
+        cves:
+          type: array
+          items:
+            $ref: "#/components/schemas/LibraryCve"
+        issues:
+          type: array
+          items:
+            $ref: "#/components/schemas/GraphIssue"
+        closestStableVersion:
+          $ref: "#/components/schemas/LibraryDetailsResponse"
+        latestStableVersion:
+          $ref: "#/components/schemas/LibraryDetailsResponse"
+    GraphIssue:
+      type: object
+      required:
+        - issueId
+        - title
+      properties:
+        issueId:
+          type: string
+        title:
+          type: string
