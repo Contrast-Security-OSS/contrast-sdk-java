@@ -257,6 +257,7 @@
                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
                 <java8>true</java8>
                 <useJakartaEe>false</useJakartaEe>
+                <dateLibrary>string</dateLibrary>
               </configOptions>
             </configuration>
           </execution>
