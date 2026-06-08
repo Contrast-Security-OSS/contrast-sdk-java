@@ -34,6 +34,6 @@ class ContrastGraphApiFactoryTest {
             .withApiUrl("http://localhost:8080/Contrast/api")
             .build();
     ContrastGraphApi api = sdk.graphApi();
-    assertThat(api).isNotNull();
+    assertThat(api).isNotNull().isInstanceOf(ContrastGraphApiImpl.class);
   }
 }
