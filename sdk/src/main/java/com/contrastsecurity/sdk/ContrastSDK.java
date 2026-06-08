@@ -82,7 +82,7 @@ import com.contrastsecurity.models.VulnerabilityTrend;
 import com.contrastsecurity.models.dtm.ApplicationCreateRequest;
 import com.contrastsecurity.models.dtm.AttestationCreateRequest;
 import com.contrastsecurity.sdk.graph.ContrastGraphApi;
-import com.contrastsecurity.sdk.graph.ContrastGraphApiFactory;
+import com.contrastsecurity.sdk.graph.ContrastGraphApiImpl;
 import com.contrastsecurity.sdk.internal.GsonFactory;
 import com.contrastsecurity.sdk.scan.ScanManager;
 import com.contrastsecurity.sdk.scan.ScanManagerImpl;
@@ -224,7 +224,7 @@ public class ContrastSDK {
   }
 
   public ContrastGraphApi graphApi() {
-    return ContrastGraphApiFactory.create(this, this.gson);
+    return new ContrastGraphApiImpl(this, this.gson);
   }
 
   /**

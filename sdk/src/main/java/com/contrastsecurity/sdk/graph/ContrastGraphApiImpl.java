@@ -33,12 +33,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
-final class ContrastGraphApiImpl implements ContrastGraphApi {
+public final class ContrastGraphApiImpl implements ContrastGraphApi {
 
     private final ContrastSDK contrast;
     private final Gson gson;
 
-    ContrastGraphApiImpl(final ContrastSDK contrast, final Gson gson) {
+    public ContrastGraphApiImpl(final ContrastSDK contrast, final Gson gson) {
         this.contrast = contrast;
         this.gson = gson;
     }
