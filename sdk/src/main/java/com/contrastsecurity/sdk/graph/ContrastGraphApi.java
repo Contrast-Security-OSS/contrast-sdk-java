@@ -24,25 +24,22 @@ import java.io.IOException;
 
 public interface ContrastGraphApi {
 
-    ContrastGraphResponse searchGraph(String organizationId, ContrastGraphRequest request)
-            throws IOException;
+  ContrastGraphResponse searchGraph(String organizationId, ContrastGraphRequest request)
+      throws IOException;
 
-    ContrastGraphResponse getIncidentGraph(String organizationId, String incidentId)
-            throws IOException;
+  ContrastGraphResponse getIncidentGraph(String organizationId, String incidentId)
+      throws IOException;
 
-    FacetsResponse getFacets(String organizationId, String filterName, RequestFilters filters)
-            throws IOException;
+  FacetsResponse getFacets(String organizationId, String filterName, RequestFilters filters)
+      throws IOException;
 
-    ApplicationLibrariesResponse getApplicationLibraries(
-            String organizationId,
-            String applicationId,
-            String agentReportingInstanceId,
-            ApplicationLibrariesRequest request)
-            throws IOException;
+  ApplicationLibrariesResponse getApplicationLibraries(
+      String organizationId,
+      String applicationId,
+      String agentReportingInstanceId,
+      ApplicationLibrariesRequest request)
+      throws IOException;
 
-    LibraryDetailsResponse getApplicationLibraryDetails(
-            String organizationId,
-            String applicationId,
-            String libraryHash)
-            throws IOException;
+  LibraryDetailsResponse getApplicationLibraryDetails(
+      String organizationId, String applicationId, String libraryHash) throws IOException;
 }

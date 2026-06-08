@@ -47,9 +47,9 @@ import com.google.gson.Gson;
  */
 public final class JSON {
 
-    private JSON() {}
+  private JSON() {}
 
-    public static Gson getGson() {
-        return GsonFactory.create();
-    }
+  public static Gson getGson() {
+    return GsonFactory.create();
+  }
 }

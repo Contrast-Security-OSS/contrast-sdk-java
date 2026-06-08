@@ -20,10 +20,10 @@ package com.contrastsecurity.sdk.graph;
  * #L%
  */
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.contrastsecurity.sdk.ContrastSDK;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class ContrastGraphApiFactoryTest {
 
