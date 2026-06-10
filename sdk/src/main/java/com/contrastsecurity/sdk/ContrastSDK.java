@@ -81,6 +81,8 @@ import com.contrastsecurity.models.Users;
 import com.contrastsecurity.models.VulnerabilityTrend;
 import com.contrastsecurity.models.dtm.ApplicationCreateRequest;
 import com.contrastsecurity.models.dtm.AttestationCreateRequest;
+import com.contrastsecurity.sdk.graph.ContrastGraphApi;
+import com.contrastsecurity.sdk.graph.ContrastGraphApiImpl;
 import com.contrastsecurity.sdk.internal.GsonFactory;
 import com.contrastsecurity.sdk.scan.ScanManager;
 import com.contrastsecurity.sdk.scan.ScanManagerImpl;
@@ -219,6 +221,10 @@ public class ContrastSDK {
 
   public ScanManager scan(final String organizationId) {
     return new ScanManagerImpl(this, gson, organizationId);
+  }
+
+  public ContrastGraphApi graphApi() {
+    return new ContrastGraphApiImpl(this, this.gson);
   }
 
   /**
@@ -1585,6 +1591,40 @@ public class ContrastSDK {
   public InputStream makeRequest(HttpMethod method, String path)
       throws IOException, UnauthorizedException {
     return makeRequestWithResponse(method, path).is;
+  }
+
+  public InputStream makeRequestToUrl(HttpMethod method, String url)
+      throws IOException, UnauthorizedException {
+    HttpURLConnection connection = makeConnection(url, method.toString());
+    int rc = connection.getResponseCode();
+    if (rc >= HttpURLConnection.HTTP_BAD_REQUEST) {
+      throw HttpResponseException.fromConnection(
+          connection, "Received unexpected status code from Contrast");
+    }
+    return connection.getInputStream();
+  }
+
+  public InputStream makeRequestWithBodyToUrl(
+      HttpMethod method, String url, String body, MediaType mediaType)
+      throws IOException, UnauthorizedException {
+    HttpURLConnection connection = makeConnection(url, method.toString());
+    if (mediaType != null
+        && body != null
+        && (method.equals(HttpMethod.PUT)
+            || method.equals(HttpMethod.POST)
+            || method.equals(HttpMethod.DELETE))) {
+      connection.setDoOutput(true);
+      connection.setRequestProperty("Content-Type", mediaType.getType());
+      try (OutputStream os = connection.getOutputStream()) {
+        os.write(body.getBytes(StandardCharsets.UTF_8));
+      }
+    }
+    int rc = connection.getResponseCode();
+    if (rc >= HttpURLConnection.HTTP_BAD_REQUEST) {
+      throw HttpResponseException.fromConnection(
+          connection, "Received unexpected status code from Contrast");
+    }
+    return connection.getInputStream();
   }
 
   public MakeRequestResponse makeRequestWithResponse(HttpMethod method, String path)

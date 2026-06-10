@@ -65,6 +65,19 @@ public class ContrastSDKUtils {
     return url;
   }
 
+  public static String getServerUrl(String url) {
+    if (url != null) {
+      if (url.endsWith("/Contrast/api")) {
+        return url.substring(0, url.length() - "/Contrast/api".length());
+      } else if (url.endsWith("/Contrast/")) {
+        return url.substring(0, url.length() - "/Contrast/".length());
+      } else if (url.endsWith("/Contrast")) {
+        return url.substring(0, url.length() - "/Contrast".length());
+      }
+    }
+    return url;
+  }
+
   public static String buildExpand(String... values) {
     if (values == null || values.length == 0) {
       return "";

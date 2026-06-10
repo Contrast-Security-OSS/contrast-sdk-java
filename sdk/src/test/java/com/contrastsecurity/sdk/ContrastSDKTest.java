@@ -21,12 +21,24 @@ package com.contrastsecurity.sdk;
  */
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.contrastsecurity.exceptions.HttpResponseException;
 import com.contrastsecurity.http.HttpMethod;
+import com.contrastsecurity.http.MediaType;
+import com.sun.net.httpserver.HttpServer;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.Executors;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 final class ContrastSDKTest {
@@ -115,5 +127,147 @@ final class ContrastSDKTest {
     assertThat(ua)
         .matches(
             "INTELLIJ_INTEGRATION/1.0.0 contrast-sdk-java/\\d\\.\\d(\\.\\d)?(-SNAPSHOT)? Java/\\d+.*");
+  }
+
+  private static String readString(final InputStream is) throws IOException {
+    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    final byte[] buf = new byte[1024];
+    int n;
+    while ((n = is.read(buf)) != -1) {
+      baos.write(buf, 0, n);
+    }
+    return baos.toString(StandardCharsets.UTF_8.name());
+  }
+
+  @Nested
+  final class MakeRequestToUrl {
+
+    private HttpServer server;
+    private String baseUrl;
+
+    @BeforeEach
+    void before() throws IOException {
+      server = HttpServer.create();
+      server.setExecutor(Executors.newSingleThreadExecutor());
+      server.bind(new InetSocketAddress("localhost", 0), 0);
+      server.start();
+      baseUrl = "http://localhost:" + server.getAddress().getPort();
+    }
+
+    @AfterEach
+    void after() {
+      server.stop(0);
+    }
+
+    @Test
+    void returns_response_body_on_success() throws IOException {
+      server.createContext(
+          "/data",
+          exchange -> {
+            final byte[] body = "response-body".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, body.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+              os.write(body);
+            }
+          });
+
+      try (InputStream is = contrastSDK.makeRequestToUrl(HttpMethod.GET, baseUrl + "/data")) {
+        assertThat(readString(is)).isEqualTo("response-body");
+      }
+    }
+
+    @Test
+    void throws_on_error_response() {
+      server.createContext(
+          "/data",
+          exchange -> {
+            exchange.sendResponseHeaders(400, -1);
+            exchange.close();
+          });
+
+      assertThatThrownBy(() -> contrastSDK.makeRequestToUrl(HttpMethod.GET, baseUrl + "/data"))
+          .isInstanceOf(HttpResponseException.class);
+    }
+  }
+
+  @Nested
+  final class MakeRequestWithBodyToUrl {
+
+    private HttpServer server;
+    private String baseUrl;
+
+    @BeforeEach
+    void before() throws IOException {
+      server = HttpServer.create();
+      server.setExecutor(Executors.newSingleThreadExecutor());
+      server.bind(new InetSocketAddress("localhost", 0), 0);
+      server.start();
+      baseUrl = "http://localhost:" + server.getAddress().getPort();
+    }
+
+    @AfterEach
+    void after() {
+      server.stop(0);
+    }
+
+    @Test
+    void sends_body_and_returns_response() throws IOException {
+      final String[] receivedBody = {null};
+      server.createContext(
+          "/submit",
+          exchange -> {
+            receivedBody[0] = readString(exchange.getRequestBody());
+            final byte[] response = "ok".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, response.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+              os.write(response);
+            }
+          });
+
+      try (InputStream is =
+          contrastSDK.makeRequestWithBodyToUrl(
+              HttpMethod.POST, baseUrl + "/submit", "{\"key\":\"value\"}", MediaType.JSON)) {
+        assertThat(readString(is)).isEqualTo("ok");
+      }
+      assertThat(receivedBody[0]).isEqualTo("{\"key\":\"value\"}");
+    }
+
+    @Test
+    void omits_body_when_null() throws IOException {
+      final String[] receivedBody = {null};
+      server.createContext(
+          "/submit",
+          exchange -> {
+            receivedBody[0] = readString(exchange.getRequestBody());
+            final byte[] response = "ok".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(200, response.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+              os.write(response);
+            }
+          });
+
+      try (InputStream is =
+          contrastSDK.makeRequestWithBodyToUrl(
+              HttpMethod.POST, baseUrl + "/submit", null, MediaType.JSON)) {
+        assertThat(readString(is)).isEqualTo("ok");
+      }
+      assertThat(receivedBody[0]).isEmpty();
+    }
+
+    @Test
+    void throws_on_error_response() {
+      server.createContext(
+          "/submit",
+          exchange -> {
+            exchange.sendResponseHeaders(400, -1);
+            exchange.close();
+          });
+
+      assertThatThrownBy(
+              () ->
+                  contrastSDK.makeRequestWithBodyToUrl(
+                      HttpMethod.POST, baseUrl + "/submit", "{}", MediaType.JSON))
+          .isInstanceOf(HttpResponseException.class);
+    }
   }
 }
