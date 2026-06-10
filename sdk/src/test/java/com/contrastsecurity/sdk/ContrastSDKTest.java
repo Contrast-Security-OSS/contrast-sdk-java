@@ -161,7 +161,8 @@ final class ContrastSDKTest {
           });
 
       try (InputStream is = contrastSDK.makeRequestToUrl(HttpMethod.GET, baseUrl + "/data")) {
-        assertThat(new String(is.readAllBytes(), StandardCharsets.UTF_8)).isEqualTo("response-body");
+        assertThat(new String(is.readAllBytes(), StandardCharsets.UTF_8))
+            .isEqualTo("response-body");
       }
     }
 
@@ -174,8 +175,7 @@ final class ContrastSDKTest {
             exchange.close();
           });
 
-      assertThatThrownBy(
-              () -> contrastSDK.makeRequestToUrl(HttpMethod.GET, baseUrl + "/data"))
+      assertThatThrownBy(() -> contrastSDK.makeRequestToUrl(HttpMethod.GET, baseUrl + "/data"))
           .isInstanceOf(HttpResponseException.class);
     }
   }

@@ -81,12 +81,7 @@ public final class ContrastGraphApiImpl implements ContrastGraphApi {
         graphApiBase
             + new URIBuilder()
                 .appendPathSegments(
-                    "v2",
-                    "organizations",
-                    organizationId,
-                    "contrast-graph",
-                    "facets",
-                    filterName)
+                    "v2", "organizations", organizationId, "contrast-graph", "facets", filterName)
                 .toURIString();
     return post(url, gson.toJson(filters), FacetsResponse.class);
   }
@@ -111,7 +106,8 @@ public final class ContrastGraphApiImpl implements ContrastGraphApi {
                     "libraries")
                 .appendQueryParam("agentReportingInstanceId", agentReportingInstanceId)
                 .toURIString();
-    return post(url, request != null ? gson.toJson(request) : null, ApplicationLibrariesResponse.class);
+    return post(
+        url, request != null ? gson.toJson(request) : null, ApplicationLibrariesResponse.class);
   }
 
   @Override
@@ -141,7 +137,8 @@ public final class ContrastGraphApiImpl implements ContrastGraphApi {
   }
 
   private <T> T post(final String url, final String body, final Class<T> type) throws IOException {
-    try (InputStream is = contrast.makeRequestWithBodyToUrl(HttpMethod.POST, url, body, MediaType.JSON)) {
+    try (InputStream is =
+        contrast.makeRequestWithBodyToUrl(HttpMethod.POST, url, body, MediaType.JSON)) {
       return parse(is, type);
     }
   }

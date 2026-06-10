@@ -1,5 +1,3 @@
-package com.contrastsecurity.sdk.graph;
-
 /*-
  * #%L
  * Contrast Java SDK
@@ -19,6 +17,8 @@ package com.contrastsecurity.sdk.graph;
  * limitations under the License.
  * #L%
  */
+
+package com.contrastsecurity.sdk.graph;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

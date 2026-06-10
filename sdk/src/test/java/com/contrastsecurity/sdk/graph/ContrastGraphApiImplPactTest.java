@@ -17,6 +17,7 @@
  * limitations under the License.
  * #L%
  */
+
 package com.contrastsecurity.sdk.graph;
 
 import static au.com.dius.pact.consumer.dsl.LambdaDsl.newJsonBody;
@@ -30,7 +31,6 @@ import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.JSON;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.Collections;
 import org.junit.jupiter.api.Nested;
@@ -120,11 +120,7 @@ final class ContrastGraphApiImplPactTest {
           .given("incident exists", Collections.singletonMap("incidentId", INCIDENT_ID))
           .uponReceiving("get incident graph")
           .method("GET")
-          .path(
-              "/api/v2/organizations/"
-                  + ORG_ID
-                  + "/contrast-graph/incidents/"
-                  + INCIDENT_ID)
+          .path("/api/v2/organizations/" + ORG_ID + "/contrast-graph/incidents/" + INCIDENT_ID)
           .willRespondWith()
           .status(200)
           .body(
