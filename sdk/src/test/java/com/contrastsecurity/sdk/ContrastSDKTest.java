@@ -27,6 +27,7 @@ import com.contrastsecurity.exceptions.HttpResponseException;
 import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.http.MediaType;
 import com.sun.net.httpserver.HttpServer;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -128,6 +129,16 @@ final class ContrastSDKTest {
             "INTELLIJ_INTEGRATION/1.0.0 contrast-sdk-java/\\d\\.\\d(\\.\\d)?(-SNAPSHOT)? Java/\\d+.*");
   }
 
+  private static String readString(final InputStream is) throws IOException {
+    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    final byte[] buf = new byte[1024];
+    int n;
+    while ((n = is.read(buf)) != -1) {
+      baos.write(buf, 0, n);
+    }
+    return baos.toString(StandardCharsets.UTF_8.name());
+  }
+
   @Nested
   final class MakeRequestToUrl {
 
@@ -161,8 +172,7 @@ final class ContrastSDKTest {
           });
 
       try (InputStream is = contrastSDK.makeRequestToUrl(HttpMethod.GET, baseUrl + "/data")) {
-        assertThat(new String(is.readAllBytes(), StandardCharsets.UTF_8))
-            .isEqualTo("response-body");
+        assertThat(readString(is)).isEqualTo("response-body");
       }
     }
 
@@ -206,8 +216,7 @@ final class ContrastSDKTest {
       server.createContext(
           "/submit",
           exchange -> {
-            receivedBody[0] =
-                new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+            receivedBody[0] = readString(exchange.getRequestBody());
             final byte[] response = "ok".getBytes(StandardCharsets.UTF_8);
             exchange.sendResponseHeaders(200, response.length);
             try (OutputStream os = exchange.getResponseBody()) {
@@ -218,7 +227,7 @@ final class ContrastSDKTest {
       try (InputStream is =
           contrastSDK.makeRequestWithBodyToUrl(
               HttpMethod.POST, baseUrl + "/submit", "{\"key\":\"value\"}", MediaType.JSON)) {
-        assertThat(new String(is.readAllBytes(), StandardCharsets.UTF_8)).isEqualTo("ok");
+        assertThat(readString(is)).isEqualTo("ok");
       }
       assertThat(receivedBody[0]).isEqualTo("{\"key\":\"value\"}");
     }
@@ -229,8 +238,7 @@ final class ContrastSDKTest {
       server.createContext(
           "/submit",
           exchange -> {
-            receivedBody[0] =
-                new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+            receivedBody[0] = readString(exchange.getRequestBody());
             final byte[] response = "ok".getBytes(StandardCharsets.UTF_8);
             exchange.sendResponseHeaders(200, response.length);
             try (OutputStream os = exchange.getResponseBody()) {
@@ -241,7 +249,7 @@ final class ContrastSDKTest {
       try (InputStream is =
           contrastSDK.makeRequestWithBodyToUrl(
               HttpMethod.POST, baseUrl + "/submit", null, MediaType.JSON)) {
-        assertThat(new String(is.readAllBytes(), StandardCharsets.UTF_8)).isEqualTo("ok");
+        assertThat(readString(is)).isEqualTo("ok");
       }
       assertThat(receivedBody[0]).isEmpty();
     }
