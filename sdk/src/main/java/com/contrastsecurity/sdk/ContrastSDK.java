@@ -1593,6 +1593,40 @@ public class ContrastSDK {
     return makeRequestWithResponse(method, path).is;
   }
 
+  public InputStream makeRequestToUrl(HttpMethod method, String url)
+      throws IOException, UnauthorizedException {
+    HttpURLConnection connection = makeConnection(url, method.toString());
+    int rc = connection.getResponseCode();
+    if (rc >= HttpURLConnection.HTTP_BAD_REQUEST) {
+      throw HttpResponseException.fromConnection(
+          connection, "Received unexpected status code from Contrast");
+    }
+    return connection.getInputStream();
+  }
+
+  public InputStream makeRequestWithBodyToUrl(
+      HttpMethod method, String url, String body, MediaType mediaType)
+      throws IOException, UnauthorizedException {
+    HttpURLConnection connection = makeConnection(url, method.toString());
+    if (mediaType != null
+        && body != null
+        && (method.equals(HttpMethod.PUT)
+            || method.equals(HttpMethod.POST)
+            || method.equals(HttpMethod.DELETE))) {
+      connection.setDoOutput(true);
+      connection.setRequestProperty("Content-Type", mediaType.getType());
+      try (OutputStream os = connection.getOutputStream()) {
+        os.write(body.getBytes(StandardCharsets.UTF_8));
+      }
+    }
+    int rc = connection.getResponseCode();
+    if (rc >= HttpURLConnection.HTTP_BAD_REQUEST) {
+      throw HttpResponseException.fromConnection(
+          connection, "Received unexpected status code from Contrast");
+    }
+    return connection.getInputStream();
+  }
+
   public MakeRequestResponse makeRequestWithResponse(HttpMethod method, String path)
       throws IOException, UnauthorizedException {
     String url = restApiURL + path;

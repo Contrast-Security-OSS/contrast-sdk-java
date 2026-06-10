@@ -24,6 +24,7 @@ import com.contrastsecurity.http.HttpMethod;
 import com.contrastsecurity.http.MediaType;
 import com.contrastsecurity.sdk.ContrastSDK;
 import com.contrastsecurity.sdk.internal.URIBuilder;
+import com.contrastsecurity.utils.ContrastSDKUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import java.io.IOException;
@@ -36,62 +37,58 @@ public final class ContrastGraphApiImpl implements ContrastGraphApi {
 
   private final ContrastSDK contrast;
   private final Gson gson;
+  private final String graphApiBase;
 
   public ContrastGraphApiImpl(final ContrastSDK contrast, final Gson gson) {
     this.contrast = contrast;
     this.gson = gson;
+    this.graphApiBase = ContrastSDKUtils.getServerUrl(contrast.getRestApiURL()) + "/api";
   }
 
   @Override
   public ContrastGraphResponse searchGraph(
       final String organizationId, final ContrastGraphRequest request) throws IOException {
-    final String uri =
-        new URIBuilder()
-            .appendPathSegments("v2", "organizations", organizationId, "contrast-graph")
-            .toURIString();
-    try (InputStream is =
-            contrast.makeRequestWithBody(
-                HttpMethod.POST, uri, gson.toJson(request), MediaType.JSON);
-        Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-      return gson.fromJson(reader, ContrastGraphResponse.class);
-    } catch (JsonParseException e) {
-      throw new ServerResponseException("Failed to parse Contrast Graph API response", e);
-    }
+    final String url =
+        graphApiBase
+            + new URIBuilder()
+                .appendPathSegments("v2", "organizations", organizationId, "contrast-graph")
+                .toURIString();
+    return post(url, gson.toJson(request), ContrastGraphResponse.class);
   }
 
   @Override
   public ContrastGraphResponse getIncidentGraph(
       final String organizationId, final String incidentId) throws IOException {
-    final String uri =
-        new URIBuilder()
-            .appendPathSegments(
-                "v2", "organizations", organizationId, "contrast-graph", "incidents", incidentId)
-            .toURIString();
-    try (InputStream is = contrast.makeRequest(HttpMethod.GET, uri);
-        Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-      return gson.fromJson(reader, ContrastGraphResponse.class);
-    } catch (JsonParseException e) {
-      throw new ServerResponseException("Failed to parse Contrast Graph API response", e);
-    }
+    final String url =
+        graphApiBase
+            + new URIBuilder()
+                .appendPathSegments(
+                    "v2",
+                    "organizations",
+                    organizationId,
+                    "contrast-graph",
+                    "incidents",
+                    incidentId)
+                .toURIString();
+    return get(url, ContrastGraphResponse.class);
   }
 
   @Override
   public FacetsResponse getFacets(
       final String organizationId, final String filterName, final RequestFilters filters)
       throws IOException {
-    final String uri =
-        new URIBuilder()
-            .appendPathSegments(
-                "v2", "organizations", organizationId, "contrast-graph", "facets", filterName)
-            .toURIString();
-    try (InputStream is =
-            contrast.makeRequestWithBody(
-                HttpMethod.POST, uri, gson.toJson(filters), MediaType.JSON);
-        Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-      return gson.fromJson(reader, FacetsResponse.class);
-    } catch (JsonParseException e) {
-      throw new ServerResponseException("Failed to parse Contrast Graph API response", e);
-    }
+    final String url =
+        graphApiBase
+            + new URIBuilder()
+                .appendPathSegments(
+                    "v2",
+                    "organizations",
+                    organizationId,
+                    "contrast-graph",
+                    "facets",
+                    filterName)
+                .toURIString();
+    return post(url, gson.toJson(filters), FacetsResponse.class);
   }
 
   @Override
@@ -101,47 +98,57 @@ public final class ContrastGraphApiImpl implements ContrastGraphApi {
       final String agentReportingInstanceId,
       final ApplicationLibrariesRequest request)
       throws IOException {
-    final String uri =
-        new URIBuilder()
-            .appendPathSegments(
-                "v2",
-                "organizations",
-                organizationId,
-                "contrast-graph",
-                "applications",
-                applicationId,
-                "libraries")
-            .appendQueryParam("agentReportingInstanceId", agentReportingInstanceId)
-            .toURIString();
-    final String body = request != null ? gson.toJson(request) : null;
-    final MediaType mediaType = request != null ? MediaType.JSON : null;
-    try (InputStream is = contrast.makeRequestWithBody(HttpMethod.POST, uri, body, mediaType);
-        Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-      return gson.fromJson(reader, ApplicationLibrariesResponse.class);
-    } catch (JsonParseException e) {
-      throw new ServerResponseException("Failed to parse Contrast Graph API response", e);
-    }
+    final String url =
+        graphApiBase
+            + new URIBuilder()
+                .appendPathSegments(
+                    "v2",
+                    "organizations",
+                    organizationId,
+                    "contrast-graph",
+                    "applications",
+                    applicationId,
+                    "libraries")
+                .appendQueryParam("agentReportingInstanceId", agentReportingInstanceId)
+                .toURIString();
+    return post(url, request != null ? gson.toJson(request) : null, ApplicationLibrariesResponse.class);
   }
 
   @Override
   public LibraryDetailsResponse getApplicationLibraryDetails(
       final String organizationId, final String applicationId, final String libraryHash)
       throws IOException {
-    final String uri =
-        new URIBuilder()
-            .appendPathSegments(
-                "v2",
-                "organizations",
-                organizationId,
-                "contrast-graph",
-                "applications",
-                applicationId,
-                "libraries",
-                libraryHash)
-            .toURIString();
-    try (InputStream is = contrast.makeRequest(HttpMethod.GET, uri);
-        Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-      return gson.fromJson(reader, LibraryDetailsResponse.class);
+    final String url =
+        graphApiBase
+            + new URIBuilder()
+                .appendPathSegments(
+                    "v2",
+                    "organizations",
+                    organizationId,
+                    "contrast-graph",
+                    "applications",
+                    applicationId,
+                    "libraries",
+                    libraryHash)
+                .toURIString();
+    return get(url, LibraryDetailsResponse.class);
+  }
+
+  private <T> T get(final String url, final Class<T> type) throws IOException {
+    try (InputStream is = contrast.makeRequestToUrl(HttpMethod.GET, url)) {
+      return parse(is, type);
+    }
+  }
+
+  private <T> T post(final String url, final String body, final Class<T> type) throws IOException {
+    try (InputStream is = contrast.makeRequestWithBodyToUrl(HttpMethod.POST, url, body, MediaType.JSON)) {
+      return parse(is, type);
+    }
+  }
+
+  private <T> T parse(final InputStream is, final Class<T> type) throws IOException {
+    try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+      return gson.fromJson(reader, type);
     } catch (JsonParseException e) {
       throw new ServerResponseException("Failed to parse Contrast Graph API response", e);
     }

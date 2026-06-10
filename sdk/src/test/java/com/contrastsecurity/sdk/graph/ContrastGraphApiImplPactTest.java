@@ -29,6 +29,7 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.contrastsecurity.sdk.ContrastSDK;
+import com.contrastsecurity.sdk.JSON;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.Collections;
@@ -52,7 +53,7 @@ final class ContrastGraphApiImplPactTest {
         new ContrastSDK.Builder("user", "serviceKey", "apiKey")
             .withApiUrl(server.getUrl() + "/Contrast/api")
             .build();
-    return new ContrastGraphApiImpl(sdk, new Gson());
+    return new ContrastGraphApiImpl(sdk, JSON.getGson());
   }
 
   @Nested
@@ -64,7 +65,7 @@ final class ContrastGraphApiImplPactTest {
           .given("graph data exists for organization")
           .uponReceiving("search graph with filters")
           .method("POST")
-          .path("/Contrast/api/v2/organizations/" + ORG_ID + "/contrast-graph")
+          .path("/api/v2/organizations/" + ORG_ID + "/contrast-graph")
           .willRespondWith()
           .status(200)
           .body(
@@ -120,7 +121,7 @@ final class ContrastGraphApiImplPactTest {
           .uponReceiving("get incident graph")
           .method("GET")
           .path(
-              "/Contrast/api/v2/organizations/"
+              "/api/v2/organizations/"
                   + ORG_ID
                   + "/contrast-graph/incidents/"
                   + INCIDENT_ID)
@@ -162,7 +163,7 @@ final class ContrastGraphApiImplPactTest {
           .given("graph data exists for organization")
           .uponReceiving("get nodeTypes facets")
           .method("POST")
-          .path("/Contrast/api/v2/organizations/" + ORG_ID + "/contrast-graph/facets/nodeTypes")
+          .path("/api/v2/organizations/" + ORG_ID + "/contrast-graph/facets/nodeTypes")
           .willRespondWith()
           .status(200)
           .body(
@@ -200,7 +201,7 @@ final class ContrastGraphApiImplPactTest {
           .uponReceiving("get application libraries without filter")
           .method("POST")
           .path(
-              "/Contrast/api/v2/organizations/"
+              "/api/v2/organizations/"
                   + ORG_ID
                   + "/contrast-graph/applications/"
                   + APP_ID
@@ -248,7 +249,7 @@ final class ContrastGraphApiImplPactTest {
           .uponReceiving("get library details by hash")
           .method("GET")
           .path(
-              "/Contrast/api/v2/organizations/"
+              "/api/v2/organizations/"
                   + ORG_ID
                   + "/contrast-graph/applications/"
                   + APP_ID

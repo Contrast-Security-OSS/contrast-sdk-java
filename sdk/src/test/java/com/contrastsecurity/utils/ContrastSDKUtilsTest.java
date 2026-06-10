@@ -62,4 +62,26 @@ final class ContrastSDKUtilsTest {
     final String ensureBlank = "";
     assertThat(blankUrl).isEqualTo(ensureBlank);
   }
+
+  @Test
+  public void get_server_url_strips_contrast_path_variants() {
+    final String expected = "http://localhost:19080";
+    assertThat(ContrastSDKUtils.getServerUrl("http://localhost:19080/Contrast/api"))
+        .isEqualTo(expected);
+    assertThat(ContrastSDKUtils.getServerUrl("http://localhost:19080/Contrast/"))
+        .isEqualTo(expected);
+    assertThat(ContrastSDKUtils.getServerUrl("http://localhost:19080/Contrast"))
+        .isEqualTo(expected);
+  }
+
+  @Test
+  public void get_server_url_leaves_plain_host_unchanged() {
+    final String plainHost = "http://localhost:19080";
+    assertThat(ContrastSDKUtils.getServerUrl(plainHost)).isEqualTo(plainHost);
+  }
+
+  @Test
+  public void get_server_url_ignores_null() {
+    assertThat(ContrastSDKUtils.getServerUrl(null)).isNull();
+  }
 }
